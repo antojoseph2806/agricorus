@@ -1,42 +1,87 @@
+// server.js
 require('dotenv').config();
 const cors = require('cors');
 const express = require('express');
 const mongoose = require('mongoose');
+
+// Import routes (must be routers)
 const authRouter = require('./routes/auth');
 const forgotPasswordRoutes = require('./routes/forgotPassword');
-const dashboardRoutes = require('./routes/dashboard'); // ✅ new import
+const dashboardRoutes = require('./routes/dashboard');
+const landownerRoutes = require('./routes/landowner');
+const leaseRoutes = require('./routes/lease');
+const paymentRoutes = require('./routes/payment');
+const disputeRoutes = require('./routes/dispute');
 
+// Import middleware
 const auth = require('./middleware/auth');
 
 const app = express();
 
-// ✅ Enable CORS for frontend
+// ------------------------
+// Middleware
+// ------------------------
 app.use(cors({
-  origin: 'http://localhost:5173',
+  origin: 'http://localhost:5173', // Adjust to frontend URL
   credentials: true
 }));
-
-// ✅ Parse JSON requests
 app.use(express.json());
 
-// ✅ MongoDB Connection
+// ------------------------
+// Database Connection
+// ------------------------
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
-.then(() => console.log('MongoDB connected'))
-.catch(err => console.error('MongoDB error:', err));
+.then(() => console.log('✅ MongoDB connected'))
+.catch(err => console.error('❌ MongoDB connection error:', err));
 
-// ✅ Routes
+// ------------------------
+// Debug route type check (helps catch errors)
+// ------------------------
+const routesList = [
+  ['auth', authRouter],
+  ['forgotPassword', forgotPasswordRoutes],
+  ['dashboard', dashboardRoutes],
+  ['landowner', landownerRoutes],
+  ['leases', leaseRoutes],
+  ['payments', paymentRoutes],
+  ['disputes', disputeRoutes],
+];
+routesList.forEach(([name, router]) => {
+  if (typeof router !== 'function') {
+    console.error(`❌ ERROR: Route "${name}" is not exporting a function. Check module.exports in routes/${name}.js`);
+  }
+});
+
+// ------------------------
+// Routes
+// ------------------------
 app.use('/api/auth', authRouter);
 app.use('/api/forgot-password', forgotPasswordRoutes);
-app.use('/api/dashboard', dashboardRoutes); // ✅ Add dashboard route
+app.use('/api/dashboard', dashboardRoutes);
+app.use('/api/landowner', landownerRoutes);
+app.use('/api/leases', leaseRoutes);
+app.use('/api/payments', paymentRoutes);
+app.use('/api/disputes', disputeRoutes);
 
-// ✅ Optional protected test route
+// Test protected route
 app.get('/api/protected', auth, (req, res) => {
   res.json({ msg: `Welcome user ${req.user.id} with role ${req.user.role}` });
 });
 
-// ✅ Start server
+// ------------------------
+// Global 404 handler
+// ------------------------
+app.use((req, res) => {
+  res.status(404).json({ error: 'Route not found' });
+});
+
+// ------------------------
+// Start server
+// ------------------------
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on http://localhost:${PORT}`);
+});
