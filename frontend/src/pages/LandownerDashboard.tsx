@@ -11,28 +11,47 @@ import {
   ShoppingCart,
   FileText,
   CreditCard,
-  AlertTriangle
+  AlertTriangle,
+  ChevronDown,
+  Globe, // Added Globe for location fields
+  Badge, // Added Badge for title field
+  Tractor, // Added Tractor for soilType field
+  Waves, // Added Waves for waterSource field
+  Route // Added Route for accessibility field
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
+// Type definition for navigation items
+interface NavItem {
+  label: string;
+  icon: React.ElementType;
+  href: string;
+  children?: NavItem[];
+}
+
 // ----- Navbar Component -----
-const Navbar = () => {
+const Navbar: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [showMore, setShowMore] = useState(false);
+  const [showLandsDropdown, setShowLandsDropdown] = useState(false);
   const navigate = useNavigate();
 
-  const navigationItems = [
+  const navigationItems: NavItem[] = [
     { label: 'Verify Identity/KYC', icon: Shield, href: '/kyc' },
-    { label: 'View Lands', icon: MapPin, href: '/lands' },
+    {
+      label: 'Manage Lands',
+      icon: MapPin,
+      href: '/lands',
+      children: [
+        { label: 'Add Lands', icon: MapPin, href: '/lands/add' },
+        { label: 'View Lands', icon: MapPin, href: '/lands/view' }
+      ]
+    },
     { label: 'Apply for Crowdfunding', icon: TrendingUp, href: '/crowdfunding' },
     { label: 'Purchase Seeds & Fertilizers', icon: ShoppingCart, href: '/marketplace' },
     { label: 'Digital Lease Agreement', icon: FileText, href: '/agreements' },
     { label: 'Lease Payments', icon: CreditCard, href: '/payments' },
     { label: 'Raise Dispute', icon: AlertTriangle, href: '/disputes' }
   ];
-
-  const mainItems = navigationItems.slice(0, 4);
-  const moreItems = navigationItems.slice(4);
 
   const handleLogout = async () => {
     const token = localStorage.getItem('token');
@@ -63,36 +82,43 @@ const Navbar = () => {
 
           {/* Desktop Nav */}
           <div className="hidden lg:flex items-center space-x-4">
-            {mainItems.map((item, i) => (
-              <a key={i} href={item.href} className="flex items-center gap-1 px-3 py-2 text-sm text-gray-700 hover:text-emerald-600">
-                <item.icon className="w-4 h-4" />
-                {item.label}
-              </a>
-            ))}
-
-            <div className="relative">
-              <button
-                onClick={() => setShowMore(!showMore)}
-                className="flex items-center gap-1 px-3 py-2 text-sm text-gray-700 hover:text-emerald-600"
-              >
-                More ▾
-              </button>
-              {showMore && (
-                <div className="absolute right-0 mt-2 w-56 bg-white shadow-lg rounded-md border z-10">
-                  {moreItems.map((item, idx) => (
-                    <a
-                      key={idx}
-                      href={item.href}
-                      className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+            {navigationItems.map((item, i) => (
+              <div key={i} className="relative">
+                {item.children ? (
+                  <>
+                    <button
+                      onClick={() => setShowLandsDropdown(!showLandsDropdown)}
+                      className="flex items-center gap-1 px-3 py-2 text-sm text-gray-700 hover:text-emerald-600"
                     >
-                      <item.icon className="w-4 h-4 mr-2" />
-                      {item.label}
-                    </a>
-                  ))}
-                </div>
-              )}
-            </div>
-
+                      <item.icon className="w-4 h-4" />
+                      {item.label} <ChevronDown className={`w-3 h-3 transition-transform ${showLandsDropdown ? 'rotate-180' : ''}`} />
+                    </button>
+                    {showLandsDropdown && (
+                      <div className="absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg border border-gray-100 z-10">
+                        {item.children.map((child, idx) => (
+                          <a
+                            key={idx}
+                            href={child.href}
+                            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                          >
+                            {child.label}
+                          </a>
+                        ))}
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <a
+                    href={item.href}
+                    className="flex items-center gap-1 px-3 py-2 text-sm text-gray-700 hover:text-emerald-600"
+                  >
+                    <item.icon className="w-4 h-4" />
+                    {item.label}
+                  </a>
+                )}
+              </div>
+            ))}
+            
             <button
               onClick={handleLogout}
               className="ml-4 bg-red-500 hover:bg-red-600 text-white text-sm font-medium px-4 py-2 rounded-md"
@@ -114,15 +140,44 @@ const Navbar = () => {
       <div className={`lg:hidden transition-all ${isMenuOpen ? 'max-h-screen' : 'max-h-0 overflow-hidden'}`}>
         <div className="bg-gray-50 px-4 py-4 space-y-2 border-t">
           {navigationItems.map((item, index) => (
-            <a
-              key={index}
-              href={item.href}
-              className="flex items-center px-3 py-2 text-sm text-gray-800 hover:bg-white"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              <item.icon className="w-4 h-4 mr-2" />
-              {item.label}
-            </a>
+            item.children ? (
+              <div key={index}>
+                <button
+                  onClick={() => setShowLandsDropdown(!showLandsDropdown)}
+                  className="w-full flex items-center px-3 py-2 text-sm text-gray-800 hover:bg-white justify-between"
+                >
+                  <div className="flex items-center">
+                    <item.icon className="w-4 h-4 mr-2" />
+                    {item.label}
+                  </div>
+                  <ChevronDown className={`w-4 h-4 transition-transform ${showLandsDropdown ? 'rotate-180' : ''}`} />
+                </button>
+                {showLandsDropdown && (
+                  <div className="ml-6 mt-1 space-y-1">
+                    {item.children.map((child, idx) => (
+                      <a
+                        key={idx}
+                        href={child.href}
+                        className="flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-white"
+                        onClick={() => { setIsMenuOpen(false); setShowLandsDropdown(false); }}
+                      >
+                        {child.label}
+                      </a>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ) : (
+              <a
+                key={index}
+                href={item.href}
+                className="flex items-center px-3 py-2 text-sm text-gray-800 hover:bg-white"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                <item.icon className="w-4 h-4 mr-2" />
+                {item.label}
+              </a>
+            )
           ))}
           <button
             onClick={() => {
@@ -141,7 +196,11 @@ const Navbar = () => {
 };
 
 // ----- Layout Component -----
-const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+interface LayoutProps {
+  children: React.ReactNode;
+}
+
+export const Layout: React.FC<LayoutProps> = ({ children }) => {
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
@@ -151,7 +210,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 };
 
 // ----- Dashboard Page -----
-const LandownerDashboard = () => {
+const LandownerDashboard: React.FC = () => {
   const stats = [
     { label: 'Active Leases', value: '124', icon: MapPin, color: 'bg-blue-500' },
     { label: 'Total Funding', value: '$2.4M', icon: DollarSign, color: 'bg-emerald-500' },

@@ -39,6 +39,14 @@ const landSchema = new mongoose.Schema({
     enum: ["available", "leased", "inactive"],
     default: "available"
   },
+  isApproved: { // ✅ New field for admin approval status
+    type: Boolean,
+    default: false
+  },
+  rejectionReason: { // ✅ New field for rejection reason
+    type: String,
+    default: null
+  }
 }, { timestamps: true });
 
 module.exports = mongoose.model("Land", landSchema);

@@ -39,10 +39,11 @@ router.post(
       const land = new Land({
         ...req.body,
         documents: fileUrls,
-        owner: req.user?.id || null
+        owner: req.user?.id || null,
+        isApproved: false // ✅ New: Default to false, awaiting admin approval
       });
       await land.save();
-      res.status(201).json({ message: "Land listed successfully", land });
+      res.status(201).json({ message: "Land listed successfully, awaiting admin approval", land });
     } catch (err) {
       res.status(500).json({ error: err.message });
     }
@@ -50,33 +51,22 @@ router.post(
 );
 
 /**
- * 2️⃣ CREATE LAND LISTING (JSON body)
+ * 2️⃣ GET ALL APPROVED LANDS (PUBLIC ROUTE)
+ * This route is now public and can be accessed without a role.
+ * It will only return lands that are approved and available.
  */
-router.post(
-  "/lands/json",
-  auth,
-  authorizeRoles("landowner"),
-  async (req, res) => {
-    try {
-      const { location, size, price, description, documents } = req.body;
-      const land = new Land({
-        location,
-        size,
-        price,
-        description,
-        documents: Array.isArray(documents) ? documents : [],
-        owner: req.user?.id || null
-      });
-      await land.save();
-      res.status(201).json({ message: "Land listed successfully (JSON)", land });
-    } catch (err) {
-      res.status(500).json({ error: err.message });
-    }
+router.get("/lands", async (req, res) => {
+  try {
+    const lands = await Land.find({ isApproved: true, status: 'available' });
+    res.json(lands);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
-);
+});
 
 /**
  * 3️⃣ GET LOGGED-IN LANDOWNER’S LANDS
+ * This route is for the landowner's personal view, so it shows all their lands.
  */
 router.get("/lands/my", auth, authorizeRoles("landowner"), async (req, res) => {
   try {
@@ -88,11 +78,13 @@ router.get("/lands/my", auth, authorizeRoles("landowner"), async (req, res) => {
 });
 
 /**
- * 4️⃣ GET SINGLE LAND
+ * ✅ 4️⃣ GET SINGLE LAND (LANDOWNER'S PERSONAL VIEW)
+ * This route remains protected for the landowner to view their own lands.
+ * Note: I removed the extra comma in the route path.
  */
 router.get("/lands/:id", auth, authorizeRoles("landowner"), async (req, res) => {
   try {
-    const land = await Land.findOne({ _id: req.params.id, owner: req.user?.id || null });
+    const land = await Land.findOne({ _id: req.params.id, owner: req.user?.id || null }).populate('owner', 'name email');
     if (!land) return res.status(404).json({ error: "Land not found" });
     res.json(land);
   } catch (err) {
@@ -101,7 +93,21 @@ router.get("/lands/:id", auth, authorizeRoles("landowner"), async (req, res) => 
 });
 
 /**
- * 5️⃣ UPDATE LAND
+ * ✅ 5️⃣ NEW PUBLIC ROUTE FOR VIEWING A SPECIFIC APPROVED LAND
+ * This route is accessible to all users (landowners, farmers, etc.) without authentication.
+ */
+router.get("/lands/public/:id", async (req, res) => {
+  try {
+    const land = await Land.findOne({ _id: req.params.id, isApproved: true });
+    if (!land) return res.status(404).json({ error: "Approved land not found" });
+    res.json(land);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+/**
+ * 6️⃣ UPDATE LAND
  */
 router.put(
   "/lands/:id",
@@ -129,7 +135,7 @@ router.put(
 );
 
 /**
- * 6️⃣ DELETE LAND
+ * 7️⃣ DELETE LAND
  */
 router.delete("/lands/:id", auth, authorizeRoles("landowner"), async (req, res) => {
   try {
@@ -142,7 +148,7 @@ router.delete("/lands/:id", auth, authorizeRoles("landowner"), async (req, res) 
 });
 
 /**
- * 7️⃣ REQUEST PAYMENT RELEASE
+ * 8️⃣ REQUEST PAYMENT RELEASE
  */
 router.post("/:paymentId/request-release", auth, authorizeRoles("landowner"), async (req, res) => {
   try {

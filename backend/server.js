@@ -12,6 +12,7 @@ const landownerRoutes = require('./routes/landowner');
 const leaseRoutes = require('./routes/lease');
 const paymentRoutes = require('./routes/payment');
 const disputeRoutes = require('./routes/dispute');
+const adminRouter = require('./routes/admin'); // ✅ Import the new admin router
 
 // Import middleware
 const auth = require('./middleware/auth');
@@ -48,6 +49,7 @@ const routesList = [
   ['leases', leaseRoutes],
   ['payments', paymentRoutes],
   ['disputes', disputeRoutes],
+  ['admin', adminRouter], // ✅ Add the admin router to the list
 ];
 routesList.forEach(([name, router]) => {
   if (typeof router !== 'function') {
@@ -65,6 +67,7 @@ app.use('/api/landowner', landownerRoutes);
 app.use('/api/leases', leaseRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/disputes', disputeRoutes);
+app.use('/api/admin', adminRouter); // ✅ Add the new admin router endpoint
 
 // Test protected route
 app.get('/api/protected', auth, (req, res) => {
