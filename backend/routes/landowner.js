@@ -22,25 +22,34 @@ try {
   upload = require("../middleware/upload");
 } catch (err) {
   console.warn("⚠️ upload middleware not found — skipping file handling");
-  upload = { array: () => (req, res, next) => next() };
+  // Assuming upload.fields is available
+  upload = { fields: () => (req, res, next) => next(), array: () => (req, res, next) => next() };
 }
 
 /**
  * 1️⃣ CREATE LAND LISTING (FILES via form-data)
+ * Now handles two file fields: 'landPhotos' and 'landDocuments'
  */
 router.post(
   "/lands",
   auth,
   authorizeRoles("landowner"),
-  upload.array("documents", 5),
+  // ✅ Use upload.fields() to handle multiple file fields
+  upload.fields([
+    { name: 'landPhotos', maxCount: 5 },
+    { name: 'landDocuments', maxCount: 5 }
+  ]),
   async (req, res) => {
     try {
-      const fileUrls = req.files?.map(file => file.path) || [];
+      const landPhotoUrls = req.files?.landPhotos?.map(file => file.path) || [];
+      const landDocumentUrls = req.files?.landDocuments?.map(file => file.path) || [];
+      
       const land = new Land({
         ...req.body,
-        documents: fileUrls,
+        landPhotos: landPhotoUrls, // ✅ Save photos separately
+        landDocuments: landDocumentUrls, // ✅ Save documents separately
         owner: req.user?.id || null,
-        isApproved: false // ✅ New: Default to false, awaiting admin approval
+        isApproved: false 
       });
       await land.save();
       res.status(201).json({ message: "Land listed successfully, awaiting admin approval", land });
@@ -52,8 +61,6 @@ router.post(
 
 /**
  * 2️⃣ GET ALL APPROVED LANDS (PUBLIC ROUTE)
- * This route is now public and can be accessed without a role.
- * It will only return lands that are approved and available.
  */
 router.get("/lands", async (req, res) => {
   try {
@@ -66,7 +73,6 @@ router.get("/lands", async (req, res) => {
 
 /**
  * 3️⃣ GET LOGGED-IN LANDOWNER’S LANDS
- * This route is for the landowner's personal view, so it shows all their lands.
  */
 router.get("/lands/my", auth, authorizeRoles("landowner"), async (req, res) => {
   try {
@@ -78,9 +84,7 @@ router.get("/lands/my", auth, authorizeRoles("landowner"), async (req, res) => {
 });
 
 /**
- * ✅ 4️⃣ GET SINGLE LAND (LANDOWNER'S PERSONAL VIEW)
- * This route remains protected for the landowner to view their own lands.
- * Note: I removed the extra comma in the route path.
+ * 4️⃣ GET SINGLE LAND (LANDOWNER'S PERSONAL VIEW)
  */
 router.get("/lands/:id", auth, authorizeRoles("landowner"), async (req, res) => {
   try {
@@ -93,8 +97,7 @@ router.get("/lands/:id", auth, authorizeRoles("landowner"), async (req, res) => 
 });
 
 /**
- * ✅ 5️⃣ NEW PUBLIC ROUTE FOR VIEWING A SPECIFIC APPROVED LAND
- * This route is accessible to all users (landowners, farmers, etc.) without authentication.
+ * 5️⃣ NEW PUBLIC ROUTE FOR VIEWING A SPECIFIC APPROVED LAND
  */
 router.get("/lands/public/:id", async (req, res) => {
   try {
@@ -108,19 +111,37 @@ router.get("/lands/public/:id", async (req, res) => {
 
 /**
  * 6️⃣ UPDATE LAND
+ * Now handles two separate file fields: 'landPhotos' and 'landDocuments'
  */
 router.put(
   "/lands/:id",
   auth,
   authorizeRoles("landowner"),
-  upload.array("documents", 5),
+  // ✅ Use upload.fields() to handle multiple file fields for updates
+  upload.fields([
+    { name: 'landPhotos', maxCount: 5 },
+    { name: 'landDocuments', maxCount: 5 }
+  ]),
   async (req, res) => {
     try {
       let updateData = { ...req.body };
-      if (req.files && req.files.length > 0) {
-        const fileUrls = req.files.map(file => file.path);
-        updateData.$push = { documents: { $each: fileUrls } };
+      
+      // Handle new photos
+      if (req.files && req.files.landPhotos && req.files.landPhotos.length > 0) {
+        const landPhotoUrls = req.files.landPhotos.map(file => file.path);
+        updateData.$push = { landPhotos: { $each: landPhotoUrls } };
       }
+
+      // Handle new documents
+      if (req.files && req.files.landDocuments && req.files.landDocuments.length > 0) {
+        const landDocumentUrls = req.files.landDocuments.map(file => file.path);
+        if (updateData.$push) {
+          updateData.$push.landDocuments = { $each: landDocumentUrls };
+        } else {
+          updateData.$push = { landDocuments: { $each: landDocumentUrls } };
+        }
+      }
+
       const land = await Land.findOneAndUpdate(
         { _id: req.params.id, owner: req.user?.id || null },
         updateData,

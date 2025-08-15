@@ -33,17 +33,18 @@ const landSchema = new mongoose.Schema({
     type: Number,
     required: true
   },
-  documents: [String], // file URLs
+  landPhotos: [String], // ✅ New field for land photos
+  landDocuments: [String], // ✅ New field for land documents
   status: {
     type: String,
     enum: ["available", "leased", "inactive"],
     default: "available"
   },
-  isApproved: { // ✅ New field for admin approval status
+  isApproved: {
     type: Boolean,
     default: false
   },
-  rejectionReason: { // ✅ New field for rejection reason
+  rejectionReason: {
     type: String,
     default: null
   }
