@@ -11,11 +11,11 @@ import {
   Badge,
   Globe,
   Loader2,
-  FileText
+  FileText,
+  Image as ImageIcon,
 } from 'lucide-react';
 import { Layout } from './LandownerDashboard';
 
-// Define the type for a single land listing
 interface Land {
   _id: string;
   title: string;
@@ -31,7 +31,10 @@ interface Land {
   leasePricePerMonth: number;
   leaseDurationMonths: number;
   status: 'available' | 'leased' | 'inactive';
-  documents: string[];
+  landPhotos: string[];
+  landDocuments: string[];
+  isApproved: boolean;
+  rejectionReason?: string | null;
 }
 
 const ViewSpecificLand: React.FC = () => {
@@ -108,6 +111,28 @@ const ViewSpecificLand: React.FC = () => {
       </Layout>
     );
   }
+  
+  const getApprovalStatusDisplay = (land: Land) => {
+    if (land.isApproved) {
+      return (
+        <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+          Approved
+        </span>
+      );
+    } else if (land.rejectionReason) {
+      return (
+        <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800" title={land.rejectionReason}>
+          Rejected
+        </span>
+      );
+    } else {
+      return (
+        <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+          Pending
+        </span>
+      );
+    }
+  };
 
   return (
     <Layout>
@@ -117,15 +142,31 @@ const ViewSpecificLand: React.FC = () => {
           <MapPin className="w-5 h-5 text-gray-500 mr-2" />
           {land.location.address}
         </p>
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-          {/* Left Column: Land Details */}
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+          {/* Left Column: Image Gallery */}
+          <div className="flex-grow-0">
+            {land.landPhotos && land.landPhotos.length > 0 ? (
+              <img
+                src={land.landPhotos[0]}
+                alt="Main land photo"
+                className="w-full rounded-lg shadow-md object-cover max-h-[500px]"
+              />
+            ) : (
+              <div className="w-full h-80 bg-gray-200 rounded-lg shadow-md flex items-center justify-center text-gray-500">
+                <ImageIcon className="w-16 h-16" />
+                <span className="ml-2">No photos available</span>
+              </div>
+            )}
+          </div>
+          
+          {/* Right Column: Key Details */}
           <div className="space-y-6">
             <h2 className="text-xl font-semibold text-gray-900 border-b border-gray-200 pb-2">Key Details</h2>
             <div className="space-y-4">
               <div className="flex items-center text-gray-700">
                 <Badge className="w-5 h-5 text-emerald-500 mr-3 flex-shrink-0" />
-                <span>Status: <span className="font-medium capitalize">{land.status}</span></span>
+                <span>Approval Status: <span className="font-medium capitalize">{getApprovalStatusDisplay(land)}</span></span>
               </div>
               <div className="flex items-center text-gray-700">
                 <Tractor className="w-5 h-5 text-emerald-500 mr-3 flex-shrink-0" />
@@ -156,56 +197,6 @@ const ViewSpecificLand: React.FC = () => {
                 </div>
               )}
             </div>
-          </div>
-          
-          {/* Right Column: Documents & Images */}
-          <div className="space-y-6">
-            <h2 className="text-xl font-semibold text-gray-900 border-b border-gray-200 pb-2">Documents</h2>
-            
-            {/* Display first document as a main image */}
-            {land.documents && land.documents.length > 0 && (
-              <div className="bg-gray-50 rounded-lg p-4 text-center border border-gray-200">
-                {land.documents[0].match(/\.(jpeg|jpg|gif|png)$/) ? (
-                  <img
-                    src={land.documents[0]}
-                    alt={`Document ${1}`}
-                    className="max-h-96 w-full object-contain rounded-md shadow-md"
-                  />
-                ) : (
-                  <div className="p-12 text-gray-400">
-                    <FileText className="mx-auto w-16 h-16" />
-                    <p className="mt-2 text-sm">Preview not available</p>
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* List other documents */}
-            {land.documents && land.documents.length > 1 && (
-              <div className="mt-4">
-                <h3 className="text-md font-semibold text-gray-700 mb-2">Other Documents</h3>
-                <ul className="space-y-2">
-                  {land.documents.slice(1).map((doc, index) => (
-                    <li key={index} className="flex items-center bg-gray-50 p-3 rounded-lg border border-gray-200">
-                      <FileText className="w-5 h-5 text-gray-500 mr-3 flex-shrink-0" />
-                      <a
-                        href={doc}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-emerald-600 hover:text-emerald-800 hover:underline break-all"
-                      >
-                        Document {index + 2}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-
-            {/* Case for no documents */}
-            {(!land.documents || land.documents.length === 0) && (
-              <p className="text-gray-500">No documents uploaded for this land.</p>
-            )}
           </div>
         </div>
       </div>

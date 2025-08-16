@@ -12,7 +12,8 @@ import {
   Waves,
   Route,
   Badge,
-  Globe
+  Globe,
+  FileText
 } from 'lucide-react';
 import { Layout } from './LandownerDashboard';
 
@@ -30,7 +31,8 @@ const AddLand: React.FC = () => {
     sizeInAcres: '',
     leasePricePerMonth: '',
     leaseDurationMonths: '',
-    documents: null as FileList | null,
+    landPhotos: null as FileList | null, // ✅ Updated for separate photos
+    landDocuments: null as FileList | null, // ✅ Updated for separate documents
   });
   const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [message, setMessage] = useState('');
@@ -53,8 +55,13 @@ const AddLand: React.FC = () => {
     }
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, documents: e.target.files });
+  // ✅ New file handlers for photos and documents
+  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({ ...formData, landPhotos: e.target.files });
+  };
+
+  const handleDocumentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({ ...formData, landDocuments: e.target.files });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -74,11 +81,17 @@ const AddLand: React.FC = () => {
     form.append('leasePricePerMonth', formData.leasePricePerMonth);
     form.append('leaseDurationMonths', formData.leaseDurationMonths);
 
-    if (formData.documents) {
-      for (let i = 0; i < formData.documents.length; i++) {
-        form.append('documents', formData.documents[i]);
+    // ✅ Append photos and documents separately
+    if (formData.landPhotos) {
+      for (let i = 0; i < formData.landPhotos.length; i++) {
+        form.append('landPhotos', formData.landPhotos[i]);
       }
     }
+    if (formData.landDocuments) {
+        for (let i = 0; i < formData.landDocuments.length; i++) {
+          form.append('landDocuments', formData.landDocuments[i]);
+        }
+      }
 
     const token = localStorage.getItem('token');
 
@@ -129,8 +142,8 @@ const AddLand: React.FC = () => {
         )}
 
         <form onSubmit={handleSubmit} className="space-y-8">
-          {/* General Information */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {/* General Information */}
             <div className="space-y-6">
               <div>
                 <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">
@@ -280,7 +293,7 @@ const AddLand: React.FC = () => {
               </fieldset>
             </div>
           </div>
-
+          
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div>
               <label htmlFor="sizeInAcres" className="block text-sm font-medium text-gray-700 mb-1">
@@ -343,33 +356,63 @@ const AddLand: React.FC = () => {
               </div>
             </div>
           </div>
-
-          <div>
-            <label htmlFor="documents" className="block text-sm font-medium text-gray-700 mb-2">
-              Documents <span className="text-gray-400">(Optional, max 5 files)</span>
-            </label>
-            <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors">
-              <div className="space-y-1 text-center">
-                <Image className="mx-auto h-12 w-12 text-gray-400" />
-                <div className="flex text-sm text-gray-600">
-                  <label htmlFor="file-upload" className="relative cursor-pointer rounded-md font-medium text-emerald-600 hover:text-emerald-500 focus-within:outline-none">
-                    <span>Upload files</span>
-                    <input id="file-upload" name="documents" type="file" multiple className="sr-only" onChange={handleFileChange} />
-                  </label>
-                  <p className="pl-1">or drag and drop</p>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {/* Land Photos Upload Section */}
+            <div>
+              <label htmlFor="landPhotos" className="block text-sm font-medium text-gray-700 mb-2">
+                Land Photos <span className="text-gray-400">(Optional, max 5 files)</span>
+              </label>
+              <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors">
+                <div className="space-y-1 text-center">
+                  <Image className="mx-auto h-12 w-12 text-gray-400" />
+                  <div className="flex text-sm text-gray-600">
+                    <label htmlFor="photo-upload" className="relative cursor-pointer rounded-md font-medium text-emerald-600 hover:text-emerald-500 focus-within:outline-none">
+                      <span>Upload photos</span>
+                      <input id="photo-upload" name="landPhotos" type="file" multiple className="sr-only" onChange={handlePhotoChange} />
+                    </label>
+                    <p className="pl-1">or drag and drop</p>
+                  </div>
+                  <p className="text-xs text-gray-500">PNG, JPG up to 5MB each</p>
                 </div>
-                <p className="text-xs text-gray-500">PNG, JPG, PDF up to 5MB each</p>
               </div>
+              {formData.landPhotos && (
+                <ul className="mt-4 text-sm text-gray-600 list-disc list-inside">
+                  {Array.from(formData.landPhotos).map((file, index) => (
+                    <li key={index}>{file.name}</li>
+                  ))}
+                </ul>
+              )}
             </div>
-            {formData.documents && (
-              <ul className="mt-4 text-sm text-gray-600 list-disc list-inside">
-                {Array.from(formData.documents).map((file, index) => (
-                  <li key={index}>{file.name}</li>
-                ))}
-              </ul>
-            )}
-          </div>
 
+            {/* Land Documents Upload Section */}
+            <div>
+              <label htmlFor="landDocuments" className="block text-sm font-medium text-gray-700 mb-2">
+                Land Documents <span className="text-gray-400">(Optional, max 5 files)</span>
+              </label>
+              <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors">
+                <div className="space-y-1 text-center">
+                  <FileText className="mx-auto h-12 w-12 text-gray-400" />
+                  <div className="flex text-sm text-gray-600">
+                    <label htmlFor="document-upload" className="relative cursor-pointer rounded-md font-medium text-emerald-600 hover:text-emerald-500 focus-within:outline-none">
+                      <span>Upload documents</span>
+                      <input id="document-upload" name="landDocuments" type="file" multiple className="sr-only" onChange={handleDocumentChange} />
+                    </label>
+                    <p className="pl-1">or drag and drop</p>
+                  </div>
+                  <p className="text-xs text-gray-500">PDFs up to 5MB each</p>
+                </div>
+              </div>
+              {formData.landDocuments && (
+                <ul className="mt-4 text-sm text-gray-600 list-disc list-inside">
+                  {Array.from(formData.landDocuments).map((file, index) => (
+                    <li key={index}>{file.name}</li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          </div>
+          
           <div className="pt-5">
             <button
               type="submit"

@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { DollarSign, TrendingUp, LandPlot, Eye, Trash2, MapPin, Edit } from 'lucide-react';
 import { Layout } from './LandownerDashboard';
 
-// Updated interface to match the Land Mongoose schema
+// Updated interface to match the new Land Mongoose schema
 interface Land {
   _id: string;
   title: string;
@@ -17,7 +17,10 @@ interface Land {
   leasePricePerMonth: number;
   leaseDurationMonths: number;
   status: 'available' | 'leased' | 'inactive';
-  documents: string[];
+  landPhotos: string[];
+  landDocuments: string[];
+  isApproved: boolean;
+  rejectionReason?: string | null;
 }
 
 const ViewLands: React.FC = () => {
@@ -84,6 +87,28 @@ const ViewLands: React.FC = () => {
     }
   };
 
+  const getApprovalStatusDisplay = (land: Land) => {
+    if (land.isApproved) {
+      return (
+        <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+          Approved
+        </span>
+      );
+    } else if (land.rejectionReason) {
+      return (
+        <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800" title={land.rejectionReason}>
+          Rejected
+        </span>
+      );
+    } else {
+      return (
+        <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+          Pending
+        </span>
+      );
+    }
+  };
+
   if (loading) {
     return <Layout><div className="text-center py-10">Loading your lands...</div></Layout>;
   }
@@ -115,29 +140,41 @@ const ViewLands: React.FC = () => {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {lands.map((land) => (
-              <div key={land._id} className="bg-gray-50 rounded-xl p-6 shadow-sm border border-gray-100 flex flex-col">
-                <div className="flex-grow">
-                  <h3 className="text-lg font-semibold text-gray-900">{land.title}</h3>
-                  <div className="flex items-center text-sm text-gray-500 mt-1">
+              <div key={land._id} className="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden flex flex-col">
+                {land.landPhotos && land.landPhotos.length > 0 && (
+                  <div className="w-full h-48 bg-gray-200 overflow-hidden">
+                    <img
+                      src={land.landPhotos[0]}
+                      alt={land.title}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                )}
+                <div className="p-6 flex-grow">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">{land.title}</h3>
+                  <div className="flex items-center text-sm text-gray-500 mb-4">
                      <MapPin className="w-4 h-4 mr-1 text-gray-400" /> {land.location.address}
                   </div>
-                  <div className="mt-4 space-y-2">
-                    <div className="flex items-center text-gray-700">
+                  <div className="space-y-2 text-sm text-gray-700">
+                    <div className="flex items-center">
                       <LandPlot className="w-4 h-4 mr-2 text-emerald-500" />
-                      <span className="text-sm">{land.sizeInAcres} acres</span>
+                      <span>{land.sizeInAcres} acres</span>
                     </div>
-                    <div className="flex items-center text-gray-700">
+                    <div className="flex items-center">
                       <DollarSign className="w-4 h-4 mr-2 text-emerald-500" />
-                      <span className="text-sm">₹{land.leasePricePerMonth} / month</span>
+                      <span>₹{land.leasePricePerMonth} / month</span>
                     </div>
-                    <div className="flex items-center text-gray-700">
+                    <div className="flex items-center">
                       <TrendingUp className="w-4 h-4 mr-2 text-emerald-500" />
-                      <span className="text-sm">{land.status === 'available' ? 'Available' : 'Leased'}</span>
+                      <span>{land.status === 'available' ? 'Available' : 'Leased'}</span>
+                    </div>
+                    <div className="flex items-center">
+                      <TrendingUp className="w-4 h-4 mr-2 text-emerald-500" />
+                      {getApprovalStatusDisplay(land)}
                     </div>
                   </div>
                 </div>
-                <div className="mt-6 flex justify-end space-x-2">
-                  {/* ✅ New Edit Button */}
+                <div className="p-4 bg-gray-50 border-t border-gray-100 flex justify-end space-x-2">
                   <button
                     onClick={() => navigate(`/lands/edit/${land._id}`)}
                     className="p-2 text-purple-600 hover:bg-purple-50 rounded-md"
