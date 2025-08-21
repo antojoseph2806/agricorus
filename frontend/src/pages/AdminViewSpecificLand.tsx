@@ -9,14 +9,12 @@ import {
   Waves,
   Route as RouteIcon,
   Badge,
-  Globe,
   Loader2,
   FileText,
   User as UserIcon,
 } from 'lucide-react';
 import { Layout } from './Layout';
 
-// Define the type for a single land listing
 interface Land {
   _id: string;
   title: string;
@@ -34,7 +32,8 @@ interface Land {
   status: 'available' | 'leased' | 'inactive';
   isApproved: boolean;
   rejectionReason?: string | null;
-  documents: string[];
+  landPhotos: string[];
+  landDocuments: string[];
   owner: {
     _id: string;
     name: string;
@@ -119,13 +118,17 @@ const AdminViewSpecificLand: React.FC = () => {
 
   return (
     <Layout>
-      <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-10">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">{land.title}</h1>
-        <p className="text-gray-600 mb-8 flex items-center">
-          <MapPin className="w-5 h-5 text-gray-500 mr-2" />
-          {land.location.address}
-        </p>
+      <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-10 space-y-10">
+        {/* Land Title & Location */}
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">{land.title}</h1>
+          <p className="text-gray-600 flex items-center">
+            <MapPin className="w-5 h-5 text-gray-500 mr-2" />
+            {land.location.address}
+          </p>
+        </div>
 
+        {/* Key Details */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
           <div className="space-y-6">
             <h2 className="text-xl font-semibold text-gray-900 border-b border-gray-200 pb-2">Key Details</h2>
@@ -136,8 +139,18 @@ const AdminViewSpecificLand: React.FC = () => {
               </div>
               <div className="flex items-center text-gray-700">
                 <Badge className="w-5 h-5 text-emerald-500 mr-3 flex-shrink-0" />
-                <span>Status: <span className="font-medium capitalize">{land.isApproved ? 'Approved' : 'Pending'}</span></span>
+                <span>Status: <span className="font-medium capitalize">{land.status}</span></span>
               </div>
+              <div className="flex items-center text-gray-700">
+                <Badge className="w-5 h-5 text-red-500 mr-3 flex-shrink-0" />
+                <span>Approval: <span className="font-medium">{land.isApproved ? 'Approved' : 'Pending'}</span></span>
+              </div>
+              {land.rejectionReason && (
+                <div className="flex items-center text-gray-700">
+                  <Text className="w-5 h-5 text-red-500 mr-3 flex-shrink-0" />
+                  <span>Rejection Reason: <span className="font-medium">{land.rejectionReason}</span></span>
+                </div>
+              )}
               <div className="flex items-center text-gray-700">
                 <Tractor className="w-5 h-5 text-emerald-500 mr-3 flex-shrink-0" />
                 <span>Soil Type: <span className="font-medium">{land.soilType}</span></span>
@@ -168,51 +181,56 @@ const AdminViewSpecificLand: React.FC = () => {
               )}
             </div>
           </div>
-          
+
+          {/* Images & Documents */}
           <div className="space-y-6">
-            <h2 className="text-xl font-semibold text-gray-900 border-b border-gray-200 pb-2">Documents</h2>
-            
-            {land.documents && land.documents.length > 0 && (
-              <div className="bg-gray-50 rounded-lg p-4 text-center border border-gray-200">
-                {land.documents[0].match(/\.(jpeg|jpg|gif|png)$/) ? (
-                  <img
-                    src={land.documents[0]}
-                    alt={`Document ${1}`}
-                    className="max-h-96 w-full object-contain rounded-md shadow-md"
-                  />
-                ) : (
-                  <div className="p-12 text-gray-400">
-                    <FileText className="mx-auto w-16 h-16" />
-                    <p className="mt-2 text-sm">Preview not available</p>
-                  </div>
-                )}
-              </div>
-            )}
-
-            {land.documents && land.documents.length > 1 && (
-              <div className="mt-4">
-                <h3 className="text-md font-semibold text-gray-700 mb-2">Other Documents</h3>
-                <ul className="space-y-2">
-                  {land.documents.slice(1).map((doc, index) => (
-                    <li key={index} className="flex items-center bg-gray-50 p-3 rounded-lg border border-gray-200">
-                      <FileText className="w-5 h-5 text-gray-500 mr-3 flex-shrink-0" />
-                      <a
-                        href={doc}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-emerald-600 hover:text-emerald-800 hover:underline break-all"
-                      >
-                        Document {index + 2}
-                      </a>
-                    </li>
+            {/* Land Images */}
+            <div>
+              <h2 className="text-xl font-semibold text-gray-900 border-b border-gray-200 pb-2">Images</h2>
+              {land.landPhotos && land.landPhotos.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                  {land.landPhotos.map((photo, index) => (
+                    <img
+                      key={index}
+                      src={photo}
+                      alt={`Land Photo ${index + 1}`}
+                      className="w-full h-64 object-cover rounded-lg shadow-md"
+                    />
                   ))}
-                </ul>
-              </div>
-            )}
+                </div>
+              ) : (
+                <p className="text-gray-500 mt-2">No images uploaded for this land.</p>
+              )}
+            </div>
 
-            {(!land.documents || land.documents.length === 0) && (
-              <p className="text-gray-500">No documents uploaded for this land.</p>
-            )}
+            {/* Land Documents */}
+            <div>
+              <h2 className="text-xl font-semibold text-gray-900 border-b border-gray-200 pb-2">Documents</h2>
+              {land.landDocuments && land.landDocuments.length > 0 ? (
+                <ul className="space-y-2 mt-4">
+                  {land.landDocuments.map((doc, index) => {
+                    // Fix PDF URLs by replacing "/image/upload/" with "/raw/upload/"
+                    const fixedUrl = doc.includes('.pdf') ? doc.replace('/image/upload/', '/raw/upload/') : doc;
+
+                    return (
+                      <li key={index} className="flex items-center bg-gray-50 p-3 rounded-lg border border-gray-200">
+                        <FileText className="w-5 h-5 text-gray-500 mr-3 flex-shrink-0" />
+                        <a
+                          href={fixedUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-emerald-600 hover:text-emerald-800 hover:underline break-all"
+                        >
+                          {doc.split('/').pop()}
+                        </a>
+                      </li>
+                    );
+                  })}
+                </ul>
+              ) : (
+                <p className="text-gray-500 mt-2">No documents uploaded for this land.</p>
+              )}
+            </div>
           </div>
         </div>
       </div>

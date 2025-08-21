@@ -17,8 +17,27 @@ import {
 } from 'lucide-react';
 import { Layout } from './LandownerDashboard';
 
+interface LocationData {
+  address: string;
+  latitude: string;
+  longitude: string;
+}
+
+interface FormData {
+  title: string;
+  location: LocationData;
+  soilType: string;
+  waterSource: string;
+  accessibility: string;
+  sizeInAcres: string;
+  leasePricePerMonth: string;
+  leaseDurationMonths: string;
+  landPhotos: FileList | null;
+  landDocuments: FileList | null;
+}
+
 const AddLand: React.FC = () => {
-  const [formData, setFormData] = useState({
+  const [landData, setLandData] = useState<FormData>({
     title: '',
     location: {
       address: '',
@@ -31,19 +50,20 @@ const AddLand: React.FC = () => {
     sizeInAcres: '',
     leasePricePerMonth: '',
     leaseDurationMonths: '',
-    landPhotos: null as FileList | null, // ✅ Updated for separate photos
-    landDocuments: null as FileList | null, // ✅ Updated for separate documents
+    landPhotos: null,
+    landDocuments: null,
   });
-  const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle');
+
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [message, setMessage] = useState('');
   const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    
+
     if (name.startsWith('location.')) {
-      const field = name.split('.')[1];
-      setFormData(prevData => ({
+      const field = name.split('.')[1] as keyof LocationData;
+      setLandData(prevData => ({
         ...prevData,
         location: {
           ...prevData.location,
@@ -51,52 +71,70 @@ const AddLand: React.FC = () => {
         },
       }));
     } else {
-      setFormData(prevData => ({ ...prevData, [name]: value }));
+      setLandData(prevData => ({ ...prevData, [name]: value }));
     }
   };
 
-  // ✅ New file handlers for photos and documents
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, landPhotos: e.target.files });
+    if (e.target.files && e.target.files.length > 5) {
+      setMessage('You can only upload a maximum of 5 photos.');
+      setStatus('error');
+      e.target.value = '';
+      return;
+    }
+    setLandData({ ...landData, landPhotos: e.target.files });
   };
 
   const handleDocumentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, landDocuments: e.target.files });
+    if (e.target.files && e.target.files.length > 5) {
+      setMessage('You can only upload a maximum of 5 documents.');
+      setStatus('error');
+      e.target.value = '';
+      return;
+    }
+    setLandData({ ...landData, landDocuments: e.target.files });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setStatus('idle');
+    setStatus('loading');
     setMessage('');
 
     const form = new FormData();
-    form.append('title', formData.title);
-    form.append('location.address', formData.location.address);
-    form.append('location.latitude', formData.location.latitude);
-    form.append('location.longitude', formData.location.longitude);
-    form.append('soilType', formData.soilType);
-    form.append('waterSource', formData.waterSource);
-    form.append('accessibility', formData.accessibility);
-    form.append('sizeInAcres', formData.sizeInAcres);
-    form.append('leasePricePerMonth', formData.leasePricePerMonth);
-    form.append('leaseDurationMonths', formData.leaseDurationMonths);
+    form.append('title', landData.title);
+    
+    // ⭐ Corrected: Append nested location data with separate, flat keys
+    form.append('location_address', landData.location.address);
+    form.append('location_latitude', landData.location.latitude);
+    form.append('location_longitude', landData.location.longitude);
+    
+    form.append('soilType', landData.soilType);
+    form.append('waterSource', landData.waterSource);
+    form.append('accessibility', landData.accessibility);
+    form.append('sizeInAcres', landData.sizeInAcres);
+    form.append('leasePricePerMonth', landData.leasePricePerMonth);
+    form.append('leaseDurationMonths', landData.leaseDurationMonths);
 
-    // ✅ Append photos and documents separately
-    if (formData.landPhotos) {
-      for (let i = 0; i < formData.landPhotos.length; i++) {
-        form.append('landPhotos', formData.landPhotos[i]);
-      }
+    if (landData.landPhotos) {
+      Array.from(landData.landPhotos).forEach(file => {
+        form.append('landPhotos', file);
+      });
     }
-    if (formData.landDocuments) {
-        for (let i = 0; i < formData.landDocuments.length; i++) {
-          form.append('landDocuments', formData.landDocuments[i]);
-        }
-      }
+    if (landData.landDocuments) {
+      Array.from(landData.landDocuments).forEach(file => {
+        form.append('landDocuments', file);
+      });
+    }
 
     const token = localStorage.getItem('token');
+    if (!token) {
+      setStatus('error');
+      setMessage('Authentication failed. Please log in again.');
+      return;
+    }
 
     try {
-      const response = await fetch('http://localhost:5000/api/landowner/lands', {
+      const response = await fetch('/api/landowner/lands', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -117,6 +155,7 @@ const AddLand: React.FC = () => {
     } catch (err) {
       setStatus('error');
       setMessage('An error occurred. Please check your network connection.');
+      console.error(err);
     }
   };
 
@@ -140,10 +179,18 @@ const AddLand: React.FC = () => {
             <p className="font-medium">{message}</p>
           </div>
         )}
+        {status === 'loading' && (
+          <div className="bg-blue-50 text-blue-700 p-4 rounded-lg mb-6 flex items-center shadow-sm">
+            <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <p className="font-medium">Submitting...</p>
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className="space-y-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {/* General Information */}
             <div className="space-y-6">
               <div>
                 <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">
@@ -157,7 +204,7 @@ const AddLand: React.FC = () => {
                     type="text"
                     name="title"
                     id="title"
-                    value={formData.title}
+                    value={landData.title}
                     onChange={handleChange}
                     required
                     className="pl-10 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm"
@@ -177,7 +224,7 @@ const AddLand: React.FC = () => {
                     type="text"
                     name="soilType"
                     id="soilType"
-                    value={formData.soilType}
+                    value={landData.soilType}
                     onChange={handleChange}
                     required
                     className="pl-10 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm"
@@ -197,7 +244,7 @@ const AddLand: React.FC = () => {
                     type="text"
                     name="waterSource"
                     id="waterSource"
-                    value={formData.waterSource}
+                    value={landData.waterSource}
                     onChange={handleChange}
                     className="pl-10 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm"
                     placeholder="e.g., Borewell, River"
@@ -216,7 +263,7 @@ const AddLand: React.FC = () => {
                     type="text"
                     name="accessibility"
                     id="accessibility"
-                    value={formData.accessibility}
+                    value={landData.accessibility}
                     onChange={handleChange}
                     className="pl-10 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm"
                     placeholder="e.g., Road access"
@@ -225,7 +272,6 @@ const AddLand: React.FC = () => {
               </div>
             </div>
 
-            {/* Location Details */}
             <div className="space-y-6">
               <fieldset className="border border-gray-200 rounded-md p-6 bg-gray-50">
                 <legend className="text-lg font-medium text-gray-900 px-2">Location</legend>
@@ -242,7 +288,7 @@ const AddLand: React.FC = () => {
                         type="text"
                         name="location.address"
                         id="location.address"
-                        value={formData.location.address}
+                        value={landData.location.address}
                         onChange={handleChange}
                         className="pl-10 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm"
                         placeholder="e.g., Anakkara, Palakkad"
@@ -262,7 +308,7 @@ const AddLand: React.FC = () => {
                           type="number"
                           name="location.latitude"
                           id="location.latitude"
-                          value={formData.location.latitude}
+                          value={landData.location.latitude}
                           onChange={handleChange}
                           className="pl-10 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm"
                           placeholder="e.g., 10.7867"
@@ -281,7 +327,7 @@ const AddLand: React.FC = () => {
                           type="number"
                           name="location.longitude"
                           id="location.longitude"
-                          value={formData.location.longitude}
+                          value={landData.location.longitude}
                           onChange={handleChange}
                           className="pl-10 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm"
                           placeholder="e.g., 76.6578"
@@ -307,7 +353,7 @@ const AddLand: React.FC = () => {
                   type="number"
                   name="sizeInAcres"
                   id="sizeInAcres"
-                  value={formData.sizeInAcres}
+                  value={landData.sizeInAcres}
                   onChange={handleChange}
                   required
                   className="pl-10 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm"
@@ -327,7 +373,7 @@ const AddLand: React.FC = () => {
                   type="number"
                   name="leasePricePerMonth"
                   id="leasePricePerMonth"
-                  value={formData.leasePricePerMonth}
+                  value={landData.leasePricePerMonth}
                   onChange={handleChange}
                   required
                   className="pl-10 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm"
@@ -347,7 +393,7 @@ const AddLand: React.FC = () => {
                   type="number"
                   name="leaseDurationMonths"
                   id="leaseDurationMonths"
-                  value={formData.leaseDurationMonths}
+                  value={landData.leaseDurationMonths}
                   onChange={handleChange}
                   required
                   className="pl-10 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm"
@@ -358,54 +404,52 @@ const AddLand: React.FC = () => {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {/* Land Photos Upload Section */}
             <div>
-              <label htmlFor="landPhotos" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="photo-upload-input" className="block text-sm font-medium text-gray-700 mb-2">
                 Land Photos <span className="text-gray-400">(Optional, max 5 files)</span>
               </label>
               <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors">
                 <div className="space-y-1 text-center">
                   <Image className="mx-auto h-12 w-12 text-gray-400" />
                   <div className="flex text-sm text-gray-600">
-                    <label htmlFor="photo-upload" className="relative cursor-pointer rounded-md font-medium text-emerald-600 hover:text-emerald-500 focus-within:outline-none">
+                    <label htmlFor="photo-upload-input" className="relative cursor-pointer rounded-md font-medium text-emerald-600 hover:text-emerald-500 focus-within:outline-none">
                       <span>Upload photos</span>
-                      <input id="photo-upload" name="landPhotos" type="file" multiple className="sr-only" onChange={handlePhotoChange} />
+                      <input id="photo-upload-input" name="landPhotos" type="file" multiple accept=".png, .jpg, .jpeg" className="sr-only" onChange={handlePhotoChange} />
                     </label>
                     <p className="pl-1">or drag and drop</p>
                   </div>
                   <p className="text-xs text-gray-500">PNG, JPG up to 5MB each</p>
                 </div>
               </div>
-              {formData.landPhotos && (
+              {landData.landPhotos && (
                 <ul className="mt-4 text-sm text-gray-600 list-disc list-inside">
-                  {Array.from(formData.landPhotos).map((file, index) => (
+                  {Array.from(landData.landPhotos).map((file, index) => (
                     <li key={index}>{file.name}</li>
                   ))}
                 </ul>
               )}
             </div>
 
-            {/* Land Documents Upload Section */}
             <div>
-              <label htmlFor="landDocuments" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="document-upload-input" className="block text-sm font-medium text-gray-700 mb-2">
                 Land Documents <span className="text-gray-400">(Optional, max 5 files)</span>
               </label>
               <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors">
                 <div className="space-y-1 text-center">
                   <FileText className="mx-auto h-12 w-12 text-gray-400" />
                   <div className="flex text-sm text-gray-600">
-                    <label htmlFor="document-upload" className="relative cursor-pointer rounded-md font-medium text-emerald-600 hover:text-emerald-500 focus-within:outline-none">
+                    <label htmlFor="document-upload-input" className="relative cursor-pointer rounded-md font-medium text-emerald-600 hover:text-emerald-500 focus-within:outline-none">
                       <span>Upload documents</span>
-                      <input id="document-upload" name="landDocuments" type="file" multiple className="sr-only" onChange={handleDocumentChange} />
+                      <input id="document-upload-input" name="landDocuments" type="file" multiple accept=".pdf" className="sr-only" onChange={handleDocumentChange} />
                     </label>
                     <p className="pl-1">or drag and drop</p>
                   </div>
                   <p className="text-xs text-gray-500">PDFs up to 5MB each</p>
                 </div>
               </div>
-              {formData.landDocuments && (
+              {landData.landDocuments && (
                 <ul className="mt-4 text-sm text-gray-600 list-disc list-inside">
-                  {Array.from(formData.landDocuments).map((file, index) => (
+                  {Array.from(landData.landDocuments).map((file, index) => (
                     <li key={index}>{file.name}</li>
                   ))}
                 </ul>
@@ -416,9 +460,10 @@ const AddLand: React.FC = () => {
           <div className="pt-5">
             <button
               type="submit"
-              className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500"
+              disabled={status === 'loading'}
+              className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              List Land
+              {status === 'loading' ? 'Listing...' : 'List Land'}
             </button>
           </div>
         </form>

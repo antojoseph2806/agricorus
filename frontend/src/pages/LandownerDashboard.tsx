@@ -46,7 +46,6 @@ const Navbar: React.FC = () => {
         { label: 'View Lands', icon: MapPin, href: '/lands/view' }
       ]
     },
-    { label: 'Apply for Crowdfunding', icon: TrendingUp, href: '/crowdfunding' },
     { label: 'Purchase Seeds & Fertilizers', icon: ShoppingCart, href: '/marketplace' },
     { label: 'Digital Lease Agreement', icon: FileText, href: '/agreements' },
     { label: 'Lease Payments', icon: CreditCard, href: '/payments' },

@@ -9,9 +9,8 @@ import AdminDashboard from './pages/AdminDashboard';
 import ProtectedRoute from './components/ProtectedRoute';
 import ForbiddenPage from './pages/ForbiddenPage';
 import Contact from './pages/Contact';
-
 import AddLand from './pages/AddLand';
-import ViewLands from './pages/ViewLands';
+import ViewLands from './pages/LandownerViewLands';
 import ViewSpecificLand from './pages/ViewSpecificLand';
 import EditLand from './pages/EditLand';
 import AdminLandManagement from './pages/AdminLandManagement';
