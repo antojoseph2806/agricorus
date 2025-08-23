@@ -24,37 +24,59 @@ const app = express();
 // Middleware
 // ------------------------
 app.use(cors({
-  origin: 'http://localhost:5173', // Adjust to frontend URL
-  credentials: true
+  origin: 'http://localhost:5173', // Adjust to frontend URL
+  credentials: true
 }));
 app.use(express.json());
 
 // ------------------------
 // Database Connection
 // ------------------------
-mongoose.connect(process.env.MONGO_URI, {
-})
-.then(() => console.log('✅ MongoDB connected'))
-.catch(err => console.error('❌ MongoDB connection error:', err));
+mongoose.connect(process.env.MONGO_URI, {})
+  .then(async () => {
+    console.log('✅ MongoDB connected');
+
+    // ---- AUTO-FIX USER INDEXES ----
+    const User = require('./models/User');
+    try {
+      console.log('🔍 Checking User indexes...');
+
+      const indexes = await User.collection.indexes();
+      const phoneIndex = indexes.find((idx) => idx.name === 'phone_1');
+
+      if (phoneIndex) {
+        console.log('⚠️ Found old phone_1 index, dropping...');
+        await User.collection.dropIndex('phone_1');
+      }
+
+      await User.collection.createIndex({ phone: 1 }, { unique: true, sparse: true });
+      console.log('✅ phone index recreated with sparse:true');
+    } catch (err) {
+      console.error('❌ Index migration error:', err.message);
+    }
+    // ---- END FIX ----
+
+  })
+  .catch(err => console.error('❌ MongoDB connection error:', err));
 
 // ------------------------
 // Debug route type check (helps catch errors)
 // ------------------------
 const routesList = [
-  ['auth', authRouter],
-  ['forgotPassword', forgotPasswordRoutes],
-  ['dashboard', dashboardRoutes],
-  ['landowner', landownerRoutes],
-  ['leases', leaseRoutes],
-  ['payments', paymentRoutes],
-  ['disputes', disputeRoutes],
-  ['admin', adminRouter],
+  ['auth', authRouter],
+  ['forgotPassword', forgotPasswordRoutes],
+  ['dashboard', dashboardRoutes],
+  ['landowner', landownerRoutes],
+  ['leases', leaseRoutes],
+  ['payments', paymentRoutes],
+  ['disputes', disputeRoutes],
+  ['admin', adminRouter],
   ['farmer', farmerRoutes], // ✅ Add the new farmer router to the list
 ];
 routesList.forEach(([name, router]) => {
-  if (typeof router !== 'function') {
-    console.error(`❌ ERROR: Route "${name}" is not exporting a function. Check module.exports in routes/${name}.js`);
-  }
+  if (typeof router !== 'function') {
+    console.error(`❌ ERROR: Route "${name}" is not exporting a function. Check module.exports in routes/${name}.js`);
+  }
 });
 
 // ------------------------
@@ -72,14 +94,14 @@ app.use('/api/farmer', farmerRoutes); // ✅ Add the new farmer router endpoint
 
 // Test protected route
 app.get('/api/protected', auth, (req, res) => {
-  res.json({ msg: `Welcome user ${req.user.id} with role ${req.user.role}` });
+  res.json({ msg: `Welcome user ${req.user.id} with role ${req.user.role}` });
 });
 
 // ------------------------
 // Global 404 handler
 // ------------------------
 app.use((req, res) => {
-  res.status(404).json({ error: 'Route not found' });
+  res.status(404).json({ error: 'Route not found' });
 });
 
 // ------------------------
@@ -87,5 +109,5 @@ app.use((req, res) => {
 // ------------------------
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
+  console.log(`🚀 Server running on http://localhost:${PORT}`);
 });

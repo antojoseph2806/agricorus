@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
 import { Sprout, Mail, Phone, Lock, Eye, EyeOff } from 'lucide-react';
 import GoogleButton from '../components/GoogleButton';
+import AlertMessage from '../components/AlertMessage'; // ✅ Import alert
 
 // ==================== VALIDATION FUNCTIONS ====================
 
@@ -45,7 +46,12 @@ const RegisterPage: React.FC = () => {
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [error, setError] = useState('');
+
+  // ✅ Alert state instead of plain error string
+  const [alert, setAlert] = useState<
+    { type: 'success' | 'error' | 'warning'; message: string } | null
+  >(null);
+
   const navigate = useNavigate();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -57,38 +63,47 @@ const RegisterPage: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
+    setAlert(null);
 
     const { email, phone, password, confirmPassword, role } = formData;
     const sanitizedPhone = phone.replace(/^(\+91)?/, '');
 
     if (!role) {
-      setError('Please select a role');
+      setAlert({ type: 'warning', message: 'Please select a role' });
       return;
     }
 
     if (!isValidEmail(email)) {
-      setError('Enter a valid email with max 2 subdomains (e.g., name@sub.domain.com)');
+      setAlert({
+        type: 'error',
+        message: 'Enter a valid email with max 2 subdomains (e.g., name@sub.domain.com)',
+      });
       return;
     }
 
     if (!isValidPhone(sanitizedPhone)) {
-      setError('Enter a valid 10-digit Indian phone number (not fake or repeated)');
+      setAlert({
+        type: 'error',
+        message: 'Enter a valid 10-digit Indian phone number (not fake or repeated)',
+      });
       return;
     }
 
     if (!isStrongPassword(password)) {
-      setError('Password must be 8+ characters, with uppercase, lowercase, number & special character');
+      setAlert({
+        type: 'error',
+        message: 'Password must be 8+ characters, with uppercase, lowercase, number & special character',
+      });
       return;
     }
 
     if (password !== confirmPassword) {
-      setError('Passwords do not match');
+      setAlert({ type: 'error', message: 'Passwords do not match' });
       return;
     }
 
     try {
-      const res = await fetch('/api/auth/register', {
+      const res = await fetch('http://localhost:5000/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...formData, phone: sanitizedPhone })
@@ -97,14 +112,16 @@ const RegisterPage: React.FC = () => {
       const data = await res.json();
 
       if (!res.ok) {
-        setError(data.msg || 'Registration failed');
+        setAlert({ type: 'error', message: data.msg || 'Registration failed' });
         return;
       }
 
       localStorage.setItem('token', data.token);
-      navigate('/login');
+      setAlert({ type: 'success', message: 'Registration successful! Redirecting to login...' });
+
+      setTimeout(() => navigate('/login'), 1500);
     } catch (err) {
-      setError('Server error. Please try again later.');
+      setAlert({ type: 'error', message: 'Server error. Please try again later.' });
     }
   };
 
@@ -125,10 +142,17 @@ const RegisterPage: React.FC = () => {
             <p className="text-gray-600">Start your agricultural investment journey</p>
           </div>
 
+          {/* ✅ Professional Alert */}
+          {alert && (
+            <AlertMessage
+              type={alert.type}
+              message={alert.message}
+              onClose={() => setAlert(null)}
+            />
+          )}
+
           <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
             <div className="space-y-4">
-              {error && <p className="text-red-600 text-sm">{error}</p>}
-
               <motion.div initial={{ x: -20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: 0.3 }} className="relative">
                 <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
                 <input

@@ -2,21 +2,28 @@
 const mongoose = require('mongoose');
 
 const userSchema = new mongoose.Schema({
-  email: { type: String, required: true, unique: true },
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+  },
 
   phone: {
     type: String,
     unique: true,
-    sparse: true, // <-- This line is critical
-    required: false,
+    sparse: true,   // ✅ allows multiple nulls
+    default: null,  // ✅ explicitly set null if not provided
   },
 
-  password: { type: String, required: true },
+  password: {
+    type: String,
+    required: true,
+  },
 
   role: {
     type: String,
     enum: ['landowner', 'farmer', 'investor', 'admin'],
-    required: false,
+    default: null,  // ✅ so new Google users don’t break
   },
 });
 

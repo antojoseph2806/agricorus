@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { GoogleLogin, CredentialResponse } from '@react-oauth/google';
-import { jwtDecode } from 'jwt-decode';
+import {jwtDecode} from 'jwt-decode';
 import { useNavigate } from 'react-router-dom';
 import RolePickerModal from './RolePickerModal';
 
@@ -9,7 +9,12 @@ interface GoogleUserPayload {
   sub: string;
 }
 
-const GoogleButton: React.FC<{ text?: string }> = ({ text = 'Continue with Google' }) => {
+interface GoogleButtonProps {
+  text?: string;
+  role?: string; // optional pre-selected role
+}
+
+const GoogleButton: React.FC<GoogleButtonProps> = ({ text = 'Continue with Google', role }) => {
   const [newUserData, setNewUserData] = useState<{ email: string; googleId: string } | null>(null);
   const [showRoleModal, setShowRoleModal] = useState(false);
   const [error, setError] = useState('');
@@ -44,15 +49,19 @@ const GoogleButton: React.FC<{ text?: string }> = ({ text = 'Continue with Googl
 
       const decoded: GoogleUserPayload = jwtDecode(credentialResponse.credential);
 
-      const res = await fetch('/api/auth/google', {
+      const res = await fetch('http://localhost:5000/api/auth/google', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ tokenId: credentialResponse.credential }),
+        body: JSON.stringify({
+          tokenId: credentialResponse.credential,
+          role, // send role if pre-selected
+        }),
       });
 
       const data = await res.json();
 
       if (res.ok && data.newUser) {
+        // New user: ask for role & phone
         setNewUserData({
           email: decoded.email,
           googleId: decoded.sub,
@@ -60,7 +69,7 @@ const GoogleButton: React.FC<{ text?: string }> = ({ text = 'Continue with Googl
         setShowRoleModal(true);
       } else if (res.ok && data.token && data.role) {
         localStorage.setItem('token', data.token);
-        localStorage.setItem('role', data.role); // ✅ role stored
+        localStorage.setItem('role', data.role);
         redirectByRole(data.role);
       } else {
         setError(data.msg || 'Login failed');
@@ -71,7 +80,7 @@ const GoogleButton: React.FC<{ text?: string }> = ({ text = 'Continue with Googl
     }
   };
 
-  const handleRoleSelect = async (role: string, phone: string) => {
+  const handleRoleSelect = async (selectedRole: string, phone: string) => {
     if (!newUserData) return;
 
     try {
@@ -81,7 +90,7 @@ const GoogleButton: React.FC<{ text?: string }> = ({ text = 'Continue with Googl
         body: JSON.stringify({
           email: newUserData.email,
           googleId: newUserData.googleId,
-          role,
+          role: selectedRole,
           phone,
         }),
       });
@@ -90,7 +99,7 @@ const GoogleButton: React.FC<{ text?: string }> = ({ text = 'Continue with Googl
 
       if (res.ok && data.token && data.role) {
         localStorage.setItem('token', data.token);
-        localStorage.setItem('role', data.role); // ✅ role stored
+        localStorage.setItem('role', data.role);
         setShowRoleModal(false);
         redirectByRole(data.role);
       } else {
