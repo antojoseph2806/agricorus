@@ -18,7 +18,14 @@ const FarmerDashboard: React.FC = () => {
     { action: "Dispute raised", time: "3 days ago", status: "alert" },
   ];
 
-  const counter = (value: number) => `${value >= 1000000 ? `$${(value/1000000).toFixed(1)}M` : value}`;
+  const counter = (value: number) =>
+    value >= 1000000 ? `$${(value / 1000000).toFixed(1)}M` : value.toLocaleString();
+
+  const quickActions = [
+    { title: "Create New Lease", desc: "Start a new agricultural lease agreement", color: "emerald" },
+    { title: "Launch Campaign", desc: "Begin a new crowdfunding campaign", color: "blue" },
+    { title: "Browse Marketplace", desc: "Shop for seeds and fertilizers", color: "purple" },
+  ];
 
   return (
     <>
@@ -55,14 +62,7 @@ const FarmerDashboard: React.FC = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600 mb-1">{stat.label}</p>
-                <motion.p
-                  className="text-3xl font-bold text-gray-900"
-                  initial={{ count: 0 }}
-                  animate={{ count: stat.value }}
-                  transition={{ duration: 1.5 }}
-                >
-                  {counter(stat.value)}
-                </motion.p>
+                <p className="text-3xl font-bold text-gray-900">{counter(stat.value)}</p>
               </div>
               <div className={`${stat.color} p-3 rounded-lg`}>
                 <stat.icon className="w-6 h-6 text-white" />
@@ -108,19 +108,31 @@ const FarmerDashboard: React.FC = () => {
       <div className="bg-white rounded-xl shadow-sm border p-6">
         <h2 className="text-xl font-semibold text-gray-900 mb-6">Quick Actions</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {[
-            { title: "Create New Lease", desc: "Start a new agricultural lease agreement", color: "emerald" },
-            { title: "Launch Campaign", desc: "Begin a new crowdfunding campaign", color: "blue" },
-            { title: "Browse Marketplace", desc: "Shop for seeds and fertilizers", color: "purple" },
-          ].map((action, index) => (
+          {quickActions.map((action, index) => (
             <motion.button
               key={index}
               whileHover={{ scale: 1.05, y: -2 }}
               transition={{ type: "spring", stiffness: 300 }}
-              className={`p-4 bg-${action.color}-50 border border-${action.color}-200 rounded-lg text-left hover:bg-${action.color}-100 transition`}
+              className={`p-4 border rounded-lg text-left transition 
+                ${action.color === "emerald" ? "bg-emerald-50 border-emerald-200 hover:bg-emerald-100" : ""}
+                ${action.color === "blue" ? "bg-blue-50 border-blue-200 hover:bg-blue-100" : ""}
+                ${action.color === "purple" ? "bg-purple-50 border-purple-200 hover:bg-purple-100" : ""}
+              `}
             >
-              <h3 className={`font-medium text-${action.color}-900`}>{action.title}</h3>
-              <p className={`text-sm text-${action.color}-700 mt-1`}>{action.desc}</p>
+              <h3
+                className={`font-medium ${
+                  action.color === "emerald" ? "text-emerald-900" : ""
+                } ${action.color === "blue" ? "text-blue-900" : ""} ${action.color === "purple" ? "text-purple-900" : ""}`}
+              >
+                {action.title}
+              </h3>
+              <p
+                className={`text-sm ${
+                  action.color === "emerald" ? "text-emerald-700" : ""
+                } ${action.color === "blue" ? "text-blue-700" : ""} ${action.color === "purple" ? "text-purple-700" : ""} mt-1`}
+              >
+                {action.desc}
+              </p>
             </motion.button>
           ))}
         </div>
