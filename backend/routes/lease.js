@@ -8,33 +8,6 @@ const generateLeasePDF = require("../utils/generateLeasePDF");
 const cloudinary = require("cloudinary").v2;
 
 /**
- * Farmer requests a lease.
- * This route remains unchanged as its logic is sound.
- */
-router.post("/:landId/request", auth, authorizeRoles("farmer"), async (req, res) => {
-  try {
-    const land = await Land.findById(req.params.landId);
-    if (!land) return res.status(404).json({ error: "Land not found" });
-    if (land.status !== "available") return res.status(400).json({ error: "Land is not available" });
-
-    const lease = new Lease({
-      land: land._id,
-      farmer: req.user.id,
-      owner: land.owner,
-      durationMonths: req.body.durationMonths || land.leaseDurationMonths,
-      pricePerMonth: land.leasePricePerMonth
-    });
-
-    await lease.save();
-    res.status(201).json({ message: "Lease request submitted", lease });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-//----------------------------------------------------------------
-
-/**
  * Landowner views all lease requests for their lands.
  * This route is correctly implemented to filter by the landowner's ID.
  * The frontend will handle displaying 'all', 'pending', 'accepted', etc.
