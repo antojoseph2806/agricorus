@@ -4,7 +4,11 @@ const cors = require('cors');
 const express = require('express');
 const mongoose = require('mongoose');
 
+const app = express();
+
+// ------------------------
 // Import routes (must be routers)
+// ------------------------
 const authRouter = require('./routes/auth');
 const forgotPasswordRoutes = require('./routes/forgotPassword');
 const dashboardRoutes = require('./routes/dashboard');
@@ -13,18 +17,19 @@ const leaseRoutes = require('./routes/lease');
 const paymentRoutes = require('./routes/payment');
 const disputeRoutes = require('./routes/dispute');
 const adminRouter = require('./routes/admin');
-const farmerRoutes = require('./routes/farmer'); // ✅ Import the new farmer router
+const farmerRoutes = require('./routes/farmer');
+const profileRoutes = require('./routes/profileRoutes'); // ✅ New profile routes
 
+// ------------------------
 // Import middleware
+// ------------------------
 const auth = require('./middleware/auth');
-
-const app = express();
 
 // ------------------------
 // Middleware
 // ------------------------
 app.use(cors({
-  origin: 'http://localhost:5173', // Adjust to frontend URL
+  origin: 'http://localhost:5173', // Adjust to frontend URL in production
   credentials: true
 }));
 app.use(express.json());
@@ -55,12 +60,11 @@ mongoose.connect(process.env.MONGO_URI, {})
       console.error('❌ Index migration error:', err.message);
     }
     // ---- END FIX ----
-
   })
   .catch(err => console.error('❌ MongoDB connection error:', err));
 
 // ------------------------
-// Debug route type check (helps catch errors)
+// Debug route type check
 // ------------------------
 const routesList = [
   ['auth', authRouter],
@@ -71,7 +75,8 @@ const routesList = [
   ['payments', paymentRoutes],
   ['disputes', disputeRoutes],
   ['admin', adminRouter],
-  ['farmer', farmerRoutes], // ✅ Add the new farmer router to the list
+  ['farmer', farmerRoutes],
+  ['profile', profileRoutes], // ✅ Added profile route check
 ];
 routesList.forEach(([name, router]) => {
   if (typeof router !== 'function') {
@@ -90,9 +95,12 @@ app.use('/api/leases', leaseRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/disputes', disputeRoutes);
 app.use('/api/admin', adminRouter);
-app.use('/api/farmer', farmerRoutes); // ✅ Add the new farmer router endpoint
+app.use('/api/farmer', farmerRoutes);
+app.use('/api/profile', profileRoutes); // ✅ Mount profile routes
 
+// ------------------------
 // Test protected route
+// ------------------------
 app.get('/api/protected', auth, (req, res) => {
   res.json({ msg: `Welcome user ${req.user.id} with role ${req.user.role}` });
 });

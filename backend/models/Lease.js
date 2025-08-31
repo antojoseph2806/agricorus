@@ -26,16 +26,10 @@ const leaseSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ["pending", "rejected", "accepted"],
+    enum: ["pending", "accepted", "cancelled"],
     default: "pending"
   },
-  // New field for the final admin approval
-  finalApproval: {
-    type: String,
-    enum: ["pending", "approved", "denied"],
-    default: "pending"
-  },
-  agreementUrl: String,
+  agreementUrl: String
 }, { timestamps: true });
 
 module.exports = mongoose.model("Lease", leaseSchema);

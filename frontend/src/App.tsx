@@ -1,4 +1,4 @@
-// App.tsx
+// src/App.tsx
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 // Public Pages
@@ -10,7 +10,7 @@ import Contact from "./pages/Contact";
 // Farmer Pages
 import FarmerDashboard from "./pages/FarmerDashboard";
 import FarmerViewLands from "./pages/FarmerViewLands";
-import FarmerLandDetail from "./pages/FarmerLandDetail"; // ✅ new detail page
+import FarmerLandDetail from "./pages/FarmerLandDetail";
 import FarmerLayout from "./components/FarmerLayout";
 
 // Landowner Pages
@@ -19,6 +19,7 @@ import AddLand from "./pages/AddLand";
 import ViewLands from "./pages/LandownerViewLands";
 import ViewSpecificLand from "./pages/ViewSpecificLand";
 import EditLand from "./pages/EditLand";
+import LandownerLeaseRequests from "./pages/LandownerLeaseRequests";
 
 // Investor Pages
 import InvestorDashboard from "./pages/InvestorDashboard";
@@ -27,6 +28,9 @@ import InvestorDashboard from "./pages/InvestorDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminLandManagement from "./pages/AdminLandManagement";
 import AdminViewSpecificLand from "./pages/AdminViewSpecificLand";
+
+// Profile Pages
+import ProfileView from "./pages/ProfileView";
 
 // Shared
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -46,18 +50,15 @@ function App() {
           {/* Public Land View Route */}
           <Route path="/lands/public/:id" element={<ViewSpecificLand />} />
 
-          {/* ----------------- Farmer Routes (with FarmerNavbar) ----------------- */}
+          {/* ----------------- Farmer Routes ----------------- */}
           <Route
             element={
-              <ProtectedRoute
-                element={<FarmerLayout />}
-                allowedRole="farmer"
-              />
+              <ProtectedRoute element={<FarmerLayout />} allowedRoles={["farmer"]} />
             }
           >
             <Route path="/farmerdashboard" element={<FarmerDashboard />} />
             <Route path="/lands/farmer" element={<FarmerViewLands />} />
-            <Route path="/farmer/lands/:id" element={<FarmerLandDetail />} /> {/* ✅ new detail route */}
+            <Route path="/farmer/lands/:id" element={<FarmerLandDetail />} />
           </Route>
 
           {/* ----------------- Landowner Routes ----------------- */}
@@ -66,35 +67,64 @@ function App() {
             element={
               <ProtectedRoute
                 element={<LandownerDashboard />}
-                allowedRole="landowner"
+                allowedRoles={["landowner"]}
               />
             }
           />
           <Route
             path="/lands/add"
-            element={
-              <ProtectedRoute element={<AddLand />} allowedRole="landowner" />
-            }
+            element={<ProtectedRoute element={<AddLand />} allowedRoles={["landowner"]} />}
           />
           <Route
             path="/lands/view"
-            element={
-              <ProtectedRoute element={<ViewLands />} allowedRole="landowner" />
-            }
+            element={<ProtectedRoute element={<ViewLands />} allowedRoles={["landowner"]} />}
           />
           <Route
             path="/lands/:id"
             element={
-              <ProtectedRoute
-                element={<ViewSpecificLand />}
-                allowedRole="landowner"
-              />
+              <ProtectedRoute element={<ViewSpecificLand />} allowedRoles={["landowner"]} />
             }
           />
           <Route
             path="/lands/edit/:id"
+            element={<ProtectedRoute element={<EditLand />} allowedRoles={["landowner"]} />}
+          />
+
+          {/* Lease Requests (Landowner Only) */}
+          <Route
+            path="/leaserequests/all"
             element={
-              <ProtectedRoute element={<EditLand />} allowedRole="landowner" />
+              <ProtectedRoute
+                element={<LandownerLeaseRequests statusFilter="all" />}
+                allowedRoles={["landowner"]}
+              />
+            }
+          />
+          <Route
+            path="/leaserequests/accepted"
+            element={
+              <ProtectedRoute
+                element={<LandownerLeaseRequests statusFilter="accepted" />}
+                allowedRoles={["landowner"]}
+              />
+            }
+          />
+          <Route
+            path="/leaserequests/cancelled"
+            element={
+              <ProtectedRoute
+                element={<LandownerLeaseRequests statusFilter="cancelled" />}
+                allowedRoles={["landowner"]}
+              />
+            }
+          />
+          <Route
+            path="/leaserequests/pending"
+            element={
+              <ProtectedRoute
+                element={<LandownerLeaseRequests statusFilter="pending" />}
+                allowedRoles={["landowner"]}
+              />
             }
           />
 
@@ -104,7 +134,7 @@ function App() {
             element={
               <ProtectedRoute
                 element={<InvestorDashboard />}
-                allowedRole="investor"
+                allowedRoles={["investor"]}
               />
             }
           />
@@ -113,10 +143,7 @@ function App() {
           <Route
             path="/admindashboard"
             element={
-              <ProtectedRoute
-                element={<AdminDashboard />}
-                allowedRole="admin"
-              />
+              <ProtectedRoute element={<AdminDashboard />} allowedRoles={["admin"]} />
             }
           />
           <Route
@@ -124,7 +151,7 @@ function App() {
             element={
               <ProtectedRoute
                 element={<AdminLandManagement statusFilter="all" />}
-                allowedRole="admin"
+                allowedRoles={["admin"]}
               />
             }
           />
@@ -133,7 +160,7 @@ function App() {
             element={
               <ProtectedRoute
                 element={<AdminLandManagement statusFilter="pending" />}
-                allowedRole="admin"
+                allowedRoles={["admin"]}
               />
             }
           />
@@ -142,7 +169,7 @@ function App() {
             element={
               <ProtectedRoute
                 element={<AdminLandManagement statusFilter="approved" />}
-                allowedRole="admin"
+                allowedRoles={["admin"]}
               />
             }
           />
@@ -151,7 +178,7 @@ function App() {
             element={
               <ProtectedRoute
                 element={<AdminLandManagement statusFilter="rejected" />}
-                allowedRole="admin"
+                allowedRoles={["admin"]}
               />
             }
           />
@@ -160,7 +187,18 @@ function App() {
             element={
               <ProtectedRoute
                 element={<AdminViewSpecificLand />}
-                allowedRole="admin"
+                allowedRoles={["admin"]}
+              />
+            }
+          />
+
+          {/* ----------------- Profile Routes ----------------- */}
+          <Route
+            path="/profile/view"
+            element={
+              <ProtectedRoute
+                element={<ProfileView />}
+                allowedRoles={["farmer", "landowner", "investor", "admin"]}
               />
             }
           />

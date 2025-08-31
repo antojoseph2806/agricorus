@@ -19,6 +19,25 @@ router.get("/lands/available", auth, authorizeRoles("farmer"), async (req, res) 
     res.status(500).json({ error: err.message });
   }
 });
+// GET LAND BY ID (for farmer)
+router.get("/farmer/lands/:landId", auth, authorizeRoles("farmer"), async (req, res) => {
+  try {
+    const land = await Land.findById(req.params.landId)
+      .populate("owner", "email phone"); // <-- populate owner email & phone
+
+    if (!land) return res.status(404).json({ error: "Land not found" });
+
+    // Get current user's lease if exists
+    const lease = await Lease.findOne({ land: land._id, farmer: req.user.id });
+
+    res.json({
+      ...land.toObject(),
+      currentUserLease: lease || null
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 
 /**
  * 2️⃣ REQUEST A LEASE

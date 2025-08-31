@@ -1,21 +1,21 @@
-import React from 'react';
-import { Navigate } from 'react-router-dom';
+import React from "react";
+import { Navigate } from "react-router-dom";
 
 interface ProtectedRouteProps {
   element: JSX.Element;
-  allowedRole: string;
+  allowedRoles: string[]; // ✅ now supports multiple roles
 }
 
-const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ element, allowedRole }) => {
-  const token = localStorage.getItem('token');
-  const role = localStorage.getItem('role');
+const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ element, allowedRoles }) => {
+  const token = localStorage.getItem("token");
+  const role = localStorage.getItem("role");
 
   if (!token) {
     return <Navigate to="/login" replace />;
   }
 
-  if (role !== allowedRole) {
-    return <Navigate to="/forbidden" replace />; // 🔁 better UX
+  if (!role || !allowedRoles.includes(role)) {
+    return <Navigate to="/forbidden" replace />;
   }
 
   return element;
