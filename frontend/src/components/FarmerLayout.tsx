@@ -1,41 +1,173 @@
 // src/components/FarmerLayout.tsx
 import React, { useState } from "react";
-import { Outlet, Link, useNavigate } from "react-router-dom";
+import { Outlet, Link, useNavigate, useLocation } from "react-router-dom";
 import {
-  Users,
   TrendingUp,
   MapPin,
   Home,
-  DollarSign,
-  Calendar,
   Shield,
   FileText,
   CreditCard,
   AlertTriangle,
   Menu,
   X,
+  UserCircle,
+  LogOut,
+  ChevronDown,
 } from "lucide-react";
 
 const FarmerLayout: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true); // Desktop default: open
   const [isMobileOpen, setIsMobileOpen] = useState(false); // Mobile overlay state
+  const [openMenus, setOpenMenus] = useState<Record<string, boolean>>({});
   const navigate = useNavigate();
+  const location = useLocation();
 
+  // -------------------- NAVIGATION ITEMS --------------------
   const navigationItems = [
     { label: "Home", icon: Home, href: "/farmerdashboard" },
-    { label: "Verify Identity", icon: Shield, href: "/kyc" },
+
+    {
+      label: "Manage Profile",
+      icon: UserCircle,
+      href: "/profile",
+      children: [
+        { label: "Verify Identity", icon: UserCircle, href: "/kyc/add" },
+        { label: "View Profile", icon: UserCircle, href: "/profile/view" },
+        { label: "KYC Status", icon: UserCircle, href: "/profile/kyc-status" },
+      ],
+    },
+
     { label: "View Lands", icon: MapPin, href: "/lands/farmer" },
-    { label: "Apply for Crowdfunding", icon: TrendingUp, href: "/crowdfunding" },
-    { label: "Lease History", icon: FileText, href: "/agreements" },
-    { label: "Payments", icon: CreditCard, href: "/payments" },
+
+    {
+      label: "Apply for Crowdfunding",
+      icon: TrendingUp,
+      href: "/crowdfunding",
+      children: [
+        { label: "Add Projects", icon: UserCircle, href: "/projects/add" },
+        { label: "View Projects", icon: UserCircle, href: "/projects/view" },
+      ],
+    },
+
+    {
+      label: "Lease History",
+      icon: FileText,
+      href: "/agreements",
+      children: [
+        { label: "Accepted Leases", icon: UserCircle, href: "/leases/accepted" },
+        { label: "Cancelled Leases", icon: UserCircle, href: "/leases/cancelled" },
+      ],
+    },
+
+    {
+      label: "Crowdfunding History",
+      icon: FileText,
+      href: "/projects/history",
+      children: [
+        { label: "Accepted Projects", icon: UserCircle, href: "/projects/accepted" },
+        { label: "Cancelled Projects", icon: UserCircle, href: "/projects/cancelled" },
+      ],
+    },
+
+    {
+      label: "Lease Payments",
+      icon: CreditCard,
+      href: "/payments",
+      children: [
+        { label: "Make Lease Payment", icon: UserCircle, href: "/payments/make" },
+        { label: "Request Project Payment", icon: UserCircle, href: "/payments/request" },
+      ],
+    },
+
     { label: "Raise Dispute", icon: AlertTriangle, href: "/disputes" },
   ];
 
+  // -------------------- HANDLERS --------------------
   const handleLogout = () => {
     localStorage.removeItem("token");
     navigate("/login");
   };
 
+  const toggleMenu = (label: string) => {
+    setOpenMenus((prev) => ({ ...prev, [label]: !prev[label] }));
+  };
+
+  const isActive = (href: string) => location.pathname.startsWith(href);
+
+  // -------------------- RENDER NAV ITEMS --------------------
+  const renderNavItems = (items: typeof navigationItems, isMobile = false) =>
+    items.map((item, idx) => {
+      const hasChildren = !!item.children;
+      const isOpen = openMenus[item.label];
+      const active = isActive(item.href);
+
+      // Only render when sidebar is open
+      if (!isSidebarOpen) return null;
+
+      return (
+        <div key={idx}>
+          {/* Parent Item */}
+          <div
+            className={`flex items-center justify-between px-4 py-2 rounded-md cursor-pointer transition ${
+              active
+                ? "bg-gray-200 text-green-700 font-semibold"
+                : "text-gray-700 hover:bg-gray-100"
+            }`}
+            onClick={() => {
+              if (hasChildren) {
+                toggleMenu(item.label);
+              } else if (isMobile) {
+                setIsMobileOpen(false);
+              }
+            }}
+          >
+            <Link
+              to={item.href}
+              className="flex items-center gap-3 flex-1 text-sm font-medium"
+              onClick={() => isMobile && !hasChildren && setIsMobileOpen(false)}
+            >
+              <item.icon className="w-5 h-5" />
+              <span>{item.label}</span>
+            </Link>
+
+            {hasChildren && (
+              <ChevronDown
+                className={`w-4 h-4 transition-transform duration-200 ${
+                  isOpen ? "rotate-180" : "rotate-0"
+                }`}
+              />
+            )}
+          </div>
+
+          {/* Children */}
+          {hasChildren && isOpen && (
+            <div className="ml-8 flex flex-col space-y-1">
+              {item.children.map((child, cidx) => {
+                const childActive = isActive(child.href);
+                return (
+                  <Link
+                    key={cidx}
+                    to={child.href}
+                    className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm transition ${
+                      childActive
+                        ? "bg-gray-200 text-green-700 font-medium"
+                        : "text-gray-600 hover:bg-gray-100"
+                    }`}
+                    onClick={() => isMobile && setIsMobileOpen(false)}
+                  >
+                    <child.icon className="w-4 h-4" />
+                    <span>{child.label}</span>
+                  </Link>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      );
+    });
+
+  // -------------------- LAYOUT --------------------
   return (
     <div className="flex min-h-screen bg-gray-50">
       {/* Sidebar Desktop */}
@@ -45,6 +177,7 @@ const FarmerLayout: React.FC = () => {
         } relative`}
       >
         <div className="flex items-center justify-between px-4 h-16 border-b">
+          <Shield className="w-6 h-6 text-green-700" />
           {isSidebarOpen && <span className="text-xl font-bold">AgriCorus</span>}
           <button
             onClick={() => setIsSidebarOpen(!isSidebarOpen)}
@@ -54,24 +187,18 @@ const FarmerLayout: React.FC = () => {
           </button>
         </div>
 
+        {/* Nav Items */}
         <nav className="mt-4 flex flex-col space-y-1">
-          {navigationItems.map((item, idx) => (
-            <Link
-              key={idx}
-              to={item.href}
-              className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-gray-100 rounded transition"
+          {renderNavItems(navigationItems)}
+          {isSidebarOpen && (
+            <button
+              onClick={handleLogout}
+              className="flex items-center gap-3 px-4 py-2 mt-4 text-sm font-medium text-red-600 hover:bg-red-100 rounded-md transition"
             >
-              <item.icon className="w-5 h-5" />
-              {isSidebarOpen && <span>{item.label}</span>}
-            </Link>
-          ))}
-          <button
-            onClick={handleLogout}
-            className="flex items-center gap-3 px-4 py-2 mt-4 text-red-600 hover:bg-red-100 rounded transition"
-          >
-            <X className="w-5 h-5" />
-            {isSidebarOpen && <span>Logout</span>}
-          </button>
+              <LogOut className="w-5 h-5" />
+              <span>Logout</span>
+            </button>
+          )}
         </nav>
       </div>
 
@@ -91,22 +218,12 @@ const FarmerLayout: React.FC = () => {
         </div>
 
         <nav className="mt-4 flex flex-col space-y-1">
-          {navigationItems.map((item, idx) => (
-            <Link
-              key={idx}
-              to={item.href}
-              onClick={() => setIsMobileOpen(false)} // close sidebar on mobile after click
-              className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-gray-100 rounded transition"
-            >
-              <item.icon className="w-5 h-5" />
-              <span>{item.label}</span>
-            </Link>
-          ))}
+          {renderNavItems(navigationItems, true)}
           <button
             onClick={handleLogout}
-            className="flex items-center gap-3 px-4 py-2 mt-4 text-red-600 hover:bg-red-100 rounded transition"
+            className="flex items-center gap-3 px-4 py-2 mt-4 text-sm font-medium text-red-600 hover:bg-red-100 rounded-md transition"
           >
-            <X className="w-5 h-5" />
+            <LogOut className="w-5 h-5" />
             <span>Logout</span>
           </button>
         </nav>

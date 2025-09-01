@@ -10,12 +10,11 @@ import {
   Home,
   UserCircle,
   X,
-  Shield,
   ShoppingCart,
   FileText,
   CreditCard,
   AlertTriangle,
-  ChevronDown
+  ChevronDown,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -34,17 +33,17 @@ const Sidebar: React.FC = () => {
   const navigate = useNavigate();
 
   const navigationItems: NavItem[] = [
-    { label: "Home", icon: Home, href: "/landownerdashboard" },
+    { label: 'Home', icon: Home, href: '/landownerdashboard' },
     {
-  label: 'Manage Profile',
-  icon: UserCircle,
-  href: '/profile',
-  children: [
-    { label: 'Verify Identity', icon: UserCircle, href: '/kyc/add' },
-    { label: 'View Profile', icon: UserCircle, href: '/profile/view' },
-    { label: 'KYC Status', icon: UserCircle, href: '/profile/kyc-status' }, // ✅ fixed
-  ],
-},
+      label: 'Manage Profile',
+      icon: UserCircle,
+      href: '/profile',
+      children: [
+        { label: 'Verify Identity', icon: UserCircle, href: '/kyc/add' },
+        { label: 'View Profile', icon: UserCircle, href: '/profile/view' },
+        { label: 'KYC Status', icon: UserCircle, href: '/profile/kyc-status' },
+      ],
+    },
     {
       label: 'Manage Lands',
       icon: MapPin,
@@ -55,17 +54,17 @@ const Sidebar: React.FC = () => {
       ],
     },
     { label: 'Purchase Seeds & Fertilizers', icon: ShoppingCart, href: '/marketplace' },
-    { 
-  label: 'Lease Requests', 
-  icon: FileText, 
-  href: '/leaserequests',
-  children: [
-    { label: 'All Requests', icon: FileText, href: '/leaserequests/all' },
-    { label: 'Accepted Requests', icon: FileText, href: '/leaserequests/accepted' },
-    { label: 'Cancelled Requests', icon: FileText, href: '/leaserequests/cancelled' },
-    { label: 'Pending Requests', icon: FileText, href: '/leaserequests/pending' },
-  ],
-},
+    {
+      label: 'Lease Requests',
+      icon: FileText,
+      href: '/leaserequests',
+      children: [
+        { label: 'All Requests', icon: FileText, href: '/leaserequests/all' },
+        { label: 'Accepted Requests', icon: FileText, href: '/leaserequests/accepted' },
+        { label: 'Cancelled Requests', icon: FileText, href: '/leaserequests/cancelled' },
+        { label: 'Pending Requests', icon: FileText, href: '/leaserequests/pending' },
+      ],
+    },
     { label: 'Digital Agreements', icon: FileSignature, href: '/agreements' },
     { label: 'Lease Payments', icon: CreditCard, href: '/payments' },
     { label: 'Raise Dispute', icon: AlertTriangle, href: '/disputes' },
@@ -89,77 +88,90 @@ const Sidebar: React.FC = () => {
 
   const SidebarContent = (
     <div className="flex flex-col h-full">
+      {/* Sidebar Header */}
       <div className="flex items-center justify-between p-4 border-b border-gray-200">
         <div className="flex items-center gap-2">
-          <MapPin className="w-6 h-6 text-emerald-500" />
-          {!isCollapsed && <span className="text-xl font-bold">AgriCorus</span>}
+          {!isCollapsed && (
+            <>
+              <MapPin className="w-6 h-6 text-emerald-500" />
+              <span className="text-xl font-bold text-gray-900">AgriCorus</span>
+            </>
+          )}
         </div>
-        <button
-          className="lg:hidden p-2"
-          onClick={() => setIsMobileOpen(false)}
-        >
-          <X className="w-6 h-6" />
-        </button>
+
+        <div className="flex items-center gap-2">
+          {/* Collapse Button (Desktop) */}
+          <button
+            onClick={() => setIsCollapsed(!isCollapsed)}
+            className="hidden lg:flex items-center justify-center w-8 h-8 bg-white border border-gray-300 rounded-full shadow-sm hover:bg-gray-100 transition"
+          >
+            {isCollapsed ? <Menu className="w-4 h-4 text-gray-700" /> : <X className="w-4 h-4 text-gray-700" />}
+          </button>
+
+          {/* Close button for mobile */}
+          <button className="lg:hidden p-2" onClick={() => setIsMobileOpen(false)}>
+            <X className="w-6 h-6" />
+          </button>
+        </div>
       </div>
 
-      <nav className="flex-1 overflow-y-auto mt-4 px-2">
-        {navigationItems.map((item, idx) => (
-          <div key={idx} className="mb-1">
-            {item.children ? (
-              <>
-                <button
-                  onClick={() =>
-                    setActiveDropdown(activeDropdown === item.label ? null : item.label)
-                  }
-                  className="w-full flex items-center justify-between p-2 text-gray-700 hover:bg-gray-100 rounded-lg transition"
-                >
-                  <div className="flex items-center gap-2">
-                    <item.icon className="w-5 h-5" />
-                    {!isCollapsed && item.label}
-                  </div>
-                  {!isCollapsed && (
+      {/* Sidebar Navigation */}
+      {!isCollapsed && (
+        <nav className="flex-1 overflow-y-auto mt-4 px-2 text-sm">
+          {navigationItems.map((item, idx) => (
+            <div key={idx} className="mb-1">
+              {item.children ? (
+                <>
+                  <button
+                    onClick={() => setActiveDropdown(activeDropdown === item.label ? null : item.label)}
+                    className="w-full flex items-center justify-between px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition"
+                  >
+                    <div className="flex items-center gap-2">
+                      <item.icon className="w-5 h-5" />
+                      {item.label}
+                    </div>
                     <ChevronDown
                       className={`w-4 h-4 transition-transform ${
                         activeDropdown === item.label ? 'rotate-180' : ''
                       }`}
                     />
+                  </button>
+                  {activeDropdown === item.label && (
+                    <div className="ml-8 mt-1 flex flex-col space-y-1">
+                      {item.children.map((child, id) => (
+                        <a
+                          key={id}
+                          href={child.href}
+                          className="flex items-center gap-2 px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-lg transition"
+                        >
+                          <child.icon className="w-4 h-4" />
+                          {child.label}
+                        </a>
+                      ))}
+                    </div>
                   )}
-                </button>
-                {activeDropdown === item.label && !isCollapsed && (
-                  <div className="ml-8 mt-1 flex flex-col space-y-1">
-                    {item.children.map((child, id) => (
-                      <a
-                        key={id}
-                        href={child.href}
-                        className="flex items-center gap-2 p-2 text-gray-600 hover:bg-gray-50 rounded-lg transition"
-                      >
-                        <child.icon className="w-4 h-4" />
-                        {child.label}
-                      </a>
-                    ))}
-                  </div>
-                )}
-              </>
-            ) : (
-              <a
-                href={item.href}
-                className="flex items-center gap-2 p-2 text-gray-700 hover:bg-gray-100 rounded-lg transition"
-              >
-                <item.icon className="w-5 h-5" />
-                {!isCollapsed && item.label}
-              </a>
-            )}
-          </div>
-        ))}
+                </>
+              ) : (
+                <a
+                  href={item.href}
+                  className="flex items-center gap-2 px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition"
+                >
+                  <item.icon className="w-5 h-5" />
+                  {item.label}
+                </a>
+              )}
+            </div>
+          ))}
 
-        <button
-          onClick={handleLogout}
-          className="mt-4 flex items-center gap-2 p-2 text-red-600 hover:bg-red-100 rounded-lg transition"
-        >
-          <X className="w-5 h-5" />
-          {!isCollapsed && 'Logout'}
-        </button>
-      </nav>
+          <button
+            onClick={handleLogout}
+            className="mt-4 flex items-center gap-2 px-3 py-2 text-red-600 hover:bg-red-100 rounded-lg transition"
+          >
+            <X className="w-5 h-5" />
+            Logout
+          </button>
+        </nav>
+      )}
     </div>
   );
 
@@ -172,18 +184,6 @@ const Sidebar: React.FC = () => {
         }`}
       >
         {SidebarContent}
-
-        {/* Collapse Button (Desktop) */}
-        <button
-          onClick={() => setIsCollapsed(!isCollapsed)}
-          className="absolute -right-3 top-1/2 transform -translate-y-1/2 bg-white border border-gray-300 rounded-full p-1 shadow-lg hover:bg-gray-100 transition"
-        >
-          {isCollapsed ? (
-            <ChevronDown className="w-4 h-4 rotate-90 text-gray-700" />
-          ) : (
-            <ChevronDown className="w-4 h-4 -rotate-90 text-gray-700" />
-          )}
-        </button>
       </div>
 
       {/* Mobile Sidebar Overlay */}
@@ -196,12 +196,14 @@ const Sidebar: React.FC = () => {
       )}
 
       {/* Mobile Hamburger */}
-      <button
-        className="fixed top-4 left-4 z-50 p-2 bg-white rounded-md shadow-lg lg:hidden hover:bg-gray-100 transition"
-        onClick={() => setIsMobileOpen(true)}
-      >
-        <Menu className="w-6 h-6 text-gray-700" />
-      </button>
+      {!isMobileOpen && (
+        <button
+          className="fixed top-4 left-4 z-50 p-2 bg-white rounded-md shadow-lg lg:hidden hover:bg-gray-100 transition"
+          onClick={() => setIsMobileOpen(true)}
+        >
+          <Menu className="w-6 h-6 text-gray-700" />
+        </button>
+      )}
     </>
   );
 };
@@ -239,6 +241,7 @@ const LandownerDashboard: React.FC = () => {
 
   return (
     <Layout>
+      {/* Hero Section */}
       <div className="bg-gradient-to-r from-emerald-500 to-blue-600 rounded-2xl p-8 text-white mb-8">
         <h1 className="text-3xl font-bold mb-2">Welcome to Landowner Dashboard</h1>
         <p className="text-emerald-100 text-lg">
@@ -249,10 +252,13 @@ const LandownerDashboard: React.FC = () => {
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         {stats.map((stat, idx) => (
-          <div key={idx} className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition">
+          <div
+            key={idx}
+            className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition"
+          >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600 mb-1">{stat.label}</p>
+                <p className="text-sm text-gray-600 mb-1">{stat.label}</p>
                 <p className="text-3xl font-bold text-gray-900">{stat.value}</p>
               </div>
               <div className={`${stat.color} p-3 rounded-lg`}>
@@ -273,7 +279,10 @@ const LandownerDashboard: React.FC = () => {
         </div>
         <div className="p-6 space-y-4">
           {recentActivities.map((activity, idx) => (
-            <div key={idx} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition">
+            <div
+              key={idx}
+              className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition"
+            >
               <div className="flex items-center space-x-3">
                 <div
                   className={`w-2 h-2 rounded-full ${
@@ -283,7 +292,7 @@ const LandownerDashboard: React.FC = () => {
                       ? 'bg-yellow-500'
                       : 'bg-red-500'
                   }`}
-                ></div>
+                />
                 <span className="font-medium text-gray-900">{activity.action}</span>
               </div>
               <span className="text-sm text-gray-500">{activity.time}</span>

@@ -54,7 +54,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, onToggleSidebar, isMob
     { label: 'Manage Projects', icon: TrendingUp, href: '/admin/projects' },
     { label: 'Handle Disputes', icon: AlertTriangle, href: '/admin/disputes' },
     { label: 'Manage Market', icon: ShoppingCart, href: '/admin/market' },
-    { label: 'Payments', icon: DollarSign, href: '/admin/payments' },
+    { label: 'Manage Payments', icon: DollarSign, href: '/admin/payments' },
     { label: 'Platform Reports', icon: FileText, href: '/admin/reports' },
   ];
 

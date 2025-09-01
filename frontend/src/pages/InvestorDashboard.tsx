@@ -9,8 +9,10 @@ import {
   Menu,
   X,
   Shield,
+  UserCircle,
   FileText,
   ChevronDown,
+  Home,
   LogOut
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -36,20 +38,21 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, onToggleSidebar, isMob
   const navigate = useNavigate();
 
   const navigationItems: NavItem[] = [
-    { label: 'View Lands', icon: MapPin, href: '/lands' },
+    { label: 'Home', icon: Home, href: '/investordashboard' },
+    {
+      label: 'Manage Profile',
+      icon: UserCircle,
+      href: '/profile',
+      children: [
+        { label: 'Verify Identity', icon: UserCircle, href: '/kyc/add' },
+        { label: 'View Profile', icon: UserCircle, href: '/profile/view' },
+        { label: 'KYC Status', icon: UserCircle, href: '/profile/kyc-status' },
+      ],
+    },
     { label: 'View Projects', icon: TrendingUp, href: '/crowdfunding' },
     { label: 'Investment History', icon: DollarSign, href: '/payments' },
     { label: 'Raise Dispute', icon: AlertTriangle, href: '/disputes' },
-    {
-      label: 'More',
-      icon: Menu,
-      href: '#',
-      children: [
-        { label: 'My Profile', icon: Users, href: '/profile' },
-        { label: 'Verify Identity', icon: Shield, href: '/kyc' },
-        { label: 'ROI Reports', icon: FileText, href: '/reports' },
-      ],
-    },
+    { label: 'ROI Reports', icon: FileText, href: '/reports' },
   ];
 
   const handleLogout = async () => {

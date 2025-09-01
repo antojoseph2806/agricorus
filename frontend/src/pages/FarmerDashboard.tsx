@@ -36,8 +36,8 @@ const FarmerDashboard: React.FC = () => {
         transition={{ duration: 1 }}
         className="bg-gradient-to-r from-emerald-500 to-blue-600 rounded-2xl p-8 text-white mb-8 relative overflow-hidden"
       >
-        <h1 className="text-3xl font-bold mb-2">Welcome to Farmer Dashboard</h1>
-        <p className="text-emerald-100 text-lg">
+        <h1 className="text-4xl font-bold mb-2">Welcome to Farmer Dashboard</h1>
+        <p className="text-base text-emerald-100">
           Manage your agricultural leases, crowdfunding campaigns, and marketplace activities all in one place.
         </p>
         {/* Animated Gradient Circle */}
@@ -62,7 +62,7 @@ const FarmerDashboard: React.FC = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600 mb-1">{stat.label}</p>
-                <p className="text-3xl font-bold text-gray-900">{counter(stat.value)}</p>
+                <p className="text-2xl font-semibold text-gray-900">{counter(stat.value)}</p>
               </div>
               <div className={`${stat.color} p-3 rounded-lg`}>
                 <stat.icon className="w-6 h-6 text-white" />
@@ -75,7 +75,7 @@ const FarmerDashboard: React.FC = () => {
       {/* Recent Activities */}
       <div className="bg-white rounded-xl shadow-sm border mb-8">
         <div className="p-6 border-b">
-          <h2 className="text-xl font-semibold text-gray-900 flex items-center">
+          <h2 className="text-2xl font-semibold text-gray-900 flex items-center">
             <Calendar className="w-5 h-5 mr-2 text-emerald-500" /> Recent Activities
           </h2>
         </div>
@@ -93,12 +93,16 @@ const FarmerDashboard: React.FC = () => {
                   animate={{ scale: activity.status === "pending" ? [1, 1.5, 1] : 1 }}
                   transition={{ repeat: activity.status === "pending" ? Infinity : 0, duration: 1 }}
                   className={`w-2 h-2 rounded-full ${
-                    activity.status === "completed" ? "bg-emerald-500" : activity.status === "pending" ? "bg-yellow-500" : "bg-red-500"
+                    activity.status === "completed"
+                      ? "bg-emerald-500"
+                      : activity.status === "pending"
+                      ? "bg-yellow-500"
+                      : "bg-red-500"
                   }`}
                 />
-                <span className="font-medium text-gray-900">{activity.action}</span>
+                <span className="text-base font-medium text-gray-800">{activity.action}</span>
               </div>
-              <span className="text-sm text-gray-500">{activity.time}</span>
+              <span className="text-xs text-gray-500">{activity.time}</span>
             </motion.div>
           ))}
         </div>
@@ -106,7 +110,7 @@ const FarmerDashboard: React.FC = () => {
 
       {/* Quick Actions */}
       <div className="bg-white rounded-xl shadow-sm border p-6">
-        <h2 className="text-xl font-semibold text-gray-900 mb-6">Quick Actions</h2>
+        <h2 className="text-2xl font-semibold text-gray-900 mb-6">Quick Actions</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {quickActions.map((action, index) => (
             <motion.button
@@ -120,16 +124,20 @@ const FarmerDashboard: React.FC = () => {
               `}
             >
               <h3
-                className={`font-medium ${
+                className={`text-base font-semibold ${
                   action.color === "emerald" ? "text-emerald-900" : ""
-                } ${action.color === "blue" ? "text-blue-900" : ""} ${action.color === "purple" ? "text-purple-900" : ""}`}
+                } ${action.color === "blue" ? "text-blue-900" : ""} ${
+                  action.color === "purple" ? "text-purple-900" : ""
+                }`}
               >
                 {action.title}
               </h3>
               <p
-                className={`text-sm ${
+                className={`text-sm text-gray-600 mt-1 ${
                   action.color === "emerald" ? "text-emerald-700" : ""
-                } ${action.color === "blue" ? "text-blue-700" : ""} ${action.color === "purple" ? "text-purple-700" : ""} mt-1`}
+                } ${action.color === "blue" ? "text-blue-700" : ""} ${
+                  action.color === "purple" ? "text-purple-700" : ""
+                }`}
               >
                 {action.desc}
               </p>
