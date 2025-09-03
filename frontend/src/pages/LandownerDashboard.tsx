@@ -11,6 +11,7 @@ import {
   UserCircle,
   X,
   ShoppingCart,
+  Shield,
   FileText,
   CreditCard,
   AlertTriangle,
@@ -37,27 +38,27 @@ const Sidebar: React.FC = () => {
     {
       label: 'Manage Profile',
       icon: UserCircle,
-      href: '/profile',
+      href: '#',
       children: [
-        { label: 'Verify Identity', icon: UserCircle, href: '/kyc/add' },
+        { label: 'Verify Identity', icon: UserCircle, href: '#' },
         { label: 'View Profile', icon: UserCircle, href: '/profile/view' },
-        { label: 'KYC Status', icon: UserCircle, href: '/profile/kyc-status' },
+        { label: 'KYC Status', icon: UserCircle, href: '#' },
       ],
     },
     {
       label: 'Manage Lands',
       icon: MapPin,
-      href: '/lands',
+      href: '#',
       children: [
         { label: 'Add Lands', icon: MapPin, href: '/lands/add' },
         { label: 'View Lands', icon: MapPin, href: '/lands/view' },
       ],
     },
-    { label: 'Purchase Seeds & Fertilizers', icon: ShoppingCart, href: '/marketplace' },
+    { label: 'Purchase Seeds & Fertilizers', icon: ShoppingCart, href: '#' },
     {
       label: 'Lease Requests',
       icon: FileText,
-      href: '/leaserequests',
+      href: '#',
       children: [
         { label: 'All Requests', icon: FileText, href: '/leaserequests/all' },
         { label: 'Accepted Requests', icon: FileText, href: '/leaserequests/accepted' },
@@ -65,9 +66,8 @@ const Sidebar: React.FC = () => {
         { label: 'Pending Requests', icon: FileText, href: '/leaserequests/pending' },
       ],
     },
-    { label: 'Digital Agreements', icon: FileSignature, href: '/agreements' },
-    { label: 'Lease Payments', icon: CreditCard, href: '/payments' },
-    { label: 'Raise Dispute', icon: AlertTriangle, href: '/disputes' },
+    { label: 'Lease Payments', icon: CreditCard, href: '#' },
+    { label: 'Raise Dispute', icon: AlertTriangle, href: '#' },
   ];
 
   const handleLogout = async () => {

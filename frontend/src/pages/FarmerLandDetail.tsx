@@ -27,10 +27,10 @@ interface Land {
   waterSource?: string;
   accessibility?: string;
   sizeInAcres?: number;
-  owner?: Owner; // Backend should populate owner with email/phone
+  owner?: Owner; // Backend populates this
   currentUserLease?: {
     _id: string;
-    status: "pending" | "approved" | "cancelled";
+    status: "pending" | "approved" | "cancelled" | "rejected";
   };
 }
 
@@ -39,7 +39,9 @@ const FarmerLandDetail: React.FC = () => {
   const [land, setLand] = useState<Land | null>(null);
   const [loading, setLoading] = useState(true);
   const [requesting, setRequesting] = useState(false);
-  const [leaseStatus, setLeaseStatus] = useState<"idle" | "pending" | "approved" | "cancelled">("idle");
+  const [leaseStatus, setLeaseStatus] = useState<
+    "idle" | "pending" | "approved" | "cancelled" | "rejected"
+  >("idle");
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -48,9 +50,12 @@ const FarmerLandDetail: React.FC = () => {
     const fetchLand = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await fetch(`http://localhost:5000/api/farmer/farmer/lands/${id}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const res = await fetch(
+          `http://localhost:5000/api/farmer/lands/${id}`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
         if (!res.ok) throw new Error("Failed to fetch land details");
         const data: Land = await res.json();
         setLand(data);
@@ -88,14 +93,17 @@ const FarmerLandDetail: React.FC = () => {
 
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch(`http://localhost:5000/api/leases/${id}/request`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({}),
-      });
+      const res = await fetch(
+        `http://localhost:5000/api/farmer/leases/${id}/request`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({}),
+        }
+      );
       const data = await res.json();
 
       if (res.ok) {
@@ -157,7 +165,9 @@ const FarmerLandDetail: React.FC = () => {
         {/* Images */}
         <motion.div
           className={`mb-8 ${
-            land.landPhotos?.length === 1 ? "flex justify-center" : "grid grid-cols-1 sm:grid-cols-2 gap-6"
+            land.landPhotos?.length === 1
+              ? "flex justify-center"
+              : "grid grid-cols-1 sm:grid-cols-2 gap-6"
           }`}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -192,36 +202,45 @@ const FarmerLandDetail: React.FC = () => {
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.5, duration: 0.6 }}
         >
-          <h2 className="text-2xl font-semibold mb-4 text-emerald-700">Land Details</h2>
+          <h2 className="text-2xl font-semibold mb-4 text-emerald-700">
+            Land Details
+          </h2>
           <div className="grid md:grid-cols-2 gap-4 text-gray-700">
             <p>
-              <span className="font-semibold">📍 Address:</span> {land.location.address}
+              <span className="font-semibold">📍 Address:</span>{" "}
+              {land.location.address}
             </p>
             <p>
-              <span className="font-semibold">🌱 Soil Type:</span> {land.soilType}
+              <span className="font-semibold">🌱 Soil Type:</span>{" "}
+              {land.soilType}
             </p>
             <p>
-              <span className="font-semibold">💰 Lease Price:</span> ₹{land.leasePricePerMonth.toLocaleString()}/month
+              <span className="font-semibold">💰 Lease Price:</span> ₹
+              {land.leasePricePerMonth.toLocaleString()}/month
             </p>
             <p>
-              <span className="font-semibold">⏳ Duration:</span> {land.leaseDurationMonths} months
+              <span className="font-semibold">⏳ Duration:</span>{" "}
+              {land.leaseDurationMonths} months
             </p>
             {land.waterSource && (
               <p className="flex items-center gap-2">
                 <Droplet className="w-5 h-5 text-emerald-500" />
-                <span className="font-semibold">Water Source:</span> {land.waterSource}
+                <span className="font-semibold">Water Source:</span>{" "}
+                {land.waterSource}
               </p>
             )}
             {land.accessibility && (
               <p className="flex items-center gap-2">
                 <Route className="w-5 h-5 text-emerald-500" />
-                <span className="font-semibold">Accessibility:</span> {land.accessibility}
+                <span className="font-semibold">Accessibility:</span>{" "}
+                {land.accessibility}
               </p>
             )}
             {land.sizeInAcres && (
               <p className="flex items-center gap-2">
                 <Ruler className="w-5 h-5 text-emerald-500" />
-                <span className="font-semibold">Size:</span> {land.sizeInAcres} acres
+                <span className="font-semibold">Size:</span>{" "}
+                {land.sizeInAcres} acres
               </p>
             )}
           </div>
@@ -235,13 +254,17 @@ const FarmerLandDetail: React.FC = () => {
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.7, duration: 0.6 }}
           >
-            <h2 className="text-2xl font-semibold mb-4 text-emerald-700">Owner Information</h2>
+            <h2 className="text-2xl font-semibold mb-4 text-emerald-700">
+              Owner Information
+            </h2>
             <div className="space-y-2 text-gray-700">
               <p>
-                <span className="font-semibold">📧 Email:</span> {land.owner.email || "N/A"}
+                <span className="font-semibold">📧 Email:</span>{" "}
+                {land.owner.email || "N/A"}
               </p>
               <p>
-                <span className="font-semibold">📞 Phone:</span> {land.owner.phone || "N/A"}
+                <span className="font-semibold">📞 Phone:</span>{" "}
+                {land.owner.phone || "N/A"}
               </p>
             </div>
           </motion.div>
@@ -254,26 +277,35 @@ const FarmerLandDetail: React.FC = () => {
           animate={{ opacity: 1 }}
           transition={{ delay: 0.9, duration: 0.5 }}
         >
-          {leaseStatus === "pending" && (
-            <p className="text-yellow-600 font-medium">Lease request submitted. Awaiting approval.</p>
-          )}
-          {leaseStatus === "approved" && (
-            <p className="text-green-600 font-medium">Lease approved. You have access to this land.</p>
-          )}
-          {leaseStatus === "cancelled" && (
-            <p className="text-red-600 font-medium">Lease request cancelled.</p>
-          )}
-          {leaseStatus === "idle" && land.status === "available" && (
-            <button
-              onClick={handleLeaseRequest}
-              disabled={requesting}
-              className="px-6 py-3 rounded-xl font-semibold shadow-lg bg-emerald-600 hover:bg-emerald-700 text-white transition"
-            >
-              {requesting ? "Submitting..." : "Request for Lease"}
-            </button>
-          )}
+          <button
+            onClick={handleLeaseRequest}
+            disabled={
+              requesting ||
+              leaseStatus === "pending" ||
+              leaseStatus === "approved" ||
+              land.status !== "available"
+            }
+            className={`px-6 py-3 rounded-xl font-semibold shadow-lg transition ${
+              requesting ||
+              leaseStatus === "pending" ||
+              leaseStatus === "approved" ||
+              land.status !== "available"
+                ? "bg-gray-400 cursor-not-allowed text-white"
+                : "bg-emerald-600 hover:bg-emerald-700 text-white"
+            }`}
+          >
+            {leaseStatus === "pending"
+              ? "Request Pending"
+              : leaseStatus === "approved"
+              ? "Lease Approved"
+              : leaseStatus === "cancelled" || leaseStatus === "rejected"
+              ? "Re-request Lease"
+              : "Request for Lease"}
+          </button>
 
-          {message && <p className="mt-4 text-green-600 font-medium">{message}</p>}
+          {message && (
+            <p className="mt-4 text-green-600 font-medium">{message}</p>
+          )}
           {error && <p className="mt-4 text-red-600 font-medium">{error}</p>}
         </motion.div>
       </div>

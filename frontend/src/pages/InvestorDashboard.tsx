@@ -42,7 +42,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, onToggleSidebar, isMob
     {
       label: 'Manage Profile',
       icon: UserCircle,
-      href: '/profile',
+      href: '#',
       children: [
         { label: 'Verify Identity', icon: UserCircle, href: '/kyc/add' },
         { label: 'View Profile', icon: UserCircle, href: '/profile/view' },

@@ -12,6 +12,9 @@ import FarmerDashboard from "./pages/FarmerDashboard";
 import FarmerViewLands from "./pages/FarmerViewLands";
 import FarmerLandDetail from "./pages/FarmerLandDetail";
 import FarmerLayout from "./components/FarmerLayout";
+import AcceptedLeases from "./pages/AcceptedLeases";
+import CancelledLeases from "./pages/CancelledLeases";
+import ActiveLeases from "./pages/ActiveLeases";
 
 // Landowner Pages
 import LandownerDashboard from "./pages/LandownerDashboard";
@@ -59,8 +62,19 @@ function App() {
             <Route path="/farmerdashboard" element={<FarmerDashboard />} />
             <Route path="/lands/farmer" element={<FarmerViewLands />} />
             <Route path="/farmer/lands/:id" element={<FarmerLandDetail />} />
-          </Route>
-
+            <Route
+              path="/farmer/leases/accepted"
+              element={<AcceptedLeases />}
+            />
+            <Route
+              path="/farmer/leases/cancelled"
+              element={<CancelledLeases />}
+            />
+            <Route 
+              path="/farmer/leases/active" 
+              element={<ActiveLeases />}
+              />
+            </Route>
           {/* ----------------- Landowner Routes ----------------- */}
           <Route
             path="/landownerdashboard"

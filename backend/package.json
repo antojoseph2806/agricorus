@@ -17,6 +17,7 @@
     "multer-gridfs-storage": "^5.0.2",
     "multer-storage-cloudinary": "^4.0.0",
     "pdfkit": "^0.17.1",
+    "razorpay": "^2.9.6",
     "twilio": "^5.7.3"
   }
 }

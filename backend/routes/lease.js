@@ -13,8 +13,8 @@ const cloudinary = require("cloudinary").v2;
 router.get("/owner/requests", auth, authorizeRoles("landowner"), async (req, res) => {
   try {
     const leases = await Lease.find({ owner: req.user.id })
-      .populate("land", "title location")     // only pull fields you need
-      .populate("farmer", "name email phone"); // 👈 include phone here
+      .populate("land", "title location landPhotos") // 👈 Added 'landPhotos' here
+      .populate("farmer", "name email phone");
 
     res.json(leases);
   } catch (err) {
@@ -22,7 +22,6 @@ router.get("/owner/requests", auth, authorizeRoles("landowner"), async (req, res
     res.status(500).json({ error: err.message });
   }
 });
-
 
 /**
  * Landowner views all pending lease requests.
@@ -65,6 +64,20 @@ router.get("/owner/requests/cancelled", auth, authorizeRoles("landowner"), async
     res.status(500).json({ error: err.message });
   }
 });
+/**
+ * Landowner views all active lease requests.
+ */
+router.get("/owner/requests/active", auth, authorizeRoles("landowner"), async (req, res) => {
+  try {
+    const leases = await Lease.find({ owner: req.user.id, status: "active" })
+      .populate("land")
+      .populate("farmer", "name email phone");
+    res.json(leases);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 
 //----------------------------------------------------------------
 

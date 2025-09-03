@@ -30,11 +30,11 @@ const FarmerLayout: React.FC = () => {
     {
       label: "Manage Profile",
       icon: UserCircle,
-      href: "/profile",
+      href: "#",
       children: [
-        { label: "Verify Identity", icon: UserCircle, href: "/kyc/add" },
+        { label: "Verify Identity", icon: UserCircle, href: "#" },
         { label: "View Profile", icon: UserCircle, href: "/profile/view" },
-        { label: "KYC Status", icon: UserCircle, href: "/profile/kyc-status" },
+        { label: "KYC Status", icon: UserCircle, href: "#" },
       ],
     },
 
@@ -43,44 +43,45 @@ const FarmerLayout: React.FC = () => {
     {
       label: "Apply for Crowdfunding",
       icon: TrendingUp,
-      href: "/crowdfunding",
+      href: "#",
       children: [
-        { label: "Add Projects", icon: UserCircle, href: "/projects/add" },
-        { label: "View Projects", icon: UserCircle, href: "/projects/view" },
+        { label: "Add Projects", icon: UserCircle, href: "#" },
+        { label: "View Projects", icon: UserCircle, href: "#" },
       ],
     },
 
     {
-      label: "Lease History",
-      icon: FileText,
-      href: "/agreements",
+       label: "Lease History",
+       icon: FileText,
+       href: "#",
       children: [
-        { label: "Accepted Leases", icon: UserCircle, href: "/leases/accepted" },
-        { label: "Cancelled Leases", icon: UserCircle, href: "/leases/cancelled" },
-      ],
-    },
+    { label: "Accepted Leases", icon: UserCircle, href: "/farmer/leases/accepted" },
+    { label: "Cancelled Leases", icon: UserCircle, href: "/farmer/leases/cancelled" },
+    { label: "Active Leases", icon: UserCircle, href: "/farmer/leases/active" },
+  ],
+},
 
     {
       label: "Crowdfunding History",
       icon: FileText,
-      href: "/projects/history",
+      href: "#",
       children: [
-        { label: "Accepted Projects", icon: UserCircle, href: "/projects/accepted" },
-        { label: "Cancelled Projects", icon: UserCircle, href: "/projects/cancelled" },
+        { label: "Accepted Projects", icon: UserCircle, href: "#" },
+        { label: "Cancelled Projects", icon: UserCircle, href: "#" },
       ],
     },
 
     {
       label: "Lease Payments",
       icon: CreditCard,
-      href: "/payments",
+      href: "#",
       children: [
-        { label: "Make Lease Payment", icon: UserCircle, href: "/payments/make" },
-        { label: "Request Project Payment", icon: UserCircle, href: "/payments/request" },
+        { label: "Make Lease Payment", icon: UserCircle, href: "#" },
+        { label: "Request Project Payment", icon: UserCircle, href: "#" },
       ],
     },
 
-    { label: "Raise Dispute", icon: AlertTriangle, href: "/disputes" },
+    { label: "Raise Dispute", icon: AlertTriangle, href: "#" },
   ];
 
   // -------------------- HANDLERS --------------------
