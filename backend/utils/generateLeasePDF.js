@@ -1,58 +1,54 @@
-const PDFDocument = require("pdfkit");
 const fs = require("fs");
 const path = require("path");
+const { Document, Packer, Paragraph, TextRun } = require("docx");
+const { v4: uuidv4 } = require("uuid");
 
-const generateLeasePDF = async (lease, land, farmer, owner) => {
-  return new Promise((resolve, reject) => {
-    const filePath = path.join(__dirname, `../temp/lease_${lease._id}.pdf`);
+async function generateLeasePDF(lease) {
+  const doc = new Document({
+    sections: [
+      {
+        properties: {},
+        children: [
+          new Paragraph({
+            children: [new TextRun({ text: "Lease Agreement", bold: true, size: 32 })],
+            spacing: { after: 300 },
+          }),
 
-    const doc = new PDFDocument();
-    const stream = fs.createWriteStream(filePath);
-    doc.pipe(stream);
+          new Paragraph(`This Lease Agreement is made between:`),
+          new Paragraph(`Landowner: ${lease.owner.name} (${lease.owner.email})`),
+          new Paragraph(`Farmer: ${lease.farmer.name} (${lease.farmer.email})`),
+          new Paragraph(`Land: ${lease.land.address}`),
+          new Paragraph(`Duration: ${lease.durationMonths} months`),
+          new Paragraph(`Monthly Rent: ₹${lease.pricePerMonth}`),
 
-    // Title
-    doc.fontSize(20).text("Digital Agricultural Land Lease Agreement", { align: "center" });
-    doc.moveDown();
+          new Paragraph({
+            children: [new TextRun("\nTerms & Conditions:")],
+          }),
+          new Paragraph("1. The farmer agrees to pay rent on time."),
+          new Paragraph("2. The landowner provides usage rights for the land."),
+          new Paragraph("3. Both parties agree to the terms stated above."),
 
-    // Agreement Details
-    doc.fontSize(12).text(`Agreement ID: ${lease._id}`);
-    doc.text(`Date: ${new Date().toLocaleDateString()}`);
-    doc.moveDown();
-
-    // Parties
-    doc.text(`Landowner: ${owner.name} (${owner.email})`);
-    doc.text(`Farmer: ${farmer.name} (${farmer.email})`);
-    doc.moveDown();
-
-    // Land Details
-    doc.text(`Land Title: ${land.title}`);
-    doc.text(`Location: ${land.location.address || "N/A"}`);
-    doc.text(`Soil Type: ${land.soilType}`);
-    doc.text(`Water Source: ${land.waterSource || "N/A"}`);
-    doc.text(`Size: ${land.sizeInAcres} acres`);
-    doc.moveDown();
-
-    // Lease Terms
-    doc.text(`Lease Duration: ${lease.durationMonths} months`);
-    doc.text(`Price per Month: ₹${lease.pricePerMonth}`);
-    doc.text(`Total Amount: ₹${lease.pricePerMonth * lease.durationMonths}`);
-    doc.moveDown();
-
-    doc.text("Both parties agree to follow the terms and conditions as per the law.", {
-      align: "justify"
-    });
-
-    // Signatures
-    doc.moveDown();
-    doc.text("______________________", { continued: true }).text("        ", { continued: true }).text("______________________");
-    doc.moveDown();
-    doc.text("Landowner Signature", { continued: true }).text("                ", { continued: true }).text("Farmer Signature");
-
-    doc.end();
-
-    stream.on("finish", () => resolve(filePath));
-    stream.on("error", reject);
+          new Paragraph({
+            children: [new TextRun("\nSignatures:\n\n")],
+          }),
+          new Paragraph(`_______________________   (Landowner)`),
+          new Paragraph(`_______________________   (Farmer)`),
+        ],
+      },
+    ],
   });
-};
+
+  const buffer = await Packer.toBuffer(doc);
+  const fileName = `lease_${uuidv4()}.docx`;
+  const filePath = path.join(__dirname, "../tmp", fileName);
+
+  // Ensure tmp folder exists
+  if (!fs.existsSync(path.join(__dirname, "../tmp"))) {
+    fs.mkdirSync(path.join(__dirname, "../tmp"));
+  }
+
+  fs.writeFileSync(filePath, buffer);
+  return filePath;
+}
 
 module.exports = generateLeasePDF;

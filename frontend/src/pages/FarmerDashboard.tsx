@@ -1,5 +1,5 @@
 import React from "react";
-import { Users, TrendingUp, MapPin, DollarSign, Calendar } from "lucide-react";
+import { Users, TrendingUp, MapPin, DollarSign } from "lucide-react";
 import { motion } from "framer-motion";
 
 const FarmerDashboard: React.FC = () => {
@@ -10,22 +10,8 @@ const FarmerDashboard: React.FC = () => {
     { label: "Success Rate", value: 94, icon: TrendingUp, color: "bg-orange-500" },
   ];
 
-  const recentActivities = [
-    { action: "New lease agreement signed", time: "2 hours ago", status: "completed" },
-    { action: "KYC verification pending", time: "4 hours ago", status: "pending" },
-    { action: "Crowdfunding goal reached", time: "1 day ago", status: "completed" },
-    { action: "Payment received", time: "2 days ago", status: "completed" },
-    { action: "Dispute raised", time: "3 days ago", status: "alert" },
-  ];
-
   const counter = (value: number) =>
     value >= 1000000 ? `$${(value / 1000000).toFixed(1)}M` : value.toLocaleString();
-
-  const quickActions = [
-    { title: "Create New Lease", desc: "Start a new agricultural lease agreement", color: "emerald" },
-    { title: "Launch Campaign", desc: "Begin a new crowdfunding campaign", color: "blue" },
-    { title: "Browse Marketplace", desc: "Shop for seeds and fertilizers", color: "purple" },
-  ];
 
   return (
     <>
@@ -70,80 +56,6 @@ const FarmerDashboard: React.FC = () => {
             </div>
           </motion.div>
         ))}
-      </div>
-
-      {/* Recent Activities */}
-      <div className="bg-white rounded-xl shadow-sm border mb-8">
-        <div className="p-6 border-b">
-          <h2 className="text-2xl font-semibold text-gray-900 flex items-center">
-            <Calendar className="w-5 h-5 mr-2 text-emerald-500" /> Recent Activities
-          </h2>
-        </div>
-        <div className="p-6 space-y-4">
-          {recentActivities.map((activity, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, x: -50 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: index * 0.15 }}
-              className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition"
-            >
-              <div className="flex items-center space-x-3">
-                <motion.div
-                  animate={{ scale: activity.status === "pending" ? [1, 1.5, 1] : 1 }}
-                  transition={{ repeat: activity.status === "pending" ? Infinity : 0, duration: 1 }}
-                  className={`w-2 h-2 rounded-full ${
-                    activity.status === "completed"
-                      ? "bg-emerald-500"
-                      : activity.status === "pending"
-                      ? "bg-yellow-500"
-                      : "bg-red-500"
-                  }`}
-                />
-                <span className="text-base font-medium text-gray-800">{activity.action}</span>
-              </div>
-              <span className="text-xs text-gray-500">{activity.time}</span>
-            </motion.div>
-          ))}
-        </div>
-      </div>
-
-      {/* Quick Actions */}
-      <div className="bg-white rounded-xl shadow-sm border p-6">
-        <h2 className="text-2xl font-semibold text-gray-900 mb-6">Quick Actions</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {quickActions.map((action, index) => (
-            <motion.button
-              key={index}
-              whileHover={{ scale: 1.05, y: -2 }}
-              transition={{ type: "spring", stiffness: 300 }}
-              className={`p-4 border rounded-lg text-left transition 
-                ${action.color === "emerald" ? "bg-emerald-50 border-emerald-200 hover:bg-emerald-100" : ""}
-                ${action.color === "blue" ? "bg-blue-50 border-blue-200 hover:bg-blue-100" : ""}
-                ${action.color === "purple" ? "bg-purple-50 border-purple-200 hover:bg-purple-100" : ""}
-              `}
-            >
-              <h3
-                className={`text-base font-semibold ${
-                  action.color === "emerald" ? "text-emerald-900" : ""
-                } ${action.color === "blue" ? "text-blue-900" : ""} ${
-                  action.color === "purple" ? "text-purple-900" : ""
-                }`}
-              >
-                {action.title}
-              </h3>
-              <p
-                className={`text-sm text-gray-600 mt-1 ${
-                  action.color === "emerald" ? "text-emerald-700" : ""
-                } ${action.color === "blue" ? "text-blue-700" : ""} ${
-                  action.color === "purple" ? "text-purple-700" : ""
-                }`}
-              >
-                {action.desc}
-              </p>
-            </motion.button>
-          ))}
-        </div>
       </div>
     </>
   );

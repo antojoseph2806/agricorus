@@ -120,4 +120,33 @@ router.put("/:leaseId/cancel", auth, authorizeRoles("landowner"), async (req, re
   }
 });
 
+/**
+ * Farmer or Landowner can download/view the Lease Agreement (if generated)
+ */
+router.get("/:leaseId/agreement", auth, async (req, res) => {
+  try {
+    const lease = await Lease.findById(req.params.leaseId);
+
+    if (!lease) return res.status(404).json({ error: "Lease not found" });
+
+    // ✅ Only farmer or owner can view
+    if (
+      lease.farmer.toString() !== req.user.id &&
+      lease.owner.toString() !== req.user.id
+    ) {
+      return res.status(403).json({ error: "Unauthorized" });
+    }
+
+    if (!lease.agreementUrl) {
+      return res.status(404).json({ error: "Agreement not generated yet." });
+    }
+
+    // Send download response
+    res.download(lease.agreementUrl, `Lease_Agreement_${lease._id}.pdf`);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+
 module.exports = router;

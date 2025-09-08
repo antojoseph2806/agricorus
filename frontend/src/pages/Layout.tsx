@@ -7,7 +7,7 @@ import {
   Menu,
   X,
   Shield,
-  ShoppingCart,
+  Home,
   FileText,
   AlertTriangle,
   ChevronDown,
@@ -35,11 +35,23 @@ interface SidebarProps {
 
 // ----- Sidebar Component -----
 const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, onToggleSidebar, isMobile }) => {
-  const [showLandsDropdown, setShowLandsDropdown] = useState(false);
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const navigate = useNavigate();
 
   const navigationItems: NavItem[] = [
-    { label: 'Manage Users', icon: Users, href: '/admin/users' },
+    { label: 'Home', 
+          icon: Home, 
+          href: '/admindashboard' },
+    {
+      label: 'Manage Users',
+      icon: Users,
+      href: '/admin/users',
+      children: [
+        { label: 'Landowners', icon: FileText, href: '#' },
+        { label: 'Farmers', icon: AlertCircle, href: '#' },
+        { label: 'Investors', icon: CheckCircle, href: '#' },
+      ],
+    },
     {
       label: 'Manage Lands',
       icon: MapPin,
@@ -51,11 +63,48 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, onToggleSidebar, isMob
         { label: 'View Rejected Lands', icon: XCircle, href: '/admin/lands/rejected' },
       ],
     },
-    { label: 'Manage Projects', icon: TrendingUp, href: '/admin/projects' },
-    { label: 'Handle Disputes', icon: AlertTriangle, href: '/admin/disputes' },
-    { label: 'Manage Market', icon: ShoppingCart, href: '/admin/market' },
-    { label: 'Manage Payments', icon: DollarSign, href: '/admin/payments' },
-    { label: 'Platform Reports', icon: FileText, href: '/admin/reports' },
+    {
+      label: 'Manage Projects',
+      icon: TrendingUp,
+      href: '/admin/projects',
+      children: [
+        { label: 'All projects', icon: FileText, href: '#' },
+        { label: 'Approved Projects', icon: AlertCircle, href: '#' },
+        { label: 'Cancelled Projects', icon: CheckCircle, href: '#' },
+        { label: 'Pending Projects', icon: XCircle, href: '#' },
+      ],
+    },
+    {
+      label: 'Handle Disputes',
+      icon: AlertTriangle,
+      href: '/admin/disputes',
+      children: [
+        { label: 'All Disputes', icon: FileText, href: '#' },
+        { label: 'Rejected Disputes', icon: AlertCircle, href: '#' },
+        { label: 'Solved Disputes', icon: CheckCircle, href: '#' },
+        { label: 'Pending Disputes', icon: XCircle, href: '#' },
+      ],
+    },
+    {
+      label: 'Manage Payments',
+      icon: DollarSign,
+      href: '/admin/payments',
+      children: [
+        { label: 'Lease Payment Requests', icon: FileText, href: '#' },
+        { label: 'Project Payment Requests', icon: AlertCircle, href: '#' },
+        { label: 'Lease Payment History', icon: FileText, href: '#' },
+        { label: 'Project Payment History', icon: AlertCircle, href: '#' },
+      ],
+    },
+    {
+      label: 'Platform Reports',
+      icon: FileText,
+      href: '/admin/reports',
+      children: [
+        { label: 'Lease Reports', icon: FileText, href: '#' },
+        { label: 'Project Reports', icon: AlertCircle, href: '#' },
+      ],
+    },
   ];
 
   const handleLogout = async () => {
@@ -64,7 +113,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, onToggleSidebar, isMob
       try {
         await fetch('http://localhost:5000/api/auth/logout', {
           method: 'POST',
-          headers: { Authorization: `Bearer ${token}` }
+          headers: { Authorization: `Bearer ${token}` },
         });
       } catch (e) {
         console.warn('Backend logout failed.');
@@ -74,18 +123,39 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, onToggleSidebar, isMob
     navigate('/login');
   };
 
+  const toggleDropdown = (label: string) => {
+    setOpenDropdown(openDropdown === label ? null : label);
+  };
+
   return (
-    <div className={`flex flex-col h-full bg-white shadow-xl border-r transition-all duration-300 ${isMobile ? 'w-64' : (isSidebarOpen ? 'w-64' : 'w-20')}`}>
+    <div
+      className={`flex flex-col h-full bg-white shadow-xl border-r transition-all duration-300 ${
+        isMobile ? 'w-64' : isSidebarOpen ? 'w-64' : 'w-20'
+      }`}
+    >
       <div className="flex items-center h-16 border-b px-4 relative">
-        <div className={`flex items-center transition-opacity duration-300 ${isSidebarOpen || isMobile ? 'opacity-100' : 'opacity-0'}`}>
+        <div
+          className={`flex items-center transition-opacity duration-300 ${
+            isSidebarOpen || isMobile ? 'opacity-100' : 'opacity-0'
+          }`}
+        >
           <div className="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center">
             <Shield className="w-5 h-5 text-white" />
           </div>
           <span className="text-xl font-bold text-gray-900 ml-2">Admin Panel</span>
         </div>
         {!isMobile && (
-          <button onClick={onToggleSidebar} className={`absolute top-1/2 -translate-y-1/2 ${isSidebarOpen ? '-right-4' : 'right-4'} p-1 rounded-full bg-gray-200 hover:bg-gray-300 transition`}>
-            {isSidebarOpen ? <ChevronDown className="w-4 h-4 rotate-90" /> : <ChevronDown className="w-4 h-4 -rotate-90" />}
+          <button
+            onClick={onToggleSidebar}
+            className={`absolute top-1/2 -translate-y-1/2 ${
+              isSidebarOpen ? '-right-4' : 'right-4'
+            } p-1 rounded-full bg-gray-200 hover:bg-gray-300 transition`}
+          >
+            {isSidebarOpen ? (
+              <ChevronDown className="w-4 h-4 rotate-90" />
+            ) : (
+              <ChevronDown className="w-4 h-4 -rotate-90" />
+            )}
           </button>
         )}
       </div>
@@ -95,16 +165,22 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, onToggleSidebar, isMob
             {item.children ? (
               <>
                 <button
-                  onClick={() => setShowLandsDropdown(!showLandsDropdown)}
+                  onClick={() => toggleDropdown(item.label)}
                   className="w-full flex items-center justify-between px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg transition"
                 >
                   <div className="flex items-center gap-2">
                     <item.icon className="w-4 h-4" />
                     {(isSidebarOpen || isMobile) && item.label}
                   </div>
-                  {(isSidebarOpen || isMobile) && <ChevronDown className={`w-4 h-4 transition-transform ${showLandsDropdown ? 'rotate-180' : ''}`} />}
+                  {(isSidebarOpen || isMobile) && (
+                    <ChevronDown
+                      className={`w-4 h-4 transition-transform ${
+                        openDropdown === item.label ? 'rotate-180' : ''
+                      }`}
+                    />
+                  )}
                 </button>
-                {(isSidebarOpen || isMobile) && showLandsDropdown && (
+                {(isSidebarOpen || isMobile) && openDropdown === item.label && (
                   <div className="ml-4 mt-1 space-y-1">
                     {item.children.map((child, idx) => (
                       <a
@@ -153,12 +229,20 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
   return (
     <div className="flex min-h-screen bg-gray-50 relative">
       {/* Sidebar for Desktop */}
-      <aside className={`hidden lg:block fixed top-0 bottom-0 left-0 z-30 transition-all duration-300 ${isSidebarOpen ? 'w-64' : 'w-20'}`}>
+      <aside
+        className={`hidden lg:block fixed top-0 bottom-0 left-0 z-30 transition-all duration-300 ${
+          isSidebarOpen ? 'w-64' : 'w-20'
+        }`}
+      >
         <Sidebar isSidebarOpen={isSidebarOpen} onToggleSidebar={toggleSidebar} isMobile={false} />
       </aside>
 
       {/* Main Content Area */}
-      <div className={`flex-1 transition-all duration-300 ${isSidebarOpen ? 'lg:ml-64' : 'lg:ml-20'}`}>
+      <div
+        className={`flex-1 transition-all duration-300 ${
+          isSidebarOpen ? 'lg:ml-64' : 'lg:ml-20'
+        }`}
+      >
         {/* Mobile Header */}
         <div className="lg:hidden fixed top-0 left-0 right-0 bg-white border-b shadow z-40 h-16 flex items-center px-4 justify-between">
           <div className="flex items-center space-x-2">
@@ -174,10 +258,12 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
             <Menu className="w-6 h-6" />
           </button>
         </div>
-        
+
         {/* Mobile Overlay Sidebar */}
-        <div 
-          className={`lg:hidden fixed top-0 bottom-0 left-0 w-64 bg-white shadow-xl z-50 transition-transform duration-300 ease-in-out ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}
+        <div
+          className={`lg:hidden fixed top-0 bottom-0 left-0 w-64 bg-white shadow-xl z-50 transition-transform duration-300 ease-in-out ${
+            isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
+          }`}
         >
           <div className="h-full relative">
             <Sidebar isSidebarOpen={true} onToggleSidebar={toggleSidebar} isMobile={true} />
@@ -188,9 +274,7 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
         </div>
 
         {/* Content Area with Top Margin for Mobile Header */}
-        <main className="p-4 lg:p-8 mt-16 lg:mt-0">
-          {children}
-        </main>
+        <main className="p-4 lg:p-8 mt-16 lg:mt-0">{children}</main>
       </div>
     </div>
   );

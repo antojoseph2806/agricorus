@@ -34,21 +34,22 @@ const FarmerLayout: React.FC = () => {
       children: [
         { label: "Verify Identity", icon: UserCircle, href: "#" },
         { label: "View Profile", icon: UserCircle, href: "/profile/view" },
-        { label: "KYC Status", icon: UserCircle, href: "#" },
+        { label: "View KYC Status", icon: UserCircle, href: "#" },
       ],
     },
 
     { label: "View Lands", icon: MapPin, href: "/lands/farmer" },
 
     {
-      label: "Apply for Crowdfunding",
-      icon: TrendingUp,
-      href: "#",
-      children: [
-        { label: "Add Projects", icon: UserCircle, href: "#" },
-        { label: "View Projects", icon: UserCircle, href: "#" },
-      ],
-    },
+  label: "Apply for Crowdfunding",
+  icon: TrendingUp,
+  href: "#",
+  children: [
+    { label: "Add Projects", icon: UserCircle, href: "/farmer/projects/add" },
+    { label: "View Projects", icon: UserCircle, href: "/farmer/projects" },
+  ],
+},
+
 
     {
        label: "Lease History",
@@ -76,12 +77,23 @@ const FarmerLayout: React.FC = () => {
       icon: CreditCard,
       href: "#",
       children: [
-        { label: "Make Lease Payment", icon: UserCircle, href: "#" },
-        { label: "Request Project Payment", icon: UserCircle, href: "#" },
+        { label: "Apply For Lease Payment", icon: UserCircle, href: "#" },
+        { label: "Apply For Project Payment", icon: UserCircle, href: "#" },
+        { label: "Lease Payment History", icon: UserCircle, href: "#" },
+        { label: "Project Payment History", icon: UserCircle, href: "#" },
       ],
     },
 
-    { label: "Raise Dispute", icon: AlertTriangle, href: "#" },
+     { label: 'Dispute Management', 
+          icon: AlertTriangle, 
+          href: '#' ,
+        children: [
+            { label: 'Ongoing disputes', icon: FileText, href: '#' },
+            { label: 'Rejected disputes', icon: FileText, href: '#' },
+    
+            
+          ],
+        },
   ];
 
   // -------------------- HANDLERS --------------------

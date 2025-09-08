@@ -15,6 +15,8 @@ import FarmerLayout from "./components/FarmerLayout";
 import AcceptedLeases from "./pages/AcceptedLeases";
 import CancelledLeases from "./pages/CancelledLeases";
 import ActiveLeases from "./pages/ActiveLeases";
+import AddProject from "./pages/AddProject";
+import ViewProjects from "./pages/ViewProjects";
 
 // Landowner Pages
 import LandownerDashboard from "./pages/LandownerDashboard";
@@ -62,19 +64,15 @@ function App() {
             <Route path="/farmerdashboard" element={<FarmerDashboard />} />
             <Route path="/lands/farmer" element={<FarmerViewLands />} />
             <Route path="/farmer/lands/:id" element={<FarmerLandDetail />} />
-            <Route
-              path="/farmer/leases/accepted"
-              element={<AcceptedLeases />}
-            />
-            <Route
-              path="/farmer/leases/cancelled"
-              element={<CancelledLeases />}
-            />
-            <Route 
-              path="/farmer/leases/active" 
-              element={<ActiveLeases />}
-              />
-            </Route>
+            <Route path="/farmer/leases/accepted" element={<AcceptedLeases />} />
+            <Route path="/farmer/leases/cancelled" element={<CancelledLeases />} />
+            <Route path="/farmer/leases/active" element={<ActiveLeases />} />
+            
+            {/* ✅ New Farmer Project Routes */}
+            <Route path="/farmer/projects" element={<ViewProjects />} />
+            <Route path="/farmer/projects/add" element={<AddProject />} />
+          </Route>
+
           {/* ----------------- Landowner Routes ----------------- */}
           <Route
             path="/landownerdashboard"
@@ -94,7 +92,7 @@ function App() {
             element={<ProtectedRoute element={<ViewLands />} allowedRoles={["landowner"]} />}
           />
           <Route
-            path="/lands/:id"
+            path="landowner/lands/view/:id"
             element={
               <ProtectedRoute element={<ViewSpecificLand />} allowedRoles={["landowner"]} />
             }

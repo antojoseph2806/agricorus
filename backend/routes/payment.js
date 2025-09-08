@@ -2,40 +2,44 @@ const express = require("express");
 const Razorpay = require("razorpay");
 const crypto = require("crypto");
 const router = express.Router();
+const cloudinary = require("cloudinary").v2;
 
 const Lease = require("../models/Lease");
 const Payment = require("../models/Payment");
 const auth = require("../middleware/auth");
 const authorizeRoles = require("../middleware/authorizeRoles");
+const generateLeasePDF = require("../utils/generateLeasePDF");
 
 // ✅ Razorpay instance
 const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID, // from Razorpay Dashboard
+  key_id: process.env.RAZORPAY_KEY_ID,
   key_secret: process.env.RAZORPAY_KEY_SECRET,
 });
 
 /**
- * 1️⃣ Create Razorpay Order
- * Endpoint: POST /api/payments/order/:leaseId
+ * 1️⃣ Create Razorpay Order for next installment
  */
 router.post("/order/:leaseId", auth, authorizeRoles("farmer"), async (req, res) => {
   try {
     const lease = await Lease.findOne({
       _id: req.params.leaseId,
       farmer: req.user.id,
-      status: "accepted",
     }).populate("land");
 
     if (!lease) {
-      return res.status(404).json({ error: "Lease not found or not eligible for payment." });
+      return res.status(404).json({ error: "Lease not found." });
     }
 
-    // 🔹 Create a short, unique receipt (<= 40 chars for Razorpay)
+    if (lease.paymentsMade >= lease.totalPayments) {
+      return res.status(400).json({ error: "All payments are already completed." });
+    }
+
+    // 🔹 Unique receipt
     const shortId = lease._id.toString().slice(-6);
-    const receipt = `lease_${shortId}_${Date.now().toString().slice(-6)}`;
+    const receipt = `lease_${shortId}_${lease.paymentsMade + 1}_${Date.now().toString().slice(-6)}`;
 
     const options = {
-      amount: lease.pricePerMonth * 100, // convert ₹ to paise
+      amount: lease.pricePerMonth * 100,
       currency: "INR",
       receipt,
     };
@@ -47,7 +51,9 @@ router.post("/order/:leaseId", auth, authorizeRoles("farmer"), async (req, res) 
       amount: order.amount,
       currency: order.currency,
       leaseId: lease._id,
-      key: process.env.RAZORPAY_KEY_ID, // send key_id to client
+      key: process.env.RAZORPAY_KEY_ID,
+      installmentNumber: lease.paymentsMade + 1,
+      totalInstallments: lease.totalPayments,
     });
   } catch (err) {
     console.error("❌ Error creating Razorpay order:", err);
@@ -57,7 +63,6 @@ router.post("/order/:leaseId", auth, authorizeRoles("farmer"), async (req, res) 
 
 /**
  * 2️⃣ Verify Razorpay Payment
- * Endpoint: POST /api/payments/verify
  */
 router.post("/verify", auth, authorizeRoles("farmer"), async (req, res) => {
   try {
@@ -74,14 +79,13 @@ router.post("/verify", auth, authorizeRoles("farmer"), async (req, res) => {
       return res.status(400).json({ error: "Invalid payment signature." });
     }
 
-    // ✅ Fetch payment details from Razorpay
+    // ✅ Fetch payment details
     const paymentDetails = await razorpay.payments.fetch(razorpay_payment_id);
 
-    // Find lease
-    const lease = await Lease.findById(leaseId);
+    const lease = await Lease.findById(leaseId).populate("farmer owner land");
     if (!lease) return res.status(404).json({ error: "Lease not found." });
 
-    // 🔹 Map Razorpay status → app status
+    // 🔹 Map Razorpay status
     let status = "pending";
     if (paymentDetails.status === "captured") status = "success";
     else if (paymentDetails.status === "failed") status = "failed";
@@ -93,19 +97,50 @@ router.post("/verify", auth, authorizeRoles("farmer"), async (req, res) => {
       owner: lease.owner,
       land: lease.land,
       amount: lease.pricePerMonth,
-      method: paymentDetails.method, // "upi", "card", etc.
-      status, // ✅ mapped to success/failed/pending
+      method: paymentDetails.method,
+      status,
       paidAt: new Date(),
       transactionId: razorpay_payment_id,
     });
 
     await payment.save();
 
-    // Update lease status → active (make sure Lease schema has "active")
-    lease.status = "active";
-    await lease.save();
+    // 🔹 Update lease installment tracking
+    if (status === "success") {
+      lease.paymentsMade += 1;
 
-    res.json({ message: "Payment verified successfully", payment });
+      // First payment → activate lease + generate agreement
+      if (lease.status === "accepted") {
+        lease.status = "active";
+
+        if (!lease.agreementUrl) {
+          const pdfPath = await generateLeasePDF(lease);
+
+          const uploadResult = await cloudinary.uploader.upload(pdfPath, {
+            folder: "agreements",
+            resource_type: "raw",
+          });
+
+          lease.agreementUrl = uploadResult.secure_url;
+        }
+      }
+
+      // Last payment → mark completed
+      if (lease.paymentsMade >= lease.totalPayments) {
+        lease.status = "completed";
+      }
+
+      await lease.save();
+    }
+
+    res.json({
+      message: "Payment verified successfully",
+      payment,
+      leaseStatus: lease.status,
+      paymentsMade: lease.paymentsMade,
+      totalPayments: lease.totalPayments,
+      agreementUrl: lease.agreementUrl,
+    });
   } catch (err) {
     console.error("❌ Error verifying payment:", err);
     res.status(500).json({ error: err.message });

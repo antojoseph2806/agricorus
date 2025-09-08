@@ -17,29 +17,32 @@ const leaseSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
-    durationMonths: {
-      type: Number,
-      required: true,
-    },
-    pricePerMonth: {
-      type: Number,
-      required: true,
-    },
+    durationMonths: { type: Number, required: true },
+    pricePerMonth: { type: Number, required: true },
+
+    // Lease lifecycle
     status: {
       type: String,
-      enum: [
-        "pending",    // farmer applied
-        "accepted",   // owner approved
-        "active",     // payment successful, lease started
-        "completed",  // lease finished
-        "terminated", // ended early
-        "cancelled",  // cancelled before starting
-      ],
+      enum: ["pending", "accepted", "active", "completed", "terminated", "cancelled"],
       default: "pending",
     },
+
+    // Installment tracking
+    paymentsMade: { type: Number, default: 0 }, // installments paid
+    totalPayments: { type: Number }, // auto set = durationMonths
+
+    // Agreement PDF
     agreementUrl: String,
   },
   { timestamps: true }
 );
+
+// Auto set totalPayments
+leaseSchema.pre("save", function (next) {
+  if (!this.totalPayments) {
+    this.totalPayments = this.durationMonths;
+  }
+  next();
+});
 
 module.exports = mongoose.model("Lease", leaseSchema);

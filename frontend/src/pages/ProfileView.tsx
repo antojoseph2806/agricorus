@@ -13,7 +13,8 @@ interface UserProfile {
   phone: string | null;
   role: string | null;
   profileImage: string | null;
-  createdAt: string;
+  joined?: string;      // ✅ matches backend
+  updatedAt?: string;   // optional
 }
 
 const ProfileView: React.FC = () => {
@@ -175,7 +176,7 @@ const ProfileView: React.FC = () => {
           <div className="flex flex-col items-center space-y-6">
             {profile.profileImage ? (
               <img
-                src={profile.profileImage}
+                src={`http://localhost:5000${profile.profileImage}`} // ✅ ensure correct URL
                 alt="Profile"
                 className="w-36 h-36 rounded-full object-cover ring-4 ring-offset-4 ring-green-500 transform transition-transform duration-500 ease-in-out hover:rotate-3 hover:scale-105"
               />
@@ -224,10 +225,15 @@ const ProfileView: React.FC = () => {
                   />
                   <ProfileDetail
                     label="Joined"
-                    value={new Date(profile.createdAt).toLocaleDateString(
-                      "en-IN",
-                      { year: "numeric", month: "long", day: "numeric" }
-                    )}
+                    value={
+                      profile.joined
+                        ? new Date(profile.joined).toLocaleDateString("en-IN", {
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
+                          })
+                        : "Not available"
+                    }
                   />
                   <div className="flex justify-between mt-6">
                     <button
@@ -271,10 +277,15 @@ const ProfileView: React.FC = () => {
                   />
                   <ProfileDetail
                     label="Joined"
-                    value={new Date(profile.createdAt).toLocaleDateString(
-                      "en-IN",
-                      { year: "numeric", month: "long", day: "numeric" }
-                    )}
+                    value={
+                      profile.joined
+                        ? new Date(profile.joined).toLocaleDateString("en-IN", {
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
+                          })
+                        : "Not available"
+                    }
                   />
                   <div className="flex justify-center mt-6">
                     <button

@@ -3,11 +3,12 @@ require('dotenv').config();
 const cors = require('cors');
 const express = require('express');
 const mongoose = require('mongoose');
+const path = require('path');
 
 const app = express();
 
 // ------------------------
-// Import routes (must be routers)
+// Import routes
 // ------------------------
 const authRouter = require('./routes/auth');
 const forgotPasswordRoutes = require('./routes/forgotPassword');
@@ -18,7 +19,8 @@ const paymentRoutes = require('./routes/payment');
 const disputeRoutes = require('./routes/dispute');
 const adminRouter = require('./routes/admin');
 const farmerRoutes = require('./routes/farmer');
-const profileRoutes = require('./routes/profileRoutes'); // ✅ New profile routes
+const profileRoutes = require('./routes/profileRoutes'); // ✅ Profile routes
+const projectRoutes = require('./routes/projectRoutes'); // ✅ Projects + Investments
 
 // ------------------------
 // Import middleware
@@ -29,10 +31,13 @@ const auth = require('./middleware/auth');
 // Middleware
 // ------------------------
 app.use(cors({
-  origin: 'http://localhost:5173', // Adjust to frontend URL in production
+  origin: 'http://localhost:5173', // Adjust for frontend URL in production
   credentials: true
 }));
 app.use(express.json());
+
+// ✅ Serve uploaded images (profile pictures, etc.)
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // ------------------------
 // Database Connection
@@ -76,8 +81,10 @@ const routesList = [
   ['disputes', disputeRoutes],
   ['admin', adminRouter],
   ['farmer', farmerRoutes],
-  ['profile', profileRoutes], // ✅ Added profile route check
+  ['profile', profileRoutes],
+  ['projects', projectRoutes],
 ];
+
 routesList.forEach(([name, router]) => {
   if (typeof router !== 'function') {
     console.error(`❌ ERROR: Route "${name}" is not exporting a function. Check module.exports in routes/${name}.js`);
@@ -96,7 +103,8 @@ app.use('/api/payments', paymentRoutes);
 app.use('/api/disputes', disputeRoutes);
 app.use('/api/admin', adminRouter);
 app.use('/api/farmer', farmerRoutes);
-app.use('/api/profile', profileRoutes); // ✅ Mount profile routes
+app.use('/api/profile', profileRoutes);
+app.use('/api/projects', projectRoutes);
 
 // ------------------------
 // Test protected route

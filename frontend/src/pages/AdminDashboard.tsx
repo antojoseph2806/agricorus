@@ -1,10 +1,8 @@
 import React from 'react';
 import {
   Users,
-  TrendingUp,
   MapPin,
   DollarSign,
-  Calendar,
   AlertCircle,
 } from 'lucide-react';
 import { Layout } from './Layout';
@@ -15,14 +13,6 @@ const AdminDashboard = () => {
     { label: 'Pending Lands', value: '7', icon: AlertCircle, color: 'bg-yellow-500' },
     { label: 'Verified Users', value: '1,847', icon: Users, color: 'bg-purple-500' },
     { label: 'Total Revenue', value: '$2.4M', icon: DollarSign, color: 'bg-emerald-500' },
-  ];
-
-  const recentActivities = [
-    { action: 'New lease agreement signed', time: '2 hours ago', status: 'completed' },
-    { action: 'KYC verification pending', time: '4 hours ago', status: 'pending' },
-    { action: 'Crowdfunding goal reached', time: '1 day ago', status: 'completed' },
-    { action: 'Payment received', time: '2 days ago', status: 'completed' },
-    { action: 'Dispute raised', time: '3 days ago', status: 'alert' }
   ];
 
   return (
@@ -36,10 +26,15 @@ const AdminDashboard = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         {stats.map((stat, index) => (
-          <div key={index} className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition">
+          <div
+            key={index}
+            className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition"
+          >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600 mb-1">{stat.label}</p>
+                <p className="text-sm font-medium text-gray-600 mb-1">
+                  {stat.label}
+                </p>
                 <p className="text-3xl font-bold text-gray-900">{stat.value}</p>
               </div>
               <div className={`${stat.color} p-3 rounded-lg`}>
@@ -48,29 +43,6 @@ const AdminDashboard = () => {
             </div>
           </div>
         ))}
-      </div>
-
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 mb-8">
-        <div className="p-6 border-b border-gray-200">
-          <h2 className="text-xl font-semibold text-gray-900 flex items-center">
-            <Calendar className="w-5 h-5 mr-2 text-emerald-500" />
-            Recent Activities
-          </h2>
-        </div>
-        <div className="p-6 space-y-4">
-          {recentActivities.map((activity, index) => (
-            <div key={index} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition">
-              <div className="flex items-center space-x-3">
-                <div className={`w-2 h-2 rounded-full ${
-                  activity.status === 'completed' ? 'bg-emerald-500' :
-                  activity.status === 'pending' ? 'bg-yellow-500' : 'bg-red-500'
-                }`} />
-                <span className="font-medium text-gray-900">{activity.action}</span>
-              </div>
-              <span className="text-sm text-gray-500">{activity.time}</span>
-            </div>
-          ))}
-        </div>
       </div>
     </Layout>
   );
