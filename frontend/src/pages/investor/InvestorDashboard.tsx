@@ -13,7 +13,8 @@ import {
   FileText,
   ChevronDown,
   Home,
-  LogOut
+  LogOut,
+  IndianRupee
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -196,18 +197,10 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 // ----- Dashboard -----
 const InvestorDashboard = () => {
   const stats = [
-    { label: 'Active Leases', value: '124', icon: MapPin, color: 'bg-blue-500' },
-    { label: 'Total Funding', value: '$2.4M', icon: DollarSign, color: 'bg-emerald-500' },
-    { label: 'Verified Users', value: '1,847', icon: Users, color: 'bg-purple-500' },
-    { label: 'Success Rate', value: '94%', icon: TrendingUp, color: 'bg-orange-500' }
-  ];
-
-  const recentActivities = [
-    { action: 'New lease agreement signed', time: '2 hours ago', status: 'completed' },
-    { action: 'KYC verification pending', time: '4 hours ago', status: 'pending' },
-    { action: 'Crowdfunding goal reached', time: '1 day ago', status: 'completed' },
-    { action: 'Payment received', time: '2 days ago', status: 'completed' },
-    { action: 'Dispute raised', time: '3 days ago', status: 'alert' }
+    { label: 'Active Leases', value: '100', icon: MapPin, color: 'bg-blue-500' },
+    { label: 'Total Funding', value: '₹ 1 CR', icon: IndianRupee, color: 'bg-emerald-500' },
+    { label: 'Verified Users', value: '1500', icon: Users, color: 'bg-purple-500' },
+    { label: 'Success Rate', value: '95%', icon: TrendingUp, color: 'bg-orange-500' }
   ];
 
   return (
@@ -215,7 +208,7 @@ const InvestorDashboard = () => {
       <div className="bg-gradient-to-r from-emerald-500 to-blue-600 rounded-2xl p-8 text-white mb-8">
         <h1 className="text-3xl font-bold mb-2">Welcome to Investor dashboard</h1>
         <p className="text-emerald-100 text-lg">
-          Manage your agricultural leases, crowdfunding campaigns, and marketplace activities all in one place.
+          Manage your agricultural leases, crowdfunding campaigns, and all in one place.
         </p>
       </div>
 
@@ -234,52 +227,6 @@ const InvestorDashboard = () => {
             </div>
           </div>
         ))}
-      </div>
-
-      {/* Recent Activities */}
-      <div className="bg-white rounded-xl shadow-sm border mb-8">
-        <div className="p-6 border-b">
-          <h2 className="text-xl font-semibold text-gray-900 flex items-center">
-            <Calendar className="w-5 h-5 mr-2 text-emerald-500" />
-            Recent Activities
-          </h2>
-        </div>
-        <div className="p-6 space-y-4">
-          {recentActivities.map((activity, index) => (
-            <div
-              key={index}
-              className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition"
-            >
-              <div className="flex items-center space-x-3">
-                <div className={`w-2 h-2 rounded-full ${
-                  activity.status === 'completed' ? 'bg-emerald-500' :
-                  activity.status === 'pending' ? 'bg-yellow-500' : 'bg-red-500'
-                }`} />
-                <span className="font-medium text-gray-900">{activity.action}</span>
-              </div>
-              <span className="text-sm text-gray-500">{activity.time}</span>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Quick Actions */}
-      <div className="bg-white rounded-xl shadow-sm border p-6">
-        <h2 className="text-xl font-semibold text-gray-900 mb-6">Quick Actions</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          <button className="p-4 bg-emerald-50 border border-emerald-200 rounded-lg hover:bg-emerald-100 text-left">
-            <h3 className="font-medium text-emerald-900">Create New Lease</h3>
-            <p className="text-sm text-emerald-700 mt-1">Start a new agricultural lease agreement</p>
-          </button>
-          <button className="p-4 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 text-left">
-            <h3 className="font-medium text-blue-900">Launch Campaign</h3>
-            <p className="text-sm text-blue-700 mt-1">Begin a new crowdfunding campaign</p>
-          </button>
-          <button className="p-4 bg-purple-50 border border-purple-200 rounded-lg hover:bg-purple-100 text-left">
-            <h3 className="font-medium text-purple-900">Browse Marketplace</h3>
-            <p className="text-sm text-purple-700 mt-1">Shop for seeds and fertilizers</p>
-          </button>
-        </div>
       </div>
     </Layout>
   );

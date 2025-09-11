@@ -9,6 +9,7 @@ const projectSchema = new mongoose.Schema({
   fundingGoal: { type: Number, required: true },
   currentFunding: { type: Number, default: 0 },
   status: { type: String, enum: ["open", "funded", "closed"], default: "open" },
+  isApproved: { type: Boolean, default: false },
   startDate: { type: Date, default: Date.now },
   endDate: { type: Date, required: true },
   slug: {

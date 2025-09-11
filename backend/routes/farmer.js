@@ -20,6 +20,23 @@ router.get("/lands/available", auth, authorizeRoles("farmer"), async (req, res) 
     res.status(500).json({ error: err.message });
   }
 });
+/**
+ * 🌍 Public: Get all approved & available lands
+ */
+// Public route: Get all approved and available lands
+// Public route: Get all approved and available lands
+router.get("/lands/public/available", async (req, res) => {
+  try {
+    const lands = await Land.find({ isApproved: true, status: "available" })
+      .sort({ createdAt: -1 }); // newest lands first
+
+    res.status(200).json(lands);
+  } catch (err) {
+    console.error("Error fetching available lands:", err);
+    res.status(500).json({ error: "Server error while fetching lands." });
+  }
+});
+
 
 /**
  * 2️⃣ GET LAND BY ID (with current user lease info)

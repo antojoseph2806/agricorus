@@ -41,7 +41,7 @@ const FarmerLayout: React.FC = () => {
     { label: "View Lands", icon: MapPin, href: "/lands/farmer" },
 
     {
-  label: "Apply for Crowdfunding",
+  label: "Crowdfunding",
   icon: TrendingUp,
   href: "#",
   children: [

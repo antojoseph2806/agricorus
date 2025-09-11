@@ -1,17 +1,20 @@
 import React from "react";
-import { Users, TrendingUp, MapPin, DollarSign } from "lucide-react";
+import { Users, TrendingUp, MapPin, IndianRupee } from "lucide-react";
 import { motion } from "framer-motion";
 
 const FarmerDashboard: React.FC = () => {
   const stats = [
-    { label: "Active Leases", value: 124, icon: MapPin, color: "bg-blue-500" },
-    { label: "Total Funding", value: 2400000, icon: DollarSign, color: "bg-emerald-500" },
-    { label: "Verified Users", value: 1847, icon: Users, color: "bg-purple-500" },
-    { label: "Success Rate", value: 94, icon: TrendingUp, color: "bg-orange-500" },
+    { label: "Active Leases", value: 100, icon: MapPin, color: "bg-blue-500" },
+    { label: "Total Funding", value: 10000000, icon: IndianRupee, color: "bg-emerald-500" }, // 1 Cr = 10,000,000
+    { label: "Verified Users", value: 1500, icon: Users, color: "bg-purple-500" },
+    { label: "Success Rate", value: 95, icon: TrendingUp, color: "bg-orange-500" },
   ];
 
-  const counter = (value: number) =>
-    value >= 1000000 ? `$${(value / 1000000).toFixed(1)}M` : value.toLocaleString();
+  const counter = (value: number) => {
+    if (value >= 10000000) return `₹${(value / 10000000).toFixed(0)} Cr`;
+    if (value >= 100000) return `₹${(value / 100000).toFixed(1)} L`;
+    return value.toLocaleString();
+  };
 
   return (
     <>

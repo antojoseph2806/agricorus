@@ -5,7 +5,7 @@ import {
   ChevronRightIcon,
   XMarkIcon,
 } from "@heroicons/react/24/solid";
-import AlertMessage from "../components/AlertMessage"; // ✅ Reuse alert
+import AlertMessage from "../../components/AlertMessage"; // ✅ Reuse alert
 
 declare global {
   interface Window {

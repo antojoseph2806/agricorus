@@ -3,8 +3,8 @@ import axios from "axios";
 
 // ✅ Correct imports for layouts
 import { Layout as LandownerLayout } from "./LandownerDashboard";
-import FarmerLayout from "../components/FarmerLayout";
-import { Layout as DefaultLayout } from "./Layout";
+import FarmerLayout from "../../components/FarmerLayout";
+import { Layout as DefaultLayout } from "../admin/Layout";
 
 interface UserProfile {
   _id: string;

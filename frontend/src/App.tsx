@@ -6,36 +6,39 @@ import LandingPage from "./pages/LandingPage";
 import RegisterPage from "./pages/RegisterPage";
 import LoginPage from "./pages/LoginPage";
 import Contact from "./pages/Contact";
+import About from "./pages/About"; // ✅ new About page
 
 // Farmer Pages
-import FarmerDashboard from "./pages/FarmerDashboard";
-import FarmerViewLands from "./pages/FarmerViewLands";
-import FarmerLandDetail from "./pages/FarmerLandDetail";
+import FarmerDashboard from "./pages/farmer/FarmerDashboard";
+import FarmerViewLands from "./pages/farmer/FarmerViewLands";
+import FarmerLandDetail from "./pages/farmer/FarmerLandDetail";
 import FarmerLayout from "./components/FarmerLayout";
-import AcceptedLeases from "./pages/AcceptedLeases";
-import CancelledLeases from "./pages/CancelledLeases";
-import ActiveLeases from "./pages/ActiveLeases";
-import AddProject from "./pages/AddProject";
-import ViewProjects from "./pages/ViewProjects";
+import AcceptedLeases from "./pages/farmer/AcceptedLeases";
+import CancelledLeases from "./pages/farmer/CancelledLeases";
+import ActiveLeases from "./pages/farmer/ActiveLeases";
+import AddProject from "./pages/farmer/AddProject";
+import ViewProjects from "./pages/farmer/ViewProjects";
+import ProjectDetails from "./pages/farmer/ProjectDetails";
+import EditProject from "./pages/farmer/EditProject";
 
 // Landowner Pages
-import LandownerDashboard from "./pages/LandownerDashboard";
-import AddLand from "./pages/AddLand";
-import ViewLands from "./pages/LandownerViewLands";
-import ViewSpecificLand from "./pages/ViewSpecificLand";
-import EditLand from "./pages/EditLand";
-import LandownerLeaseRequests from "./pages/LandownerLeaseRequests";
+import LandownerDashboard from "./pages/landowner/LandownerDashboard";
+import AddLand from "./pages/landowner/AddLand";
+import ViewLands from "./pages/landowner/LandownerViewLands";
+import ViewSpecificLand from "./pages/landowner/ViewSpecificLand";
+import EditLand from "./pages/landowner/EditLand";
+import LandownerLeaseRequests from "./pages/landowner/LandownerLeaseRequests";
 
 // Investor Pages
-import InvestorDashboard from "./pages/InvestorDashboard";
+import InvestorDashboard from "./pages/investor/InvestorDashboard";
 
 // Admin Pages
-import AdminDashboard from "./pages/AdminDashboard";
-import AdminLandManagement from "./pages/AdminLandManagement";
-import AdminViewSpecificLand from "./pages/AdminViewSpecificLand";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminLandManagement from "./pages/admin/AdminLandManagement";
+import AdminViewSpecificLand from "./pages/admin/AdminViewSpecificLand";
 
 // Profile Pages
-import ProfileView from "./pages/ProfileView";
+import ProfileView from "./pages/landowner/ProfileView";
 
 // Shared
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -51,6 +54,7 @@ function App() {
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/contact" element={<Contact />} />
+          <Route path="/about" element={<About />} /> {/* ✅ new About page */}
 
           {/* Public Land View Route */}
           <Route path="/lands/public/:id" element={<ViewSpecificLand />} />
@@ -67,10 +71,12 @@ function App() {
             <Route path="/farmer/leases/accepted" element={<AcceptedLeases />} />
             <Route path="/farmer/leases/cancelled" element={<CancelledLeases />} />
             <Route path="/farmer/leases/active" element={<ActiveLeases />} />
-            
-            {/* ✅ New Farmer Project Routes */}
+
+            {/* Farmer Project Routes */}
             <Route path="/farmer/projects" element={<ViewProjects />} />
             <Route path="/farmer/projects/add" element={<AddProject />} />
+            <Route path="/farmer/projects/:id" element={<ProjectDetails />} />
+            <Route path="/farmer/projects/edit/:id" element={<EditProject />} />
           </Route>
 
           {/* ----------------- Landowner Routes ----------------- */}
@@ -135,6 +141,15 @@ function App() {
             element={
               <ProtectedRoute
                 element={<LandownerLeaseRequests statusFilter="pending" />}
+                allowedRoles={["landowner"]}
+              />
+            }
+          />
+          <Route
+            path="/leaserequests/active"
+            element={
+              <ProtectedRoute
+                element={<LandownerLeaseRequests statusFilter="active" />}
                 allowedRoles={["landowner"]}
               />
             }

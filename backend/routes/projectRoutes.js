@@ -1,53 +1,99 @@
 // routes/projectRoutes.js
 const express = require("express");
+const mongoose = require("mongoose");
 const Project = require("../models/Project");
 const Investment = require("../models/Investment");
-const auth = require("../middleware/auth"); // ✅ Authentication middleware
-const authorizeRoles = require("../middleware/authorizeRoles"); // ✅ Role-based authorization
+const auth = require("../middleware/auth");
+const authorizeRoles = require("../middleware/authorizeRoles");
 
 const router = express.Router();
 
-/**
- * Create new project (Farmer only)
- */
-router.post(
-  "/projects",
-  auth,
-  authorizeRoles("farmer"),
-  async (req, res) => {
-    try {
-      const project = new Project({
-        ...req.body,
-        createdBy: req.user.id, // ✅ Track farmer who created it
-      });
-      await project.save();
-      res.status(201).json(project);
-    } catch (err) {
-      res.status(400).json({ error: err.message });
-    }
-  }
-);
-
-/**
- * Get all projects (public)
- */
-router.get("/projects", async (req, res) => {
+/* -----------------------------
+   CREATE PROJECT  (Farmer)
+------------------------------ */
+router.post("/projects", auth, authorizeRoles("farmer"), async (req, res) => {
   try {
-    const projects = await Project.find().populate("createdBy", "name email");
+    const project = new Project({
+      ...req.body,
+      farmerId: req.user.id,
+    });
+    await project.save();
+    res.status(201).json(project);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+/* -----------------------------
+   APPROVED PROJECT ROUTES (public)
+   👉 keep these ABOVE /projects/:id
+------------------------------ */
+router.get("/projects/approved", async (req, res) => {
+  try {
+    const projects = await Project.find({ isApproved: true })
+      .populate("farmerId", "_id name email")
+      .sort({ createdAt: -1 });
     res.json(projects);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
-/**
- * Get project by ID (public)
- */
+router.get("/projects/approved/:id", async (req, res) => {
+  try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({ error: "Invalid project ID" });
+    }
+
+    const project = await Project.findOne({
+      _id: req.params.id,
+      isApproved: true,
+    }).populate("farmerId", "_id name email");
+
+    if (!project) return res.status(404).json({ error: "Approved project not found" });
+    res.json(project);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.get("/projects/approved/slug/:slug", async (req, res) => {
+  try {
+    const project = await Project.findOne({
+      slug: req.params.slug,
+      isApproved: true,
+    }).populate("farmerId", "_id name email");
+
+    if (!project) return res.status(404).json({ error: "Approved project not found" });
+    res.json(project);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+/* -----------------------------
+   GET ALL PROJECTS (public)
+------------------------------ */
+router.get("/projects", async (req, res) => {
+  try {
+    const projects = await Project.find().populate("farmerId", "_id name email");
+    res.json(projects);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+/* -----------------------------
+   GET PROJECT BY ID (public)
+------------------------------ */
 router.get("/projects/:id", async (req, res) => {
   try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({ error: "Invalid project ID" });
+    }
     const project = await Project.findById(req.params.id).populate(
-      "createdBy",
-      "name email"
+      "farmerId",
+      "_id name email"
     );
     if (!project) return res.status(404).json({ error: "Project not found" });
     res.json(project);
@@ -56,26 +102,48 @@ router.get("/projects/:id", async (req, res) => {
   }
 });
 
-/**
- * Update project (Farmer who created it OR Admin)
- */
+/* -----------------------------
+   GET PROJECT BY SLUG (public)
+------------------------------ */
+router.get("/projects/slug/:slug", async (req, res) => {
+  try {
+    const project = await Project.findOne({ slug: req.params.slug }).populate(
+      "farmerId",
+      "_id name email"
+    );
+    if (!project) return res.status(404).json({ error: "Project not found" });
+    res.json(project);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+/* -----------------------------
+   UPDATE PROJECT (Farmer/Admin)
+------------------------------ */
 router.put(
   "/projects/:id",
   auth,
   authorizeRoles("farmer", "admin"),
   async (req, res) => {
     try {
+      if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+        return res.status(400).json({ error: "Invalid project ID" });
+      }
       const project = await Project.findById(req.params.id);
       if (!project) return res.status(404).json({ error: "Project not found" });
 
-      // ✅ Farmers can update only their own projects
-      if (req.user.role === "farmer" && project.createdBy.toString() !== req.user.id) {
-        return res.status(403).json({ error: "Not authorized to update this project" });
+      if (
+        req.user.role === "farmer" &&
+        project.farmerId.toString() !== req.user.id
+      ) {
+        return res
+          .status(403)
+          .json({ error: "Not authorized to update this project" });
       }
 
       Object.assign(project, req.body);
       await project.save();
-
       res.json(project);
     } catch (err) {
       res.status(400).json({ error: err.message });
@@ -83,21 +151,28 @@ router.put(
   }
 );
 
-/**
- * Delete project (Farmer who created it OR Admin)
- */
+/* -----------------------------
+   DELETE PROJECT (Farmer/Admin)
+------------------------------ */
 router.delete(
   "/projects/:id",
   auth,
   authorizeRoles("farmer", "admin"),
   async (req, res) => {
     try {
+      if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+        return res.status(400).json({ error: "Invalid project ID" });
+      }
       const project = await Project.findById(req.params.id);
       if (!project) return res.status(404).json({ error: "Project not found" });
 
-      // ✅ Farmers can delete only their own projects
-      if (req.user.role === "farmer" && project.createdBy.toString() !== req.user.id) {
-        return res.status(403).json({ error: "Not authorized to delete this project" });
+      if (
+        req.user.role === "farmer" &&
+        project.farmerId.toString() !== req.user.id
+      ) {
+        return res
+          .status(403)
+          .json({ error: "Not authorized to delete this project" });
       }
 
       await project.deleteOne();
@@ -108,64 +183,108 @@ router.delete(
   }
 );
 
-/**
- * Invest in a project (Investor)
- */
-router.post("/projects/:id/invest", auth, authorizeRoles("investor"), async (req, res) => {
-  try {
-    const project = await Project.findById(req.params.id);
-    if (!project) return res.status(404).json({ error: "Project not found" });
-    if (project.status !== "open")
-      return res.status(400).json({ error: "Project is not open for funding" });
+/* -----------------------------
+   INVEST IN PROJECT (Investor)
+------------------------------ */
+router.post(
+  "/projects/:id/invest",
+  auth,
+  authorizeRoles("investor"),
+  async (req, res) => {
+    try {
+      if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+        return res.status(400).json({ error: "Invalid project ID" });
+      }
 
-    const investment = new Investment({
-      projectId: req.params.id,
-      investorId: req.user.id,
-      amount: req.body.amount,
-    });
-    await investment.save();
+      const { amount } = req.body;
+      if (!amount || amount <= 0) {
+        return res
+          .status(400)
+          .json({ error: "Investment amount must be greater than zero" });
+      }
 
-    // Update project funding
-    project.currentFunding += req.body.amount;
-    if (project.currentFunding >= project.fundingGoal) {
-      project.status = "funded";
+      const project = await Project.findById(req.params.id);
+      if (!project) return res.status(404).json({ error: "Project not found" });
+      if (project.status !== "open") {
+        return res.status(400).json({ error: "Project is not open for funding" });
+      }
+
+      const investment = new Investment({
+        projectId: req.params.id,
+        investorId: req.user.id,
+        amount,
+      });
+      await investment.save();
+
+      project.currentFunding += amount;
+      if (project.currentFunding >= project.fundingGoal) {
+        project.status = "funded";
+      }
+      await project.save();
+
+      res.status(201).json(investment);
+    } catch (err) {
+      res.status(400).json({ error: err.message });
     }
-    await project.save();
-
-    res.status(201).json(investment);
-  } catch (err) {
-    res.status(400).json({ error: err.message });
   }
-});
+);
 
-/**
- * Get all investments in a project
- */
+/* -----------------------------
+   GET INVESTMENTS FOR PROJECT
+------------------------------ */
 router.get("/projects/:id/investments", async (req, res) => {
   try {
-    const investments = await Investment.find({ projectId: req.params.id }).populate(
-      "investorId",
-      "name email"
-    );
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({ error: "Invalid project ID" });
+    }
+    const investments = await Investment.find({
+      projectId: req.params.id,
+    }).populate("investorId", "_id name email");
     res.json(investments);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
-/**
- * Get all investments by a user
- */
+/* -----------------------------
+   GET ALL INVESTMENTS BY USER
+------------------------------ */
 router.get("/users/:id/investments", async (req, res) => {
   try {
-    const investments = await Investment.find({ investorId: req.params.id }).populate(
-      "projectId",
-      "title"
-    );
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({ error: "Invalid user ID" });
+    }
+    const investments = await Investment.find({
+      investorId: req.params.id,
+    }).populate("projectId", "_id title slug");
     res.json(investments);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
+
+/* -----------------------------
+   APPROVE PROJECT (Admin)
+------------------------------ */
+router.patch(
+  "/projects/:id/approve",
+  auth,
+  authorizeRoles("admin"),
+  async (req, res) => {
+    try {
+      if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+        return res.status(400).json({ error: "Invalid project ID" });
+      }
+      const project = await Project.findById(req.params.id);
+      if (!project) return res.status(404).json({ error: "Project not found" });
+
+      project.isApproved = true;
+      await project.save();
+      res.json({ message: "Project approved successfully", project });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  }
+);
 
 module.exports = router;
