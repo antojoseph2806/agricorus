@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
 import { Sprout, Mail, Phone, Lock, Eye, EyeOff } from 'lucide-react';
 import GoogleButton from '../components/GoogleButton';
-import AlertMessage from '../components/AlertMessage'; // ✅ Import alert
+import AlertMessage from '../components/AlertMessage';
 
 // ==================== VALIDATION FUNCTIONS ====================
 

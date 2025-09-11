@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Sprout, Mail, Lock, Eye, EyeOff } from "lucide-react";
 import GoogleButton from "../components/GoogleButton";
 import ForgotPasswordModal from "../components/ForgotPasswordModal";
-import AlertMessage from "../components/AlertMessage"; // ✅ import alert
+import AlertMessage from "../components/AlertMessage";
 
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
