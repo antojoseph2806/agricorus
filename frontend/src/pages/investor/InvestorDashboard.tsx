@@ -50,7 +50,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, onToggleSidebar, isMob
         { label: 'KYC Status', icon: UserCircle, href: '/profile/kyc-status' },
       ],
     },
-    { label: 'View Projects', icon: TrendingUp, href: '/crowdfunding' },
+    { label: 'View Projects', icon: TrendingUp, href: '#' },
     { label: 'Investment History', icon: DollarSign, href: '/payments' },
     { label: 'Raise Dispute', icon: AlertTriangle, href: '/disputes' },
     { label: 'ROI Reports', icon: FileText, href: '/reports' },
