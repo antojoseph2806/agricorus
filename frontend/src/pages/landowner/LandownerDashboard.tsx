@@ -4,17 +4,16 @@ import {
   TrendingUp,
   MapPin,
   IndianRupee,
-  FileSignature,
-  Calendar,
   Menu,
   Home,
-  UserCircle,
   X,
-  ShoppingCart,
-  Shield,
+  UserCircle,
+  LogOut,
   FileText,
   CreditCard,
   AlertTriangle,
+  ShoppingBag,
+  Shield,
   ChevronDown,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -34,9 +33,7 @@ const Sidebar: React.FC = () => {
   const navigate = useNavigate();
 
   const navigationItems: NavItem[] = [
-    { label: 'Home', 
-      icon: Home, 
-      href: '/landownerdashboard' },
+    { label: 'Home', icon: Home, href: '/landownerdashboard' },
     {
       label: 'Manage Profile',
       icon: UserCircle,
@@ -57,7 +54,7 @@ const Sidebar: React.FC = () => {
       ],
     },
     {
-      label: 'Lease Requests',
+      label: 'Manage Leases',
       icon: FileText,
       href: '#',
       children: [
@@ -68,24 +65,31 @@ const Sidebar: React.FC = () => {
         { label: 'Active Leases', icon: FileText, href: '/leaserequests/active' },
       ],
     },
-    { label: 'Lease Payments', 
-      icon: CreditCard, 
+    {
+      label: 'Lease Payments',
+      icon: CreditCard,
       href: '#',
       children: [
-        { label: 'Payment history', icon: FileText, href: '#' },
+        { label: 'Lease Payment history', icon: FileText, href: '#' },
         { label: 'Request Lease Payment', icon: FileText, href: '#' },
       ],
     },
-    { label: 'Dispute Management', 
-      icon: AlertTriangle, 
-      href: '#' ,
-    children: [
-        { label: 'Ongoing disputes', icon: FileText, href: '#' },
-        { label: 'Rejected disputes', icon: FileText, href: '#' },
-
+    {
+      label: 'Dispute Management',
+      icon: AlertTriangle,
+      href: '#',
+      children: [
+        { label: 'Raised by You', icon: FileText, href: '#' },
+        { label: 'Raised Against You', icon: FileText, href: '#' },
         
       ],
     },
+{
+      label: 'Purchase seeds, fertilizers',
+      icon: ShoppingBag,
+      href: '#',
+    }
+    
   ];
 
   const handleLogout = async () => {
@@ -111,7 +115,7 @@ const Sidebar: React.FC = () => {
         <div className="flex items-center gap-2">
           {!isCollapsed && (
             <>
-              <MapPin className="w-6 h-6 text-emerald-500" />
+              <Shield className="w-6 h-6 text-emerald-500" />
               <span className="text-xl font-bold text-gray-900">AgriCorus</span>
             </>
           )}
@@ -135,60 +139,65 @@ const Sidebar: React.FC = () => {
 
       {/* Sidebar Navigation */}
       {!isCollapsed && (
-        <nav className="flex-1 overflow-y-auto mt-4 px-2 text-sm">
-          {navigationItems.map((item, idx) => (
-            <div key={idx} className="mb-1">
-              {item.children ? (
-                <>
-                  <button
-                    onClick={() => setActiveDropdown(activeDropdown === item.label ? null : item.label)}
-                    className="w-full flex items-center justify-between px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition"
+        <div className="flex flex-col flex-1">
+          <nav className="flex-1 overflow-y-auto mt-4 px-2 text-sm">
+            {navigationItems.map((item, idx) => (
+              <div key={idx} className="mb-1">
+                {item.children ? (
+                  <>
+                    <button
+                      onClick={() => setActiveDropdown(activeDropdown === item.label ? null : item.label)}
+                      className="w-full flex items-center justify-between px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition"
+                    >
+                      <div className="flex items-center gap-2">
+                        <item.icon className="w-5 h-5" />
+                        {item.label}
+                      </div>
+                      <ChevronDown
+                        className={`w-4 h-4 transition-transform ${
+                          activeDropdown === item.label ? 'rotate-180' : ''
+                        }`}
+                      />
+                    </button>
+                    {activeDropdown === item.label && (
+                      <div className="ml-8 mt-1 flex flex-col space-y-1">
+                        {item.children.map((child, id) => (
+                          <a
+                            key={id}
+                            href={child.href}
+                            className="flex items-center gap-2 px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-lg transition"
+                          >
+                            <child.icon className="w-4 h-4" />
+                            {child.label}
+                          </a>
+                        ))}
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <a
+                    href={item.href}
+                    className="flex items-center gap-2 px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition"
                   >
-                    <div className="flex items-center gap-2">
-                      <item.icon className="w-5 h-5" />
-                      {item.label}
-                    </div>
-                    <ChevronDown
-                      className={`w-4 h-4 transition-transform ${
-                        activeDropdown === item.label ? 'rotate-180' : ''
-                      }`}
-                    />
-                  </button>
-                  {activeDropdown === item.label && (
-                    <div className="ml-8 mt-1 flex flex-col space-y-1">
-                      {item.children.map((child, id) => (
-                        <a
-                          key={id}
-                          href={child.href}
-                          className="flex items-center gap-2 px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-lg transition"
-                        >
-                          <child.icon className="w-4 h-4" />
-                          {child.label}
-                        </a>
-                      ))}
-                    </div>
-                  )}
-                </>
-              ) : (
-                <a
-                  href={item.href}
-                  className="flex items-center gap-2 px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition"
-                >
-                  <item.icon className="w-5 h-5" />
-                  {item.label}
-                </a>
-              )}
-            </div>
-          ))}
+                    <item.icon className="w-5 h-5" />
+                    {item.label}
+                  </a>
+                )}
+              </div>
+            ))}
+          </nav>
 
-          <button
-            onClick={handleLogout}
-            className="mt-4 flex items-center gap-2 px-3 py-2 text-red-600 hover:bg-red-100 rounded-lg transition"
-          >
-            <X className="w-5 h-5" />
-            Logout
-          </button>
-        </nav>
+          {/* Logout Button (Bottom Left) */}
+          <div className="p-4 border-t border-gray-200">
+            <button
+              onClick={handleLogout}
+              className="w-full flex items-center gap-2 px-3 py-2 text-red-600 hover:bg-red-100 rounded-lg transition"
+            >
+              <LogOut className="w-5 h-5" />
+              Logout
+            </button>
+          </div>
+        </div>
       )}
     </div>
   );

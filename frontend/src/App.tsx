@@ -6,7 +6,9 @@ import LandingPage from "./pages/LandingPage";
 import RegisterPage from "./pages/RegisterPage";
 import LoginPage from "./pages/LoginPage";
 import Contact from "./pages/Contact";
-import About from "./pages/About"; // ✅ new About page
+import About from "./pages/About";
+import PublicViewLands from "./pages/PublicViewLands"; 
+import PublicLandDetail from "./pages/PublicLandDetail";
 
 // Farmer Pages
 import FarmerDashboard from "./pages/farmer/FarmerDashboard";
@@ -19,8 +21,12 @@ import ActiveLeases from "./pages/farmer/ActiveLeases";
 import AddProject from "./pages/farmer/AddProject";
 import ViewProjects from "./pages/farmer/ViewProjects";
 import ProjectDetails from "./pages/farmer/ProjectDetails";
+import ApprovedProjects from "./pages/farmer/ApprovedProjects";
+import ClosedProjects from "./pages/farmer/ClosedProjects";
+import OngoingProjects from "./pages/farmer/OngoingProjects";
 import EditProject from "./pages/farmer/EditProject";
-
+import MyDisputes from "./pages/farmer/MyDisputes";
+import AgainstDisputes from "./pages/farmer/AgainstDisputes";
 // Landowner Pages
 import LandownerDashboard from "./pages/landowner/LandownerDashboard";
 import AddLand from "./pages/landowner/AddLand";
@@ -54,10 +60,11 @@ function App() {
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/contact" element={<Contact />} />
-          <Route path="/about" element={<About />} /> {/* ✅ new About page */}
+          <Route path="/about" element={<About />} />
 
-          {/* Public Land View Route */}
-          <Route path="/lands/public/:id" element={<ViewSpecificLand />} />
+          {/* Public Lands List */}
+          <Route path="/public-lands" element={<PublicViewLands />} />
+          <Route path="/land-details" element={<PublicLandDetail />} />
 
           {/* ----------------- Farmer Routes ----------------- */}
           <Route
@@ -77,6 +84,14 @@ function App() {
             <Route path="/farmer/projects/add" element={<AddProject />} />
             <Route path="/farmer/projects/:id" element={<ProjectDetails />} />
             <Route path="/farmer/projects/edit/:id" element={<EditProject />} />
+            <Route path="/approved-projects" element={<ApprovedProjects />} />
+            <Route path="/closed-projects" element={<ClosedProjects />} />
+            <Route path="/ongoing-projects" element={<OngoingProjects />} />
+
+
+            {/* farmer disputes routes*/}
+             <Route path="/disputes/my" element={<MyDisputes />} />
+             <Route path="/disputes/against" element={<AgainstDisputes />} />
           </Route>
 
           {/* ----------------- Landowner Routes ----------------- */}
@@ -159,64 +174,42 @@ function App() {
           <Route
             path="/investordashboard"
             element={
-              <ProtectedRoute
-                element={<InvestorDashboard />}
-                allowedRoles={["investor"]}
-              />
+              <ProtectedRoute element={<InvestorDashboard />} allowedRoles={["investor"]} />
             }
           />
 
           {/* ----------------- Admin Routes ----------------- */}
           <Route
             path="/admindashboard"
-            element={
-              <ProtectedRoute element={<AdminDashboard />} allowedRoles={["admin"]} />
-            }
+            element={<ProtectedRoute element={<AdminDashboard />} allowedRoles={["admin"]} />}
           />
           <Route
             path="/admin/lands/all"
             element={
-              <ProtectedRoute
-                element={<AdminLandManagement statusFilter="all" />}
-                allowedRoles={["admin"]}
-              />
+              <ProtectedRoute element={<AdminLandManagement statusFilter="all" />} allowedRoles={["admin"]} />
             }
           />
           <Route
             path="/admin/lands/pending"
             element={
-              <ProtectedRoute
-                element={<AdminLandManagement statusFilter="pending" />}
-                allowedRoles={["admin"]}
-              />
+              <ProtectedRoute element={<AdminLandManagement statusFilter="pending" />} allowedRoles={["admin"]} />
             }
           />
           <Route
             path="/admin/lands/approved"
             element={
-              <ProtectedRoute
-                element={<AdminLandManagement statusFilter="approved" />}
-                allowedRoles={["admin"]}
-              />
+              <ProtectedRoute element={<AdminLandManagement statusFilter="approved" />} allowedRoles={["admin"]} />
             }
           />
           <Route
             path="/admin/lands/rejected"
             element={
-              <ProtectedRoute
-                element={<AdminLandManagement statusFilter="rejected" />}
-                allowedRoles={["admin"]}
-              />
+              <ProtectedRoute element={<AdminLandManagement statusFilter="rejected" />} allowedRoles={["admin"]} />
             }
           />
           <Route
             path="/admin/lands/:id"
-            element={
-              <ProtectedRoute
-                element={<AdminViewSpecificLand />}
-                allowedRoles={["admin"]}
-              />
-            }
+            element={<ProtectedRoute element={<AdminViewSpecificLand />} allowedRoles={["admin"]} />}
           />
 
           {/* ----------------- Profile Routes ----------------- */}

@@ -7,42 +7,81 @@ const User = require('../models/User');
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
+// ✅ Email regex: basic RFC compliant
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+// ✅ Phone regex: allows only 10 digits (adjust for your region if needed)
+const phoneRegex = /^[0-9]{10}$/;
+
+// ✅ Strong password: min 8 chars, uppercase, lowercase, number, special char
+const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#^])[A-Za-z\d@$!%*?&#^]{8,}$/;
 // =======================
-// REGISTER (Email / Phone / Password)
+// REGISTER
 // =======================
-router.post('/register', async (req, res) => {
+router.post("/register", async (req, res) => {
   const { email, phone, password, confirmPassword, role } = req.body;
 
+  // 1️⃣ Check empty fields
   if (!email || !phone || !password || !confirmPassword || !role) {
-    return res.status(400).json({ msg: 'Please fill all fields' });
+    return res.status(400).json({ msg: "Please fill all fields" });
   }
 
-  if (!['landowner', 'farmer', 'investor', 'admin'].includes(role)) {
-    return res.status(400).json({ msg: 'Invalid role selected' });
+  // 2️⃣ Validate email format
+  if (!emailRegex.test(email)) {
+    return res.status(400).json({ msg: "Invalid email format" });
   }
 
+  // 3️⃣ Validate phone format
+  if (!phoneRegex.test(phone)) {
+    return res.status(400).json({ msg: "Phone number must be 10 digits" });
+  }
+
+  // 4️⃣ Validate role
+  const allowedRoles = ["landowner", "farmer", "investor", "admin"];
+  if (!allowedRoles.includes(role)) {
+    return res.status(400).json({ msg: "Invalid role selected" });
+  }
+
+  // 5️⃣ Validate password strength
+  if (!passwordRegex.test(password)) {
+    return res.status(400).json({
+      msg: "Password must be at least 8 characters long and include uppercase, lowercase, number, and special character",
+    });
+  }
+
+  // 6️⃣ Check password confirmation
   if (password !== confirmPassword) {
-    return res.status(400).json({ msg: 'Passwords must match' });
-  }
-
-  if (password.length < 6) {
-    return res.status(400).json({ msg: 'Password should be at least 6 characters' });
+    return res.status(400).json({ msg: "Passwords must match" });
   }
 
   try {
+    // 7️⃣ Check if email already exists
     const existingEmail = await User.findOne({ email });
-    if (existingEmail) return res.status(400).json({ msg: 'Email already registered' });
+    if (existingEmail) {
+      return res.status(400).json({ msg: "Email already registered" });
+    }
 
+    // 8️⃣ Check if phone already exists
     const existingPhone = await User.findOne({ phone });
-    if (existingPhone) return res.status(400).json({ msg: 'Phone already registered' });
+    if (existingPhone) {
+      return res.status(400).json({ msg: "Phone already registered" });
+    }
 
+    // 9️⃣ Hash password
     const hashedPassword = await bcrypt.hash(password, 12);
 
+    // 🔟 Save new user
     const user = new User({ email, phone, password: hashedPassword, role });
     await user.save();
 
-    const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    // 1️⃣1️⃣ Generate JWT
+    const token = jwt.sign(
+      { id: user._id, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" }
+    );
 
+    // 1️⃣2️⃣ Send response
     res.status(201).json({
       token,
       role: user.role,
@@ -55,7 +94,7 @@ router.post('/register', async (req, res) => {
     });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ msg: 'Server error' });
+    res.status(500).json({ msg: "Server error" });
   }
 });
 

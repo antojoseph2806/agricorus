@@ -39,6 +39,20 @@ router.get("/projects/approved", async (req, res) => {
   }
 });
 
+/* -----------------------------
+   VIEW CLOSED PROJECTS
+------------------------------ */
+router.get("/projects/closed", auth, async (req, res) => {
+  try {
+    const projects = await Project.find({ status: "closed" })
+      .populate("farmerId", "name email"); // populate farmer details
+
+    res.json(projects);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 router.get("/projects/approved/:id", async (req, res) => {
   try {
     if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
@@ -70,6 +84,20 @@ router.get("/projects/approved/slug/:slug", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+/* -----------------------------
+   VIEW FUNDED PROJECTS
+------------------------------ */
+router.get("/projects/funded", auth, async (req, res) => {
+  try {
+    const projects = await Project.find({ status: "funded" })
+      .populate("farmerId", "name email"); // include farmer info
+
+    res.json(projects);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 
 /* -----------------------------
    GET ALL PROJECTS (public)
@@ -281,6 +309,98 @@ router.patch(
       project.isApproved = true;
       await project.save();
       res.json({ message: "Project approved successfully", project });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  }
+);
+
+/* -----------------------------
+   CLOSE PROJECT (Admin)
+------------------------------ */
+// PATCH /projects/:id/close
+router.patch("/projects/:id/close", auth, authorizeRoles("admin"), async (req, res) => {
+  try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({ error: "Invalid project ID" });
+    }
+
+    const project = await Project.findById(req.params.id);
+    if (!project) return res.status(404).json({ error: "Project not found" });
+
+    project.status = "closed"; // 👈 Important
+    await project.save();
+
+    res.json({ message: "Project closed successfully", project });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+/* -----------------------------
+   INVESTOR FUND PROJECT
+------------------------------ */
+router.patch(
+  "/projects/:id/fund",
+  auth,
+  authorizeRoles("investor"),
+  async (req, res) => {
+    try {
+      if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+        return res.status(400).json({ error: "Invalid project ID" });
+      }
+
+      const { amount } = req.body;
+      if (!amount || amount <= 0) {
+        return res.status(400).json({ error: "Funding amount must be greater than 0" });
+      }
+
+      const project = await Project.findById(req.params.id);
+      if (!project) return res.status(404).json({ error: "Project not found" });
+      if (project.status !== "open") {
+        return res.status(400).json({ error: "Project is not open for funding" });
+      }
+
+      project.currentFunding += amount;
+
+      // Auto-mark funded if goal reached
+      if (project.currentFunding >= project.fundingGoal) {
+        project.status = "funded";
+      }
+
+      await project.save();
+
+      res.json({ message: "Funding successful", project });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  }
+);
+/* -----------------------------
+   MARK PROJECT AS FUNDED (Admin)
+------------------------------ */
+router.patch(
+  "/projects/:id/mark-funded",
+  auth,
+  authorizeRoles("admin"),
+  async (req, res) => {
+    try {
+      if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+        return res.status(400).json({ error: "Invalid project ID" });
+      }
+
+      const project = await Project.findById(req.params.id);
+      if (!project) return res.status(404).json({ error: "Project not found" });
+
+      if (project.status === "funded") {
+        return res.status(400).json({ error: "Project is already funded" });
+      }
+
+      project.status = "funded";
+      project.currentFunding = project.fundingGoal; // optional: force match goal
+      await project.save();
+
+      res.json({ message: "Project marked as funded by admin", project });
     } catch (err) {
       res.status(500).json({ error: err.message });
     }

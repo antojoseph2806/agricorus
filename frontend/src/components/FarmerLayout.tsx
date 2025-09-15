@@ -14,6 +14,7 @@ import {
   UserCircle,
   LogOut,
   ChevronDown,
+  ShoppingBag
 } from "lucide-react";
 
 const FarmerLayout: React.FC = () => {
@@ -41,37 +42,36 @@ const FarmerLayout: React.FC = () => {
     { label: "View Lands", icon: MapPin, href: "/lands/farmer" },
 
     {
-  label: "Crowdfunding",
-  icon: TrendingUp,
-  href: "#",
-  children: [
-    { label: "Add Projects", icon: UserCircle, href: "/farmer/projects/add" },
-    { label: "View Projects", icon: UserCircle, href: "/farmer/projects" },
-  ],
-},
-
-
-    {
-       label: "Lease History",
-       icon: FileText,
-       href: "#",
-      children: [
-    { label: "Accepted Leases", icon: UserCircle, href: "/farmer/leases/accepted" },
-    { label: "Cancelled Leases", icon: UserCircle, href: "/farmer/leases/cancelled" },
-    { label: "Active Leases", icon: UserCircle, href: "/farmer/leases/active" },
-  ],
-},
-
-    {
-      label: "Crowdfunding History",
-      icon: FileText,
+      label: "Crowdfunding",
+      icon: TrendingUp,
       href: "#",
       children: [
-        { label: "Accepted Projects", icon: UserCircle, href: "#" },
-        { label: "Cancelled Projects", icon: UserCircle, href: "#" },
+        { label: "Add Projects", icon: UserCircle, href: "/farmer/projects/add" },
+        { label: "View Projects", icon: UserCircle, href: "/farmer/projects" },
       ],
     },
 
+    {
+      label: "Lease History",
+      icon: FileText,
+      href: "#",
+      children: [
+        { label: "Accepted Leases", icon: UserCircle, href: "/farmer/leases/accepted" },
+        { label: "Cancelled Leases", icon: UserCircle, href: "/farmer/leases/cancelled" },
+        { label: "Active Leases", icon: UserCircle, href: "/farmer/leases/active" },
+      ],
+    },
+
+    {
+  label: "Crowdfunding History",
+  icon: FileText,
+  href: "#",
+  children: [
+    { label: "Approved Projects", icon: UserCircle, href: "/approved-projects" },
+    { label: "Closed Projects", icon: UserCircle, href: "/closed-projects" },
+    { label: "Ongoing Projects", icon: UserCircle, href: "/ongoing-projects" },
+  ],
+},
     {
       label: "Lease Payments",
       icon: CreditCard,
@@ -84,16 +84,21 @@ const FarmerLayout: React.FC = () => {
       ],
     },
 
-     { label: 'Dispute Management', 
-          icon: AlertTriangle, 
-          href: '#' ,
-        children: [
-            { label: 'Ongoing disputes', icon: FileText, href: '#' },
-            { label: 'Rejected disputes', icon: FileText, href: '#' },
-    
-            
-          ],
-        },
+    {
+  label: 'Dispute Management',
+  icon: AlertTriangle,
+  href: '#',
+  children: [
+    { label: 'Raised by You', icon: FileText, href: '/disputes/my' },
+    { label: 'Raised Against You', icon: FileText, href: '/disputes/against' },
+  ],
+},
+
+    {
+      label: "Purchase seeds, fertilizers",
+      icon: ShoppingBag,
+      href: "#",
+    }
   ];
 
   // -------------------- HANDLERS --------------------
@@ -201,18 +206,22 @@ const FarmerLayout: React.FC = () => {
         </div>
 
         {/* Nav Items */}
-        <nav className="mt-4 flex flex-col space-y-1">
+        <nav className="mt-4 flex-1 flex flex-col space-y-1">
           {renderNavItems(navigationItems)}
-          {isSidebarOpen && (
+        </nav>
+
+        {/* Logout at bottom */}
+        {isSidebarOpen && (
+          <div className="p-4 border-t">
             <button
               onClick={handleLogout}
-              className="flex items-center gap-3 px-4 py-2 mt-4 text-sm font-medium text-red-600 hover:bg-red-100 rounded-md transition"
+              className="flex items-center gap-3 px-4 py-2 w-full text-sm font-medium text-red-600 hover:bg-red-100 rounded-md transition"
             >
               <LogOut className="w-5 h-5" />
               <span>Logout</span>
             </button>
-          )}
-        </nav>
+          </div>
+        )}
       </div>
 
       {/* Sidebar Mobile Overlay */}
@@ -230,16 +239,20 @@ const FarmerLayout: React.FC = () => {
           </button>
         </div>
 
-        <nav className="mt-4 flex flex-col space-y-1">
-          {renderNavItems(navigationItems, true)}
-          <button
-            onClick={handleLogout}
-            className="flex items-center gap-3 px-4 py-2 mt-4 text-sm font-medium text-red-600 hover:bg-red-100 rounded-md transition"
-          >
-            <LogOut className="w-5 h-5" />
-            <span>Logout</span>
-          </button>
-        </nav>
+        <div className="flex flex-col h-full">
+          <nav className="mt-4 flex-1 flex flex-col space-y-1 overflow-y-auto">
+            {renderNavItems(navigationItems, true)}
+          </nav>
+          <div className="p-4 border-t">
+            <button
+              onClick={handleLogout}
+              className="flex items-center gap-3 px-4 py-2 w-full text-sm font-medium text-red-600 hover:bg-red-100 rounded-md transition"
+            >
+              <LogOut className="w-5 h-5" />
+              <span>Logout</span>
+            </button>
+          </div>
+        </div>
       </div>
 
       {/* Mobile backdrop */}

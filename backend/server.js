@@ -19,8 +19,9 @@ const paymentRoutes = require('./routes/payment');
 const disputeRoutes = require('./routes/dispute');
 const adminRouter = require('./routes/admin');
 const farmerRoutes = require('./routes/farmer');
-const profileRoutes = require('./routes/profileRoutes'); // ✅ Profile routes
-const projectRoutes = require('./routes/projectRoutes'); // ✅ Projects + Investments
+const profileRoutes = require('./routes/profileRoutes');
+const projectRoutes = require('./routes/projectRoutes');
+const kycRoutes = require("./routes/kyc");
 
 // ------------------------
 // Import middleware
@@ -105,6 +106,7 @@ app.use('/api/admin', adminRouter);
 app.use('/api/farmer', farmerRoutes);
 app.use('/api/profile', profileRoutes);
 app.use('/api/projects', projectRoutes);
+app.use("/api/kyc", kycRoutes);
 
 // ------------------------
 // Test protected route

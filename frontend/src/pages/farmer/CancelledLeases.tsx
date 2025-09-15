@@ -1,6 +1,6 @@
 // src/pages/CancelledLeases.tsx
 import React, { useEffect, useState } from "react";
-import { XCircleIcon } from "@heroicons/react/24/solid";
+import { XCircleIcon, PhotoIcon } from "@heroicons/react/24/solid";
 
 interface Lease {
   _id: string;
@@ -62,80 +62,129 @@ const CancelledLeases: React.FC = () => {
   }, []);
 
   if (loading) {
-    return <p className="p-8 text-lg text-gray-600">Loading cancelled leases...</p>;
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-50">
+        <div className="flex flex-col items-center">
+          <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mb-4"></div>
+          <p className="text-gray-600 font-medium">Loading cancelled leases...</p>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div className="p-8">
-      <h1 className="text-3xl font-bold mb-6 text-gray-800">Cancelled Leases</h1>
-      {leases.length === 0 ? (
-        <p className="text-lg text-gray-500">No cancelled leases found.</p>
-      ) : (
-        <div className="space-y-6">
-          {leases.map((lease) => (
-            <div
-              key={lease._id}
-              className="bg-white rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 overflow-hidden flex flex-col md:flex-row border border-gray-100"
-            >
-              {/* Image Section */}
-              <div className="relative w-full h-56 md:w-80 md:h-auto flex-shrink-0">
-                {lease.land?.landPhotos?.length ? (
-                  <img
-                    src={lease.land.landPhotos[0]}
-                    alt={lease.land.title}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <div className="w-full h-full bg-gray-200 flex items-center justify-center text-gray-500 text-sm">
-                    No Image Available
-                  </div>
-                )}
-                {/* Status Badge */}
-                <div className="absolute top-4 right-4 bg-red-600/90 text-white text-xs font-semibold px-3 py-1 rounded-full flex items-center space-x-1">
-                  <XCircleIcon className="h-4 w-4" />
-                  <span>{lease.status}</span>
-                </div>
-              </div>
-
-              {/* Content Section */}
-              <div className="p-6 flex-1 flex flex-col justify-between">
-                <div>
-                  <h2 className="text-2xl font-bold text-gray-900 mb-1">
-                    {lease.land?.title || "Untitled Land"}
-                  </h2>
-                  <p className="text-base text-gray-600 mb-4">{lease.land?.location?.address}</p>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2 text-gray-700">
-                    <p className="font-medium">Size: <span className="font-normal">{lease.land?.sizeInAcres} acres</span></p>
-                    <p className="font-medium">Soil: <span className="font-normal">{lease.land?.soilType}</span></p>
-                    <p className="font-medium">Water: <span className="font-normal">{lease.land?.waterSource}</span></p>
-                    <p className="font-medium">Accessibility: <span className="font-normal">{lease.land?.accessibility}</span></p>
-                    <p className="font-medium">Duration: <span className="font-normal">{lease.durationMonths} months</span></p>
-                    <p className="font-medium">Price: <span className="font-normal">₹{lease.pricePerMonth} / month</span></p>
-                  </div>
-                </div>
-
-                <div className="border-t border-gray-200 mt-4 pt-4 text-sm text-gray-500 space-y-1">
-                  <p className="flex items-center space-x-2">
-                    <span className="font-medium">Owner:</span>
-                    <span>{lease.owner?.email}</span>
-                  </p>
-                  <p className="flex items-center space-x-2">
-                    <span className="font-medium">Contact:</span>
-                    <span>{lease.owner?.phone}</span>
-                  </p>
-                  {lease.updatedAt && (
-                    <p className="flex items-center space-x-2">
-                      <span className="font-medium">Cancelled On:</span>
-                      <span>{new Date(lease.updatedAt).toLocaleDateString()}</span>
-                    </p>
-                  )}
-                </div>
-              </div>
-            </div>
-          ))}
+    <div className="min-h-screen bg-gray-50 p-4">
+      <div className="max-w-6xl mx-auto">
+        {/* Header */}
+        <div className="bg-white rounded-sm shadow-sm p-5 mb-6 border border-gray-200">
+          <div className="flex items-center">
+            <div className="h-8 w-2 bg-blue-600 mr-3 rounded-sm"></div>
+            <h1 className="text-xl font-bold text-gray-800">Cancelled Leases</h1>
+          </div>
+          <p className="text-gray-600 mt-1 text-sm">
+            These are the lease agreements that have been cancelled
+          </p>
         </div>
-      )}
+
+        {leases.length === 0 ? (
+          <div className="bg-white rounded-sm shadow-sm p-8 text-center border border-gray-200">
+            <div className="text-5xl text-gray-300 mb-4">✅</div>
+            <h3 className="text-lg font-medium text-gray-700 mb-2">No cancelled leases</h3>
+            <p className="text-gray-500">
+              Great! You don't have any cancelled lease agreements.
+            </p>
+          </div>
+        ) : (
+          <div className="grid gap-5">
+            {leases.map((lease) => (
+              <div
+                key={lease._id}
+                className="bg-white rounded-sm shadow-sm hover:shadow-md transition-shadow duration-200 border border-gray-200 overflow-hidden"
+              >
+                {/* Changes made here */}
+                <div className="flex flex-col">
+                  {/* Image Section */}
+                  <div className="relative w-full h-48 sm:h-64 flex-shrink-0">
+                    {lease.land?.landPhotos?.length ? (
+                      <img
+                        src={lease.land.landPhotos[0]}
+                        alt={lease.land.title}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-gray-100 flex flex-col items-center justify-center text-gray-400">
+                        <PhotoIcon className="h-12 w-12 mb-2" />
+                        <span className="text-sm">No image available</span>
+                      </div>
+                    )}
+                    {/* Status Badge */}
+                    <div className="absolute top-3 right-3 bg-red-100 text-red-800 text-xs font-medium px-2.5 py-1 rounded-full flex items-center">
+                      <XCircleIcon className="h-3 w-3 mr-1" />
+                      Cancelled
+                    </div>
+                  </div>
+
+                  {/* Content Section */}
+                  <div className="flex-1 p-5">
+                    <div className="flex flex-col h-full">
+                      <div className="flex-1">
+                        <h2 className="text-lg font-bold text-gray-800 mb-2">
+                          {lease.land?.title || "Untitled Land"}
+                        </h2>
+                        <p className="text-sm text-gray-600 mb-4">
+                          {lease.land?.location?.address || "No address provided"}
+                        </p>
+
+                        <div className="grid grid-cols-2 gap-3 mb-4">
+                          <div className="bg-gray-50 p-3 rounded-sm">
+                            <p className="text-xs text-gray-500 mb-1">Size</p>
+                            <p className="text-sm font-medium text-gray-800">
+                              {lease.land?.sizeInAcres || "N/A"} acres
+                            </p>
+                          </div>
+                          <div className="bg-gray-50 p-3 rounded-sm">
+                            <p className="text-xs text-gray-500 mb-1">Soil Type</p>
+                            <p className="text-sm font-medium text-gray-800">
+                              {lease.land?.soilType || "N/A"}
+                            </p>
+                          </div>
+                          <div className="bg-gray-50 p-3 rounded-sm">
+                            <p className="text-xs text-gray-500 mb-1">Duration</p>
+                            <p className="text-sm font-medium text-gray-800">
+                              {lease.durationMonths} months
+                            </p>
+                          </div>
+                          <div className="bg-gray-50 p-3 rounded-sm">
+                            <p className="text-xs text-gray-500 mb-1">Price</p>
+                            <p className="text-sm font-medium text-gray-800">
+                              ₹{lease.pricePerMonth}/month
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="text-xs text-gray-500 space-y-1">
+                          <p>
+                            <span className="font-medium">Owner:</span> {lease.owner?.email}
+                          </p>
+                          <p>
+                            <span className="font-medium">Contact:</span> {lease.owner?.phone || "N/A"}
+                          </p>
+                          {lease.updatedAt && (
+                            <p>
+                              <span className="font-medium">Cancelled On:</span>{" "}
+                              {new Date(lease.updatedAt).toLocaleDateString('en-IN')}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 };

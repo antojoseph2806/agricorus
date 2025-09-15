@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
-const Otp = require('../models/Otp');  // Mongoose model
-const User = require('../models/User'); // Mongoose model
+const Otp = require('../models/Otp');
+const User = require('../models/User');
 
 // SEND OTP
 router.post('/send-otp', async (req, res) => {

@@ -27,9 +27,9 @@ const Navbar: React.FC = () => {
 
           {/* Desktop Menu */}
           <div className="hidden md:flex items-center space-x-8">
-            <a href="#" className="text-gray-700 hover:text-primary-600 transition-colors">Agricultural Projects</a>
-            <a href="#" className="text-gray-700 hover:text-primary-600 transition-colors">Available Lands</a>
-            <a href="/about" className="text-gray-700 hover:text-primary-600 transition-colors">About Us</a>
+            <Link to="#" className="text-gray-700 hover:text-primary-600 transition-colors">Agricultural Projects</Link>
+            <Link to="/public-lands" className="text-gray-700 hover:text-primary-600 transition-colors">Available Lands</Link>
+            <Link to="/about" className="text-gray-700 hover:text-primary-600 transition-colors">About Us</Link>
             <Link to="/contact" className="text-gray-700 hover:text-primary-600 transition-colors">Contact Us</Link>
             <Link to="/register" className="btn-primary">Get Started</Link>
           </div>

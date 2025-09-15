@@ -23,8 +23,6 @@ router.get("/lands/available", auth, authorizeRoles("farmer"), async (req, res) 
 /**
  * 🌍 Public: Get all approved & available lands
  */
-// Public route: Get all approved and available lands
-// Public route: Get all approved and available lands
 router.get("/lands/public/available", async (req, res) => {
   try {
     const lands = await Land.find({ isApproved: true, status: "available" })
@@ -39,7 +37,7 @@ router.get("/lands/public/available", async (req, res) => {
 
 
 /**
- * 2️⃣ GET LAND BY ID (with current user lease info)
+ * 2️⃣ GET LAND BY ID (with current user lease info) - FOR FARMER
  * Endpoint: GET /api/farmer/lands/:landId
  */
 router.get("/lands/:landId", auth, authorizeRoles("farmer"), async (req, res) => {
@@ -59,6 +57,37 @@ router.get("/lands/:landId", auth, authorizeRoles("farmer"), async (req, res) =>
     res.status(500).json({ error: err.message });
   }
 });
+
+/**
+ * GET LAND BY ID - FOR PUBLIC VIEW
+ * Endpoint: GET /api/lands/public/:landId
+ */
+router.get("/lands/public/:landId", async (req, res) => {
+  try {
+    const land = await Land.findById(req.params.landId);
+
+    if (!land) {
+      return res.status(404).json({ error: "Land not found" });
+    }
+
+    // Only return public info (exclude owner/lease info)
+    res.json({
+      _id: land._id,
+      title: land.title,
+      location: land.location,
+      soilType: land.soilType,
+      leasePricePerMonth: land.leasePricePerMonth,
+      leaseDurationMonths: land.leaseDurationMonths,
+      landPhotos: land.landPhotos,
+      landDocuments: land.landDocuments,
+      status: land.status,
+      isApproved: land.isApproved,
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 
 /**
  * 3️⃣ REQUEST A LEASE

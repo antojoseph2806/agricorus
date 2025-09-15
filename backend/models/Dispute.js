@@ -23,10 +23,37 @@ const disputeSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  details: {
+    type: String
+  },
+  attachments: [
+    {
+      url: String,
+      name: String
+    }
+  ],
+  dateOfIncident: {
+    type: Date
+  },
+  amountInvolved: {
+    type: Number
+  },
+  preferredResolution: {
+    type: String
+  },
+  category: { 
+  type: String, 
+  enum: ["Lease Issue", "Payment Issue", "Service Issue", "Other"], 
+  required: true 
+},
   status: {
     type: String,
     enum: ["open", "resolved", "rejected"],
     default: "open"
+  },
+  response: {
+    type: String,
+    default: null
   },
   resolutionNote: String
 }, { timestamps: true });

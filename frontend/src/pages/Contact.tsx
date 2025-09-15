@@ -1,30 +1,36 @@
-// Contact.tsx
-import React from 'react';
-import { motion } from 'framer-motion';
-import { Mail, Phone, MapPin } from 'lucide-react';
-import Navbar from '../components/Navbar';
+import React from "react";
+import { motion } from "framer-motion";
+import { Mail, Phone, MapPin } from "lucide-react";
+import Navbar from "../components/Navbar";
 
 const Contact: React.FC = () => {
   return (
     <>
       <Navbar /> {/* Navbar added here */}
-      <section className="min-h-screen bg-gradient-to-br from-green-50 to-green-100 px-4 py-12">
+      {/* Added pt-28 to create space below the navbar */}
+      <section className="min-h-screen bg-gradient-to-br from-green-50 to-green-100 px-4 pt-28 pb-12">
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           className="max-w-6xl mx-auto bg-white shadow-2xl rounded-2xl p-8 md:p-14"
         >
-          <h2 className="text-4xl font-bold text-green-700 text-center mb-4">Get in Touch</h2>
+          <h2 className="text-4xl font-bold text-green-700 text-center mb-4">
+            Get in Touch
+          </h2>
           <p className="text-gray-600 text-center mb-10 max-w-2xl mx-auto">
-            We’d love to hear from you! Whether you have a question about our services, pricing, or anything else, our team is ready to answer all your questions.
+            We’d love to hear from you! Whether you have a question about our
+            services, pricing, or anything else, our team is ready to answer all
+            your questions.
           </p>
 
           <div className="grid lg:grid-cols-2 gap-10">
             {/* Contact Form */}
             <form className="space-y-6">
               <div>
-                <label className="block mb-1 text-sm font-medium text-gray-700">Full Name</label>
+                <label className="block mb-1 text-sm font-medium text-gray-700">
+                  Full Name
+                </label>
                 <input
                   type="text"
                   className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500"
@@ -32,7 +38,9 @@ const Contact: React.FC = () => {
                 />
               </div>
               <div>
-                <label className="block mb-1 text-sm font-medium text-gray-700">Email</label>
+                <label className="block mb-1 text-sm font-medium text-gray-700">
+                  Email
+                </label>
                 <input
                   type="email"
                   className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500"
@@ -40,7 +48,9 @@ const Contact: React.FC = () => {
                 />
               </div>
               <div>
-                <label className="block mb-1 text-sm font-medium text-gray-700">Message</label>
+                <label className="block mb-1 text-sm font-medium text-gray-700">
+                  Message
+                </label>
                 <textarea
                   className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500"
                   rows={5}
@@ -61,22 +71,30 @@ const Contact: React.FC = () => {
                 <div className="flex items-start space-x-4">
                   <Mail className="text-green-600 mt-1" />
                   <div>
-                    <h4 className="text-lg font-semibold text-gray-800">Email</h4>
+                    <h4 className="text-lg font-semibold text-gray-800">
+                      Email
+                    </h4>
                     <p className="text-gray-600">contact@agricorus.com</p>
                   </div>
                 </div>
                 <div className="flex items-start space-x-4">
                   <Phone className="text-green-600 mt-1" />
                   <div>
-                    <h4 className="text-lg font-semibold text-gray-800">Phone</h4>
+                    <h4 className="text-lg font-semibold text-gray-800">
+                      Phone
+                    </h4>
                     <p className="text-gray-600">+91 6282289862</p>
                   </div>
                 </div>
                 <div className="flex items-start space-x-4">
                   <MapPin className="text-green-600 mt-1" />
                   <div>
-                    <h4 className="text-lg font-semibold text-gray-800">Address</h4>
-                    <p className="text-gray-600">AgriCorus, AJCE, Kanjirappally, India</p>
+                    <h4 className="text-lg font-semibold text-gray-800">
+                      Address
+                    </h4>
+                    <p className="text-gray-600">
+                      AgriCorus, AJCE, Kanjirappally, India
+                    </p>
                   </div>
                 </div>
               </div>
