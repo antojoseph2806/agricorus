@@ -42,6 +42,11 @@ import InvestorDashboard from "./pages/investor/InvestorDashboard";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminLandManagement from "./pages/admin/AdminLandManagement";
 import AdminViewSpecificLand from "./pages/admin/AdminViewSpecificLand";
+import ManageUsers from "./pages/admin/ManageUsers";
+import AdminLeasesPage from "./pages/admin/AdminLeasesPage";
+import AdminEditLeasePage from "./pages/admin/AdminEditLeasePage";
+import ManageProjects from "./pages/admin/ManageProjects";
+import EditProject from "./pages/admin/EditProject";
 
 // Profile Pages
 import ProfileView from "./pages/landowner/ProfileView";
@@ -211,6 +216,29 @@ function App() {
             path="/admin/lands/:id"
             element={<ProtectedRoute element={<AdminViewSpecificLand />} allowedRoles={["admin"]} />}
           />
+          <Route 
+            path="/admin/users/landowners"
+            element={<ManageUsers role="landowner" />} 
+          />
+          <Route
+            path="/admin/users/farmers" 
+            element={<ManageUsers role="farmer" />} 
+          />
+          <Route 
+            path="/admin/users/investors"
+            element={<ManageUsers role="investor" />} 
+          />
+          <Route 
+            path="/admin/leases"
+            element={<AdminLeasesPage />} 
+          />
+          <Route 
+            path="/admin/leases/:id/edit" 
+            element={<AdminEditLeasePage />} 
+          />
+          <Route path="/admin/manage-projects" element={<ManageProjects />} />
+          <Route path="/admin/projects/edit/:id" element={<EditProject />} />
+
 
           {/* ----------------- Profile Routes ----------------- */}
           <Route

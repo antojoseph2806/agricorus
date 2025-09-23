@@ -148,5 +148,26 @@ router.get("/:leaseId/agreement", auth, async (req, res) => {
   }
 });
 
+/**
+ * Get total number of leases (all or active only)
+ */
+router.get("/owner/total-leases", auth, authorizeRoles("landowner"), async (req, res) => {
+  try {
+    // Count ALL leases owned by this landowner
+    const totalLeases = await Lease.countDocuments({ owner: req.user.id });
+
+    // Count only ACTIVE leases for this landowner
+    const activeLeases = await Lease.countDocuments({ owner: req.user.id, status: "active" });
+
+    res.json({
+      totalLeases,
+      activeLeases
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 
 module.exports = router;

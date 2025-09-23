@@ -19,10 +19,10 @@ const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#^])[A-Za-z\d
 // REGISTER
 // =======================
 router.post("/register", async (req, res) => {
-  const { email, phone, password, confirmPassword, role } = req.body;
+  const { name, email, phone, password, confirmPassword, role } = req.body;
 
   // 1️⃣ Check empty fields
-  if (!email || !phone || !password || !confirmPassword || !role) {
+  if (!name || !email || !phone || !password || !confirmPassword || !role) {
     return res.status(400).json({ msg: "Please fill all fields" });
   }
 
@@ -71,7 +71,7 @@ router.post("/register", async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 12);
 
     // 🔟 Save new user
-    const user = new User({ email, phone, password: hashedPassword, role });
+    const user = new User({ name, email, phone, password: hashedPassword, role });
     await user.save();
 
     // 1️⃣1️⃣ Generate JWT
@@ -87,6 +87,7 @@ router.post("/register", async (req, res) => {
       role: user.role,
       user: {
         id: user._id,
+        name: user.name,
         email: user.email,
         phone: user.phone,
         role: user.role,

@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { DollarSign, TrendingUp, LandPlot, Eye, Trash2, MapPin, Edit } from 'lucide-react';
+import { DollarSign, TrendingUp, LandPlot, Eye, Trash2, MapPin, Edit, Plus } from 'lucide-react';
 import { Layout } from './LandownerDashboard';
 
-// Updated interface to match the new Land Mongoose schema
 interface Land {
   _id: string;
   title: string;
@@ -91,22 +90,25 @@ const LandownerViewLands: React.FC = () => {
   const getApprovalStatusDisplay = (land: Land) => {
     if (land.isApproved) {
       return (
-        <span className="px-3 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
+        <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800 flex items-center">
+          <div className="w-2 h-2 bg-green-500 rounded-full mr-1.5"></div>
           Approved
         </span>
       );
     } else if (land.rejectionReason) {
       return (
         <span
-          className="px-3 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800"
+          className="px-2.5 py-1 text-xs font-medium rounded-full bg-red-100 text-red-800 flex items-center"
           title={`Reason: ${land.rejectionReason}`}
         >
+          <div className="w-2 h-2 bg-red-500 rounded-full mr-1.5"></div>
           Rejected
         </span>
       );
     } else {
       return (
-        <span className="px-3 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">
+        <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-yellow-100 text-yellow-800 flex items-center">
+          <div className="w-2 h-2 bg-yellow-500 rounded-full mr-1.5"></div>
           Pending
         </span>
       );
@@ -116,7 +118,12 @@ const LandownerViewLands: React.FC = () => {
   if (loading) {
     return (
       <Layout>
-        <div className="text-center py-10">Loading your lands...</div>
+        <div className="flex items-center justify-center min-h-screen bg-gray-50">
+          <div className="flex flex-col items-center">
+            <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mb-4"></div>
+            <p className="text-gray-600 font-medium">Loading your lands...</p>
+          </div>
+        </div>
       </Layout>
     );
   }
@@ -124,123 +131,173 @@ const LandownerViewLands: React.FC = () => {
   if (error) {
     return (
       <Layout>
-        <div className="text-center py-10 text-red-600">{error}</div>
+        <div className="max-w-4xl mx-auto p-6">
+          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-sm">
+            <p className="font-medium">Error</p>
+            <p className="text-sm">{error}</p>
+          </div>
+        </div>
       </Layout>
     );
   }
 
   return (
     <Layout>
-      <div className="p-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Your Listed Lands</h1>
-        <p className="text-gray-600 mb-8">
-          Browse and manage all the agricultural lands you have listed on AgriCorus.
-        </p>
-
-        {lands.length === 0 ? (
-          <div className="text-center py-16 px-4 bg-gray-50 rounded-lg border border-dashed border-gray-300">
-            <LandPlot className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-            <h3 className="text-lg font-semibold text-gray-900">No lands listed yet.</h3>
-            <p className="mt-1 text-sm text-gray-500">
-              Get started by listing your first land to find a tenant or crowdfunding opportunity.
-            </p>
-            <button
-              onClick={() => navigate('/lands/add')}
-              className="mt-6 inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-emerald-600 hover:bg-emerald-700"
-            >
-              List a New Land
-            </button>
-          </div>
-        ) : (
-          <div className="space-y-6">
-            {lands.map((land) => (
-              <div
-                key={land._id}
-                className="bg-white rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 overflow-hidden flex flex-col md:flex-row border border-gray-100"
-              >
-                {/* Image Section */}
-                <div className="relative w-full h-56 md:w-80 md:h-auto flex-shrink-0">
-                  {land.landPhotos && land.landPhotos.length > 0 ? (
-                    <img
-                      src={land.landPhotos[0]}
-                      alt={land.title}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className="w-full h-full bg-gray-200 flex items-center justify-center text-gray-500 text-sm">
-                      No Image Available
-                    </div>
-                  )}
+      <div className="min-h-screen bg-gray-50 p-4">
+        <div className="max-w-6xl mx-auto">
+          {/* Header */}
+          <div className="bg-white rounded-sm shadow-sm p-5 mb-6 border border-gray-200">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex items-center mb-4 sm:mb-0">
+                <div className="h-8 w-2 bg-blue-600 mr-3 rounded-sm"></div>
+                <div>
+                  <h1 className="text-xl font-bold text-gray-800">Your Listed Lands</h1>
+                  <p className="text-gray-600 text-sm">Manage all your agricultural land listings</p>
                 </div>
+              </div>
+              <button
+                onClick={() => navigate('/lands/add')}
+                className="flex items-center px-4 py-2.5 bg-blue-600 text-white rounded-sm hover:bg-blue-700 transition-colors text-sm font-medium"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                List New Land
+              </button>
+            </div>
+          </div>
 
-                {/* Content Section */}
-                <div className="p-6 flex-1 flex flex-col justify-between">
-                  <div>
-                    <div className="flex justify-between items-start mb-2">
-                      <h3 className="text-2xl font-bold text-gray-900 leading-tight">
-                        {land.title}
-                      </h3>
-                      {getApprovalStatusDisplay(land)}
+          {lands.length === 0 ? (
+            <div className="bg-white rounded-sm shadow-sm p-8 text-center border border-gray-200">
+              <div className="text-5xl text-gray-300 mb-4">🏞️</div>
+              <h3 className="text-lg font-medium text-gray-700 mb-2">No lands listed yet</h3>
+              <p className="text-gray-500 mb-6">
+                Get started by listing your first land to find a tenant or crowdfunding opportunity.
+              </p>
+              <button
+                onClick={() => navigate('/lands/add')}
+                className="flex items-center px-5 py-2.5 bg-blue-600 text-white rounded-sm hover:bg-blue-700 transition-colors text-sm font-medium mx-auto"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                List Your First Land
+              </button>
+            </div>
+          ) : (
+            <div className="grid gap-5">
+              {lands.map((land) => (
+                <div key={land._id} className="bg-white rounded-sm shadow-sm hover:shadow-md transition-shadow duration-200 border border-gray-200 overflow-hidden">
+                  <div className="flex flex-col md:flex-row">
+                    {/* Image Section */}
+                    <div className="md:w-64 flex-shrink-0">
+                      {land.landPhotos && land.landPhotos.length > 0 ? (
+                        <img
+                          src={land.landPhotos[0]}
+                          alt={land.title}
+                          className="w-full h-48 md:h-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-48 md:h-full bg-gray-100 flex flex-col items-center justify-center text-gray-400">
+                          <LandPlot className="h-12 w-12 mb-2" />
+                          <span className="text-sm">No image available</span>
+                        </div>
+                      )}
                     </div>
-                    <div className="flex items-center text-sm text-gray-500 mb-4">
-                      <MapPin className="w-4 h-4 mr-1 text-gray-400" />
-                      <span>{land.location.address}</span>
-                    </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-2 gap-x-8 text-sm text-gray-700">
-                      <div className="flex items-center">
-                        <LandPlot className="w-4 h-4 mr-2 text-emerald-600 flex-shrink-0" />
-                        <span className="font-medium">
-                          Size: <span className="font-normal">{land.sizeInAcres} acres</span>
-                        </span>
-                      </div>
-                      <div className="flex items-center">
-                        <DollarSign className="w-4 h-4 mr-2 text-emerald-600 flex-shrink-0" />
-                        <span className="font-medium">
-                          Price:{" "}
-                          <span className="font-normal">₹{land.leasePricePerMonth} / month</span>
-                        </span>
-                      </div>
-                      <div className="flex items-center">
-                        <TrendingUp className="w-4 h-4 mr-2 text-emerald-600 flex-shrink-0" />
-                        <span className="font-medium">
-                          Status:{" "}
-                          <span className="font-normal">
-                            {land.status === 'available' ? 'Available' : 'Leased'}
-                          </span>
-                        </span>
+
+                    {/* Content Section */}
+                    <div className="flex-1 p-5">
+                      <div className="flex flex-col h-full">
+                        <div className="flex-1">
+                          {/* Header */}
+                          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-4">
+                            <div className="flex-1">
+                              <h3 className="text-lg font-bold text-gray-800 mb-1">
+                                {land.title}
+                              </h3>
+                              <div className="flex items-center text-sm text-gray-600 mb-2">
+                                <MapPin className="h-3 w-3 mr-1.5 text-gray-400" />
+                                <span className="line-clamp-1">{land.location.address}</span>
+                              </div>
+                            </div>
+                            {getApprovalStatusDisplay(land)}
+                          </div>
+
+                          {/* Land Details */}
+                          <div className="grid grid-cols-2 gap-3 mb-4">
+                            <div className="bg-blue-50 p-3 rounded-sm">
+                              <p className="text-xs text-gray-500 mb-1">Size</p>
+                              <div className="flex items-center">
+                                <LandPlot className="h-3 w-3 text-blue-600 mr-2" />
+                                <p className="text-sm font-medium text-gray-800">
+                                  {land.sizeInAcres} acres
+                                </p>
+                              </div>
+                            </div>
+                            
+                            <div className="bg-blue-50 p-3 rounded-sm">
+                              <p className="text-xs text-gray-500 mb-1">Monthly Price</p>
+                              <div className="flex items-center">
+                                <DollarSign className="h-3 w-3 text-blue-600 mr-2" />
+                                <p className="text-sm font-medium text-gray-800">
+                                  ₹{land.leasePricePerMonth.toLocaleString()}
+                                </p>
+                              </div>
+                            </div>
+                            
+                            <div className="bg-blue-50 p-3 rounded-sm">
+                              <p className="text-xs text-gray-500 mb-1">Duration</p>
+                              <p className="text-sm font-medium text-gray-800">
+                                {land.leaseDurationMonths} months
+                              </p>
+                            </div>
+                            
+                            <div className="bg-blue-50 p-3 rounded-sm">
+                              <p className="text-xs text-gray-500 mb-1">Status</p>
+                              <div className="flex items-center">
+                                <TrendingUp className="h-3 w-3 text-blue-600 mr-2" />
+                                <p className="text-sm font-medium text-gray-800 capitalize">
+                                  {land.status}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Soil Type */}
+                          <div className="bg-gray-50 p-3 rounded-sm mb-4">
+                            <p className="text-xs text-gray-500 mb-1">Soil Type</p>
+                            <p className="text-sm font-medium text-gray-800">{land.soilType}</p>
+                          </div>
+                        </div>
+
+                        {/* Action Buttons */}
+                        <div className="flex gap-3 pt-4 border-t border-gray-200">
+                          <button
+                            onClick={() => navigate(`/landowner/lands/edit/${land._id}`)}
+                            className="flex-1 flex items-center justify-center px-4 py-2 bg-gray-100 text-gray-700 rounded-sm hover:bg-gray-200 transition-colors text-sm font-medium"
+                          >
+                            <Edit className="h-4 w-4 mr-1.5" />
+                            Edit
+                          </button>
+                          <button
+                            onClick={() => navigate(`/landowner/lands/view/${land._id}`)}
+                            className="flex-1 flex items-center justify-center px-4 py-2 bg-blue-600 text-white rounded-sm hover:bg-blue-700 transition-colors text-sm font-medium"
+                          >
+                            <Eye className="h-4 w-4 mr-1.5" />
+                            View
+                          </button>
+                          <button
+                            onClick={() => handleDelete(land._id)}
+                            className="flex-1 flex items-center justify-center px-4 py-2 bg-red-600 text-white rounded-sm hover:bg-red-700 transition-colors text-sm font-medium"
+                          >
+                            <Trash2 className="h-4 w-4 mr-1.5" />
+                            Delete
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
-
-                {/* Actions Section */}
-                <div className="p-4 bg-gray-50 border-t border-gray-100 flex justify-end space-x-2">
-                  <button
-                    onClick={() => navigate(`/landowner/lands/edit/${land._id}`)}
-                    className="p-2 text-purple-600 hover:bg-purple-50 rounded-md transition-colors"
-                    title="Edit Land"
-                  >
-                    <Edit className="w-5 h-5" />
-                  </button>
-                  <button
-                    onClick={() => navigate(`/landowner/lands/view/${land._id}`)}
-                    className="p-2 text-blue-600 hover:bg-blue-50 rounded-md transition-colors"
-                    title="View Details"
-                  >
-                    <Eye className="w-5 h-5" />
-                  </button>
-                  <button
-                    onClick={() => handleDelete(land._id)}
-                    className="p-2 text-red-600 hover:bg-red-50 rounded-md transition-colors"
-                    title="Delete Land"
-                  >
-                    <Trash2 className="w-5 h-5" />
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </Layout>
   );

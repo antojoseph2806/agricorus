@@ -41,6 +41,7 @@ const userSchema = new mongoose.Schema(
       type: Date,
       default: Date.now, // auto-set join date
     },
+    isBlocked: { type: Boolean, default: false },
   },
   { timestamps: true } // adds createdAt & updatedAt automatically
 );

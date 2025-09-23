@@ -23,7 +23,20 @@ router.post("/projects", auth, authorizeRoles("farmer"), async (req, res) => {
     res.status(400).json({ error: err.message });
   }
 });
+/* -----------------------------
+   GET ALL PROJECTS (Admin only)
+------------------------------ */
+router.get("/admin/projects", auth, authorizeRoles("admin"), async (req, res) => {
+  try {
+    const projects = await Project.find()
+      .populate("farmerId", "_id name email")
+      .sort({ createdAt: -1 }); // latest first
 
+    res.json(projects);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 /* -----------------------------
    APPROVED PROJECT ROUTES (public)
    👉 keep these ABOVE /projects/:id
@@ -406,5 +419,29 @@ router.patch(
     }
   }
 );
+
+/**
+ * Get Total Funding across all projects
+ */
+router.get("/projects/total-funding", auth, authorizeRoles("admin"), async (req, res) => {
+  try {
+    // Aggregate sum of currentFunding from all projects
+    const result = await Project.aggregate([
+      {
+        $group: {
+          _id: null,
+          totalFunding: { $sum: "$currentFunding" }
+        }
+      }
+    ]);
+
+    const totalFunding = result.length > 0 ? result[0].totalFunding : 0;
+
+    res.json({ totalFunding });
+  } catch (err) {
+    console.error("Error fetching total funding:", err);
+    res.status(500).json({ error: err.message });
+  }
+});
 
 module.exports = router;

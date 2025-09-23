@@ -10,7 +10,11 @@ import {
   Trash2,
   LandPlot,
   Eye,
-  AlertCircle
+  AlertCircle,
+  Search,
+  Filter,
+  Download,
+  MoreVertical
 } from 'lucide-react';
 import { Layout } from './Layout';
 
@@ -30,6 +34,7 @@ interface Land {
     name: string;
     email: string;
   };
+  createdAt?: string;
 }
 
 interface AdminLandManagementProps {
@@ -40,6 +45,7 @@ const AdminLandManagement: React.FC<AdminLandManagementProps> = ({ statusFilter 
   const [lands, setLands] = useState<Land[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState('');
   const navigate = useNavigate();
 
   const getEndpoint = (filter: string) => {
@@ -62,21 +68,29 @@ const AdminLandManagement: React.FC<AdminLandManagementProps> = ({ statusFilter 
       case 'all':
         return 'All Land Listings';
       case 'pending':
-        return 'Pending Land Listings';
+        return 'Pending Approvals';
       case 'approved':
-        return 'Approved Land Listings';
+        return 'Approved Listings';
       case 'rejected':
-        return 'Rejected Land Listings';
+        return 'Rejected Listings';
       default:
-        return 'Manage All Land Listings';
+        return 'Manage Land Listings';
     }
+  };
+
+  const getStats = () => {
+    const total = lands.length;
+    const approved = lands.filter(land => land.isApproved).length;
+    const pending = lands.filter(land => !land.isApproved && !land.rejectionReason).length;
+    const rejected = lands.filter(land => land.rejectionReason).length;
+
+    return { total, approved, pending, rejected };
   };
 
   const fetchLands = async () => {
     setLoading(true);
     const token = localStorage.getItem('token');
     if (!token) {
-      // ✅ This check is crucial. If there's no token, redirect immediately.
       navigate('/login');
       return;
     }
@@ -92,7 +106,7 @@ const AdminLandManagement: React.FC<AdminLandManagementProps> = ({ statusFilter 
       if (response.ok) {
         const data = await response.json();
         setLands(data);
-        setError(null); // Clear any previous errors
+        setError(null);
       } else {
         const errorData = await response.json();
         setError(errorData.error || 'Failed to fetch lands.');
@@ -107,6 +121,12 @@ const AdminLandManagement: React.FC<AdminLandManagementProps> = ({ statusFilter 
   useEffect(() => {
     fetchLands();
   }, [navigate, statusFilter]);
+
+  const filteredLands = lands.filter(land =>
+    land.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    land.owner?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    land.location?.address?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   const handleApprove = async (landId: string) => {
     const token = localStorage.getItem('token');
@@ -125,7 +145,7 @@ const AdminLandManagement: React.FC<AdminLandManagementProps> = ({ statusFilter 
 
       if (response.ok) {
         alert('Land approved successfully!');
-        fetchLands(); // Re-fetch lands to update the list
+        fetchLands();
       } else {
         const errorData = await response.json();
         alert(errorData.error || 'Failed to approve land.');
@@ -160,7 +180,7 @@ const AdminLandManagement: React.FC<AdminLandManagementProps> = ({ statusFilter 
 
       if (response.ok) {
         alert('Land rejected successfully!');
-        fetchLands(); // Re-fetch lands to update the list
+        fetchLands();
       } else {
         const errorData = await response.json();
         alert(errorData.error || 'Failed to reject land.');
@@ -190,7 +210,7 @@ const AdminLandManagement: React.FC<AdminLandManagementProps> = ({ statusFilter 
 
       if (response.ok) {
         alert('Land status set to pending!');
-        fetchLands(); // Re-fetch lands to update the list
+        fetchLands();
       } else {
         const errorData = await response.json();
         alert(errorData.error || 'Failed to set land status to pending.');
@@ -230,22 +250,25 @@ const AdminLandManagement: React.FC<AdminLandManagementProps> = ({ statusFilter 
     }
   };
 
-  const getStatusDisplay = (land: Land) => {
+  const getStatusBadge = (land: Land) => {
     if (land.isApproved) {
       return (
-        <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+        <span className="px-3 py-1 inline-flex text-sm font-medium rounded-full bg-green-100 text-green-800 border border-green-200">
+          <CheckCircle className="w-4 h-4 mr-1" />
           Approved
         </span>
       );
     } else if (land.rejectionReason) {
       return (
-        <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800" title={land.rejectionReason}>
+        <span className="px-3 py-1 inline-flex text-sm font-medium rounded-full bg-red-100 text-red-800 border border-red-200" title={land.rejectionReason}>
+          <XCircle className="w-4 h-4 mr-1" />
           Rejected
         </span>
       );
     } else {
       return (
-        <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+        <span className="px-3 py-1 inline-flex text-sm font-medium rounded-full bg-yellow-100 text-yellow-800 border border-yellow-200">
+          <AlertCircle className="w-4 h-4 mr-1" />
           Pending
         </span>
       );
@@ -255,109 +278,246 @@ const AdminLandManagement: React.FC<AdminLandManagementProps> = ({ statusFilter 
   if (loading) {
     return (
       <Layout>
-        <div className="text-center py-10 flex items-center justify-center">
-          <Loader2 className="w-6 h-6 animate-spin mr-2" /> Loading lands...
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+          <div className="bg-white rounded-xl shadow-lg p-8 max-w-md w-full mx-4">
+            <div className="flex justify-center mb-4">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+            </div>
+            <p className="text-center text-gray-600 font-medium">Loading land listings...</p>
+          </div>
         </div>
       </Layout>
     );
   }
 
   if (error) {
-    return <Layout><div className="text-center py-10 text-red-600">{error}</div></Layout>;
+    return (
+      <Layout>
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+          <div className="bg-white rounded-xl shadow-lg p-6 max-w-md w-full mx-4">
+            <div className="text-red-500 text-center">
+              <XCircle className="w-16 h-16 mx-auto mb-4" />
+              <p className="text-lg font-semibold">{error}</p>
+              <button 
+                onClick={fetchLands}
+                className="mt-4 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                Try Again
+              </button>
+            </div>
+          </div>
+        </div>
+      </Layout>
+    );
   }
+
+  const stats = getStats();
 
   return (
     <Layout>
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8">
-        <h1 className="text-2xl font-bold text-gray-900 mb-6">{getTitle(statusFilter)}</h1>
-        <p className="text-gray-600 mb-8">Review and manage all lands uploaded by landowners. Use the actions below to approve or delete listings.</p>
-        
-        {lands.length === 0 ? (
-          <div className="text-center py-10 text-gray-500">
-            <MapPin className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-            <h3 className="text-lg font-semibold">No land listings found.</h3>
-            <p className="mt-1 text-sm">There are no lands to review at the moment.</p>
+      <div className="min-h-screen bg-gray-50 p-6">
+        {/* Header Card */}
+        <div className="bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl shadow-lg mb-6 p-6 text-white">
+          <div className="flex justify-between items-center mb-4">
+            <h1 className="text-2xl font-bold">{getTitle(statusFilter)}</h1>
+            <div className="flex space-x-3">
+            </div>
+          </div>
+          
+          {/* Stats Bar */}
+          <div className="grid grid-cols-4 gap-4">
+            <div className="bg-white/10 rounded-lg p-4 text-center backdrop-blur-sm">
+              <div className="text-2xl font-bold">{stats.total}</div>
+              <div className="text-sm opacity-90">Total Listings</div>
+            </div>
+            <div className="bg-white/10 rounded-lg p-4 text-center backdrop-blur-sm">
+              <div className="text-2xl font-bold">{stats.pending}</div>
+              <div className="text-sm opacity-90">Pending</div>
+            </div>
+            <div className="bg-white/10 rounded-lg p-4 text-center backdrop-blur-sm">
+              <div className="text-2xl font-bold">{stats.approved}</div>
+              <div className="text-sm opacity-90">Approved</div>
+            </div>
+            <div className="bg-white/10 rounded-lg p-4 text-center backdrop-blur-sm">
+              <div className="text-2xl font-bold">{stats.rejected}</div>
+              <div className="text-sm opacity-90">Rejected</div>
+            </div>
+          </div>
+        </div>
+
+        {/* Search Bar */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 mb-6">
+          <div className="flex items-center space-x-4">
+            <div className="flex-1 relative">
+              <Search className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search by title, owner, or location..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+            <span className="text-gray-600 bg-gray-100 px-3 py-2 rounded-lg">
+              {filteredLands.length} results
+            </span>
+          </div>
+        </div>
+
+        {/* Lands Grid */}
+        {filteredLands.length === 0 ? (
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center">
+            <LandPlot className="mx-auto h-16 w-16 text-gray-400 mb-4" />
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">No land listings found</h3>
+            <p className="text-gray-600 mb-4">Try adjusting your search criteria or check back later.</p>
+            <button 
+              onClick={() => setSearchTerm('')}
+              className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              Clear Search
+            </button>
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Owner</th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Location</th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Size/Price</th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                  <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {lands.map((land) => (
-                  <tr key={land._id}>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{land.title}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      <div className="flex items-center">
-                        <User className="w-4 h-4 mr-2" />
-                        <span>{land.owner?.name || 'N/A'}</span>
+          <div className="grid gap-6">
+            {filteredLands.map((land) => (
+              <div key={land._id} className="bg-white rounded-xl shadow-sm hover:shadow-lg transition-shadow duration-300 border border-gray-200">
+                {/* Land Header */}
+                <div className="border-b border-gray-200 p-6">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <h3 className="text-lg font-bold text-gray-900 mb-2">{land.title}</h3>
+                      <div className="flex items-center space-x-4">
+                        {getStatusBadge(land)}
+                        <span className="text-sm text-gray-500">
+                          Listed {land.createdAt ? new Date(land.createdAt).toLocaleDateString() : 'N/A'}
+                        </span>
                       </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      <div className="flex items-center">
-                        <MapPin className="w-4 h-4 mr-2" />
-                        <span>{land.location?.address || 'N/A'}</span>
+                    </div>
+                    <button className="text-gray-400 hover:text-gray-600 p-2">
+                      <MoreVertical className="w-5 h-5" />
+                    </button>
+                  </div>
+                </div>
+
+                {/* Land Details */}
+                <div className="p-6">
+                  <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    {/* Owner Info */}
+                    <div className="flex items-center space-x-3">
+                      <div className="bg-blue-100 p-2 rounded-lg">
+                        <User className="w-5 h-5 text-blue-600" />
                       </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {land.sizeInAcres} acres<br/>
-                      ₹{land.leasePricePerMonth} / mo
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      {getStatusDisplay(land)}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
+                      <div>
+                        <p className="text-sm text-gray-600">Owner</p>
+                        <p className="font-medium text-gray-900">{land.owner?.name || 'N/A'}</p>
+                        <p className="text-xs text-gray-500">{land.owner?.email}</p>
+                      </div>
+                    </div>
+
+                    {/* Location */}
+                    <div className="flex items-center space-x-3">
+                      <div className="bg-green-100 p-2 rounded-lg">
+                        <MapPin className="w-5 h-5 text-green-600" />
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-600">Location</p>
+                        <p className="font-medium text-gray-900">{land.location?.address || 'N/A'}</p>
+                      </div>
+                    </div>
+
+                    {/* Size */}
+                    <div className="flex items-center space-x-3">
+                      <div className="bg-purple-100 p-2 rounded-lg">
+                        <LandPlot className="w-5 h-5 text-purple-600" />
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-600">Size</p>
+                        <p className="font-medium text-gray-900">{land.sizeInAcres} acres</p>
+                      </div>
+                    </div>
+
+                    {/* Price */}
+                    <div className="flex items-center space-x-3">
+                      <div className="bg-orange-100 p-2 rounded-lg">
+                        <DollarSign className="w-5 h-5 text-orange-600" />
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-600">Monthly Lease</p>
+                        <p className="font-medium text-gray-900">₹{land.leasePricePerMonth.toLocaleString()}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="flex justify-end space-x-3 mt-6 pt-6 border-t border-gray-200">
+                    <button
+                      onClick={() => navigate(`/admin/lands/${land._id}`)}
+                      className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg font-medium transition-colors duration-200 flex items-center"
+                    >
+                      <Eye className="w-4 h-4 mr-2" />
+                      View Details
+                    </button>
+                    
+                    {land.isApproved ? (
                       <button
-                        onClick={() => navigate(`/admin/lands/${land._id}`)}
-                        className="text-blue-600 hover:text-blue-900 p-1"
-                        title="View Details"
+                        onClick={() => handleUnapprove(land._id)}
+                        className="bg-yellow-100 hover:bg-yellow-200 text-yellow-700 px-4 py-2 rounded-lg font-medium transition-colors duration-200 flex items-center"
                       >
-                        <Eye className="w-5 h-5" />
+                        <AlertCircle className="w-4 h-4 mr-2" />
+                        Set to Pending
                       </button>
-                      {land.isApproved ? (
-                          <button
-                            onClick={() => handleUnapprove(land._id)}
-                            className="text-yellow-600 hover:text-yellow-900 p-1"
-                            title="Set to Pending"
-                          >
-                            <AlertCircle className="w-5 h-5" />
-                          </button>
-                      ) : (
-                          <button
-                            onClick={() => handleApprove(land._id)}
-                            className="text-green-600 hover:text-green-900 p-1"
-                            title="Approve Land"
-                          >
-                            <CheckCircle className="w-5 h-5" />
-                          </button>
-                      )}
+                    ) : (
                       <button
-                          onClick={() => handleReject(land._id)}
-                          className="text-red-600 hover:text-red-900 p-1"
-                          title="Reject Land"
+                        onClick={() => handleApprove(land._id)}
+                        className="bg-green-100 hover:bg-green-200 text-green-700 px-4 py-2 rounded-lg font-medium transition-colors duration-200 flex items-center"
                       >
-                          <XCircle className="w-5 h-5" />
+                        <CheckCircle className="w-4 h-4 mr-2" />
+                        Approve
                       </button>
-                      <button
-                        onClick={() => handleDelete(land._id)}
-                        className="text-red-600 hover:text-red-900 p-1"
-                        title="Delete Land"
-                      >
-                        <Trash2 className="w-5 h-5" />
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                    )}
+                    
+                    <button
+                      onClick={() => handleReject(land._id)}
+                      className="bg-red-100 hover:bg-red-200 text-red-700 px-4 py-2 rounded-lg font-medium transition-colors duration-200 flex items-center"
+                    >
+                      <XCircle className="w-4 h-4 mr-2" />
+                      Reject
+                    </button>
+                    
+                    <button
+                      onClick={() => handleDelete(land._id)}
+                      className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200 flex items-center"
+                    >
+                      <Trash2 className="w-4 h-4 mr-2" />
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Footer */}
+        {filteredLands.length > 0 && (
+          <div className="mt-6 bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+            <div className="flex justify-between items-center text-sm text-gray-600">
+              <span>Showing {filteredLands.length} of {lands.length} listings</span>
+              <div className="flex space-x-6">
+                <span className="flex items-center">
+                  <span className="w-3 h-3 bg-green-500 rounded-full mr-2"></span>
+                  Approved: {stats.approved}
+                </span>
+                <span className="flex items-center">
+                  <span className="w-3 h-3 bg-yellow-500 rounded-full mr-2"></span>
+                  Pending: {stats.pending}
+                </span>
+                <span className="flex items-center">
+                  <span className="w-3 h-3 bg-red-500 rounded-full mr-2"></span>
+                  Rejected: {stats.rejected}
+                </span>
+              </div>
+            </div>
           </div>
         )}
       </div>

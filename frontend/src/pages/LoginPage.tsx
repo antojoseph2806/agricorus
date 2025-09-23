@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
-import { Sprout, Mail, Lock, Eye, EyeOff } from "lucide-react";
+import { Sprout, Mail, Lock } from "lucide-react"; // 👈 removed Eye & EyeOff
 import GoogleButton from "../components/GoogleButton";
 import ForgotPasswordModal from "../components/ForgotPasswordModal";
 import AlertMessage from "../components/AlertMessage";
@@ -11,7 +11,6 @@ const LoginPage: React.FC = () => {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({ email: "", password: "" });
-  const [showPassword, setShowPassword] = useState(false);
   const [showForgotModal, setShowForgotModal] = useState(false);
 
   const [alert, setAlert] = useState<
@@ -64,7 +63,10 @@ const LoginPage: React.FC = () => {
       }
     } catch (error) {
       console.error("Login error:", error);
-      setAlert({ type: "error", message: "Something went wrong. Please try again later." });
+      setAlert({
+        type: "error",
+        message: "Something went wrong. Please try again later.",
+      });
     }
   };
 
@@ -115,6 +117,7 @@ const LoginPage: React.FC = () => {
 
             <form className="mt-6 space-y-6" onSubmit={handleSubmit}>
               <div className="space-y-4">
+                {/* Email Field */}
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
                   <input
@@ -129,32 +132,24 @@ const LoginPage: React.FC = () => {
                   />
                 </div>
 
+                {/* Password Field (no custom toggle) */}
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
                   <input
                     id="password"
                     name="password"
-                    type={showPassword ? "text" : "password"}
+                    type="password"
                     required
-                    className="input-field pl-10 pr-10 w-full"
+                    autoComplete="new-password"
+                    className="input-field pl-10 w-full"
                     placeholder="Password"
                     value={formData.password}
                     onChange={handleInputChange}
                   />
-                  <button
-                    type="button"
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2"
-                    onClick={() => setShowPassword(!showPassword)}
-                  >
-                    {showPassword ? (
-                      <EyeOff className="h-5 w-5 text-gray-400" />
-                    ) : (
-                      <Eye className="h-5 w-5 text-gray-400" />
-                    )}
-                  </button>
                 </div>
               </div>
 
+              {/* Remember me + Forgot password */}
               <div className="flex items-center justify-between">
                 <div className="flex items-center">
                   <input
@@ -163,7 +158,10 @@ const LoginPage: React.FC = () => {
                     type="checkbox"
                     className="h-4 w-4 text-green-600 border-gray-300 rounded"
                   />
-                  <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900">
+                  <label
+                    htmlFor="remember-me"
+                    className="ml-2 block text-sm text-gray-900"
+                  >
                     Remember me
                   </label>
                 </div>
@@ -183,12 +181,15 @@ const LoginPage: React.FC = () => {
                 Sign In
               </button>
 
+              {/* Divider */}
               <div className="relative mt-6">
                 <div className="absolute inset-0 flex items-center">
                   <div className="w-full border-t border-gray-300" />
                 </div>
                 <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-white text-gray-500">Or continue with</span>
+                  <span className="px-2 bg-white text-gray-500">
+                    Or continue with
+                  </span>
                 </div>
               </div>
 
@@ -196,7 +197,10 @@ const LoginPage: React.FC = () => {
 
               <p className="text-sm text-center text-gray-600 mt-4">
                 Don't have an account?{" "}
-                <Link to="/register" className="font-medium text-green-600 hover:text-green-500">
+                <Link
+                  to="/register"
+                  className="font-medium text-green-600 hover:text-green-500"
+                >
                   Sign up
                 </Link>
               </p>
@@ -204,7 +208,9 @@ const LoginPage: React.FC = () => {
           </div>
         </motion.div>
 
-        {showForgotModal && <ForgotPasswordModal onClose={() => setShowForgotModal(false)} />}
+        {showForgotModal && (
+          <ForgotPasswordModal onClose={() => setShowForgotModal(false)} />
+        )}
       </div>
     </>
   );

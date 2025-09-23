@@ -42,16 +42,16 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, onToggleSidebar, isMob
     { label: 'Home', 
           icon: Home, 
           href: '/admindashboard' },
-    {
-      label: 'Manage Users',
-      icon: Users,
-      href: '/admin/users',
-      children: [
-        { label: 'Landowners', icon: FileText, href: '#' },
-        { label: 'Farmers', icon: AlertCircle, href: '#' },
-        { label: 'Investors', icon: CheckCircle, href: '#' },
-      ],
-    },
+ {
+  label: "Manage Users",
+  icon: Users,
+  href: "/admin/users",
+  children: [
+    { label: "Landowners", icon: FileText, href: "/admin/users/landowners" },
+    { label: "Farmers", icon: AlertCircle, href: "/admin/users/farmers" },
+    { label: "Investors", icon: CheckCircle, href: "/admin/users/investors" },
+  ],
+},
     {
       label: 'Manage Lands',
       icon: MapPin,
@@ -64,16 +64,18 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, onToggleSidebar, isMob
       ],
     },
     {
-      label: 'Manage Projects',
-      icon: TrendingUp,
-      href: '/admin/projects',
-      children: [
-        { label: 'All projects', icon: FileText, href: '#' },
-        { label: 'Approved Projects', icon: AlertCircle, href: '#' },
-        { label: 'Cancelled Projects', icon: CheckCircle, href: '#' },
-        { label: 'Pending Projects', icon: XCircle, href: '#' },
-      ],
-    },
+  label: "Manage Leases",
+  icon: AlertTriangle,
+  href: "/admin/leases", // default: view all leases
+  children: [
+    { label: "View All Leases", icon: FileText, href: "/admin/leases" },
+  ],
+},
+ { label: 'Manage Projects', icon: Home, href: '/admin/manage-projects' },
+
+    { label: 'Manage Investments', 
+      icon: Home, 
+      href: '#' },
     {
       label: 'Handle Disputes',
       icon: AlertTriangle,

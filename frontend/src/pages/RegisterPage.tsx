@@ -36,6 +36,16 @@ const isStrongPassword = (password: string): boolean => {
 
 const RegisterPage: React.FC = () => {
   const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    password: '',
+    confirmPassword: '',
+    role: '',
+  });
+
+  const [formErrors, setFormErrors] = useState({
+    name: '',
     email: '',
     phone: '',
     password: '',
@@ -46,64 +56,78 @@ const RegisterPage: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const [alert, setAlert] = useState<
-    { type: 'success' | 'error' | 'warning'; message: string } | null
-  >(null);
+  const [alert, setAlert] = useState<{
+    type: 'success' | 'error' | 'warning';
+    message: string;
+  } | null>(null);
 
   const navigate = useNavigate();
 
+  const validateField = (name: string, value: string): string => {
+    switch (name) {
+      case 'name':
+        if (value.trim().length < 3) return 'Name must be at least 3 characters.';
+        if (/\d/.test(value)) return 'Name cannot contain numbers.';
+        return '';
+      case 'email':
+        if (value && !isValidEmail(value)) return 'Enter a valid email with max 2 subdomains.';
+        return '';
+      case 'phone':
+        if (value && !isValidPhone(value)) return 'Enter a valid 10-digit Indian phone number.';
+        return '';
+      case 'password':
+        if (value && !isStrongPassword(value)) return 'Password must be 8+ characters, with uppercase, lowercase, number & special character.';
+        return '';
+      case 'confirmPassword':
+        if (value && value !== formData.password) return 'Passwords do not match.';
+        return '';
+      case 'role':
+        if (value === '') return 'Please select a role.';
+        return '';
+      default:
+        return '';
+    }
+  };
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+    setFormErrors(prevErrors => ({ ...prevErrors, [name]: '' })); // Clear error on change
+  };
+
+  const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    const error = validateField(name, value);
+    setFormErrors(prevErrors => ({ ...prevErrors, [name]: error }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setAlert(null);
 
-    const { email, phone, password, confirmPassword, role } = formData;
-    const sanitizedPhone = phone.replace(/^(\+91)?/, '');
+    const { name, email, phone, password, confirmPassword, role } = formData;
+    let newErrors: Record<string, string> = {};
 
-    if (!role) {
-      setAlert({ type: 'warning', message: 'Please select a role' });
+    // Final validation before submission
+    const fieldsToValidate = ['name', 'email', 'phone', 'password', 'confirmPassword', 'role'];
+    let hasError = false;
+    fieldsToValidate.forEach(field => {
+      const error = validateField(field, formData[field as keyof typeof formData]);
+      if (error) {
+        newErrors[field] = error;
+        hasError = true;
+      }
+    });
+
+    setFormErrors(newErrors);
+
+    if (hasError) {
+      setAlert({ type: 'error', message: 'Please correct the highlighted errors before submitting.' });
       return;
     }
-
-    if (!isValidEmail(email)) {
-      setAlert({
-        type: 'error',
-        message:
-          'Enter a valid email with max 2 subdomains (e.g., name@sub.domain.com)',
-      });
-      return;
-    }
-
-    if (!isValidPhone(sanitizedPhone)) {
-      setAlert({
-        type: 'error',
-        message:
-          'Enter a valid 10-digit Indian phone number (not fake or repeated)',
-      });
-      return;
-    }
-
-    if (!isStrongPassword(password)) {
-      setAlert({
-        type: 'error',
-        message:
-          'Password must be 8+ characters, with uppercase, lowercase, number & special character',
-      });
-      return;
-    }
-
-    if (password !== confirmPassword) {
-      setAlert({ type: 'error', message: 'Passwords do not match' });
-      return;
-    }
-
+    
     try {
+      const sanitizedPhone = phone.replace(/^(\+91)?/, '');
       const res = await fetch('http://localhost:5000/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -134,7 +158,6 @@ const RegisterPage: React.FC = () => {
 
   return (
     <>
-      {/* ✅ Navbar now used */}
       <Navbar />
 
       <div className="min-h-screen flex items-start justify-center pt-32 pb-12 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-green-50 to-green-100">
@@ -185,6 +208,29 @@ const RegisterPage: React.FC = () => {
 
             <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
               <div className="space-y-4">
+                {/* Name Input */}
+                <motion.div
+                  initial={{ x: -20, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  transition={{ delay: 0.2 }}
+                  className="relative"
+                >
+                  <Sprout className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                  <input
+                    id="name"
+                    name="name"
+                    type="text"
+                    required
+                    className={`input-field pl-10 ${formErrors.name ? 'border-red-500' : ''}`}
+                    placeholder="Full Name"
+                    value={formData.name}
+                    onChange={handleInputChange}
+                    onBlur={handleBlur}
+                  />
+                </motion.div>
+                {formErrors.name && <p className="text-red-500 text-sm mt-1">{formErrors.name}</p>}
+
+                {/* Email Input */}
                 <motion.div
                   initial={{ x: -20, opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}
@@ -197,13 +243,16 @@ const RegisterPage: React.FC = () => {
                     name="email"
                     type="email"
                     required
-                    className="input-field pl-10"
+                    className={`input-field pl-10 ${formErrors.email ? 'border-red-500' : ''}`}
                     placeholder="Email address"
                     value={formData.email}
                     onChange={handleInputChange}
+                    onBlur={handleBlur}
                   />
                 </motion.div>
+                {formErrors.email && <p className="text-red-500 text-sm mt-1">{formErrors.email}</p>}
 
+                {/* Phone Input */}
                 <motion.div
                   initial={{ x: -20, opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}
@@ -216,13 +265,16 @@ const RegisterPage: React.FC = () => {
                     name="phone"
                     type="tel"
                     required
-                    className="input-field pl-10"
+                    className={`input-field pl-10 ${formErrors.phone ? 'border-red-500' : ''}`}
                     placeholder="Phone number"
                     value={formData.phone}
                     onChange={handleInputChange}
+                    onBlur={handleBlur}
                   />
                 </motion.div>
+                {formErrors.phone && <p className="text-red-500 text-sm mt-1">{formErrors.phone}</p>}
 
+                {/* Password Input */}
                 <motion.div
                   initial={{ x: -20, opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}
@@ -235,10 +287,11 @@ const RegisterPage: React.FC = () => {
                     name="password"
                     type={showPassword ? 'text' : 'password'}
                     required
-                    className="input-field pl-10 pr-10"
+                    className={`input-field pl-10 pr-10 ${formErrors.password ? 'border-red-500' : ''}`}
                     placeholder="Password"
                     value={formData.password}
                     onChange={handleInputChange}
+                    onBlur={handleBlur}
                   />
                   <button
                     type="button"
@@ -252,7 +305,9 @@ const RegisterPage: React.FC = () => {
                     )}
                   </button>
                 </motion.div>
+                {formErrors.password && <p className="text-red-500 text-sm mt-1">{formErrors.password}</p>}
 
+                {/* Confirm Password Input */}
                 <motion.div
                   initial={{ x: -20, opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}
@@ -265,10 +320,11 @@ const RegisterPage: React.FC = () => {
                     name="confirmPassword"
                     type={showConfirmPassword ? 'text' : 'password'}
                     required
-                    className="input-field pl-10 pr-10"
+                    className={`input-field pl-10 pr-10 ${formErrors.confirmPassword ? 'border-red-500' : ''}`}
                     placeholder="Confirm password"
                     value={formData.confirmPassword}
                     onChange={handleInputChange}
+                    onBlur={handleBlur}
                   />
                   <button
                     type="button"
@@ -284,14 +340,16 @@ const RegisterPage: React.FC = () => {
                     )}
                   </button>
                 </motion.div>
+                {formErrors.confirmPassword && <p className="text-red-500 text-sm mt-1">{formErrors.confirmPassword}</p>}
 
+                {/* Role Selection */}
                 <motion.div
                   initial={{ x: -20, opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}
                   transition={{ delay: 0.65 }}
                   className="space-y-2"
                 >
-                  <label className="block text-sm font-medium text-gray-700">
+                  <label className={`block text-sm font-medium ${formErrors.role ? 'text-red-500' : 'text-gray-700'}`}>
                     Select your role
                   </label>
                   <div className="flex space-x-4">
@@ -302,9 +360,10 @@ const RegisterPage: React.FC = () => {
                           name="role"
                           value={role}
                           checked={formData.role === role}
-                          onChange={(e) =>
-                            setFormData({ ...formData, role: e.target.value })
-                          }
+                          onChange={(e) => {
+                            setFormData({ ...formData, role: e.target.value });
+                            setFormErrors({ ...formErrors, role: '' });
+                          }}
                           className="form-radio text-primary-600"
                         />
                         <span className="text-gray-700 capitalize">{role}</span>
@@ -312,6 +371,7 @@ const RegisterPage: React.FC = () => {
                     ))}
                   </div>
                 </motion.div>
+                {formErrors.role && <p className="text-red-500 text-sm mt-1">{formErrors.role}</p>}
               </div>
 
               <motion.div

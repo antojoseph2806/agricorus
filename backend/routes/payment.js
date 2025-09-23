@@ -147,4 +147,47 @@ router.post("/verify", auth, authorizeRoles("farmer"), async (req, res) => {
   }
 });
 
+/**
+ * 3️⃣ View Lease Payment History
+ * - Farmers can view their own payments for a lease.
+ * - Landowners can view payments made to them for their lands.
+ */
+router.get("/history/:leaseId", auth, async (req, res) => {
+  try {
+    const { leaseId } = req.params;
+
+    // Check if lease exists
+    const lease = await Lease.findById(leaseId).populate("farmer owner land");
+    if (!lease) return res.status(404).json({ error: "Lease not found." });
+
+    // Role-based access:
+    if (req.user.role === "farmer" && lease.farmer._id.toString() !== req.user.id) {
+      return res.status(403).json({ error: "You are not authorized to view this lease's payments." });
+    }
+
+    if (req.user.role === "landowner" && lease.owner._id.toString() !== req.user.id) {
+      return res.status(403).json({ error: "You are not authorized to view this lease's payments." });
+    }
+
+    // Fetch payments sorted by newest first
+    const payments = await Payment.find({ lease: leaseId })
+      .populate("farmer", "name email")
+      .populate("owner", "name email")
+      .populate("land", "title location")
+      .sort({ paidAt: -1 });
+
+    res.json({
+      leaseId: lease._id,
+      leaseStatus: lease.status,
+      paymentsMade: lease.paymentsMade,
+      totalPayments: lease.totalPayments,
+      history: payments,
+    });
+  } catch (err) {
+    console.error("❌ Error fetching payment history:", err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+
 module.exports = router;

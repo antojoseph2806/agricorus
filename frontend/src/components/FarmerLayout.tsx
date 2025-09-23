@@ -73,14 +73,13 @@ const FarmerLayout: React.FC = () => {
   ],
 },
     {
-      label: "Lease Payments",
+      label: "Platform Payments",
       icon: CreditCard,
       href: "#",
       children: [
-        { label: "Apply For Lease Payment", icon: UserCircle, href: "#" },
         { label: "Apply For Project Payment", icon: UserCircle, href: "#" },
-        { label: "Lease Payment History", icon: UserCircle, href: "#" },
         { label: "Project Payment History", icon: UserCircle, href: "#" },
+        { label: "Lease Payment History", icon: UserCircle, href: "#" },
       ],
     },
 
