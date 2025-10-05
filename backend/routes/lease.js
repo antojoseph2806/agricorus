@@ -169,5 +169,28 @@ router.get("/owner/total-leases", auth, authorizeRoles("landowner"), async (req,
   }
 });
 
+/**
+ * Landowner views leases eligible for requesting payment from admin.
+ * Eligible leases: status "active" and no pending payment request
+ */
+router.get("/owner/eligible-payments", auth, authorizeRoles("landowner"), async (req, res) => {
+  try {
+    const leases = await Lease.find({
+      owner: req.user.id,
+      status: "active",
+      $or: [
+        { paymentRequest: { $exists: false } },       // No request yet
+        { "paymentRequest.status": "paid" },          // Last request completed
+      ],
+    })
+      .populate("land", "title location")
+      .populate("farmer", "name email phone");
+
+    res.json(leases);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
+  }
+});
 
 module.exports = router;

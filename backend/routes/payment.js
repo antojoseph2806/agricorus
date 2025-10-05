@@ -6,6 +6,7 @@ const cloudinary = require("cloudinary").v2;
 
 const Lease = require("../models/Lease");
 const Payment = require("../models/Payment");
+const PayoutMethod = require("../models/PayoutMethod");
 const auth = require("../middleware/auth");
 const authorizeRoles = require("../middleware/authorizeRoles");
 const generateLeasePDF = require("../utils/generateLeasePDF");
@@ -153,41 +154,42 @@ router.post("/verify", auth, authorizeRoles("farmer"), async (req, res) => {
  * - Landowners can view payments made to them for their lands.
  */
 router.get("/history/:leaseId", auth, async (req, res) => {
-  try {
-    const { leaseId } = req.params;
+  try {
+    const { leaseId } = req.params;
 
-    // Check if lease exists
-    const lease = await Lease.findById(leaseId).populate("farmer owner land");
-    if (!lease) return res.status(404).json({ error: "Lease not found." });
+    // Fetch the lease (populated land here is primarily for access check and response data)
+    const lease = await Lease.findById(leaseId).populate("farmer owner land");
+    if (!lease) return res.status(404).json({ error: "Lease not found." });
 
-    // Role-based access:
-    if (req.user.role === "farmer" && lease.farmer._id.toString() !== req.user.id) {
-      return res.status(403).json({ error: "You are not authorized to view this lease's payments." });
-    }
+    // Role-based access:
+    if (req.user.role === "farmer" && lease.farmer._id.toString() !== req.user.id) {
+      return res.status(403).json({ error: "You are not authorized to view this lease's payments." });
+    }
 
-    if (req.user.role === "landowner" && lease.owner._id.toString() !== req.user.id) {
-      return res.status(403).json({ error: "You are not authorized to view this lease's payments." });
-    }
+    if (req.user.role === "landowner" && lease.owner._id.toString() !== req.user.id) {
+      return res.status(403).json({ error: "You are not authorized to view this lease's payments." });
+    }
 
-    // Fetch payments sorted by newest first
-    const payments = await Payment.find({ lease: leaseId })
-      .populate("farmer", "name email")
-      .populate("owner", "name email")
-      .populate("land", "title location")
-      .sort({ paidAt: -1 });
+    // Fetch payments sorted by newest first
+    // ✅ FIX: Populate 'land' is now valid on the Payment model
+    const payments = await Payment.find({ lease: leaseId })
+      .populate("farmer", "name email")
+      .populate("owner", "name email")
+      .populate("land", "title location")
+      .sort({ paidAt: -1 });
 
-    res.json({
-      leaseId: lease._id,
-      leaseStatus: lease.status,
-      paymentsMade: lease.paymentsMade,
-      totalPayments: lease.totalPayments,
-      history: payments,
-    });
-  } catch (err) {
-    console.error("❌ Error fetching payment history:", err);
-    res.status(500).json({ error: err.message });
-  }
+    res.json({
+      leaseId: lease._id,
+      leaseStatus: lease.status,
+      paymentsMade: lease.paymentsMade,
+      totalPayments: lease.totalPayments,
+      // You can still include the land details from the lease if needed outside of the history array
+      landDetails: lease.land,
+      history: payments, // Each item in 'payments' now has populated 'land'
+    });
+  } catch (err) {
+    console.error("❌ Error fetching payment history:", err);
+    res.status(500).json({ error: "An internal server error occurred while fetching payment history." });
+  }
 });
-
-
 module.exports = router;

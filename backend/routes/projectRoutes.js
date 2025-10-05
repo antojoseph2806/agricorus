@@ -123,7 +123,6 @@ router.get("/projects", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
-
 /* -----------------------------
    GET PROJECT BY ID (public)
 ------------------------------ */
@@ -153,6 +152,52 @@ router.get("/projects/slug/:slug", async (req, res) => {
       "_id name email"
     );
     if (!project) return res.status(404).json({ error: "Project not found" });
+    res.json(project);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+
+// -----------------------------
+// GET ALL PROJECTS (Investor specific)
+// -----------------------------
+router.get("/investor", auth, async (req, res) => {
+  try {
+    if (req.user.role !== "investor") {
+      return res.status(403).json({ error: "Access denied. Investors only." });
+    }
+
+    // Only fetch projects that are OPEN
+    const projects = await Project.find({ status: "open" })
+      .populate("farmerId", "_id name email");
+
+    res.json(projects);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+
+// -----------------------------
+// GET PROJECT BY ID (Investor specific)
+// -----------------------------
+router.get("/investor/:id", auth, async (req, res) => {
+  try {
+    if (req.user.role !== "investor") {
+      return res.status(403).json({ error: "Access denied. Investors only." });
+    }
+
+    // Only allow access to "open" projects
+    const project = await Project.findOne({
+      _id: req.params.id,
+      status: "open",
+    }).populate("farmerId", "_id name email");
+
+    if (!project) {
+      return res.status(404).json({ error: "Project not found or not accessible." });
+    }
+
     res.json(project);
   } catch (err) {
     res.status(500).json({ error: err.message });

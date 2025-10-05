@@ -48,6 +48,7 @@ const FarmerLayout: React.FC = () => {
       children: [
         { label: "Add Projects", icon: UserCircle, href: "/farmer/projects/add" },
         { label: "View Projects", icon: UserCircle, href: "/farmer/projects" },
+        { label: "Approved Projects", icon: UserCircle, href: "/approved-projects" },
       ],
     },
 
@@ -67,9 +68,8 @@ const FarmerLayout: React.FC = () => {
   icon: FileText,
   href: "#",
   children: [
-    { label: "Approved Projects", icon: UserCircle, href: "/approved-projects" },
-    { label: "Closed Projects", icon: UserCircle, href: "/closed-projects" },
-    { label: "Ongoing Projects", icon: UserCircle, href: "/ongoing-projects" },
+    { label: "Completed Projects", icon: UserCircle, href: "/closed-projects" },
+    { label: "Funded Projects", icon: UserCircle, href: "/ongoing-projects" },
   ],
 },
     {
@@ -79,9 +79,9 @@ const FarmerLayout: React.FC = () => {
       children: [
         { label: "Apply For Project Payment", icon: UserCircle, href: "#" },
         { label: "Project Payment History", icon: UserCircle, href: "#" },
-        { label: "Lease Payment History", icon: UserCircle, href: "#" },
       ],
     },
+    { label: "Lease Payment History", icon: UserCircle, href: "#" },
 
     {
   label: 'Dispute Management',
@@ -92,12 +92,15 @@ const FarmerLayout: React.FC = () => {
     { label: 'Raised Against You', icon: FileText, href: '/disputes/against' },
   ],
 },
-
-    {
-      label: "Purchase seeds, fertilizers",
-      icon: ShoppingBag,
-      href: "#",
-    }
+{
+    label: "UPI/Bank Management",
+    icon: CreditCard,
+    href: "#",
+    children: [
+      { label: "Manage UPI", icon: UserCircle, href: "/payouts/upi" },
+      { label: "Manage Bank Card", icon: UserCircle, href: "/payouts/bank" },
+    ],
+  },
   ];
 
   // -------------------- HANDLERS --------------------

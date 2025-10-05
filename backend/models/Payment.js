@@ -42,6 +42,21 @@ const paymentSchema = new mongoose.Schema(
     razorpaySignature: {
       type: String,
     },
+    land: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Land",
+      required: true,
+    },
+    payoutMethod: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "PayoutMethod",
+    },
+    requestedAt: {
+      type: Date,
+    },
+    paidAt: {
+      type: Date,
+    },
   },
   { timestamps: true }
 );

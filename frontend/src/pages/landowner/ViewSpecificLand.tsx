@@ -15,7 +15,11 @@ import {
   FileText,
   CheckCircle,
   XCircle,
-  Clock
+  Clock,
+  Server,
+  Cloud,
+  Shield,
+  Cpu
 } from 'lucide-react';
 import { Layout } from './LandownerDashboard';
 
@@ -85,13 +89,84 @@ const ViewSpecificLand: React.FC = () => {
     fetchLand();
   }, [id, navigate]);
 
+  // Add custom styles for the tech/hosting theme
+  const styles = `
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+    
+    .tech-theme {
+      font-family: 'Inter', sans-serif;
+    }
+    
+    .gradient-bg {
+      background: linear-gradient(135deg, #0a1a55 0%, #1a2a88 50%, #2a3abb 100%);
+    }
+    
+    .card-gradient {
+      background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+      backdrop-filter: blur(10px);
+    }
+    
+    .red-button {
+      background: #ff3b3b;
+      transition: all 0.3s ease-in-out;
+    }
+    
+    .red-button:hover {
+      background: #ff5252;
+      box-shadow: 0 0 20px rgba(255, 59, 59, 0.4);
+      transform: translateY(-2px);
+    }
+    
+    .tech-card {
+      transition: all 0.3s ease-in-out;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    
+    .tech-card:hover {
+      transform: scale(1.03);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+    
+    .glow-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: radial-gradient(circle at center, rgba(255,255,255,0.1) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    
+    .status-approved {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      box-shadow: 0 0 15px rgba(16, 185, 129, 0.3);
+    }
+    
+    .status-pending {
+      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+      box-shadow: 0 0 15px rgba(245, 158, 11, 0.3);
+    }
+    
+    .status-rejected {
+      background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+      box-shadow: 0 0 15px rgba(239, 68, 68, 0.3);
+    }
+    
+    .icon-bg {
+      background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.1) 100%);
+    }
+  `;
+
   if (loading) {
     return (
       <Layout>
-        <div className="flex items-center justify-center min-h-screen bg-gray-50">
-          <div className="flex flex-col items-center">
-            <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mb-4"></div>
-            <p className="text-gray-600 font-medium">Loading land details...</p>
+        <style>{styles}</style>
+        <div className="tech-theme gradient-bg min-h-screen flex items-center justify-center relative overflow-hidden">
+          <div className="glow-overlay"></div>
+          <div className="flex flex-col items-center relative z-10">
+            <div className="w-16 h-16 border-4 border-white border-t-transparent rounded-full animate-spin mb-6"></div>
+            <h3 className="text-white text-xl font-bold uppercase tracking-wider mb-2">LOADING LAND DETAILS</h3>
+            <p className="text-gray-300 font-medium">Please wait while we fetch your data</p>
           </div>
         </div>
       </Layout>
@@ -101,18 +176,25 @@ const ViewSpecificLand: React.FC = () => {
   if (error) {
     return (
       <Layout>
-        <div className="max-w-4xl mx-auto p-6">
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-sm mb-6">
-            <p className="font-medium">Error</p>
-            <p className="text-sm">{error}</p>
+        <style>{styles}</style>
+        <div className="tech-theme gradient-bg min-h-screen p-6 relative">
+          <div className="glow-overlay"></div>
+          <div className="max-w-4xl mx-auto relative z-10">
+            <div className="tech-card card-gradient rounded-2xl p-8 border border-red-400/20 mb-8">
+              <div className="text-center">
+                <Shield className="h-16 w-16 text-red-400 mx-auto mb-4" />
+                <h2 className="text-2xl font-bold text-white uppercase tracking-wider mb-4">ERROR</h2>
+                <p className="text-red-200 text-lg mb-6">{error}</p>
+                <button
+                  onClick={() => navigate(-1)}
+                  className="red-button text-white font-bold py-3 px-8 rounded-full uppercase tracking-wide text-sm"
+                >
+                  <ArrowLeft className="h-4 w-4 inline mr-2" />
+                  Go Back
+                </button>
+              </div>
+            </div>
           </div>
-          <button
-            onClick={() => navigate(-1)}
-            className="flex items-center text-blue-600 hover:text-blue-800 font-medium"
-          >
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Go Back
-          </button>
         </div>
       </Layout>
     );
@@ -121,18 +203,22 @@ const ViewSpecificLand: React.FC = () => {
   if (!land) {
     return (
       <Layout>
-        <div className="max-w-4xl mx-auto p-6">
-          <div className="bg-white rounded-sm shadow-sm p-8 text-center border border-gray-200">
-            <div className="text-5xl text-gray-300 mb-4">🏞️</div>
-            <h3 className="text-lg font-medium text-gray-700 mb-2">Land not found</h3>
-            <p className="text-gray-500 mb-4">The requested land could not be found.</p>
-            <button
-              onClick={() => navigate(-1)}
-              className="flex items-center text-blue-600 hover:text-blue-800 font-medium mx-auto"
-            >
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Go Back
-            </button>
+        <style>{styles}</style>
+        <div className="tech-theme gradient-bg min-h-screen p-6 relative">
+          <div className="glow-overlay"></div>
+          <div className="max-w-4xl mx-auto relative z-10">
+            <div className="tech-card card-gradient rounded-2xl p-8 text-center border border-white/10">
+              <Cloud className="h-20 w-20 text-white/40 mx-auto mb-6" />
+              <h3 className="text-2xl font-bold text-white uppercase tracking-wider mb-4">LAND NOT FOUND</h3>
+              <p className="text-gray-300 text-lg mb-6">The requested land could not be found in our system.</p>
+              <button
+                onClick={() => navigate(-1)}
+                className="red-button text-white font-bold py-3 px-8 rounded-full uppercase tracking-wide text-sm inline-flex items-center"
+              >
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                Go Back
+              </button>
+            </div>
           </div>
         </div>
       </Layout>
@@ -142,22 +228,22 @@ const ViewSpecificLand: React.FC = () => {
   const getApprovalStatusDisplay = (land: Land) => {
     if (land.isApproved) {
       return (
-        <div className="flex items-center bg-green-100 text-green-800 px-3 py-1.5 rounded-full text-sm font-medium">
-          <CheckCircle className="h-4 w-4 mr-1.5" />
+        <div className="status-approved text-white px-4 py-2 rounded-full text-sm font-bold uppercase tracking-wide">
+          <CheckCircle className="h-4 w-4 inline mr-2" />
           Approved
         </div>
       );
     } else if (land.rejectionReason) {
       return (
-        <div className="flex items-center bg-red-100 text-red-800 px-3 py-1.5 rounded-full text-sm font-medium" title={land.rejectionReason}>
-          <XCircle className="h-4 w-4 mr-1.5" />
+        <div className="status-rejected text-white px-4 py-2 rounded-full text-sm font-bold uppercase tracking-wide" title={land.rejectionReason}>
+          <XCircle className="h-4 w-4 inline mr-2" />
           Rejected
         </div>
       );
     } else {
       return (
-        <div className="flex items-center bg-yellow-100 text-yellow-800 px-3 py-1.5 rounded-full text-sm font-medium">
-          <Clock className="h-4 w-4 mr-1.5" />
+        <div className="status-pending text-white px-4 py-2 rounded-full text-sm font-bold uppercase tracking-wide">
+          <Clock className="h-4 w-4 inline mr-2" />
           Pending Approval
         </div>
       );
@@ -166,13 +252,15 @@ const ViewSpecificLand: React.FC = () => {
 
   return (
     <Layout>
-      <div className="min-h-screen bg-gray-50 p-4">
-        <div className="max-w-6xl mx-auto">
+      <style>{styles}</style>
+      <div className="tech-theme gradient-bg min-h-screen p-4 relative">
+        <div className="glow-overlay"></div>
+        <div className="max-w-7xl mx-auto relative z-10">
           {/* Header with Back Button */}
-          <div className="mb-6">
+          <div className="mb-8">
             <button
               onClick={() => navigate(-1)}
-              className="flex items-center text-blue-600 hover:text-blue-800 font-medium"
+              className="flex items-center text-white hover:text-red-400 font-bold uppercase tracking-wide transition-colors duration-300"
             >
               <ArrowLeft className="h-5 w-5 mr-2" />
               Back to Lands
@@ -180,138 +268,163 @@ const ViewSpecificLand: React.FC = () => {
           </div>
 
           {/* Main Content */}
-          <div className="bg-white rounded-sm shadow-sm border border-gray-200 overflow-hidden">
+          <div className="tech-card card-gradient rounded-2xl border border-white/10 overflow-hidden">
             {/* Image Section */}
             <div className="relative">
               {land.landPhotos && land.landPhotos.length > 0 ? (
                 <img
                   src={land.landPhotos[0]}
                   alt="Main land photo"
-                  className="w-full h-64 object-cover"
+                  className="w-full h-80 object-cover"
                 />
               ) : (
-                <div className="w-full h-64 bg-gray-100 flex flex-col items-center justify-center text-gray-400">
-                  <ImageIcon className="h-16 w-16 mb-2" />
-                  <span className="text-sm">No photos available</span>
+                <div className="w-full h-80 bg-white/5 flex flex-col items-center justify-center text-white/40">
+                  <Server className="h-20 w-20 mb-4" />
+                  <span className="text-lg font-medium">NO IMAGES AVAILABLE</span>
                 </div>
               )}
-              <div className="absolute top-4 right-4">
+              <div className="absolute top-6 right-6">
                 {getApprovalStatusDisplay(land)}
               </div>
             </div>
 
             {/* Content Section */}
-            <div className="p-6">
-              <div className="flex flex-col lg:flex-row gap-6">
+            <div className="p-8">
+              <div className="flex flex-col lg:flex-row gap-8">
                 {/* Left Column - Main Details */}
                 <div className="flex-1">
-                  <h1 className="text-2xl font-bold text-gray-800 mb-2">{land.title}</h1>
-                  <div className="flex items-center text-gray-600 mb-6">
-                    <MapPin className="h-4 w-4 mr-1.5 text-gray-400" />
-                    <span className="text-sm">{land.location.address}</span>
+                  <h1 className="text-3xl font-bold text-white uppercase tracking-wider mb-4">{land.title}</h1>
+                  <div className="flex items-center text-white/80 mb-8">
+                    <MapPin className="h-5 w-5 mr-3 text-red-400" />
+                    <span className="text-lg font-medium">{land.location.address}</span>
                   </div>
 
                   {/* Key Details Grid */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                    <div className="bg-blue-50 p-4 rounded-sm">
-                      <div className="flex items-center mb-2">
-                        <Ruler className="h-4 w-4 text-blue-600 mr-2" />
-                        <span className="text-sm font-medium text-gray-700">Size</span>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div className="tech-card card-gradient p-6 rounded-xl border border-white/5">
+                      <div className="flex items-center mb-4">
+                        <div className="icon-bg p-3 rounded-lg mr-4">
+                          <Ruler className="h-6 w-6 text-white" />
+                        </div>
+                        <div>
+                          <p className="text-white/60 text-sm font-bold uppercase tracking-wide">SIZE</p>
+                          <p className="text-2xl font-bold text-white">{land.sizeInAcres} ACRES</p>
+                        </div>
                       </div>
-                      <p className="text-lg font-semibold text-gray-800">{land.sizeInAcres} acres</p>
                     </div>
 
-                    <div className="bg-blue-50 p-4 rounded-sm">
-                      <div className="flex items-center mb-2">
-                        <DollarSign className="h-4 w-4 text-blue-600 mr-2" />
-                        <span className="text-sm font-medium text-gray-700">Monthly Price</span>
+                    <div className="tech-card card-gradient p-6 rounded-xl border border-white/5">
+                      <div className="flex items-center mb-4">
+                        <div className="icon-bg p-3 rounded-lg mr-4">
+                          <DollarSign className="h-6 w-6 text-white" />
+                        </div>
+                        <div>
+                          <p className="text-white/60 text-sm font-bold uppercase tracking-wide">MONTHLY PRICE</p>
+                          <p className="text-2xl font-bold text-white">₹{land.leasePricePerMonth.toLocaleString()}</p>
+                        </div>
                       </div>
-                      <p className="text-lg font-semibold text-gray-800">₹{land.leasePricePerMonth.toLocaleString()}</p>
                     </div>
 
-                    <div className="bg-blue-50 p-4 rounded-sm">
-                      <div className="flex items-center mb-2">
-                        <Calendar className="h-4 w-4 text-blue-600 mr-2" />
-                        <span className="text-sm font-medium text-gray-700">Lease Duration</span>
+                    <div className="tech-card card-gradient p-6 rounded-xl border border-white/5">
+                      <div className="flex items-center mb-4">
+                        <div className="icon-bg p-3 rounded-lg mr-4">
+                          <Calendar className="h-6 w-6 text-white" />
+                        </div>
+                        <div>
+                          <p className="text-white/60 text-sm font-bold uppercase tracking-wide">LEASE DURATION</p>
+                          <p className="text-2xl font-bold text-white">{land.leaseDurationMonths} MONTHS</p>
+                        </div>
                       </div>
-                      <p className="text-lg font-semibold text-gray-800">{land.leaseDurationMonths} months</p>
                     </div>
 
-                    <div className="bg-blue-50 p-4 rounded-sm">
-                      <div className="flex items-center mb-2">
-                        <Tractor className="h-4 w-4 text-blue-600 mr-2" />
-                        <span className="text-sm font-medium text-gray-700">Soil Type</span>
+                    <div className="tech-card card-gradient p-6 rounded-xl border border-white/5">
+                      <div className="flex items-center mb-4">
+                        <div className="icon-bg p-3 rounded-lg mr-4">
+                          <Cpu className="h-6 w-6 text-white" />
+                        </div>
+                        <div>
+                          <p className="text-white/60 text-sm font-bold uppercase tracking-wide">SOIL TYPE</p>
+                          <p className="text-2xl font-bold text-white">{land.soilType}</p>
+                        </div>
                       </div>
-                      <p className="text-lg font-semibold text-gray-800">{land.soilType}</p>
                     </div>
                   </div>
 
                   {/* Additional Details */}
                   <div className="space-y-4">
                     {land.waterSource && (
-                      <div className="flex items-center p-3 bg-gray-50 rounded-sm">
-                        <Waves className="h-4 w-4 text-gray-500 mr-3" />
+                      <div className="tech-card card-gradient p-4 rounded-xl border border-white/5 flex items-center">
+                        <div className="icon-bg p-3 rounded-lg mr-4">
+                          <Waves className="h-5 w-5 text-white" />
+                        </div>
                         <div>
-                          <p className="text-xs text-gray-500">Water Source</p>
-                          <p className="text-sm font-medium text-gray-800">{land.waterSource}</p>
+                          <p className="text-white/60 text-xs font-bold uppercase tracking-wide">WATER SOURCE</p>
+                          <p className="text-lg font-semibold text-white">{land.waterSource}</p>
                         </div>
                       </div>
                     )}
 
                     {land.accessibility && (
-                      <div className="flex items-center p-3 bg-gray-50 rounded-sm">
-                        <RouteIcon className="h-4 w-4 text-gray-500 mr-3" />
+                      <div className="tech-card card-gradient p-4 rounded-xl border border-white/5 flex items-center">
+                        <div className="icon-bg p-3 rounded-lg mr-4">
+                          <RouteIcon className="h-5 w-5 text-white" />
+                        </div>
                         <div>
-                          <p className="text-xs text-gray-500">Accessibility</p>
-                          <p className="text-sm font-medium text-gray-800">{land.accessibility}</p>
+                          <p className="text-white/60 text-xs font-bold uppercase tracking-wide">ACCESSIBILITY</p>
+                          <p className="text-lg font-semibold text-white">{land.accessibility}</p>
                         </div>
                       </div>
                     )}
 
-                    <div className="flex items-center p-3 bg-gray-50 rounded-sm">
-                      <Badge className="h-4 w-4 text-gray-500 mr-3" />
+                    <div className="tech-card card-gradient p-4 rounded-xl border border-white/5 flex items-center">
+                      <div className="icon-bg p-3 rounded-lg mr-4">
+                        <Badge className="h-5 w-5 text-white" />
+                      </div>
                       <div>
-                        <p className="text-xs text-gray-500">Status</p>
-                        <p className="text-sm font-medium text-gray-800 capitalize">{land.status}</p>
+                        <p className="text-white/60 text-xs font-bold uppercase tracking-wide">STATUS</p>
+                        <p className="text-lg font-semibold text-white uppercase">{land.status}</p>
                       </div>
                     </div>
                   </div>
                 </div>
 
                 {/* Right Column - Documents and Actions */}
-                <div className="lg:w-80 flex-shrink-0">
-                  <div className="bg-gray-50 p-5 rounded-sm border border-gray-200">
-                    <h3 className="text-lg font-semibold text-gray-800 mb-4">Documents</h3>
+                <div className="lg:w-96 flex-shrink-0">
+                  <div className="tech-card card-gradient p-6 rounded-2xl border border-white/10">
+                    <h3 className="text-xl font-bold text-white uppercase tracking-wider mb-6">DOCUMENTS</h3>
                     
                     {land.landDocuments && land.landDocuments.length > 0 ? (
-                      <div className="space-y-3">
+                      <div className="space-y-4">
                         {land.landDocuments.map((doc, index) => (
                           <a
                             key={index}
                             href={doc}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="flex items-center p-3 bg-white rounded-sm border border-gray-200 hover:border-blue-300 transition-colors"
+                            className="tech-card card-gradient p-4 rounded-xl border border-white/5 hover:border-red-400/30 transition-all duration-300 flex items-center"
                           >
-                            <FileText className="h-4 w-4 text-blue-600 mr-2" />
-                            <span className="text-sm text-gray-700">Document {index + 1}</span>
+                            <FileText className="h-5 w-5 text-red-400 mr-3" />
+                            <span className="text-white font-medium">Document {index + 1}</span>
                           </a>
                         ))}
                       </div>
                     ) : (
-                      <p className="text-sm text-gray-500">No documents available</p>
+                      <div className="text-center py-8">
+                        <FileText className="h-12 w-12 text-white/30 mx-auto mb-4" />
+                        <p className="text-white/60 font-medium">No documents available</p>
+                      </div>
                     )}
 
-                    <div className="mt-6 pt-4 border-t border-gray-200">
+                    <div className="mt-8 pt-6 border-t border-white/10">
                       <button
                         onClick={() => navigate(`/landowner/lands/edit/${land._id}`)}
-                        className="w-full flex items-center justify-center px-4 py-2.5 bg-blue-600 text-white rounded-sm hover:bg-blue-700 transition-colors text-sm font-medium mb-3"
+                        className="red-button w-full flex items-center justify-center py-3 px-4 rounded-full text-white font-bold uppercase tracking-wide text-sm mb-4"
                       >
                         Edit Land Details
                       </button>
                       <button
                         onClick={() => navigate(-1)}
-                        className="w-full flex items-center justify-center px-4 py-2.5 bg-gray-100 text-gray-700 rounded-sm hover:bg-gray-200 transition-colors text-sm font-medium"
+                        className="w-full flex items-center justify-center py-3 px-4 bg-white/10 text-white rounded-full hover:bg-white/20 transition-all duration-300 font-bold uppercase tracking-wide text-sm"
                       >
                         Back to List
                       </button>

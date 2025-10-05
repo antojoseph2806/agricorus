@@ -1,6 +1,24 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Layout } from "./Layout";
+import { 
+  Users, 
+  Shield, 
+  Mail, 
+  Phone, 
+  Calendar, 
+  Edit3, 
+  Trash2, 
+  Lock, 
+  Unlock,
+  AlertCircle,
+  CheckCircle2,
+  MoreVertical,
+  Search,
+  Filter,
+  Download,
+  Eye
+} from "lucide-react";
 
 interface User {
   _id: string;
@@ -36,6 +54,8 @@ const ManageUsers: React.FC<ManageUsersProps> = ({ role }) => {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [statusFilter, setStatusFilter] = useState<"all" | "active" | "blocked">("all");
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -94,15 +114,31 @@ const ManageUsers: React.FC<ManageUsersProps> = ({ role }) => {
     }
   };
 
+  // Filter users based on search and status
+  const filteredUsers = users.filter(user => {
+    const matchesSearch = user.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         user.phone.includes(searchTerm);
+    
+    const matchesStatus = statusFilter === "all" || 
+                         (statusFilter === "active" && !user.isBlocked) ||
+                         (statusFilter === "blocked" && user.isBlocked);
+    
+    return matchesSearch && matchesStatus;
+  });
+
+  const activeUsers = users.filter(u => !u.isBlocked).length;
+  const blockedUsers = users.filter(u => u.isBlocked).length;
+
   if (loading) {
     return (
       <Layout>
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-          <div className="bg-white rounded-lg shadow-lg p-8 max-w-md w-full mx-4">
+        <div className="min-h-screen flex items-center justify-center p-6">
+          <div className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-md border border-white/20 rounded-2xl shadow-2xl p-8 max-w-md w-full">
             <div className="flex justify-center mb-4">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#ff3b3b]"></div>
             </div>
-            <p className="text-center text-gray-600 font-medium">Loading {role}s...</p>
+            <p className="text-center text-gray-300 font-medium font-['Inter']">Loading {role}s...</p>
           </div>
         </div>
       </Layout>
@@ -112,13 +148,17 @@ const ManageUsers: React.FC<ManageUsersProps> = ({ role }) => {
   if (error) {
     return (
       <Layout>
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-          <div className="bg-white rounded-lg shadow-lg p-6 max-w-md w-full mx-4">
-            <div className="text-red-500 text-center">
-              <svg className="w-16 h-16 mx-auto mb-4" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-              </svg>
-              <p className="text-lg font-semibold">{error}</p>
+        <div className="min-h-screen flex items-center justify-center p-6">
+          <div className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-md border border-white/20 rounded-2xl shadow-2xl p-8 max-w-md w-full">
+            <div className="text-red-400 text-center">
+              <AlertCircle className="w-16 h-16 mx-auto mb-4" />
+              <p className="text-lg font-semibold font-['Poppins'] text-white">{error}</p>
+              <button 
+                onClick={() => window.location.reload()}
+                className="mt-4 bg-gradient-to-r from-[#ff3b3b] to-[#ff6b6b] text-white px-6 py-2 rounded-lg font-medium hover:shadow-lg hover:shadow-red-500/30 transition-all duration-300"
+              >
+                Retry
+              </button>
             </div>
           </div>
         </div>
@@ -128,76 +168,126 @@ const ManageUsers: React.FC<ManageUsersProps> = ({ role }) => {
 
   return (
     <Layout>
-      <div className="min-h-screen bg-gray-50 p-6">
-        {/* Header Card */}
-        <div className="bg-white rounded-lg shadow-md mb-6 p-6 border border-gray-200">
-          <div className="flex justify-between items-center">
-            <h2 className="text-2xl font-bold text-gray-800">
-              Manage {role.charAt(0).toUpperCase() + role.slice(1)}s
-              <span className="ml-3 bg-blue-100 text-blue-800 text-sm font-medium px-2.5 py-0.5 rounded-full">
-                {users.length} {users.length === 1 ? 'user' : 'users'}
-              </span>
+      <div className="min-h-screen p-6">
+        {/* Header Section */}
+        <div className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-md border border-white/20 rounded-2xl shadow-2xl mb-6 p-6">
+          <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
+            <div>
+              <h2 className="text-2xl font-bold text-white uppercase tracking-wider font-['Poppins'] mb-2">
+                Manage {role.charAt(0).toUpperCase() + role.slice(1)}s
               </h2>
+              <div className="flex items-center gap-4 text-gray-300 font-['Inter']">
+                <span className="flex items-center gap-2">
+                  <Users className="w-4 h-4" />
+                  Total: {users.length}
+                </span>
+                <span className="flex items-center gap-2 text-green-400">
+                  <CheckCircle2 className="w-4 h-4" />
+                  Active: {activeUsers}
+                </span>
+                <span className="flex items-center gap-2 text-red-400">
+                  <Lock className="w-4 h-4" />
+                  Blocked: {blockedUsers}
+                </span>
               </div>
+            </div>
+            
+            {/* Search and Filter Controls */}
+            <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <input
+                  type="text"
+                  placeholder="Search users..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10 pr-4 py-2 bg-white/5 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:border-[#ff3b3b] focus:ring-2 focus:ring-[#ff3b3b]/20 transition-all duration-300 font-['Inter']"
+                />
+              </div>
+              
+              <select
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value as any)}
+                className="px-4 py-2 bg-white/5 border border-white/20 rounded-lg text-white focus:border-[#ff3b3b] focus:ring-2 focus:ring-[#ff3b3b]/20 transition-all duration-300 font-['Inter']"
+              >
+                <option value="all">All Status</option>
+                <option value="active">Active Only</option>
+                <option value="blocked">Blocked Only</option>
+              </select>
+            </div>
+          </div>
         </div>
 
         {/* Users Grid */}
-        {users.length === 0 ? (
-          <div className="bg-white rounded-lg shadow-md p-8 text-center">
-            <svg className="w-16 h-16 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
-            </svg>
-            <p className="text-gray-600 text-lg">No {role}s found.</p>
-            <p className="text-gray-500">Try adjusting your search criteria or add new users.</p>
+        {filteredUsers.length === 0 ? (
+          <div className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-md border border-white/20 rounded-2xl shadow-2xl p-12 text-center">
+            <Users className="w-16 h-16 mx-auto text-gray-400 mb-4" />
+            <p className="text-gray-300 text-lg font-['Inter'] mb-2">No {role}s found.</p>
+            <p className="text-gray-400 font-['Inter']">Try adjusting your search criteria or add new users.</p>
           </div>
         ) : (
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {users.map((user) => (
-              <div key={user._id} className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 border border-gray-200">
+            {filteredUsers.map((user) => (
+              <div 
+                key={user._id} 
+                className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-md border border-white/20 rounded-2xl shadow-2xl hover:shadow-purple-500/20 transition-all duration-300 hover:scale-[1.02] group"
+              >
                 {/* User Header */}
-                <div className="bg-gradient-to-r from-blue-500 to-blue-600 rounded-t-lg p-4 text-white">
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <h3 className="font-bold text-lg truncate">{user.name || "Unnamed User"}</h3>
-                      <p className="text-blue-100 text-sm">{user.email}</p>
+                <div className="bg-gradient-to-r from-[#ff3b3b] to-[#ff6b6b] rounded-t-2xl p-6 text-white">
+                  <div className="flex justify-between items-start mb-3">
+                    <div className="flex items-center gap-3">
+                      <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
+                        <Shield className="w-6 h-6" />
+                      </div>
+                      <div>
+                        <h3 className="font-bold text-lg font-['Poppins'] truncate max-w-[120px]">
+                          {user.name || "Unnamed User"}
+                        </h3>
+                        <p className="text-white/80 text-sm font-['Inter']">{user.role}</p>
+                      </div>
                     </div>
-                    <span className="bg-white text-blue-600 text-xs font-medium px-2 py-1 rounded-full">
-                      {user.role}
-                    </span>
+                    <button className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 p-2 hover:bg-white/10 rounded-lg">
+                      <MoreVertical className="w-4 h-4" />
+                    </button>
                   </div>
                 </div>
 
                 {/* User Details */}
-                <div className="p-4">
-                  <div className="space-y-3">
-                    <div className="flex justify-between items-center">
-                      <span className="text-gray-600 font-medium">Phone:</span>
-                      <span className="text-gray-900">{user.phone}</span>
+                <div className="p-6">
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-3 text-gray-300">
+                      <Mail className="w-4 h-4 text-gray-400" />
+                      <span className="font-['Inter'] text-sm truncate">{user.email}</span>
                     </div>
                     
-                    <div className="flex justify-between items-center">
-                      <span className="text-gray-600 font-medium">Joined:</span>
-                      <span className="text-gray-900">
+                    <div className="flex items-center gap-3 text-gray-300">
+                      <Phone className="w-4 h-4 text-gray-400" />
+                      <span className="font-['Inter'] text-sm">{user.phone}</span>
+                    </div>
+                    
+                    <div className="flex items-center gap-3 text-gray-300">
+                      <Calendar className="w-4 h-4 text-gray-400" />
+                      <span className="font-['Inter'] text-sm">
                         {user.joined ? new Date(user.joined).toLocaleDateString() : "—"}
                       </span>
                     </div>
 
                     {/* Status Badge */}
-                    <div className="flex justify-between items-center">
-                      <span className="text-gray-600 font-medium">Status:</span>
-                      <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
+                    <div className="flex justify-between items-center pt-3 border-t border-white/10">
+                      <span className="font-['Inter'] text-sm text-gray-400">Status:</span>
+                      <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium font-['Inter'] ${
                         user.isBlocked 
-                          ? 'bg-red-100 text-red-800' 
-                          : 'bg-green-100 text-green-800'
+                          ? 'bg-red-500/20 text-red-400 border border-red-500/30' 
+                          : 'bg-green-500/20 text-green-400 border border-green-500/30'
                       }`}>
                         {user.isBlocked ? (
                           <>
-                            <span className="w-2 h-2 bg-red-500 rounded-full mr-2"></span>
+                            <Lock className="w-3 h-3 mr-1" />
                             Blocked
                           </>
                         ) : (
                           <>
-                            <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
+                            <CheckCircle2 className="w-3 h-3 mr-1" />
                             Active
                           </>
                         )}
@@ -205,28 +295,25 @@ const ManageUsers: React.FC<ManageUsersProps> = ({ role }) => {
                     </div>
 
                     {/* Action Buttons */}
-                    <div className="grid grid-cols-3 gap-2 pt-3">
-                      <button
-                        onClick={() => alert("Edit not implemented yet")}
-                        className="bg-blue-50 hover:bg-blue-100 text-blue-600 px-3 py-2 rounded-lg font-medium text-sm transition-colors duration-200 border border-blue-200"
-                      >
-                        Edit
-                      </button>
-                      <button
-                        onClick={() => handleDelete(user._id)}
-                        className="bg-red-50 hover:bg-red-100 text-red-600 px-3 py-2 rounded-lg font-medium text-sm transition-colors duration-200 border border-red-200"
-                      >
-                        Delete
-                      </button>
+                    <div className="grid grid-cols-2 gap-3 pt-4">
                       <button
                         onClick={() => toggleBlock(user._id, user.isBlocked)}
-                        className={`px-3 py-2 rounded-lg font-medium text-sm transition-colors duration-200 border ${
+                        className={`flex items-center justify-center gap-2 px-3 py-2 rounded-lg font-medium text-sm transition-all duration-300 font-['Inter'] ${
                           user.isBlocked
-                            ? 'bg-green-50 hover:bg-green-100 text-green-600 border-green-200'
-                            : 'bg-yellow-50 hover:bg-yellow-100 text-yellow-600 border-yellow-200'
+                            ? 'bg-green-500/20 text-green-400 hover:bg-green-500/30 border border-green-500/30'
+                            : 'bg-yellow-500/20 text-yellow-400 hover:bg-yellow-500/30 border border-yellow-500/30'
                         }`}
                       >
+                        {user.isBlocked ? <Unlock className="w-4 h-4" /> : <Lock className="w-4 h-4" />}
                         {user.isBlocked ? "Unblock" : "Block"}
+                      </button>
+                      
+                      <button
+                        onClick={() => handleDelete(user._id)}
+                        className="flex items-center justify-center gap-2 px-3 py-2 bg-red-500/20 text-red-400 hover:bg-red-500/30 rounded-lg font-medium text-sm transition-all duration-300 border border-red-500/30 font-['Inter']"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                        Delete
                       </button>
                     </div>
                   </div>
@@ -237,18 +324,18 @@ const ManageUsers: React.FC<ManageUsersProps> = ({ role }) => {
         )}
 
         {/* Footer Stats */}
-        {users.length > 0 && (
-          <div className="mt-6 bg-white rounded-lg shadow-md p-4">
-            <div className="flex justify-between items-center text-sm text-gray-600">
-              <span>Showing {users.length} of {users.length} users</span>
-              <div className="flex space-x-4">
+        {filteredUsers.length > 0 && (
+          <div className="mt-6 bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-md border border-white/20 rounded-2xl shadow-2xl p-4">
+            <div className="flex flex-col sm:flex-row justify-between items-center text-sm text-gray-400 font-['Inter']">
+              <span>Showing {filteredUsers.length} of {users.length} users</span>
+              <div className="flex space-x-4 mt-2 sm:mt-0">
                 <span className="flex items-center">
-                  <span className="w-3 h-3 bg-green-500 rounded-full mr-1"></span>
-                  Active: {users.filter(u => !u.isBlocked).length}
+                  <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
+                  Active: {activeUsers}
                 </span>
                 <span className="flex items-center">
-                  <span className="w-3 h-3 bg-red-500 rounded-full mr-1"></span>
-                  Blocked: {users.filter(u => u.isBlocked).length}
+                  <span className="w-2 h-2 bg-red-500 rounded-full mr-2"></span>
+                  Blocked: {blockedUsers}
                 </span>
               </div>
             </div>

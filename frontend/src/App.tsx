@@ -34,9 +34,17 @@ import ViewLands from "./pages/landowner/LandownerViewLands";
 import ViewSpecificLand from "./pages/landowner/ViewSpecificLand";
 import EditLand from "./pages/landowner/EditLand";
 import LandownerLeaseRequests from "./pages/landowner/LandownerLeaseRequests";
+import RequestPayment from "./pages/landowner/RequestPayment";
+import { PayoutManagement } from "./pages/landowner/PayoutManagement";
+import PaymentHistory from "./pages/landowner/PaymentHistory";
 
 // Investor Pages
 import InvestorDashboard from "./pages/investor/InvestorDashboard";
+import InvestorProjects from "./pages/investor/InvestorProjects";
+import InvestorProjectDetails from "./pages/investor/InvestorProjectDetails";
+import InvestmentHistory from "./pages/investor/InvestmentHistory";
+import ManageUPI from "./pages/investor/ManageUPI";
+import ManageBank from "./pages/investor/ManageBank";
 
 // Admin Pages
 import AdminDashboard from "./pages/admin/AdminDashboard";
@@ -46,7 +54,7 @@ import ManageUsers from "./pages/admin/ManageUsers";
 import AdminLeasesPage from "./pages/admin/AdminLeasesPage";
 import AdminEditLeasePage from "./pages/admin/AdminEditLeasePage";
 import ManageProjects from "./pages/admin/ManageProjects";
-import EditProject from "./pages/admin/EditProject";
+import ditProjectadmin from "./pages/admin/EditProjectadmin";
 
 // Profile Pages
 import ProfileView from "./pages/landowner/ProfileView";
@@ -54,6 +62,7 @@ import ProfileView from "./pages/landowner/ProfileView";
 // Shared
 import ProtectedRoute from "./components/ProtectedRoute";
 import ForbiddenPage from "./pages/ForbiddenPage";
+import EditProjectadmin from "./pages/admin/EditProjectadmin";
 
 function App() {
   return (
@@ -109,6 +118,11 @@ function App() {
               />
             }
           />
+          <Route path="/payouts/upi" element={<PayoutManagement type="upi" />} />
+          <Route path="/payouts/bank" element={<PayoutManagement type="bank" />} />
+          <Route path="/request-payment" element={<RequestPayment />} />
+          <Route path="/payment-history" element={<PaymentHistory />} />
+
           <Route
             path="/lands/add"
             element={<ProtectedRoute element={<AddLand />} allowedRoles={["landowner"]} />}
@@ -124,7 +138,7 @@ function App() {
             }
           />
           <Route
-            path="/lands/edit/:id"
+            path="landowner/lands/edit/:id"
             element={<ProtectedRoute element={<EditLand />} allowedRoles={["landowner"]} />}
           />
 
@@ -176,12 +190,30 @@ function App() {
           />
 
           {/* ----------------- Investor Routes ----------------- */}
-          <Route
-            path="/investordashboard"
-            element={
-              <ProtectedRoute element={<InvestorDashboard />} allowedRoles={["investor"]} />
-            }
-          />
+<Route
+  path="/investordashboard"
+  element={
+    <ProtectedRoute element={<InvestorDashboard />} allowedRoles={["investor"]} />
+  }
+/>
+
+<Route
+  path="/projects"
+  element={
+    <ProtectedRoute element={<InvestorProjects />} allowedRoles={["investor"]} />
+  }
+/>
+
+<Route
+  path="/projects/:id"
+  element={
+    <ProtectedRoute element={<InvestorProjectDetails />} allowedRoles={["investor"]} />
+  }
+/>
+<Route path="/investments/history" element={<InvestmentHistory />} />
+<Route path="/investor/upi/manage" element={<ManageUPI />} />
+        <Route path="/investor/bank/manage" element={<ManageBank />} />
+
 
           {/* ----------------- Admin Routes ----------------- */}
           <Route
@@ -237,7 +269,8 @@ function App() {
             element={<AdminEditLeasePage />} 
           />
           <Route path="/admin/manage-projects" element={<ManageProjects />} />
-          <Route path="/admin/projects/edit/:id" element={<EditProject />} />
+          <Route path="projects/:id" element={<ManageProjects />} />
+          <Route path="/admin/projects/edit/:id" element={<EditProjectadmin />} />
 
 
           {/* ----------------- Profile Routes ----------------- */}

@@ -13,8 +13,8 @@ interface UserProfile {
   phone: string | null;
   role: string | null;
   profileImage: string | null;
-  joined?: string;      // ✅ matches backend
-  updatedAt?: string;   // optional
+  joined?: string;
+  updatedAt?: string;
 }
 
 const ProfileView: React.FC = () => {
@@ -121,7 +121,7 @@ const ProfileView: React.FC = () => {
       case "farmer":
         return FarmerLayout;
       default:
-        return DefaultLayout; // fallback layout
+        return DefaultLayout;
     }
   };
   const Layout = getLayout();
@@ -129,12 +129,13 @@ const ProfileView: React.FC = () => {
   if (loading) {
     return (
       <Layout>
-        <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-green-50 to-lime-100">
-          <div className="flex flex-col items-center p-8 bg-white rounded-2xl shadow-xl animate-pulse">
-            <div className="w-16 h-16 bg-gray-200 rounded-full mb-4"></div>
-            <p className="text-gray-700 text-lg font-medium">
-              Loading profile...
-            </p>
+        <div className="min-h-screen bg-gradient-to-br from-[#0a1a55] via-[#1a2a88] to-[#2d1a88] flex items-center justify-center p-4">
+          <div className="bg-gradient-to-br from-[#1a2a88]/80 to-[#2d1a88]/80 backdrop-blur-sm rounded-2xl shadow-2xl p-8 border border-white/10">
+            <div className="flex flex-col items-center">
+              <div className="w-20 h-20 bg-gradient-to-r from-[#ff3b3b] to-[#ff6b6b] rounded-full mb-6 animate-pulse"></div>
+              <div className="h-6 bg-white/20 rounded w-48 mb-4 animate-pulse"></div>
+              <div className="h-4 bg-white/20 rounded w-32 animate-pulse"></div>
+            </div>
           </div>
         </div>
       </Layout>
@@ -144,11 +145,15 @@ const ProfileView: React.FC = () => {
   if (!profile) {
     return (
       <Layout>
-        <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-          <div className="flex flex-col items-center p-8 bg-white rounded-2xl shadow-xl">
-            <p className="text-gray-700 text-lg font-medium">
-              No profile data available.
-            </p>
+        <div className="min-h-screen bg-gradient-to-br from-[#0a1a55] via-[#1a2a88] to-[#2d1a88] flex items-center justify-center p-4">
+          <div className="bg-gradient-to-br from-[#1a2a88]/80 to-[#2d1a88]/80 backdrop-blur-sm rounded-2xl shadow-2xl p-8 border border-white/10 text-center">
+            <div className="w-16 h-16 bg-gradient-to-r from-[#ff3b3b] to-[#ff6b6b] rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
+              </svg>
+            </div>
+            <h3 className="text-white font-bold text-xl uppercase tracking-wider mb-2">No Profile Data</h3>
+            <p className="text-gray-300">Unable to load profile information.</p>
           </div>
         </div>
       </Layout>
@@ -157,146 +162,172 @@ const ProfileView: React.FC = () => {
 
   return (
     <Layout>
-      <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-green-100 via-lime-100 to-emerald-200 animate-gradient-shift">
-        <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl p-8 border-t-4 border-green-600">
+      <div className="min-h-screen bg-gradient-to-br from-[#0a1a55] via-[#1a2a88] to-[#2d1a88] py-8 px-4">
+        <div className="max-w-2xl mx-auto">
+          {/* Header Section */}
           <div className="text-center mb-8">
-            <h2 className="text-4xl font-extrabold text-gray-800 tracking-tight">
+            <h1 className="text-4xl font-bold text-white uppercase tracking-widest mb-4 font-['Poppins']">
               User Profile
-            </h2>
-            <p className="text-md text-gray-500 mt-2">
-              Your personal details at a glance
+            </h1>
+            <p className="text-gray-300 text-lg font-['Inter']">
+              Manage your account settings and personal information
             </p>
           </div>
 
-          {successMsg && (
-            <p className="text-green-700 font-medium mb-4">{successMsg}</p>
-          )}
-          {error && <p className="text-red-700 font-medium mb-4">{error}</p>}
-
-          <div className="flex flex-col items-center space-y-6">
-            {profile.profileImage ? (
-              <img
-                src={`http://localhost:5000${profile.profileImage}`} // ✅ ensure correct URL
-                alt="Profile"
-                className="w-36 h-36 rounded-full object-cover ring-4 ring-offset-4 ring-green-500 transform transition-transform duration-500 ease-in-out hover:rotate-3 hover:scale-105"
-              />
-            ) : (
-              <div className="w-36 h-36 rounded-full bg-green-200 flex items-center justify-center text-green-700 text-5xl font-bold ring-4 ring-offset-4 ring-green-500 transform transition-transform duration-500 ease-in-out hover:rotate-3 hover:scale-105">
-                {profile.name ? profile.name.charAt(0).toUpperCase() : "U"}
-              </div>
-            )}
-
-            <div className="w-full space-y-5 text-gray-700">
-              {isEditing ? (
-                <form onSubmit={handleEditSubmit} className="space-y-4">
-                  <ProfileEditField
-                    label="Name"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleInputChange}
-                  />
-                  <ProfileEditField
-                    label="Email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleInputChange}
-                    disabled={true}
-                  />
-                  <ProfileEditField
-                    label="Phone"
-                    name="phone"
-                    value={formData.phone}
-                    onChange={handleInputChange}
-                  />
-                  <div className="w-full">
-                    <label className="block text-sm font-medium text-gray-600">
-                      Profile Image
-                    </label>
-                    <input
-                      type="file"
-                      name="profileImage"
-                      onChange={handleFileChange}
-                      className="mt-1 block w-full text-sm text-gray-900 border border-gray-300 rounded-md cursor-pointer bg-gray-50 focus:outline-none"
-                    />
-                  </div>
-                  <ProfileDetail
-                    label="Role"
-                    value={profile.role || "Not assigned"}
-                  />
-                  <ProfileDetail
-                    label="Joined"
-                    value={
-                      profile.joined
-                        ? new Date(profile.joined).toLocaleDateString("en-IN", {
-                            year: "numeric",
-                            month: "long",
-                            day: "numeric",
-                          })
-                        : "Not available"
-                    }
-                  />
-                  <div className="flex justify-between mt-6">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setIsEditing(false);
-                        setFormData({
-                          name: profile.name || "",
-                          email: profile.email,
-                          phone: profile.phone || "",
-                        });
-                        setProfilePicFile(null);
-                      }}
-                      className="w-1/2 mr-2 py-2 px-4 bg-gray-300 text-gray-800 rounded-lg font-medium hover:bg-gray-400 transition"
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      type="submit"
-                      disabled={isSubmitting}
-                      className="w-1/2 ml-2 py-2 px-4 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition disabled:opacity-50"
-                    >
-                      {isSubmitting ? "Saving..." : "Save Changes"}
-                    </button>
-                  </div>
-                </form>
-              ) : (
-                <>
-                  <ProfileDetail
-                    label="Name"
-                    value={profile.name || "Not set"}
-                  />
-                  <ProfileDetail label="Email" value={profile.email} />
-                  <ProfileDetail
-                    label="Phone"
-                    value={profile.phone || "Not set"}
-                  />
-                  <ProfileDetail
-                    label="Role"
-                    value={profile.role || "Not assigned"}
-                  />
-                  <ProfileDetail
-                    label="Joined"
-                    value={
-                      profile.joined
-                        ? new Date(profile.joined).toLocaleDateString("en-IN", {
-                            year: "numeric",
-                            month: "long",
-                            day: "numeric",
-                          })
-                        : "Not available"
-                    }
-                  />
-                  <div className="flex justify-center mt-6">
-                    <button
-                      onClick={() => setIsEditing(true)}
-                      className="py-2 px-6 bg-green-600 text-white rounded-full font-medium shadow-md hover:bg-green-700 transition"
-                    >
-                      Edit Profile
-                    </button>
-                  </div>
-                </>
+          {/* Main Profile Card */}
+          <div className="bg-gradient-to-br from-[#1a2a88]/80 to-[#2d1a88]/80 backdrop-blur-sm rounded-2xl shadow-2xl border border-white/10 overflow-hidden transition-transform duration-300 ease-in-out hover:scale-[1.02]">
+            <div className="p-8">
+              {/* Success/Error Messages */}
+              {successMsg && (
+                <div className="mb-6 p-4 bg-green-500/20 border border-green-500/50 rounded-lg text-green-200 font-medium">
+                  {successMsg}
+                </div>
               )}
+              {error && (
+                <div className="mb-6 p-4 bg-red-500/20 border border-red-500/50 rounded-lg text-red-200 font-medium">
+                  {error}
+                </div>
+              )}
+
+              {/* Profile Image Section */}
+              <div className="flex flex-col items-center mb-8">
+                <div className="relative group">
+                  {profile.profileImage ? (
+                    <img
+                      src={`http://localhost:5000${profile.profileImage}`}
+                      alt="Profile"
+                      className="w-32 h-32 rounded-full object-cover border-4 border-white/20 shadow-2xl transition-all duration-300 ease-in-out group-hover:scale-110 group-hover:border-[#ff3b3b]/50"
+                    />
+                  ) : (
+                    <div className="w-32 h-32 rounded-full bg-gradient-to-r from-[#ff3b3b] to-[#ff6b6b] flex items-center justify-center text-white text-4xl font-bold border-4 border-white/20 shadow-2xl transition-all duration-300 ease-in-out group-hover:scale-110 group-hover:border-[#ff3b3b]/50">
+                      {profile.name ? profile.name.charAt(0).toUpperCase() : "U"}
+                    </div>
+                  )}
+                  <div className="absolute inset-0 rounded-full bg-gradient-to-r from-[#ff3b3b] to-[#ff6b6b] opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
+                </div>
+              </div>
+
+              {/* Profile Details */}
+              <div className="space-y-6">
+                {isEditing ? (
+                  <form onSubmit={handleEditSubmit} className="space-y-6">
+                    <ProfileEditField
+                      label="Name"
+                      name="name"
+                      value={formData.name}
+                      onChange={handleInputChange}
+                    />
+                    <ProfileEditField
+                      label="Email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleInputChange}
+                      disabled={true}
+                    />
+                    <ProfileEditField
+                      label="Phone"
+                      name="phone"
+                      value={formData.phone}
+                      onChange={handleInputChange}
+                    />
+                    
+                    <div className="space-y-4">
+                      <label className="block text-sm font-medium text-gray-300 uppercase tracking-wider">
+                        Profile Image
+                      </label>
+                      <input
+                        type="file"
+                        name="profileImage"
+                        onChange={handleFileChange}
+                        className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-[#ff3b3b] transition-colors duration-300"
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4 pt-4">
+                      <ProfileDetail
+                        label="Role"
+                        value={profile.role || "Not assigned"}
+                      />
+                      <ProfileDetail
+                        label="Joined"
+                        value={
+                          profile.joined
+                            ? new Date(profile.joined).toLocaleDateString("en-IN", {
+                                year: "numeric",
+                                month: "long",
+                                day: "numeric",
+                              })
+                            : "Not available"
+                        }
+                      />
+                    </div>
+
+                    <div className="flex gap-4 pt-6">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setIsEditing(false);
+                          setFormData({
+                            name: profile.name || "",
+                            email: profile.email,
+                            phone: profile.phone || "",
+                          });
+                          setProfilePicFile(null);
+                        }}
+                        className="flex-1 py-3 px-6 bg-white/10 text-white rounded-lg font-medium hover:bg-white/20 transition-all duration-300 ease-in-out border border-white/20 hover:border-white/40"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="submit"
+                        disabled={isSubmitting}
+                        className="flex-1 py-3 px-6 bg-gradient-to-r from-[#ff3b3b] to-[#ff6b6b] text-white rounded-lg font-medium hover:from-[#ff6b6b] hover:to-[#ff3b3b] transition-all duration-300 ease-in-out shadow-lg hover:shadow-xl disabled:opacity-50"
+                      >
+                        {isSubmitting ? "Saving..." : "Save Changes"}
+                      </button>
+                    </div>
+                  </form>
+                ) : (
+                  <>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <ProfileDetail
+                        label="Name"
+                        value={profile.name || "Not set"}
+                      />
+                      <ProfileDetail label="Email" value={profile.email} />
+                      <ProfileDetail
+                        label="Phone"
+                        value={profile.phone || "Not set"}
+                      />
+                      <ProfileDetail
+                        label="Role"
+                        value={profile.role || "Not assigned"}
+                      />
+                      <ProfileDetail
+                        label="Joined"
+                        value={
+                          profile.joined
+                            ? new Date(profile.joined).toLocaleDateString("en-IN", {
+                                year: "numeric",
+                                month: "long",
+                                day: "numeric",
+                              })
+                            : "Not available"
+                        }
+                      />
+                    </div>
+                    
+                    <div className="pt-6">
+                      <button
+                        onClick={() => setIsEditing(true)}
+                        className="w-full py-3 px-6 bg-gradient-to-r from-[#ff3b3b] to-[#ff6b6b] text-white rounded-lg font-medium hover:from-[#ff6b6b] hover:to-[#ff3b3b] transition-all duration-300 ease-in-out shadow-lg hover:shadow-xl hover:scale-105 uppercase tracking-wider"
+                      >
+                        Edit Profile
+                      </button>
+                    </div>
+                  </>
+                )}
+              </div>
             </div>
           </div>
         </div>
@@ -309,9 +340,11 @@ const ProfileDetail: React.FC<{ label: string; value: string }> = ({
   label,
   value,
 }) => (
-  <div className="flex justify-between items-center py-3 px-4 bg-gray-50 rounded-lg shadow-sm hover:bg-gray-100 transition duration-300">
-    <span className="font-semibold text-gray-600">{label}:</span>
-    <span className="font-medium text-gray-900">{value}</span>
+  <div className="bg-white/5 backdrop-blur-sm rounded-lg p-4 border border-white/10 hover:border-white/20 transition-all duration-300 ease-in-out hover:scale-105">
+    <div className="flex justify-between items-center">
+      <span className="text-gray-400 font-medium uppercase tracking-wider text-sm">{label}:</span>
+      <span className="text-white font-semibold text-right">{value}</span>
+    </div>
   </div>
 );
 
@@ -322,17 +355,20 @@ const ProfileEditField: React.FC<{
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   disabled?: boolean;
 }> = ({ label, name, value, onChange, disabled = false }) => (
-  <div className="w-full">
-    <label className="block text-sm font-medium text-gray-600">{label}</label>
+  <div className="space-y-2">
+    <label className="block text-sm font-medium text-gray-300 uppercase tracking-wider">
+      {label}
+    </label>
     <input
       type="text"
       name={name}
       value={value}
       onChange={onChange}
       disabled={disabled}
-      className={`mt-1 block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 ${
-        disabled ? "bg-gray-200 cursor-not-allowed" : "bg-white"
+      className={`w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-[#ff3b3b] transition-all duration-300 ease-in-out ${
+        disabled ? "opacity-50 cursor-not-allowed" : "hover:border-white/40"
       }`}
+      placeholder={`Enter ${label.toLowerCase()}...`}
     />
   </div>
 );
