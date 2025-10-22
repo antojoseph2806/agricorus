@@ -1,4 +1,3 @@
-// models/PayoutMethod.js
 const mongoose = require("mongoose");
 
 const payoutMethodSchema = new mongoose.Schema(
@@ -6,6 +5,11 @@ const payoutMethodSchema = new mongoose.Schema(
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
+      required: true,
+    },
+    role: {
+      type: String,
+      enum: ["landowner", "farmer", "investor"], // add all valid roles here
       required: true,
     },
     type: {
@@ -46,10 +50,6 @@ const payoutMethodSchema = new mongoose.Schema(
     isDefault: {
       type: Boolean,
       default: false,
-    },
-    createdAt: {
-      type: Date,
-      default: Date.now,
     },
   },
   { timestamps: true }

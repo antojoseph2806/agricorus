@@ -10,16 +10,22 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
-// 🔧 Use 'auto' to let Cloudinary decide (image or raw)
+// Dynamic storage: choose folder based on route or file type
 const storage = new CloudinaryStorage({
   cloudinary,
   params: async (req, file) => {
     const ext = file.originalname.split(".").pop();
     const filename = file.originalname.replace(/\.[^/.]+$/, ""); // remove extension
 
+    // Example: use different folders for KYC vs other uploads
+    let folder = "lands"; // default folder
+    if (req.baseUrl.includes("kyc") || file.fieldname === "document") {
+      folder = "kyc_docs"; // store KYC files here
+    }
+
     return {
-      folder: "lands",
-      resource_type: "auto", // 🔥 Key trick to support PDFs & images in same uploader
+      folder,
+      resource_type: "auto", // supports images & PDFs
       public_id: filename,
       format: ext // optional
     };

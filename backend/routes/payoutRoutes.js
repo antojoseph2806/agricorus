@@ -1,16 +1,15 @@
-// routes/payoutRoutes.js
 const express = require("express");
 const router = express.Router();
 const PayoutMethod = require("../models/PayoutMethod");
 const auth = require("../middleware/auth");
 
-// Utility functions for validation
+// ------------------ Utility Validation Functions ------------------
 const isValidUPI = (upiId) => /^[\w.\-]{2,256}@[a-zA-Z]{2,64}$/.test(upiId);
 const isValidIFSC = (ifsc) => /^[A-Z]{4}0[A-Z0-9]{6}$/.test(ifsc);
 const isValidAccountNumber = (acc) => /^\d{9,18}$/.test(acc);
 const isNonEmptyString = (str) => typeof str === "string" && str.trim().length > 0;
 
-// ✅ Add UPI payout method
+// ------------------ ADD UPI Payout Method ------------------
 router.post("/add-upi", auth, async (req, res) => {
   try {
     const { name, upiId, isDefault } = req.body;
@@ -22,16 +21,17 @@ router.post("/add-upi", auth, async (req, res) => {
       return res.status(400).json({ error: "Invalid UPI ID format." });
     }
 
+    // If setting this as default, unset previous defaults for same user + role
     if (isDefault) {
       await PayoutMethod.updateMany(
         { user: req.user.id, role: req.user.role },
-        { isDefault: false }
+        { $set: { isDefault: false } }
       );
     }
 
     const payout = new PayoutMethod({
       user: req.user.id,
-      role: req.user.role,   // store role too
+      role: req.user.role, // store role as per model
       type: "upi",
       name: name.trim(),
       upiId: upiId.trim(),
@@ -46,7 +46,7 @@ router.post("/add-upi", auth, async (req, res) => {
   }
 });
 
-// ✅ Add Bank payout method
+// ------------------ ADD BANK Payout Method ------------------
 router.post("/add-bank", auth, async (req, res) => {
   try {
     const { accountHolderName, accountNumber, ifscCode, bankName, isDefault } = req.body;
@@ -64,10 +64,11 @@ router.post("/add-bank", auth, async (req, res) => {
       return res.status(400).json({ error: "Bank name is required." });
     }
 
+    // Reset existing defaults for same user + role
     if (isDefault) {
       await PayoutMethod.updateMany(
         { user: req.user.id, role: req.user.role },
-        { isDefault: false }
+        { $set: { isDefault: false } }
       );
     }
 
@@ -90,7 +91,7 @@ router.post("/add-bank", auth, async (req, res) => {
   }
 });
 
-// ✅ Update payout method
+// ------------------ UPDATE Payout Method ------------------
 router.put("/:id", auth, async (req, res) => {
   try {
     const payout = await PayoutMethod.findOne({
@@ -98,7 +99,10 @@ router.put("/:id", auth, async (req, res) => {
       user: req.user.id,
       role: req.user.role,
     });
-    if (!payout) return res.status(404).json({ error: "Payout method not found" });
+
+    if (!payout) {
+      return res.status(404).json({ error: "Payout method not found" });
+    }
 
     const { name, upiId, accountHolderName, accountNumber, ifscCode, bankName, isDefault } = req.body;
 
@@ -122,37 +126,46 @@ router.put("/:id", auth, async (req, res) => {
     if (isDefault === true) {
       await PayoutMethod.updateMany(
         { user: req.user.id, role: req.user.role },
-        { isDefault: false }
+        { $set: { isDefault: false } }
       );
       payout.isDefault = true;
     }
 
     await payout.save();
-    res.json({ message: "Payout method updated", payout });
+    res.json({ message: "Payout method updated successfully", payout });
   } catch (err) {
     console.error("Error updating payout method:", err);
     res.status(500).json({ error: "Internal server error" });
   }
 });
-// ✅ Delete payout method
+
+// ------------------ DELETE Payout Method ------------------
 router.delete("/:id", auth, async (req, res) => {
   try {
-    const payout = await PayoutMethod.findOneAndDelete({ 
-      _id: req.params.id, 
+    const payout = await PayoutMethod.findOneAndDelete({
+      _id: req.params.id,
       user: req.user.id,
-      role: req.user.role
+      role: req.user.role,
     });
-    if (!payout) return res.status(404).json({ error: "Payout method not found" });
-    res.json({ message: "Payout method deleted" });
+
+    if (!payout) {
+      return res.status(404).json({ error: "Payout method not found" });
+    }
+
+    res.json({ message: "Payout method deleted successfully" });
   } catch (err) {
     console.error("Error deleting payout method:", err);
     res.status(500).json({ error: "Internal server error" });
   }
 });
-// ✅ Get all payout methods for logged-in user (based on role)
+
+// ------------------ GET All Payout Methods (by user + role) ------------------
 router.get("/", auth, async (req, res) => {
   try {
-    const methods = await PayoutMethod.find({ user: req.user.id, role: req.user.role });
+    const methods = await PayoutMethod.find({
+      user: req.user.id,
+      role: req.user.role,
+    }).sort({ createdAt: -1 }); // newest first
     res.json(methods);
   } catch (err) {
     console.error("Error fetching payout methods:", err);

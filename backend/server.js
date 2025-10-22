@@ -26,6 +26,11 @@ const adminLeaseRoutes = require("./routes/adminLeaseRoutes");
 const payoutRoutes = require("./routes/payoutRoutes");
 const paymentRequestRoutes = require("./routes/paymentRequestRoutes");
 const projectPaymentsRoutes = require("./routes/projectPayments");
+const kycRoutes = require('./routes/kycRoute');
+const adminLeasePaymentRoutes = require("./routes/adminLeasePaymentRoutes");
+const adminInvestmentRoutes = require("./routes/adminInvestmentRoutes");
+const investmentPaymentRequestRoutes = require("./routes/investmentPaymentRequestRoutes");
+
 
 // ------------------------
 // Import middleware
@@ -115,6 +120,10 @@ app.use("/api/admin/leases", adminLeaseRoutes);
 app.use("/api/payouts", payoutRoutes);
 app.use("/api/payment-requests", paymentRequestRoutes);
 app.use("/api/project-payments", projectPaymentsRoutes);
+app.use('/api/kyc', kycRoutes);
+app.use("/api/admin/leases", adminLeasePaymentRoutes);
+app.use("/api/admin/investments", adminInvestmentRoutes);
+app.use("/api/investment-payment-requests", investmentPaymentRequestRoutes);
 // ------------------------
 // Test protected route
 // ------------------------

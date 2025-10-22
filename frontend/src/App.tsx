@@ -37,6 +37,8 @@ import LandownerLeaseRequests from "./pages/landowner/LandownerLeaseRequests";
 import RequestPayment from "./pages/landowner/RequestPayment";
 import { PayoutManagement } from "./pages/landowner/PayoutManagement";
 import PaymentHistory from "./pages/landowner/PaymentHistory";
+import KycVerify from './pages/landowner/KycVerify';
+import KycStatus from './pages/landowner/KycStatus';
 
 // Investor Pages
 import InvestorDashboard from "./pages/investor/InvestorDashboard";
@@ -45,6 +47,8 @@ import InvestorProjectDetails from "./pages/investor/InvestorProjectDetails";
 import InvestmentHistory from "./pages/investor/InvestmentHistory";
 import ManageUPI from "./pages/investor/ManageUPI";
 import ManageBank from "./pages/investor/ManageBank";
+import { VerifyIdentity } from "./pages/investor/VerifyIdentity";
+import { KYCStatus } from "./pages/investor/KYCStatus";
 
 // Admin Pages
 import AdminDashboard from "./pages/admin/AdminDashboard";
@@ -54,7 +58,8 @@ import ManageUsers from "./pages/admin/ManageUsers";
 import AdminLeasesPage from "./pages/admin/AdminLeasesPage";
 import AdminEditLeasePage from "./pages/admin/AdminEditLeasePage";
 import ManageProjects from "./pages/admin/ManageProjects";
-import ditProjectadmin from "./pages/admin/EditProjectadmin";
+import EditProjectadmin from "./pages/admin/EditProjectadmin";
+import ManageInvestments from "./pages/admin/ManageInvestments";
 
 // Profile Pages
 import ProfileView from "./pages/landowner/ProfileView";
@@ -62,7 +67,6 @@ import ProfileView from "./pages/landowner/ProfileView";
 // Shared
 import ProtectedRoute from "./components/ProtectedRoute";
 import ForbiddenPage from "./pages/ForbiddenPage";
-import EditProjectadmin from "./pages/admin/EditProjectadmin";
 
 function App() {
   return (
@@ -122,6 +126,8 @@ function App() {
           <Route path="/payouts/bank" element={<PayoutManagement type="bank" />} />
           <Route path="/request-payment" element={<RequestPayment />} />
           <Route path="/payment-history" element={<PaymentHistory />} />
+          <Route path="/profile/kyc-verify" element={<KycVerify />} />
+        <Route path="/profile/kyc-status" element={<KycStatus />} />
 
           <Route
             path="/lands/add"
@@ -210,6 +216,8 @@ function App() {
     <ProtectedRoute element={<InvestorProjectDetails />} allowedRoles={["investor"]} />
   }
 />
+<Route path="/investor/verify-identity" element={<VerifyIdentity />} />
+<Route path="/investor/kyc-status" element={<KYCStatus />} />
 <Route path="/investments/history" element={<InvestmentHistory />} />
 <Route path="/investor/upi/manage" element={<ManageUPI />} />
         <Route path="/investor/bank/manage" element={<ManageBank />} />
@@ -260,6 +268,10 @@ function App() {
             path="/admin/users/investors"
             element={<ManageUsers role="investor" />} 
           />
+          <Route
+          path="/admin/manage-investments"
+          element={<ManageInvestments />}
+        />
           <Route 
             path="/admin/leases"
             element={<AdminLeasesPage />} 
@@ -271,8 +283,6 @@ function App() {
           <Route path="/admin/manage-projects" element={<ManageProjects />} />
           <Route path="projects/:id" element={<ManageProjects />} />
           <Route path="/admin/projects/edit/:id" element={<EditProjectadmin />} />
-
-
           {/* ----------------- Profile Routes ----------------- */}
           <Route
             path="/profile/view"

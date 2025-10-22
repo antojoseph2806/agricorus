@@ -83,11 +83,11 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, onToggleSidebar, isMob
       icon: TrendingUp, 
       href: '/admin/manage-projects' 
     },
-    { 
-      label: 'Manage Investments', 
-      icon: DollarSign, 
-      href: '#' 
-    },
+    {
+  label: "Manage Investments",
+  icon: DollarSign,
+  href: "/admin/manage-investments"
+},
     {
       label: 'Handle Disputes',
       icon: AlertTriangle,
@@ -102,11 +102,11 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, onToggleSidebar, isMob
     {
       label: 'Manage Payments',
       icon: DollarSign,
-      href: '/admin/payments',
+      href: '#',
       children: [
-        { label: 'Lease Payment Requests', icon: FileText, href: '#' },
+        { label: "Lease Payment Requests", icon: FileText, href: "/admin/lease-payment-requests" },
         { label: 'Project Payment Requests', icon: AlertCircle, href: '#' },
-        { label: 'Lease Payment History', icon: FileText, href: '#' },
+        { label: "Lease Payment History", icon: FileText, href: "/admin/lease-payment-history" },
         { label: 'Project Payment History', icon: AlertCircle, href: '#' },
       ],
     },

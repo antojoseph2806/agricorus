@@ -46,9 +46,9 @@ const Sidebar: React.FC<SidebarProps> = ({
       icon: UserCircle,
       href: "#",
       children: [
-        { label: "Verify Identity", icon: UserCircle, href: "/kyc/add" },
-        { label: "View Profile", icon: UserCircle, href: "/profile/view" },
-        { label: "KYC Status", icon: UserCircle, href: "/profile/kyc-status" },
+        { label: "Verify Identity", icon: UserCircle, href: "/investor/verify-identity" },
+        { label: "View Profile", icon: UserCircle, href: "#" },
+        { label: "KYC Status", icon: UserCircle, href: "/investor/kyc-status" },
       ],
     },
     { label: "View Projects", icon: TrendingUp, href: "/projects" },
@@ -72,15 +72,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         { label: "Payment History", icon: UserCircle, href: "#" },
       ],
     },
-    {
-      label: "Disputes",
-      icon: UserCircle,
-      href: "#",
-      children: [
-        { label: "Raise Dispute", icon: UserCircle, href: "#" },
-        { label: "Disputes History", icon: UserCircle, href: "#" },
-      ],
-    },
+    
     { label: "ROI Reports", icon: FileText, href: "/reports" },
   ];
 
