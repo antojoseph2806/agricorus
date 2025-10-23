@@ -49,6 +49,7 @@ import ManageUPI from "./pages/investor/ManageUPI";
 import ManageBank from "./pages/investor/ManageBank";
 import { VerifyIdentity } from "./pages/investor/VerifyIdentity";
 import { KYCStatus } from "./pages/investor/KYCStatus";
+import InvestorProfile from "./pages/investor/InvestorProfile";
 
 // Admin Pages
 import AdminDashboard from "./pages/admin/AdminDashboard";
@@ -220,6 +221,7 @@ function App() {
 <Route path="/investor/kyc-status" element={<KYCStatus />} />
 <Route path="/investments/history" element={<InvestmentHistory />} />
 <Route path="/investor/upi/manage" element={<ManageUPI />} />
+<Route path="/investor/profile" element={<InvestorProfile />} />
         <Route path="/investor/bank/manage" element={<ManageBank />} />
 
 

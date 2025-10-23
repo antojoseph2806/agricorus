@@ -47,7 +47,7 @@ const Sidebar: React.FC<SidebarProps> = ({
       href: "#",
       children: [
         { label: "Verify Identity", icon: UserCircle, href: "/investor/verify-identity" },
-        { label: "View Profile", icon: UserCircle, href: "#" },
+        { label: "View Profile", icon: UserCircle, href: "/investor/profile" },
         { label: "KYC Status", icon: UserCircle, href: "/investor/kyc-status" },
       ],
     },
@@ -68,12 +68,9 @@ const Sidebar: React.FC<SidebarProps> = ({
       icon: UserCircle,
       href: "#",
       children: [
-        { label: "Request payment", icon: UserCircle, href: "#" },
         { label: "Payment History", icon: UserCircle, href: "#" },
       ],
     },
-    
-    { label: "ROI Reports", icon: FileText, href: "/reports" },
   ];
 
   const handleLogout = async () => {
