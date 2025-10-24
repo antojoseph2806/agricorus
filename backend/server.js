@@ -29,8 +29,7 @@ const projectPaymentsRoutes = require("./routes/projectPayments");
 const kycRoutes = require('./routes/kycRoute');
 const adminLeasePaymentRoutes = require("./routes/adminLeasePaymentRoutes");
 const adminInvestmentRoutes = require("./routes/adminInvestmentRoutes");
-
-
+const investmentPaymentRequestRoutes = require("./routes/investmentPaymentRequestRoutes");
 
 // ------------------------
 // Import middleware
@@ -38,12 +37,29 @@ const adminInvestmentRoutes = require("./routes/adminInvestmentRoutes");
 const auth = require('./middleware/auth');
 
 // ------------------------
-// Middleware
+// CORS Configuration
 // ------------------------
+const allowedOrigins = [
+  'http://localhost:5173',
+  'https://agricorus-uxjb.vercel.app'
+];
+
 app.use(cors({
-  origin: 'http://localhost:5173', // Adjust for frontend URL in production
+  origin: function(origin, callback){
+    // allow requests with no origin (like Postman, curl)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) === -1) {
+      const msg = `The CORS policy for this site does not allow access from the specified Origin: ${origin}`;
+      return callback(new Error(msg), false);
+    }
+    return callback(null, true);
+  },
   credentials: true
 }));
+
+// ------------------------
+// Middleware
+// ------------------------
 app.use(express.json());
 
 // ✅ Serve uploaded images (profile pictures, etc.)
@@ -60,7 +76,6 @@ mongoose.connect(process.env.MONGO_URI, {})
     const User = require('./models/User');
     try {
       console.log('🔍 Checking User indexes...');
-
       const indexes = await User.collection.indexes();
       const phoneIndex = indexes.find((idx) => idx.name === 'phone_1');
 
@@ -123,6 +138,8 @@ app.use("/api/project-payments", projectPaymentsRoutes);
 app.use('/api/kyc', kycRoutes);
 app.use("/api/admin/leases", adminLeasePaymentRoutes);
 app.use("/api/admin/investments", adminInvestmentRoutes);
+app.use("/api/investment-payment-requests", investmentPaymentRequestRoutes);
+
 // ------------------------
 // Test protected route
 // ------------------------
