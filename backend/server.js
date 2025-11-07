@@ -42,7 +42,7 @@ const auth = require('./middleware/auth');
 // Middleware
 // ------------------------
 app.use(cors({
-  origin: 'http://localhost:5173', // Adjust for frontend URL in production
+  origin: 'https://agricorus.vercel.app', // Adjust for frontend URL in production
   credentials: true
 }));
 app.use(express.json());
