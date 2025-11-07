@@ -67,7 +67,7 @@ const FarmerLandDetail: React.FC = () => {
     const fetchLand = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await fetch(`http://localhost:5000/api/farmer/lands/${id}`, {
+        const res = await fetch(`https://agricorus.onrender.com/api/farmer/lands/${id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (!res.ok) throw new Error("Failed to fetch land details");
@@ -106,7 +106,7 @@ const FarmerLandDetail: React.FC = () => {
     try {
       const token = localStorage.getItem("token");
       const res = await fetch(
-        `http://localhost:5000/api/farmer/leases/${id}/request`,
+        `https://agricorus.onrender.com/api/farmer/leases/${id}/request`,
         {
           method: "POST",
           headers: {

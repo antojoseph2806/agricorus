@@ -16,7 +16,7 @@ const FarmerKYCStatus: React.FC = () => {
   const [loading, setLoading] = useState(true);
 
   // ✅ Backend URL (no .env needed)
-  const API_URL = "http://localhost:5000"; // Change this if backend is hosted elsewhere
+  const API_URL = "https://agricorus.onrender.com"; // Change this if backend is hosted elsewhere
 
   useEffect(() => {
     const fetchKYC = async () => {

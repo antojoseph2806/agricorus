@@ -47,7 +47,7 @@ const AgainstDisputes: React.FC = () => {
                     return;
                 }
                 
-                const res = await axios.get("http://localhost:5000/api/disputes/against/me", {
+                const res = await axios.get("https://agricorus.onrender.com/api/disputes/against/me", {
                     headers: { Authorization: `Bearer ${token}` },
                 });
                 

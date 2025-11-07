@@ -49,7 +49,7 @@ export default function ProjectDetails() {
     const fetchProject = async () => {
       try {
         setLoading(true);
-        const res = await axios.get(`http://localhost:5000/api/projects/projects/${id}`);
+        const res = await axios.get(`https://agricorus.onrender.com/api/projects/projects/${id}`);
         setProject(res.data);
         setFormData({
           title: res.data.title,
@@ -71,7 +71,7 @@ export default function ProjectDetails() {
     if (!window.confirm("Are you sure you want to delete this deployment?")) return;
 
     try {
-      await axios.delete(`http://localhost:5000/api/projects/projects/${id}`, {
+      await axios.delete(`https://agricorus.onrender.com/api/projects/projects/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       navigate("/farmer/projects");
@@ -84,7 +84,7 @@ export default function ProjectDetails() {
   const handleSave = async () => {
     try {
       const res = await axios.put(
-        `http://localhost:5000/api/projects/projects/${id}`,
+        `https://agricorus.onrender.com/api/projects/projects/${id}`,
         formData,
         { headers: { Authorization: `Bearer ${token}` } }
       );

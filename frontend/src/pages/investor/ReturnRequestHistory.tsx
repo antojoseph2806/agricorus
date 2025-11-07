@@ -24,7 +24,7 @@ const ReturnRequestHistory: React.FC = () => {
         setLoading(true);
         const token = localStorage.getItem("token"); // JWT token
         const res = await axios.get(
-          "http://localhost:5000/api/investor/return-requests",
+          "https://agricorus.onrender.com/api/investor/return-requests",
           {
             headers: { Authorization: `Bearer ${token}` },
           }

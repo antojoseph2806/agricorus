@@ -15,7 +15,7 @@ export default function ManageUPI() {
   const [editingId, setEditingId] = useState<string | null>(null);
 
   const fetchMethods = async () => {
-    const res = await axios.get("http://localhost:5000/api/payouts/", { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } });
+    const res = await axios.get("https://agricorus.onrender.com/api/payouts/", { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } });
     setMethods(res.data.filter((m: any) => m.type === "upi"));
   };
 
@@ -24,9 +24,9 @@ export default function ManageUPI() {
   const handleSubmit = async () => {
     try {
       if (editingId) {
-        await axios.put(`http://localhost:5000/api/payouts/${editingId}`, form, { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } });
+        await axios.put(`https://agricorus.onrender.com/api/payouts/${editingId}`, form, { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } });
       } else {
-        await axios.post("http://localhost:5000/api/payouts/add-upi", form, { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } });
+        await axios.post("https://agricorus.onrender.com/api/payouts/add-upi", form, { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } });
       }
       setForm({ name: "", upiId: "", isDefault: false });
       setEditingId(null);
@@ -43,7 +43,7 @@ export default function ManageUPI() {
 
   const handleDelete = async (id: string) => {
     if (!window.confirm("Delete this UPI method?")) return;
-    await axios.delete(`http://localhost:5000/api/payouts/${id}`, { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } });
+    await axios.delete(`https://agricorus.onrender.com/api/payouts/${id}`, { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } });
     fetchMethods();
   };
 

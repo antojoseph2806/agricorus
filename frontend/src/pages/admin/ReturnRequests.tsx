@@ -39,7 +39,7 @@ const ReturnRequestsAdmin: React.FC = () => {
       setLoading(true);
       const token = localStorage.getItem("token");
       const { data } = await axios.get(
-        "http://localhost:5000/api/investor/return-requests/admin",
+        "https://agricorus.onrender.com/api/investor/return-requests/admin",
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -63,7 +63,7 @@ const ReturnRequestsAdmin: React.FC = () => {
       setUpdatingId(id);
       const token = localStorage.getItem("token");
       const { data } = await axios.patch(
-        `http://localhost:5000/api/investor/return-requests/admin/${id}`,
+        `https://agricorus.onrender.com/api/investor/return-requests/admin/${id}`,
         { status },
         { headers: { Authorization: `Bearer ${token}` } }
       );
