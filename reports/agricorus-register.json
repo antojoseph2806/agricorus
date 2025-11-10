@@ -1,0 +1,261 @@
+{
+  "stats": {
+    "suites": 1,
+    "tests": 6,
+    "passes": 5,
+    "pending": 0,
+    "failures": 1,
+    "start": "2025-11-08T07:06:54.631Z",
+    "end": "2025-11-08T07:08:29.486Z",
+    "duration": 94855,
+    "testsRegistered": 6,
+    "passPercent": 83.33333333333334,
+    "pendingPercent": 0,
+    "other": 0,
+    "hasOther": false,
+    "skipped": 0,
+    "hasSkipped": false
+  },
+  "results": [
+    {
+      "uuid": "4b71411d-6b16-49f3-97ba-fdf3516e27c9",
+      "title": "",
+      "fullFile": "C:\\Users\\antom\\OneDrive\\Documents\\agricorus\\tests\\register.test.js",
+      "file": "\\tests\\register.test.js",
+      "beforeHooks": [],
+      "afterHooks": [],
+      "tests": [],
+      "suites": [
+        {
+          "uuid": "00ec6602-61c9-4170-a97b-d4257c15a0a2",
+          "title": "AgriCorus Register Page E2E Tests (Edge)",
+          "fullFile": "C:\\Users\\antom\\OneDrive\\Documents\\agricorus\\tests\\register.test.js",
+          "file": "\\tests\\register.test.js",
+          "beforeHooks": [
+            {
+              "title": "\"before all\" hook in \"AgriCorus Register Page E2E Tests (Edge)\"",
+              "fullTitle": "AgriCorus Register Page E2E Tests (Edge) \"before all\" hook in \"AgriCorus Register Page E2E Tests (Edge)\"",
+              "timedOut": false,
+              "duration": 2659,
+              "state": null,
+              "speed": null,
+              "pass": false,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "const options = new edge.Options();\noptions.addArguments(\"--no-sandbox\");\noptions.addArguments(\"--disable-dev-shm-usage\");\n// options.addArguments(\"--headless=new\"); // ← enable in CI if needed\ndriver = await new Builder()\n  .forBrowser(\"MicrosoftEdge\")\n  .setEdgeOptions(options)\n  .build();",
+              "err": {},
+              "uuid": "9345bd8a-579d-44db-aa01-8a290dc90aff",
+              "parentUUID": "00ec6602-61c9-4170-a97b-d4257c15a0a2",
+              "isHook": true,
+              "skipped": false
+            }
+          ],
+          "afterHooks": [
+            {
+              "title": "\"after all\" hook in \"AgriCorus Register Page E2E Tests (Edge)\"",
+              "fullTitle": "AgriCorus Register Page E2E Tests (Edge) \"after all\" hook in \"AgriCorus Register Page E2E Tests (Edge)\"",
+              "timedOut": false,
+              "duration": 601,
+              "state": null,
+              "speed": null,
+              "pass": false,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "if (driver) await driver.quit();",
+              "err": {},
+              "uuid": "25b410c3-0da4-4343-80e7-ad980a358678",
+              "parentUUID": "00ec6602-61c9-4170-a97b-d4257c15a0a2",
+              "isHook": true,
+              "skipped": false
+            },
+            {
+              "title": "\"after each\" hook in \"AgriCorus Register Page E2E Tests (Edge)\"",
+              "fullTitle": "AgriCorus Register Page E2E Tests (Edge) \"after each\" hook in \"AgriCorus Register Page E2E Tests (Edge)\"",
+              "timedOut": false,
+              "duration": 226,
+              "state": null,
+              "speed": null,
+              "pass": false,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "if (this.currentTest.state === \"failed\" && driver) {\n  try {\n    const png = await driver.takeScreenshot();\n    const dir = path.join(__dirname, \"..\", \"reports\", \"screens\");\n    fs.mkdirSync(dir, { recursive: true });\n    const fileSafe = this.currentTest.fullTitle().replace(/[^\\w]+/g, \"_\");\n    const filePath = path.join(dir, `${fileSafe}.png`);\n    fs.writeFileSync(filePath, png, \"base64\");\n    addContext(this, `../screens/${path.basename(filePath)}`);\n  } catch (_) {\n    // ignore screenshot failures\n  }\n}",
+              "err": {},
+              "uuid": "9c38e116-d59c-4ec2-90bb-a4324be58b67",
+              "parentUUID": "00ec6602-61c9-4170-a97b-d4257c15a0a2",
+              "isHook": true,
+              "skipped": false
+            }
+          ],
+          "tests": [
+            {
+              "title": "1. Shows global error + inline errors on empty submit",
+              "fullTitle": "AgriCorus Register Page E2E Tests (Edge) 1. Shows global error + inline errors on empty submit",
+              "timedOut": false,
+              "duration": 19251,
+              "state": "passed",
+              "speed": "slow",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "await goToRegister();\nawait clickSubmit();\nconst alertText = await getGlobalAlertText();\n// match broadly to avoid brittle copy\nexpect(alertText.toLowerCase()).to.satisfy(t =>\n  t.includes(\"error\") || t.includes(\"please correct\") || t.includes(\"required\")\n);\nconst nameErr = await getFieldError(\"name\");\nexpect(nameErr.toLowerCase()).to.include(\"required\");",
+              "err": {},
+              "uuid": "75e572b4-400c-439c-b030-49ed682f3910",
+              "parentUUID": "00ec6602-61c9-4170-a97b-d4257c15a0a2",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "2. Shows strong password error on blur",
+              "fullTitle": "AgriCorus Register Page E2E Tests (Edge) 2. Shows strong password error on blur",
+              "timedOut": false,
+              "duration": 5585,
+              "state": "passed",
+              "speed": "slow",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "await goToRegister();\nawait fillField(\"password\", \"weakpass\");\nconst pwdErr = await getFieldError(\"password\");\nexpect(pwdErr.toLowerCase()).to.satisfy(t =>\n  t.includes(\"8\") || t.includes(\"uppercase\") || t.includes(\"lowercase\") || t.includes(\"number\") || t.includes(\"special\")\n);",
+              "err": {},
+              "uuid": "f1a64df0-fe5a-4e43-9882-f2f8ec7050a1",
+              "parentUUID": "00ec6602-61c9-4170-a97b-d4257c15a0a2",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "3. Toggles password visibility via eye icon",
+              "fullTitle": "AgriCorus Register Page E2E Tests (Edge) 3. Toggles password visibility via eye icon",
+              "timedOut": false,
+              "duration": 3843,
+              "state": "passed",
+              "speed": "slow",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "await goToRegister();\nconst pwd = await driver.findElement(By.name(\"password\"));\n// try known data-testid first\nlet toggle;\nconst toggles = await driver.findElements(By.css(\"[data-testid='toggle-password']\"));\nif (toggles.length) {\n  toggle = toggles[0];\n} else {\n  // fallback: following sibling button\n  toggle = await driver.findElement(By.xpath(\"//input[@name='password']/following-sibling::button[1]\"));\n}\nexpect(await pwd.getAttribute(\"type\")).to.equal(\"password\");\nawait toggle.click();\nexpect(await pwd.getAttribute(\"type\")).to.equal(\"text\");\nawait toggle.click();\nexpect(await pwd.getAttribute(\"type\")).to.equal(\"password\");",
+              "err": {},
+              "uuid": "f843986c-c7db-43d0-ad79-6386578c3610",
+              "parentUUID": "00ec6602-61c9-4170-a97b-d4257c15a0a2",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "4. Shows mismatch error when passwords differ",
+              "fullTitle": "AgriCorus Register Page E2E Tests (Edge) 4. Shows mismatch error when passwords differ",
+              "timedOut": false,
+              "duration": 3630,
+              "state": "passed",
+              "speed": "slow",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "await goToRegister();\nawait fillField(\"password\", \"StrongPass1!\");\nawait fillField(\"confirmPassword\", \"DifferentPass2!\");\nconst err = await getFieldError(\"confirmPassword\");\nexpect(err.toLowerCase()).to.satisfy(t => t.includes(\"match\"));",
+              "err": {},
+              "uuid": "c3028e6f-4a0d-4573-842e-9a5ae88d102b",
+              "parentUUID": "00ec6602-61c9-4170-a97b-d4257c15a0a2",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "5. Submits successfully and opens OTP verification modal",
+              "fullTitle": "AgriCorus Register Page E2E Tests (Edge) 5. Submits successfully and opens OTP verification modal",
+              "timedOut": false,
+              "duration": 14364,
+              "state": "passed",
+              "speed": "slow",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "await goToRegister();\nawait fillValidForm(true);\nawait clickSubmit();\n// 1) success alert mentioning verification/otp\nconst alert = await getGlobalAlertText();\nexpect(alert.toLowerCase()).to.satisfy(t =>\n  t.includes(\"registration\") || t.includes(\"verify\") || t.includes(\"otp\")\n);\n// 2) OTP modal title (prefer data-testid; fallback to text)\nconst otpTitle = await waitForAnyLocated([\n  By.css(\"[data-testid='otp-modal-title']\"),\n  By.xpath(\"//h3[normalize-space()='Verify your email']\"),\n  By.xpath(\"//h3[contains(.,'Verify')]\"),\n], TIMEOUT_ASYNC);\nexpect(await otpTitle.isDisplayed()).to.equal(true);\n// 3) Email displayed in modal copy\nconst emailLine = await waitForAnyLocated([\n  By.xpath(\"//p[contains(.,'OTP') and contains(.,'sent')]\"),\n  By.css(\"[data-testid='otp-instructions']\"),\n], TIMEOUT_ASYNC);\nconst text = (await emailLine.getText()).toLowerCase();\nexpect(text).to.satisfy(t => t.includes(\"@agricorus.com\") || t.includes(\"email\"));",
+              "err": {},
+              "uuid": "c241fdf5-b354-4881-acfb-68016237cfc9",
+              "parentUUID": "00ec6602-61c9-4170-a97b-d4257c15a0a2",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "6. OTP modal resend cooldown works (disables then re-enables)",
+              "fullTitle": "AgriCorus Register Page E2E Tests (Edge) 6. OTP modal resend cooldown works (disables then re-enables)",
+              "timedOut": false,
+              "duration": 44644,
+              "state": "failed",
+              "speed": null,
+              "pass": false,
+              "fail": true,
+              "pending": false,
+              "context": "\"../screens/AgriCorus_Register_Page_E2E_Tests_Edge_6_OTP_modal_resend_cooldown_works_disables_then_re_enables_.png\"",
+              "code": "await goToRegister();\nawait fillValidForm(true);\nawait clickSubmit();\n// Ensure OTP modal is visible\nawait waitForAnyLocated([\n  By.css(\"[data-testid='otp-modal-title']\"),\n  By.xpath(\"//h3[contains(.,'Verify')]\"),\n], TIMEOUT_ASYNC);\n// Resend button\nconst resendBtn = await waitForAnyLocated([\n  By.css(\"[data-testid='otp-resend']\"),\n  By.xpath(\"//button[contains(.,'Resend')]\"),\n], TIMEOUT_GENERAL);\n// Initially disabled\nexpect(await resendBtn.isEnabled()).to.equal(false);\n// Wait until enabled (cooldown complete)\nawait driver.wait(until.elementIsEnabled(resendBtn), OTP_RESEND_MAX_MS);\nexpect(await resendBtn.isEnabled()).to.equal(true);\n// Click to restart cooldown, then confirm disabled again\nawait resendBtn.click();\nawait driver.sleep(1500);\nexpect(await resendBtn.isEnabled()).to.equal(false);",
+              "err": {
+                "message": "AssertionError: expected true to equal false",
+                "estack": "AssertionError: expected true to equal false\n    at Context.<anonymous> (tests\\register.test.js:288:44)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)",
+                "diff": "- true\n+ false\n"
+              },
+              "uuid": "ecbf29c6-54f5-448b-b066-a61fd0451c99",
+              "parentUUID": "00ec6602-61c9-4170-a97b-d4257c15a0a2",
+              "isHook": false,
+              "skipped": false
+            }
+          ],
+          "suites": [],
+          "passes": [
+            "75e572b4-400c-439c-b030-49ed682f3910",
+            "f1a64df0-fe5a-4e43-9882-f2f8ec7050a1",
+            "f843986c-c7db-43d0-ad79-6386578c3610",
+            "c3028e6f-4a0d-4573-842e-9a5ae88d102b",
+            "c241fdf5-b354-4881-acfb-68016237cfc9"
+          ],
+          "failures": [
+            "ecbf29c6-54f5-448b-b066-a61fd0451c99"
+          ],
+          "pending": [],
+          "skipped": [],
+          "duration": 91317,
+          "root": false,
+          "rootEmpty": false,
+          "_timeout": 120000
+        }
+      ],
+      "passes": [],
+      "failures": [],
+      "pending": [],
+      "skipped": [],
+      "duration": 0,
+      "root": true,
+      "rootEmpty": true,
+      "_timeout": 90000
+    }
+  ],
+  "meta": {
+    "mocha": {
+      "version": "11.7.5"
+    },
+    "mochawesome": {
+      "options": {
+        "quiet": true,
+        "reportFilename": "agricorus-register",
+        "saveHtml": true,
+        "saveJson": true,
+        "consoleReporter": "spec",
+        "useInlineDiffs": false,
+        "code": true
+      },
+      "version": "7.1.4"
+    },
+    "marge": {
+      "options": {
+        "reportDir": "reports",
+        "reportFilename": "agricorus-register",
+        "overwrite": "true",
+        "quiet": "true"
+      },
+      "version": "6.3.2"
+    }
+  }
+}

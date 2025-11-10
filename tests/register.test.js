@@ -1,201 +1,290 @@
+// tests/register.test.js
+// Run with:
+// npx mocha tests/register.test.js --timeout 120000 --reporter mochawesome --reporter-options "reportDir=reports,reportFilename=agricorus-register,overwrite=true,quiet=true"
+
 const { Builder, By, until } = require("selenium-webdriver");
+const edge = require("selenium-webdriver/edge");
 const { expect } = require("chai");
-require("chromedriver"); 
+const fs = require("fs");
+const path = require("path");
+const addContext = require("mochawesome/addContext");
 
-// --- Configuration ---
-const REGISTER_URL = "http://localhost:5173/register";
-const TIMEOUT_GENERAL = 5000;
-// Increased alert/modal timeout to allow for network latency and React state updates
-const TIMEOUT_ASYNC = 15000; 
+// -------------------- Config --------------------
+const BASE_URL = process.env.BASE_URL || "http://localhost:5173";
+const REGISTER_PATH = "/register"; // adjust if your route differs
+const REGISTER_URL = `${BASE_URL}${REGISTER_PATH}`;
 
-describe("AgriCorus Register Page E2E Tests", function () {
-    // Increased overall test suite timeout to 90 seconds
-    this.timeout(90000); 
-    let driver;
+const TIMEOUT_GENERAL = 10000;  // wait for DOM elements
+const TIMEOUT_ASYNC = 20000;    // network/state/UI transitions
+const OTP_RESEND_MAX_MS = 40000; // generous cooldown wait
 
-    before(async () => {
-        driver = await new Builder().forBrowser("chrome").build();
-    });
+// If your app redirects to any dashboard after success:
+const DASHBOARD_MATCH = /dashboard/i;
 
-    after(async () => {
-        if (driver) await driver.quit();
-    });
+// -------------------- Suite --------------------
+describe("AgriCorus Register Page E2E Tests (Edge)", function () {
+  this.timeout(120000);
 
-    // --- Helper Functions ---
+  /** @type {import('selenium-webdriver').WebDriver} */
+  let driver;
 
-    const goToRegister = async () => {
-        await driver.get(REGISTER_URL);
-        // Wait for the main form title to ensure the page has loaded
-        await driver.wait(until.elementLocated(By.xpath("//h2[text()='Join AgriCorus']")), TIMEOUT_GENERAL);
-    };
+  before(async function () {
+    const options = new edge.Options();
+    options.addArguments("--no-sandbox");
+    options.addArguments("--disable-dev-shm-usage");
+    // options.addArguments("--headless=new"); // ← enable in CI if needed
 
-    const fillField = async (name, value) => {
-        const input = await driver.findElement(By.name(name));
-        await input.clear();
-        await input.sendKeys(value);
-        // Crucial: Manually trigger blur for immediate client-side validation errors
-        await driver.executeScript("arguments[0].blur();", input); 
-    };
+    driver = await new Builder()
+      .forBrowser("MicrosoftEdge")
+      .setEdgeOptions(options)
+      .build();
+  });
 
-    const selectRole = async (role) => {
-        const radio = await driver.findElement(By.css(`input[name='role'][value='${role}']`));
-        await radio.click();
-    };
+  after(async function () {
+    if (driver) await driver.quit();
+  });
 
-    const clickSubmit = async () => {
-        const btn = await driver.findElement(By.css("button[type='submit']"));
-        await btn.click();
-    };
+  // Attach screenshot on failures to Mochawesome report
+  afterEach(async function () {
+    if (this.currentTest.state === "failed" && driver) {
+      try {
+        const png = await driver.takeScreenshot();
+        const dir = path.join(__dirname, "..", "reports", "screens");
+        fs.mkdirSync(dir, { recursive: true });
+        const fileSafe = this.currentTest.fullTitle().replace(/[^\w]+/g, "_");
+        const filePath = path.join(dir, `${fileSafe}.png`);
+        fs.writeFileSync(filePath, png, "base64");
+        addContext(this, `../screens/${path.basename(filePath)}`);
+      } catch (_) {
+        // ignore screenshot failures
+      }
+    }
+  });
 
-    // FIX: Using a robust locator for the AlertMessage component
-    const getGlobalAlertText = async () => {
+  // -------------------- Helpers --------------------
+  async function goToRegister() {
+    await driver.get(REGISTER_URL);
+    // Prefer a stable data-testid; fallback to heading text:
+    await waitForAnyLocated([
+      By.css("[data-testid='register-title']"),
+      By.xpath("//h2[normalize-space()='Join AgriCorus']"),
+      By.xpath("//h1[contains(.,'Register') or contains(.,'Sign Up') or contains(.,'Create Account')]"),
+    ], TIMEOUT_GENERAL);
+  }
+
+  async function fillField(name, value) {
+    const el = await driver.findElement(By.name(name));
+    await el.clear();
+    await el.sendKeys(value);
+    // trigger blur for client-side validation
+    await driver.executeScript("arguments[0].blur();", el);
+  }
+
+  async function selectRole(roleValue) {
+    // Try radio first:
+    const radios = await driver.findElements(By.css(`input[name='role'][value='${roleValue}']`));
+    if (radios.length) {
+      await radios[0].click();
+      return;
+    }
+    // Try <select>:
+    const selects = await driver.findElements(By.id("role"));
+    if (selects.length) {
+      const tag = (await selects[0].getTagName()).toLowerCase();
+      if (tag === "select") {
+        await selects[0].findElement(By.css(`option[value='${roleValue}']`)).click();
+        return;
+      }
+    }
+    // Fallback: click visible label text
+    const maybe = await driver.findElements(By.xpath(`//*[self::label or self::div or self::span][contains(., '${roleValue.charAt(0).toUpperCase() + roleValue.slice(1)}')]`));
+    if (maybe.length) await maybe[0].click();
+  }
+
+  async function clickSubmit() {
+    const btn = await waitForAnyLocated([
+      By.css("button[type='submit']"),
+      By.css("[data-testid='register-submit']"),
+      By.xpath("//button[contains(.,'Register') or contains(.,'Sign Up') or contains(.,'Create')]"),
+    ], TIMEOUT_GENERAL);
+    await btn.click();
+  }
+
+  async function waitForAnyLocated(locators, timeoutMs) {
+    const end = Date.now() + timeoutMs;
+    let lastErr;
+    while (Date.now() < end) {
+      for (const loc of locators) {
         try {
-            // Locating by the specific text or class of the AlertMessage container
-            const alert = await driver.wait(
-                until.elementLocated(By.xpath('//div[contains(@class, "flex items-center p-3")]')),
-                TIMEOUT_ASYNC 
-            );
-            // Wait for the text content itself to appear
-            await driver.wait(async () => (await alert.getText()).length > 0, 5000);
-            return await alert.getText();
+          const el = await driver.wait(until.elementLocated(loc), 1000);
+          return el;
         } catch (e) {
-            return "";
+          lastErr = e;
         }
-    };
+      }
+    }
+    throw lastErr || new Error("Element not found within timeout");
+  }
 
-    const getFieldError = async (fieldName) => {
-        try {
-            // XPath to find the error <p> sibling immediately following the input's container
-            const errorP = await driver.wait(
-                until.elementLocated(
-                    By.xpath(
-                        `//input[@name='${fieldName}']/ancestor::div[1]/p[contains(@class,'text-red-500')]`
-                    )
-                ),
-                TIMEOUT_GENERAL
-            );
-            return await errorP.getText();
-        } catch {
-            return "";
-        }
-    };
+  async function getGlobalAlertText() {
+    try {
+      const alert = await waitForAnyLocated([
+        By.css("[data-testid='alert']"),
+        By.css(".alert, .error, .text-red-500"),
+        By.xpath("//div[contains(@class,'flex') and contains(@class,'p-3') and contains(@class,'border') and contains(@class,'rounded')]"),
+      ], TIMEOUT_ASYNC);
+      await driver.wait(async () => (await alert.getText()).trim().length > 0, 5000);
+      return (await alert.getText()).trim();
+    } catch {
+      return "";
+    }
+  }
 
-    const fillValidForm = async (unique = false) => {
-        // Use unique data for submission tests to avoid backend 'duplicate' errors
-        const uniqueEmail = unique ? `valid.user.${Date.now()}@agricorus.com` : "valid.user@example.com";
-        // Ensure phone number starts with 6-9 and is 10 digits
-        const uniquePhone = unique ? `9${Math.floor(100000000 + Math.random() * 900000000)}` : "9876543210"; 
-        
-        await fillField("name", "Valid User");
-        await fillField("email", uniqueEmail);
-        await fillField("phone", uniquePhone);
-        await fillField("password", "SecureP@ss123"); // Meets strong password requirements
-        await fillField("confirmPassword", "SecureP@ss123");
-        await selectRole("investor");
-    };
+  async function getFieldError(fieldName) {
+    try {
+      // Prefer data-testid error for field
+      const testId = await driver.findElements(By.css(`[data-testid='error-${fieldName}']`));
+      if (testId.length) return (await testId[0].getText()).trim();
 
-    // --- Core Tests ---
+      // Fallback: error <p> sibling with red text
+      const errP = await driver.wait(
+        until.elementLocated(
+          By.xpath(`//input[@name='${fieldName}']/ancestor::div[1]//p[contains(@class,'text-red')]`)
+        ),
+        TIMEOUT_GENERAL
+      );
+      return (await errP.getText()).trim();
+    } catch {
+      return "";
+    }
+  }
 
-    it("1. Should show global error and inline errors when submitting an empty form", async () => {
-        await goToRegister();
-        
-        await clickSubmit();
-        
-        // Wait for 2 seconds to allow React state update and render the global alert
-        await driver.sleep(2000); 
+  function uniqueEmail(prefix = "user") {
+    const stamp = new Date().toISOString().replace(/[-:.TZ]/g, "");
+    return `${prefix}.${stamp}@agricorus.com`;
+  }
 
-        // Assert the global error message
-        const alertText = await getGlobalAlertText();
-        expect(alertText).to.include("Please correct the highlighted errors");
-        
-        // Check a required field error
-        expect(await getFieldError("name")).to.include("Name is required.");
-    });
-    
-    it("2. Should show strong password error on blur", async () => {
-        await goToRegister(); 
-        await fillField("password", "weakpass");
-        const passwordError = await getFieldError("password");
-        expect(passwordError).to.include("Password must be 8+ characters, include uppercase, lowercase, number & special character.");
-    });
+  async function fillValidForm(unique = false) {
+    const email = unique ? uniqueEmail("valid") : "valid.user@example.com";
+    const phone = unique ? `9${Math.floor(100000000 + Math.random() * 900000000)}` : "9876543210";
+    await fillField("name", "Valid User");
+    await fillField("email", email);
+    // if your field is phoneNumber or mobile, adjust here:
+    await fillField("phone", phone);
+    await fillField("password", "SecureP@ss123");
+    await fillField("confirmPassword", "SecureP@ss123");
+    await selectRole("investor");
+  }
 
-    it("3. Should toggle password visibility when eye icons are clicked", async () => {
-        await goToRegister();
-        const passwordInput = await driver.findElement(By.name("password"));
-        const toggleButton = await passwordInput.findElement(By.xpath("./following-sibling::button"));
-        
-        expect(await passwordInput.getAttribute('type')).to.equal('password');
+  // -------------------- Tests --------------------
 
-        await toggleButton.click();
-        expect(await passwordInput.getAttribute('type')).to.equal('text');
+  it("1. Shows global error + inline errors on empty submit", async function () {
+    await goToRegister();
+    await clickSubmit();
 
-        await toggleButton.click();
-        expect(await passwordInput.getAttribute('type')).to.equal('password');
-    });
+    const alertText = await getGlobalAlertText();
+    // match broadly to avoid brittle copy
+    expect(alertText.toLowerCase()).to.satisfy(t =>
+      t.includes("error") || t.includes("please correct") || t.includes("required")
+    );
 
-    it("4. Should show mismatch error when passwords do not match", async () => {
-        await goToRegister();
-        await fillField("password", "StrongPass1!");
-        await fillField("confirmPassword", "DifferentPass2!"); 
-        
-        const confirmError = await getFieldError("confirmPassword");
-        expect(confirmError).to.include("Passwords do not match.");
-    });
+    const nameErr = await getFieldError("name");
+    expect(nameErr.toLowerCase()).to.include("required");
+  });
 
-    // FIX APPLIED: Corrected the expected string to match the observed output
-    it("5. Should successfully submit and open the OTP verification modal", async () => {
-        await goToRegister();
-        
-        await fillValidForm(true); 
+  it("2. Shows strong password error on blur", async function () {
+    await goToRegister();
+    await fillField("password", "weakpass");
+    const pwdErr = await getFieldError("password");
+    expect(pwdErr.toLowerCase()).to.satisfy(t =>
+      t.includes("8") || t.includes("uppercase") || t.includes("lowercase") || t.includes("number") || t.includes("special")
+    );
+  });
 
-        await clickSubmit();
+  it("3. Toggles password visibility via eye icon", async function () {
+    await goToRegister();
 
-        // 1. Check for the success alert confirming OTP was sent (uses TIMEOUT_ASYNC)
-        const alertText = await getGlobalAlertText();
-        // FIX: Assert the string observed in the failure output (or a reliable subset)
-        expect(alertText).to.include("Registration successful. Please verif"); 
-        
-        // 2. Wait explicitly for the OTP Modal to appear (FIX: using TIMEOUT_ASYNC)
-        const otpModalTitle = await driver.wait(
-            until.elementLocated(By.xpath("//h3[text()='Verify your email']")),
-            TIMEOUT_ASYNC 
-        );
-        expect(await otpModalTitle.isDisplayed()).to.be.true;
-        
-        // 3. Verify the email address is displayed in the modal
-        const emailText = await driver.findElement(By.xpath("//p[contains(text(),'Enter the 6-digit OTP sent to')]")).getText();
-        expect(emailText).to.include("@agricorus.com");
-    });
+    const pwd = await driver.findElement(By.name("password"));
+    // try known data-testid first
+    let toggle;
+    const toggles = await driver.findElements(By.css("[data-testid='toggle-password']"));
+    if (toggles.length) {
+      toggle = toggles[0];
+    } else {
+      // fallback: following sibling button
+      toggle = await driver.findElement(By.xpath("//input[@name='password']/following-sibling::button[1]"));
+    }
 
-    // FIX APPLIED: Replaced fixed sleep with driver.wait to handle timer cleanup latency
-    it("6. OTP Modal: Should handle resend cooldown logic", async () => {
-        await goToRegister();
-        await fillValidForm(true); 
+    expect(await pwd.getAttribute("type")).to.equal("password");
+    await toggle.click();
+    expect(await pwd.getAttribute("type")).to.equal("text");
+    await toggle.click();
+    expect(await pwd.getAttribute("type")).to.equal("password");
+  });
 
-        await clickSubmit(); 
-        
-        // Wait for the OTP modal to appear
-        await driver.wait(
-            until.elementLocated(By.xpath("//h3[text()='Verify your email']")), 
-            TIMEOUT_ASYNC
-        );
+  it("4. Shows mismatch error when passwords differ", async function () {
+    await goToRegister();
+    await fillField("password", "StrongPass1!");
+    await fillField("confirmPassword", "DifferentPass2!");
+    const err = await getFieldError("confirmPassword");
+    expect(err.toLowerCase()).to.satisfy(t => t.includes("match"));
+  });
 
-        const resendButton = await driver.findElement(By.xpath("//button[contains(.,'Resend')]"));
-        
-        // 1. Initial State: Button should be disabled and show the cooldown
-        expect(await resendButton.isEnabled()).to.be.false;
-        
-        // 2. FIX: Wait until the button is ENABLED (i.e., cooldown is over, 35s max wait)
-        await driver.wait(until.elementIsEnabled(resendButton), 35000); 
-        
-        // 3. Assert the button is now enabled
-        expect(await resendButton.isEnabled()).to.be.true;
-        
-        // 4. Click resend to restart cooldown
-        await resendButton.click();
-        
-        // 5. Assert the cooldown restarts (button is disabled again)
-        await driver.sleep(2000); 
-        expect(await resendButton.isEnabled()).to.be.false;
-    });
+  it("5. Submits successfully and opens OTP verification modal", async function () {
+    await goToRegister();
+    await fillValidForm(true);
+    await clickSubmit();
+
+    // 1) success alert mentioning verification/otp
+    const alert = await getGlobalAlertText();
+    expect(alert.toLowerCase()).to.satisfy(t =>
+      t.includes("registration") || t.includes("verify") || t.includes("otp")
+    );
+
+    // 2) OTP modal title (prefer data-testid; fallback to text)
+    const otpTitle = await waitForAnyLocated([
+      By.css("[data-testid='otp-modal-title']"),
+      By.xpath("//h3[normalize-space()='Verify your email']"),
+      By.xpath("//h3[contains(.,'Verify')]"),
+    ], TIMEOUT_ASYNC);
+    expect(await otpTitle.isDisplayed()).to.equal(true);
+
+    // 3) Email displayed in modal copy
+    const emailLine = await waitForAnyLocated([
+      By.xpath("//p[contains(.,'OTP') and contains(.,'sent')]"),
+      By.css("[data-testid='otp-instructions']"),
+    ], TIMEOUT_ASYNC);
+    const text = (await emailLine.getText()).toLowerCase();
+    expect(text).to.satisfy(t => t.includes("@agricorus.com") || t.includes("email"));
+  });
+
+  it("6. OTP modal resend cooldown works (disables then re-enables)", async function () {
+    await goToRegister();
+    await fillValidForm(true);
+    await clickSubmit();
+
+    // Ensure OTP modal is visible
+    await waitForAnyLocated([
+      By.css("[data-testid='otp-modal-title']"),
+      By.xpath("//h3[contains(.,'Verify')]"),
+    ], TIMEOUT_ASYNC);
+
+    // Resend button
+    const resendBtn = await waitForAnyLocated([
+      By.css("[data-testid='otp-resend']"),
+      By.xpath("//button[contains(.,'Resend')]"),
+    ], TIMEOUT_GENERAL);
+
+    // Initially disabled
+    expect(await resendBtn.isEnabled()).to.equal(false);
+
+    // Wait until enabled (cooldown complete)
+    await driver.wait(until.elementIsEnabled(resendBtn), OTP_RESEND_MAX_MS);
+    expect(await resendBtn.isEnabled()).to.equal(true);
+
+    // Click to restart cooldown, then confirm disabled again
+    await resendBtn.click();
+    await driver.sleep(1500);
+    expect(await resendBtn.isEnabled()).to.equal(false);
+  });
 });

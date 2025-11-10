@@ -1,0 +1,186 @@
+{
+  "stats": {
+    "suites": 1,
+    "tests": 3,
+    "passes": 2,
+    "pending": 0,
+    "failures": 1,
+    "start": "2025-11-08T07:18:01.746Z",
+    "end": "2025-11-08T07:19:43.166Z",
+    "duration": 101420,
+    "testsRegistered": 3,
+    "passPercent": 66.66666666666666,
+    "pendingPercent": 0,
+    "other": 0,
+    "hasOther": false,
+    "skipped": 0,
+    "hasSkipped": false
+  },
+  "results": [
+    {
+      "uuid": "b5518d66-085c-46ec-a63b-b02936182810",
+      "title": "",
+      "fullFile": "C:\\Users\\antom\\OneDrive\\Documents\\agricorus\\tests\\landowner.test.js",
+      "file": "\\tests\\landowner.test.js",
+      "beforeHooks": [],
+      "afterHooks": [],
+      "tests": [],
+      "suites": [
+        {
+          "uuid": "2914e1f4-a43b-499b-8fd3-6d82a6485f02",
+          "title": "AgriCorus Landowner Functionality: Add Land (Edge)",
+          "fullFile": "C:\\Users\\antom\\OneDrive\\Documents\\agricorus\\tests\\landowner.test.js",
+          "file": "\\tests\\landowner.test.js",
+          "beforeHooks": [
+            {
+              "title": "\"before all\" hook in \"AgriCorus Landowner Functionality: Add Land (Edge)\"",
+              "fullTitle": "AgriCorus Landowner Functionality: Add Land (Edge) \"before all\" hook in \"AgriCorus Landowner Functionality: Add Land (Edge)\"",
+              "timedOut": false,
+              "duration": 60812,
+              "state": null,
+              "speed": null,
+              "pass": false,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "console.log(\"🚀 Launching Microsoft Edge for Landowner tests...\");\n\n// --- FIX: Correctly instantiate Edge Options ---\nconst options = new edge.Options(); \n\noptions.addArguments(\"--no-sandbox\");\noptions.addArguments(\"--disable-dev-shm-usage\");\n// options.addArguments(\"--headless=new\"); // Uncomment to run headless\ndriver = await new Builder()\n    .forBrowser(\"MicrosoftEdge\")\n    .setEdgeOptions(options)\n    .build();\nconsole.log(\"✅ Edge launched successfully\");\n// --- PRE-REQUISITE: Perform Login as Landowner ---\nconsole.log(\"🔑 Logging in as Landowner...\");\nawait driver.get(LOGIN_URL);\nawait driver.wait(until.elementLocated(By.id(\"email\")), 10000);\n\n// Use your known landowner credentials\nawait driver.findElement(By.id(\"email\")).sendKeys(\"nandu@gmail.com\"); \nawait driver.findElement(By.id(\"password\")).sendKeys(\"Anto9862@\");\nawait driver.findElement(By.css('button[type=\"submit\"]')).click();\n\n// Wait for successful redirection after login\nawait driver.wait(until.urlContains(DASHBOARD_URL_PARTIAL), 20000, \"Login failed or redirection took too long\");\nconsole.log(\"✅ Landowner logged in successfully\");",
+              "err": {},
+              "uuid": "80e6f561-f192-48c0-90eb-154f9078048f",
+              "parentUUID": "2914e1f4-a43b-499b-8fd3-6d82a6485f02",
+              "isHook": true,
+              "skipped": false
+            }
+          ],
+          "afterHooks": [
+            {
+              "title": "\"after all\" hook in \"AgriCorus Landowner Functionality: Add Land (Edge)\"",
+              "fullTitle": "AgriCorus Landowner Functionality: Add Land (Edge) \"after all\" hook in \"AgriCorus Landowner Functionality: Add Land (Edge)\"",
+              "timedOut": false,
+              "duration": 1784,
+              "state": null,
+              "speed": null,
+              "pass": false,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "console.log(\"🛑 Closing Edge\");\nawait driver.quit();",
+              "err": {},
+              "uuid": "f1b21343-e46e-4b42-8a9f-dc7bebdd84b5",
+              "parentUUID": "2914e1f4-a43b-499b-8fd3-6d82a6485f02",
+              "isHook": true,
+              "skipped": false
+            }
+          ],
+          "tests": [
+            {
+              "title": "should successfully list new land with all valid data and files",
+              "fullTitle": "AgriCorus Landowner Functionality: Add Land (Edge) should successfully list new land with all valid data and files",
+              "timedOut": false,
+              "duration": 28749,
+              "state": "failed",
+              "speed": null,
+              "pass": false,
+              "fail": true,
+              "pending": false,
+              "context": null,
+              "code": "await fillRequiredFields(\"Premium Land Listing - Automated Test\");\n\n// Upload Dummy Files\nconst photoInput = await driver.findElement(By.id(\"photo-upload-input\"));\nawait photoInput.sendKeys(DUMMY_PHOTO_PATH); \n\nconst docInput = await driver.findElement(By.id(\"document-upload-input\"));\nawait docInput.sendKeys(DUMMY_DOC_PATH); \n// Submit the form\nconst submitBtn = await driver.findElement(By.css('button[type=\"submit\"]'));\nawait submitBtn.click();\n// Check for success status message (UI check)\nconst successMessageContainer = await driver.wait(\n    until.elementLocated(By.xpath(\"//*[contains(text(), 'Deployment Successful!')]\")), \n    20000,\n    \"Success message 'Deployment Successful!' did not appear after submission.\"\n);\nconst messageText = await successMessageContainer.getText();\nconsole.log(\"✅ Success message:\", messageText);\nexpect(messageText).to.include(\"Land listed successfully!\");\n// Assert redirection to the view lands page\nawait driver.wait(until.urlContains(VIEW_LANDS_URL_PARTIAL), 10000, \"Did not redirect to /lands/view after success.\");\nconst currentUrl = await driver.getCurrentUrl();\nexpect(currentUrl).to.include(VIEW_LANDS_URL_PARTIAL);",
+              "err": {
+                "message": "TimeoutError: Success message 'Deployment Successful!' did not appear after submission.\nWait timed out after 20114ms",
+                "estack": "TimeoutError: Success message 'Deployment Successful!' did not appear after submission.\nWait timed out after 20114ms\n    at C:\\Users\\antom\\OneDrive\\Documents\\agricorus\\tests\\node_modules\\selenium-webdriver\\lib\\webdriver.js:929:22\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)",
+                "diff": null
+              },
+              "uuid": "637e99ef-b9e3-4e21-9e43-089f8e950d4f",
+              "parentUUID": "2914e1f4-a43b-499b-8fd3-6d82a6485f02",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "should prevent form submission with missing required 'Title' (Browser Validation)",
+              "fullTitle": "AgriCorus Landowner Functionality: Add Land (Edge) should prevent form submission with missing required 'Title' (Browser Validation)",
+              "timedOut": false,
+              "duration": 7766,
+              "state": "passed",
+              "speed": "slow",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "await fillRequiredFields(\"Temporary Title\"); // Fill everything else first\n\n// Clear the required 'title' field\nconst titleInput = await driver.findElement(By.id(\"title\"));\nawait titleInput.clear();\n\nconst submitBtn = await driver.findElement(By.css('button[type=\"submit\"]'));\n\n// Attempt to click the submit button\nawait submitBtn.click();\n\n// Check if the title field is marked as invalid using the browser's checkValidity API\nconst isTitleValid = await driver.executeScript(\n    \"return arguments[0].checkValidity();\",\n    titleInput\n);\n\nconsole.log(\"❌ Title field validity (Expected: false):\", isTitleValid);\nexpect(isTitleValid).to.be.false;\n\n// Check that the URL is still the Add Land page (no redirection occurred)\nconst currentUrl = await driver.getCurrentUrl();\nexpect(currentUrl).to.include(ADD_LAND_URL.replace(BASE_URL, ''));",
+              "err": {},
+              "uuid": "47e24b7c-4a2c-492d-8fe7-9d6849e649fd",
+              "parentUUID": "2914e1f4-a43b-499b-8fd3-6d82a6485f02",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "should display a client-side error message when attempting to upload more than 5 photos",
+              "fullTitle": "AgriCorus Landowner Functionality: Add Land (Edge) should display a client-side error message when attempting to upload more than 5 photos",
+              "timedOut": false,
+              "duration": 2287,
+              "state": "passed",
+              "speed": "slow",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "await driver.get(ADD_LAND_URL);\nawait driver.wait(until.urlContains(\"/lands/add\"), 5000);\nawait driver.wait(until.elementLocated(By.id(\"title\")), 10000);\n\n// We simulate the condition that triggers the error using JavaScript to test the UI logic.\nawait driver.executeScript(() => {\n    const fiveMB = 5 * 1024 * 1024;\n    const fileArray = [];\n    // Create 6 dummy files to exceed the 5-file limit\n    for (let i = 0; i < 6; i++) {\n        // Using a mock File object\n        fileArray.push(new File(['dummy content'], `test_photo_${i + 1}.jpg`, { type: 'image/jpeg', size: fiveMB }));\n    }\n    \n    // Replicate the component's internal check and state setting to trigger the message\n    if (fileArray.length > 5) {\n        // Simulate injecting the error message into the DOM (for the test to find)\n        const errorDiv = document.createElement('div');\n        errorDiv.id = 'temp-test-error-message';\n        errorDiv.textContent = 'You can only upload a maximum of 5 photos.';\n        // Append it to a location that exists on the page\n        document.querySelector('.max-w-6xl.mx-auto').prepend(errorDiv);\n    }\n});\n// Wait for the simulated error message container to appear\nconst errorMessageContainer = await driver.wait(\n    until.elementLocated(By.id(\"temp-test-error-message\")),\n    10000,\n    \"Max file limit error message did not appear on the screen.\"\n);\n\nconst errorMessageText = await errorMessageContainer.getText();\nconsole.log(\"❌ File upload error:\", errorMessageText);\nexpect(errorMessageText).to.include(\"You can only upload a maximum of 5 photos.\");",
+              "err": {},
+              "uuid": "3b15675f-5c82-418c-bfff-c3346824b8c1",
+              "parentUUID": "2914e1f4-a43b-499b-8fd3-6d82a6485f02",
+              "isHook": false,
+              "skipped": false
+            }
+          ],
+          "suites": [],
+          "passes": [
+            "47e24b7c-4a2c-492d-8fe7-9d6849e649fd",
+            "3b15675f-5c82-418c-bfff-c3346824b8c1"
+          ],
+          "failures": [
+            "637e99ef-b9e3-4e21-9e43-089f8e950d4f"
+          ],
+          "pending": [],
+          "skipped": [],
+          "duration": 38802,
+          "root": false,
+          "rootEmpty": false,
+          "_timeout": 90000
+        }
+      ],
+      "passes": [],
+      "failures": [],
+      "pending": [],
+      "skipped": [],
+      "duration": 0,
+      "root": true,
+      "rootEmpty": true,
+      "_timeout": 90000
+    }
+  ],
+  "meta": {
+    "mocha": {
+      "version": "11.7.5"
+    },
+    "mochawesome": {
+      "options": {
+        "quiet": true,
+        "reportFilename": "agricorus-landowner",
+        "saveHtml": true,
+        "saveJson": true,
+        "consoleReporter": "spec",
+        "useInlineDiffs": false,
+        "code": true
+      },
+      "version": "7.1.4"
+    },
+    "marge": {
+      "options": {
+        "reportDir": "reports",
+        "reportFilename": "agricorus-landowner",
+        "overwrite": "true",
+        "quiet": "true"
+      },
+      "version": "6.3.2"
+    }
+  }
+}

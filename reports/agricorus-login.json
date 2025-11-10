@@ -1,0 +1,219 @@
+{
+  "stats": {
+    "suites": 1,
+    "tests": 5,
+    "passes": 5,
+    "pending": 0,
+    "failures": 0,
+    "start": "2025-11-08T06:50:56.766Z",
+    "end": "2025-11-08T06:51:36.494Z",
+    "duration": 39728,
+    "testsRegistered": 5,
+    "passPercent": 100,
+    "pendingPercent": 0,
+    "other": 0,
+    "hasOther": false,
+    "skipped": 0,
+    "hasSkipped": false
+  },
+  "results": [
+    {
+      "uuid": "0d479797-47cb-4f0e-8905-75267f0cd735",
+      "title": "",
+      "fullFile": "C:\\Users\\antom\\OneDrive\\Documents\\agricorus\\tests\\login.test.js",
+      "file": "\\tests\\login.test.js",
+      "beforeHooks": [],
+      "afterHooks": [],
+      "tests": [],
+      "suites": [
+        {
+          "uuid": "48168bf8-aea9-4a76-8942-847b55640638",
+          "title": "AgriCorus Login Page Test (Edge)",
+          "fullFile": "C:\\Users\\antom\\OneDrive\\Documents\\agricorus\\tests\\login.test.js",
+          "file": "\\tests\\login.test.js",
+          "beforeHooks": [
+            {
+              "title": "\"before all\" hook in \"AgriCorus Login Page Test (Edge)\"",
+              "fullTitle": "AgriCorus Login Page Test (Edge) \"before all\" hook in \"AgriCorus Login Page Test (Edge)\"",
+              "timedOut": false,
+              "duration": 2701,
+              "state": null,
+              "speed": null,
+              "pass": false,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "console.log(\"🚀 Launching Microsoft Edge...\");\nconst options = new edge.Options();\noptions.addArguments(\"--no-sandbox\");\noptions.addArguments(\"--disable-dev-shm-usage\");\n// options.addArguments(\"--headless=new\");\ndriver = await new Builder()\n  .forBrowser(\"MicrosoftEdge\")\n  .setEdgeOptions(options)\n  .build();\nconsole.log(\"✅ Edge launched successfully\");",
+              "err": {},
+              "uuid": "28c17bfa-1821-4e5d-b827-27104c518bc6",
+              "parentUUID": "48168bf8-aea9-4a76-8942-847b55640638",
+              "isHook": true,
+              "skipped": false
+            }
+          ],
+          "afterHooks": [
+            {
+              "title": "\"after all\" hook in \"AgriCorus Login Page Test (Edge)\"",
+              "fullTitle": "AgriCorus Login Page Test (Edge) \"after all\" hook in \"AgriCorus Login Page Test (Edge)\"",
+              "timedOut": false,
+              "duration": 1050,
+              "state": null,
+              "speed": null,
+              "pass": false,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "console.log(\"🛑 Closing Edge\");\nawait driver.quit();",
+              "err": {},
+              "uuid": "d48a2fa3-4324-4924-84a8-dec6af9958f1",
+              "parentUUID": "48168bf8-aea9-4a76-8942-847b55640638",
+              "isHook": true,
+              "skipped": false
+            }
+          ],
+          "tests": [
+            {
+              "title": "should login successfully with correct credentials",
+              "fullTitle": "AgriCorus Login Page Test (Edge) should login successfully with correct credentials",
+              "timedOut": false,
+              "duration": 8826,
+              "state": "passed",
+              "speed": "slow",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "await driver.get(\"http://localhost:5173/login\");\nawait driver.wait(until.elementLocated(By.id(\"email\")), 10000);\nawait driver.findElement(By.id(\"email\")).sendKeys(\"nandu@gmail.com\");\nawait driver.findElement(By.id(\"password\")).sendKeys(\"Anto9862@\");\nawait driver.findElement(By.css('button[type=\"submit\"]')).click();\nawait driver.wait(async () => {\n  const url = await driver.getCurrentUrl();\n  return (\n    url.includes(\"/dashboard\") ||\n    url.includes(\"/farmerdashboard\") ||\n    url.includes(\"/landownerdashboard\") ||\n    url.includes(\"/investordashboard\") ||\n    url.includes(\"/admindashboard\")\n  );\n}, 20000);\nconst currentUrl = await driver.getCurrentUrl();\nconsole.log(\"✅ Redirected to:\", currentUrl);\nexpect(currentUrl).to.match(/dashboard/i);",
+              "err": {},
+              "uuid": "28fd5d5a-e3b5-4839-b451-f54659e1c7ed",
+              "parentUUID": "48168bf8-aea9-4a76-8942-847b55640638",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "should show error with invalid credentials",
+              "fullTitle": "AgriCorus Login Page Test (Edge) should show error with invalid credentials",
+              "timedOut": false,
+              "duration": 6030,
+              "state": "passed",
+              "speed": "slow",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "await driver.get(\"http://localhost:5173/login\");\nawait driver.wait(until.elementLocated(By.id(\"email\")), 10000);\nconst email = await driver.findElement(By.id(\"email\"));\nconst password = await driver.findElement(By.id(\"password\"));\nconst loginBtn = await driver.findElement(By.css('button[type=\"submit\"]'));\nawait email.clear();\nawait password.clear();\nawait email.sendKeys(\"wronguser@gmail.com\");\nawait password.sendKeys(\"wrongpassword\");\nawait driver.executeScript(\"arguments[0].click();\", loginBtn);\nconst alert = await driver.wait(\n  until.elementLocated(\n    By.css(\"div.flex.items-center.p-3.mb-4.border.rounded-lg\")\n  ),\n  10000,\n  \"Alert message did not appear\"\n);\nconst alertText = await alert.getText();\nconsole.log(\"❌ Alert text:\", alertText);\nexpect(alertText.length).to.be.greaterThan(0);",
+              "err": {},
+              "uuid": "d429fa06-f66f-4f15-8296-ed133a31bf21",
+              "parentUUID": "48168bf8-aea9-4a76-8942-847b55640638",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "should prevent login with empty fields",
+              "fullTitle": "AgriCorus Login Page Test (Edge) should prevent login with empty fields",
+              "timedOut": false,
+              "duration": 2046,
+              "state": "passed",
+              "speed": "slow",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "await driver.get(\"http://localhost:5173/login\");\nawait driver.wait(until.elementLocated(By.id(\"email\")), 10000);\nconst email = await driver.findElement(By.id(\"email\"));\nconst password = await driver.findElement(By.id(\"password\"));\nconst loginBtn = await driver.findElement(By.css('button[type=\"submit\"]'));\n// Check browser validation for empty fields\nconst emailValid = await driver.executeScript(\n  \"return arguments[0].checkValidity();\",\n  email\n);\nconst passwordValid = await driver.executeScript(\n  \"return arguments[0].checkValidity();\",\n  password\n);\nexpect(emailValid).to.be.false;\nexpect(passwordValid).to.be.false;\nconsole.log(\"⚠️ Browser validation prevented empty form submission\");",
+              "err": {},
+              "uuid": "2dec55fe-e9a9-4ae1-ac9f-ffdbf79df413",
+              "parentUUID": "48168bf8-aea9-4a76-8942-847b55640638",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "should keep user logged in if \"Remember Me\" is checked",
+              "fullTitle": "AgriCorus Login Page Test (Edge) should keep user logged in if \"Remember Me\" is checked",
+              "timedOut": false,
+              "duration": 7109,
+              "state": "passed",
+              "speed": "slow",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "await driver.get(\"http://localhost:5173/login\");\nawait driver.findElement(By.id(\"email\")).sendKeys(\"nandu@gmail.com\");\nawait driver.findElement(By.id(\"password\")).sendKeys(\"Anto9862@\");\nawait driver.findElement(By.id(\"remember-me\")).click();\nawait driver.findElement(By.css('button[type=\"submit\"]')).click();\nawait driver.wait(until.urlContains(\"dashboard\"), 15000);\nawait driver.navigate().refresh();\nconst currentUrl = await driver.getCurrentUrl();\nconsole.log(\"✅ Current URL after refresh:\", currentUrl);\nexpect(currentUrl).to.match(/dashboard/i);",
+              "err": {},
+              "uuid": "b416b6fd-5c05-4c0b-afd1-a0760d140a44",
+              "parentUUID": "48168bf8-aea9-4a76-8942-847b55640638",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "should logout successfully",
+              "fullTitle": "AgriCorus Login Page Test (Edge) should logout successfully",
+              "timedOut": false,
+              "duration": 11906,
+              "state": "passed",
+              "speed": "slow",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "await driver.get(\"http://localhost:5173/landownerdashboard\");\nlet logoutBtn;\ntry {\n  logoutBtn = await driver.wait(\n    until.elementLocated(By.id(\"logout-btn\")),\n    10000\n  );\n} catch (err) {\n  logoutBtn = await driver.wait(\n    until.elementLocated(By.xpath(`//button[contains(., 'Logout')]`)),\n    10000\n  );\n}\nawait logoutBtn.click();\nawait driver.wait(until.urlContains(\"/login\"), 15000);\nconst currentUrl = await driver.getCurrentUrl();\nconsole.log(\"✅ Redirected to login:\", currentUrl);\nexpect(currentUrl).to.include(\"/login\");",
+              "err": {},
+              "uuid": "f6ea1a9e-77c7-49ad-9890-7a56a3906f8f",
+              "parentUUID": "48168bf8-aea9-4a76-8942-847b55640638",
+              "isHook": false,
+              "skipped": false
+            }
+          ],
+          "suites": [],
+          "passes": [
+            "28fd5d5a-e3b5-4839-b451-f54659e1c7ed",
+            "d429fa06-f66f-4f15-8296-ed133a31bf21",
+            "2dec55fe-e9a9-4ae1-ac9f-ffdbf79df413",
+            "b416b6fd-5c05-4c0b-afd1-a0760d140a44",
+            "f6ea1a9e-77c7-49ad-9890-7a56a3906f8f"
+          ],
+          "failures": [],
+          "pending": [],
+          "skipped": [],
+          "duration": 35917,
+          "root": false,
+          "rootEmpty": false,
+          "_timeout": 90000
+        }
+      ],
+      "passes": [],
+      "failures": [],
+      "pending": [],
+      "skipped": [],
+      "duration": 0,
+      "root": true,
+      "rootEmpty": true,
+      "_timeout": 90000
+    }
+  ],
+  "meta": {
+    "mocha": {
+      "version": "11.7.5"
+    },
+    "mochawesome": {
+      "options": {
+        "quiet": true,
+        "reportFilename": "agricorus-login",
+        "saveHtml": true,
+        "saveJson": true,
+        "consoleReporter": "spec",
+        "useInlineDiffs": false,
+        "code": true
+      },
+      "version": "7.1.4"
+    },
+    "marge": {
+      "options": {
+        "reportDir": "reports",
+        "reportFilename": "agricorus-login",
+        "overwrite": "true",
+        "quiet": "true"
+      },
+      "version": "6.3.2"
+    }
+  }
+}

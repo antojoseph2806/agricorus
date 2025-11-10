@@ -7,8 +7,8 @@ const path = require("path");
 // --- Configuration ---
 // IMPORTANT: You MUST create the following two dummy files in your 'tests' directory 
 // for the file upload test to work successfully.
-const DUMMY_PHOTO_PATH = path.join(__dirname, 'dummy_photo.jpg'); 
-const DUMMY_DOC_PATH = path.join(__dirname, 'dummy_doc.pdf'); 
+const DUMMY_PHOTO_PATH = path.join(__dirname, '1.png'); 
+const DUMMY_DOC_PATH = path.join(__dirname, '2.png'); 
 
 const BASE_URL = "http://localhost:5173";
 const LOGIN_URL = `${BASE_URL}/login`;
