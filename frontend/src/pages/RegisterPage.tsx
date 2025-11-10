@@ -11,6 +11,7 @@ import {
   EyeOff,
   ShieldCheck,
   RefreshCw,
+  User,
 } from "lucide-react";
 import GoogleButton from "../components/GoogleButton";
 import AlertMessage from "../components/AlertMessage";
@@ -18,11 +19,8 @@ import Navbar from "../components/Navbar";
 
 /**
  * Full-length RegisterPage with OTP modal and full validation.
- * - Keeps visual style and animations similar to your 470+ line original.
- * - Works with backend endpoints:
- *   POST /api/auth/register
- *   POST /api/auth/verify-otp
- *   POST /api/auth/resend-otp  (optional)
+ * - Fully responsive for mobile devices
+ * - Optimized layout for small screens
  */
 
 // ----------------- Validation helpers -----------------
@@ -385,9 +383,9 @@ const RegisterPage: React.FC = () => {
     <>
       <Navbar />
 
-      <div className="min-h-screen flex items-start justify-center pt-32 pb-12 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-green-50 to-green-100">
-        {/* decorative floating shapes */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      <div className="min-h-screen flex items-start justify-center pt-20 md:pt-32 pb-8 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-green-50 to-green-100">
+        {/* decorative floating shapes - hidden on mobile for performance */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none hidden sm:block">
           <motion.div
             animate={{ rotate: 360 }}
             transition={{ duration: 22, repeat: Infinity, ease: "linear" }}
@@ -404,20 +402,20 @@ const RegisterPage: React.FC = () => {
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          className="max-w-2xl w-full space-y-8 relative z-10"
+          className="w-full max-w-2xl space-y-6 md:space-y-8 relative z-10"
         >
-          <div className="bg-white p-8 md:p-10 rounded-xl shadow-2xl border border-gray-100">
+          <div className="bg-white p-6 md:p-10 rounded-xl shadow-lg md:shadow-2xl border border-gray-100 mx-auto w-full">
             <div className="text-center mb-6">
               <motion.div
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ delay: 0.15, type: "spring", stiffness: 250 }}
-                className="mx-auto h-16 w-16 bg-primary-600 rounded-full flex items-center justify-center mb-4"
+                className="mx-auto h-12 w-12 md:h-16 md:w-16 bg-primary-600 rounded-full flex items-center justify-center mb-3 md:mb-4"
               >
-                <Sprout className="h-8 w-8 text-white" />
+                <Sprout className="h-6 w-6 md:h-8 md:w-8 text-white" />
               </motion.div>
-              <h2 className="text-3xl font-bold text-gray-900 mb-2">Join AgriCorus</h2>
-              <p className="text-gray-600">Start your agricultural investment journey</p>
+              <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">Join AgriCorus</h2>
+              <p className="text-sm md:text-base text-gray-600">Start your agricultural investment journey</p>
             </div>
 
             {/* Alerts */}
@@ -425,16 +423,17 @@ const RegisterPage: React.FC = () => {
               <AlertMessage type={alert.type} message={alert.message} onClose={() => setAlert(null)} />
             )}
 
-            <form className="space-y-6" onSubmit={handleSubmit} noValidate>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <form className="space-y-4 md:space-y-6" onSubmit={handleSubmit} noValidate>
+              <div className="grid grid-cols-1 gap-4">
+                {/* Name Field */}
                 <div className="relative">
-                  <Sprout className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                  <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 md:h-5 md:w-5 text-gray-400" />
                   <input
                     id="name"
                     name="name"
                     type="text"
                     required
-                    className={`input-field pl-10 ${formErrors.name ? "border-red-500" : ""}`}
+                    className={`input-field pl-10 text-sm md:text-base ${formErrors.name ? "border-red-500" : ""}`}
                     placeholder="Full Name"
                     value={formData.name}
                     onChange={handleInputChange}
@@ -443,14 +442,15 @@ const RegisterPage: React.FC = () => {
                   {formErrors.name && <p className="text-red-500 text-xs mt-1">{formErrors.name}</p>}
                 </div>
 
+                {/* Email Field */}
                 <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 md:h-5 md:w-5 text-gray-400" />
                   <input
                     id="email"
                     name="email"
                     type="email"
                     required
-                    className={`input-field pl-10 ${formErrors.email ? "border-red-500" : ""}`}
+                    className={`input-field pl-10 text-sm md:text-base ${formErrors.email ? "border-red-500" : ""}`}
                     placeholder="Email address"
                     value={formData.email}
                     onChange={handleInputChange}
@@ -459,14 +459,15 @@ const RegisterPage: React.FC = () => {
                   {formErrors.email && <p className="text-red-500 text-xs mt-1">{formErrors.email}</p>}
                 </div>
 
+                {/* Phone Field */}
                 <div className="relative">
-                  <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                  <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 md:h-5 md:w-5 text-gray-400" />
                   <input
                     id="phone"
                     name="phone"
                     type="tel"
                     required
-                    className={`input-field pl-10 ${formErrors.phone ? "border-red-500" : ""}`}
+                    className={`input-field pl-10 text-sm md:text-base ${formErrors.phone ? "border-red-500" : ""}`}
                     placeholder="Phone number"
                     value={formData.phone}
                     onChange={handleInputChange}
@@ -475,14 +476,15 @@ const RegisterPage: React.FC = () => {
                   {formErrors.phone && <p className="text-red-500 text-xs mt-1">{formErrors.phone}</p>}
                 </div>
 
+                {/* Password Field */}
                 <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 md:h-5 md:w-5 text-gray-400" />
                   <input
                     id="password"
                     name="password"
                     type={showPassword ? "text" : "password"}
                     required
-                    className={`input-field pl-10 pr-10 ${formErrors.password ? "border-red-500" : ""}`}
+                    className={`input-field pl-10 pr-10 text-sm md:text-base ${formErrors.password ? "border-red-500" : ""}`}
                     placeholder="Password"
                     value={formData.password}
                     onChange={handleInputChange}
@@ -493,19 +495,23 @@ const RegisterPage: React.FC = () => {
                     className="absolute right-3 top-1/2 transform -translate-y-1/2"
                     onClick={() => setShowPassword((s) => !s)}
                   >
-                    {showPassword ? <EyeOff className="h-5 w-5 text-gray-400" /> : <Eye className="h-5 w-5 text-gray-400" />}
+                    {showPassword ? 
+                      <EyeOff className="h-4 w-4 md:h-5 md:w-5 text-gray-400" /> : 
+                      <Eye className="h-4 w-4 md:h-5 md:w-5 text-gray-400" />
+                    }
                   </button>
                   {formErrors.password && <p className="text-red-500 text-xs mt-1">{formErrors.password}</p>}
                 </div>
 
+                {/* Confirm Password Field */}
                 <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 md:h-5 md:w-5 text-gray-400" />
                   <input
                     id="confirmPassword"
                     name="confirmPassword"
                     type={showConfirmPassword ? "text" : "password"}
                     required
-                    className={`input-field pl-10 pr-10 ${formErrors.confirmPassword ? "border-red-500" : ""}`}
+                    className={`input-field pl-10 pr-10 text-sm md:text-base ${formErrors.confirmPassword ? "border-red-500" : ""}`}
                     placeholder="Confirm password"
                     value={formData.confirmPassword}
                     onChange={handleInputChange}
@@ -516,29 +522,32 @@ const RegisterPage: React.FC = () => {
                     className="absolute right-3 top-1/2 transform -translate-y-1/2"
                     onClick={() => setShowConfirmPassword((s) => !s)}
                   >
-                    {showConfirmPassword ? <EyeOff className="h-5 w-5 text-gray-400" /> : <Eye className="h-5 w-5 text-gray-400" />}
+                    {showConfirmPassword ? 
+                      <EyeOff className="h-4 w-4 md:h-5 md:w-5 text-gray-400" /> : 
+                      <Eye className="h-4 w-4 md:h-5 md:w-5 text-gray-400" />
+                    }
                   </button>
                   {formErrors.confirmPassword && <p className="text-red-500 text-xs mt-1">{formErrors.confirmPassword}</p>}
                 </div>
               </div>
 
-              {/* Role */}
+              {/* Role Selection - Mobile Optimized */}
               <div className="space-y-2">
                 <label className={`block text-sm font-medium ${formErrors.role ? "text-red-500" : "text-gray-700"}`}>
                   Select your role
                 </label>
-                <div className="flex space-x-6">
+                <div className="flex flex-col sm:flex-row sm:space-x-6 space-y-2 sm:space-y-0">
                   {["landowner", "farmer", "investor"].map((r) => (
-                    <label key={r} className="flex items-center space-x-2">
+                    <label key={r} className="flex items-center space-x-2 py-1">
                       <input
                         type="radio"
                         name="role"
                         value={r}
                         checked={formData.role === r}
                         onChange={handleRadioChange}
-                        className="form-radio text-primary-600"
+                        className="form-radio text-primary-600 h-4 w-4"
                       />
-                      <span className="text-gray-700 capitalize">{r}</span>
+                      <span className="text-sm text-gray-700 capitalize">{r}</span>
                     </label>
                   ))}
                 </div>
@@ -546,7 +555,11 @@ const RegisterPage: React.FC = () => {
               </div>
 
               <div className="space-y-3">
-                <button type="submit" className="btn-primary w-full" disabled={isSubmitting}>
+                <button 
+                  type="submit" 
+                  className="btn-primary w-full text-sm md:text-base py-3"
+                  disabled={isSubmitting}
+                >
                   {isSubmitting ? "Creating account..." : "Create Account"}
                 </button>
 
@@ -555,13 +568,13 @@ const RegisterPage: React.FC = () => {
                     <div className="w-full border-t border-gray-200" />
                   </div>
                   <div className="relative flex justify-center text-sm">
-                    <span className="px-2 bg-white text-gray-500">Or continue with</span>
+                    <span className="px-2 bg-white text-gray-500 text-xs md:text-sm">Or continue with</span>
                   </div>
                 </div>
 
                 <GoogleButton text="Sign up with Google" />
 
-                <p className="text-sm text-gray-600 text-center">
+                <p className="text-xs md:text-sm text-gray-600 text-center">
                   Already have an account?{" "}
                   <Link to="/login" className="font-medium text-primary-600 hover:text-primary-500">
                     Sign in
@@ -573,19 +586,19 @@ const RegisterPage: React.FC = () => {
         </motion.div>
       </div>
 
-      {/* OTP Modal */}
+      {/* OTP Modal - Mobile Responsive */}
       {otpOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
           <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ duration: 0.18 }}
-            className="bg-white w-full max-w-md rounded-xl shadow-lg p-6"
+            className="bg-white w-full max-w-md rounded-xl shadow-lg p-4 md:p-6 mx-2"
           >
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold">Verify your email</h3>
               <button
-                className="text-gray-500 hover:text-gray-700"
+                className="text-gray-500 hover:text-gray-700 text-lg"
                 onClick={() => {
                   closeOtpModal();
                 }}
@@ -600,7 +613,7 @@ const RegisterPage: React.FC = () => {
 
             <form onSubmit={handleVerifyOtp} className="space-y-4">
               <div className="relative">
-                <ShieldCheck className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+                <ShieldCheck className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4 md:h-5 md:w-5" />
                 <input
                   type="text"
                   name="otp"
@@ -609,15 +622,15 @@ const RegisterPage: React.FC = () => {
                   placeholder="Enter OTP"
                   value={otpValue}
                   onChange={(e) => setOtpValue(e.target.value.replace(/\D/g, ""))}
-                  className="input-field pl-10 text-center text-lg tracking-widest"
+                  className="input-field pl-10 text-center text-lg tracking-widest text-sm md:text-base"
                   required
                 />
               </div>
 
-              <div className="flex items-center justify-between gap-2">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2">
                 <button
                   type="submit"
-                  className="btn-primary flex-1"
+                  className="btn-primary flex-1 text-sm md:text-base py-3 order-2 sm:order-1"
                   disabled={otpLoading}
                 >
                   {otpLoading ? "Verifying..." : "Verify OTP"}
@@ -625,7 +638,7 @@ const RegisterPage: React.FC = () => {
 
                 <button
                   type="button"
-                  className="btn-ghost flex items-center space-x-2 px-4 py-2 border rounded"
+                  className="btn-ghost flex items-center justify-center space-x-2 px-4 py-2 border rounded text-sm order-1 sm:order-2"
                   onClick={handleResendOtp}
                   disabled={otpLoading || resendCooldown > 0}
                 >
