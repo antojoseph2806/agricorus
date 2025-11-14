@@ -37,7 +37,7 @@ const FarmerViewLands: React.FC = () => {
       try {
         const token = localStorage.getItem("token");
         const res = await fetch(
-          "https://agricorus.onrender.com/api/farmer/lands/available",
+          "http://localhost:5000/api/farmer/lands/available",
           {
             headers: { Authorization: `Bearer ${token}` },
           }

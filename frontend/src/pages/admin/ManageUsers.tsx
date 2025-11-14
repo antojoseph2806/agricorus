@@ -48,7 +48,7 @@ interface ManageUsersProps {
   role: "landowner" | "farmer" | "investor";
 }
 
-const API_BASE_URL = "https://agricorus.onrender.com";
+const API_BASE_URL = "http://localhost:5000";
 
 const ManageUsers: React.FC<ManageUsersProps> = ({ role }) => {
   const [users, setUsers] = useState<User[]>([]);

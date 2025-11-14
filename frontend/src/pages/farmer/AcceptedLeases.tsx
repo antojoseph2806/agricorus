@@ -37,7 +37,7 @@ const AcceptedLeases: React.FC = () => {
     const fetchAcceptedLeases = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await fetch("https://agricorus.onrender.com/api/farmer/leases/accepted", {
+        const res = await fetch("http://localhost:5000/api/farmer/leases/accepted", {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -67,7 +67,7 @@ const AcceptedLeases: React.FC = () => {
       const token = localStorage.getItem("token");
 
       // Step 1: Create Razorpay order
-      const res = await fetch(`https://agricorus.onrender.com/api/payments/order/${leaseId}`, {
+      const res = await fetch(`http://localhost:5000/api/payments/order/${leaseId}`, {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -88,7 +88,7 @@ const AcceptedLeases: React.FC = () => {
         order_id: orderData.orderId,
         handler: async function (response: any) {
           // Step 3: Verify payment on backend
-          const verifyRes = await fetch(`https://agricorus.onrender.com/api/payments/verify`, {
+          const verifyRes = await fetch(`http://localhost:5000/api/payments/verify`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",

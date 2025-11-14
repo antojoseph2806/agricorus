@@ -33,7 +33,7 @@ const AdminDisputeDashboard: React.FC = () => {
     try {
       setLoading(true);
       const res = await axios.get(
-        `https://agricorus.onrender.com/api/landowner/disputes/admin/all${
+        `http://localhost:5000/api/landowner/disputes/admin/all${
           selectedStatus ? `?status=${selectedStatus}` : ""
         }`,
         {
@@ -60,7 +60,7 @@ const AdminDisputeDashboard: React.FC = () => {
       const adminRemarks = prompt("Enter admin remarks (optional):") || "";
 
       await axios.patch(
-        `https://agricorus.onrender.com/api/landowner/disputes/admin/${disputeId}/action`,
+        `http://localhost:5000/api/landowner/disputes/admin/${disputeId}/action`,
         { action, adminRemarks },
         { headers: { Authorization: `Bearer ${token}` } }
       );

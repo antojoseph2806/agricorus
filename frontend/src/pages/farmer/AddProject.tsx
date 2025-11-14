@@ -48,7 +48,7 @@ export default function AddProject() {
         fundingGoal: Number(form.fundingGoal),
       };
 
-      await axios.post("https://agricorus.onrender.com/api/projects/projects", projectData, {
+      await axios.post("http://localhost:5000/api/projects/projects", projectData, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,

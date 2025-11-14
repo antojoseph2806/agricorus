@@ -220,7 +220,7 @@ const RegisterPage: React.FC = () => {
 
     try {
       const sanitizedPhone = formData.phone.replace(/^(\+91)?/, "");
-      const res = await fetch("https://agricorus.onrender.com/api/auth/register", {
+      const res = await fetch("http://localhost:5000/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ...formData, phone: sanitizedPhone }),
@@ -320,7 +320,7 @@ const RegisterPage: React.FC = () => {
     }
 
     try {
-      const res = await fetch("https://agricorus.onrender.com/api/auth/verify-otp", {
+      const res = await fetch("http://localhost:5000/api/auth/verify-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: formData.email, otp: otpValue.trim() }),
@@ -356,7 +356,7 @@ const RegisterPage: React.FC = () => {
     setAlert(null);
 
     try {
-      const res = await fetch("https://agricorus.onrender.com/api/auth/resend-otp", {
+      const res = await fetch("http://localhost:5000/api/auth/resend-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: formData.email }),

@@ -50,7 +50,7 @@ export const PayoutManagement = ({ type }: { type: "upi" | "bank" }) => {
   const fetchPayouts = async () => {
     setLoading(true);
     try {
-      const res = await axios.get("https://agricorus.onrender.com/api/payouts", axiosConfig);
+      const res = await axios.get("http://localhost:5000/api/payouts", axiosConfig);
       setPayouts(res.data.filter((p: PayoutMethod) => p.type === type));
     } catch (err: any) {
       console.error("Error fetching payouts:", err);
@@ -80,13 +80,13 @@ export const PayoutManagement = ({ type }: { type: "upi" | "bank" }) => {
     try {
       if (editingId) {
         await axios.put(
-          `https://agricorus.onrender.com/api/payouts/${editingId}`,
+          `http://localhost:5000/api/payouts/${editingId}`,
           formData,
           axiosConfig
         );
       } else {
         await axios.post(
-          `https://agricorus.onrender.com/api/payouts/add-${type}`,
+          `http://localhost:5000/api/payouts/add-${type}`,
           formData,
           axiosConfig
         );
@@ -111,7 +111,7 @@ export const PayoutManagement = ({ type }: { type: "upi" | "bank" }) => {
     if (!window.confirm("Are you sure you want to delete this payout method?")) return;
 
     try {
-      await axios.delete(`https://agricorus.onrender.com/api/payouts/${id}`, axiosConfig);
+      await axios.delete(`http://localhost:5000/api/payouts/${id}`, axiosConfig);
       fetchPayouts();
     } catch (err: any) {
       console.error("Error deleting payout:", err);

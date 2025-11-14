@@ -69,7 +69,7 @@ const PaymentHistory: React.FC = () => {
       }
 
       const { data } = await axios.get(
-        "https://agricorus.onrender.com/api/payment-requests/my-requests",
+        "http://localhost:5000/api/payment-requests/my-requests",
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -94,7 +94,7 @@ const PaymentHistory: React.FC = () => {
       if (!token) return;
 
       await axios.patch(
-        `https://agricorus.onrender.com/api/payment-requests/cancel-request/${requestId}`,
+        `http://localhost:5000/api/payment-requests/cancel-request/${requestId}`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );

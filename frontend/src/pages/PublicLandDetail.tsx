@@ -51,7 +51,7 @@ const PublicLandDetail: React.FC = () => {
       try {
         const token = localStorage.getItem("token");
         const res = await fetch(
-          `https://agricorus.onrender.com/api/farmer/lands/public/${id}`,
+          `http://localhost:5000/api/farmer/lands/public/${id}`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -94,7 +94,7 @@ const PublicLandDetail: React.FC = () => {
     try {
       const token = localStorage.getItem("token");
       const res = await fetch(
-        `https://agricorus.onrender.com/api/farmer/leases/${id}/request`,
+        `http://localhost:5000/api/farmer/leases/${id}/request`,
         {
           method: "POST",
           headers: {

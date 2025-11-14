@@ -73,7 +73,7 @@ const ActiveLeases: React.FC = () => {
       }
       try {
         const res = await fetch(
-          "https://agricorus.onrender.com/api/farmer/leases/active",
+          "http://localhost:5000/api/farmer/leases/active",
           { headers: { Authorization: `Bearer ${token}` } }
         );
         const data = await res.json();
@@ -99,7 +99,7 @@ const ActiveLeases: React.FC = () => {
     try {
       const token = localStorage.getItem("token");
       const res = await fetch(
-        `https://agricorus.onrender.com/api/payments/order/${leaseId}`,
+        `http://localhost:5000/api/payments/order/${leaseId}`,
         { method: "POST", headers: { Authorization: `Bearer ${token}` } }
       );
       const orderData = await res.json();
@@ -117,7 +117,7 @@ const ActiveLeases: React.FC = () => {
         order_id: orderData.orderId,
         handler: async (response: any) => {
           const verifyRes = await fetch(
-            "https://agricorus.onrender.com/api/payments/verify",
+            "http://localhost:5000/api/payments/verify",
             {
               method: "POST",
               headers: {
@@ -215,7 +215,7 @@ const ActiveLeases: React.FC = () => {
         headers["Content-Type"] = "application/json";
       }
 
-      const res = await fetch("https://agricorus.onrender.com/api/disputes", {
+      const res = await fetch("http://localhost:5000/api/disputes", {
         method: "POST",
         headers,
         body,

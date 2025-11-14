@@ -40,7 +40,7 @@ const KycVerify: React.FC = () => {
       const token = localStorage.getItem('token');
 
       const { data } = await axios.post<ApiResponse>(
-        'https://agricorus.onrender.com/api/kyc/verify',
+        'http://localhost:5000/api/kyc/verify',
         formData,
         {
           headers: {
