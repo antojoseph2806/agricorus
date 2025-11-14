@@ -38,7 +38,7 @@ const CancelledLeases: React.FC = () => {
       try {
         const token = localStorage.getItem("token");
         const res = await fetch(
-          "http://localhost:5000/api/farmer/leases/cancelled",
+          "https://agricorus.onrender.com/api/farmer/leases/cancelled",
           {
             headers: { Authorization: `Bearer ${token}` },
           }

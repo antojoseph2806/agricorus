@@ -62,7 +62,7 @@ const DisputeForm: React.FC<DisputeModalProps> = ({ leaseId, onClose, onDisputeR
       };
 
       await axios.post(
-        `http://localhost:5000/api/landowner/disputes/${leaseId}`,
+        `https://agricorus.onrender.com/api/landowner/disputes/${leaseId}`,
         payload,
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -168,9 +168,9 @@ const LandownerLeaseRequests: React.FC<LeaseRequestsProps> = ({
       setError(null);
 
       try {
-        let url = "http://localhost:5000/api/leases/owner/requests";
+        let url = "https://agricorus.onrender.com/api/leases/owner/requests";
         if (statusFilter !== "all") {
-          url = `http://localhost:5000/api/leases/owner/requests/${statusFilter}`;
+          url = `https://agricorus.onrender.com/api/leases/owner/requests/${statusFilter}`;
         }
 
         const token = localStorage.getItem("token");
@@ -207,7 +207,7 @@ const LandownerLeaseRequests: React.FC<LeaseRequestsProps> = ({
     setActionLoading(leaseId);
     try {
       const token = localStorage.getItem("token");
-      const url = `http://localhost:5000/api/leases/${leaseId}/${action}`;
+      const url = `https://agricorus.onrender.com/api/leases/${leaseId}/${action}`;
 
       const res = await axios.put(
         url,

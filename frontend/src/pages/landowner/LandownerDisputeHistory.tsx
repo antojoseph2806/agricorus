@@ -59,7 +59,7 @@ const LandownerDisputeHistory: React.FC = () => {
       setLoading(true);
       setError(null);
       try {
-        const url = "http://localhost:5000/api/landowner/disputes";
+        const url = "https://agricorus.onrender.com/api/landowner/disputes";
         const token = localStorage.getItem("token");
 
         if (!token) {

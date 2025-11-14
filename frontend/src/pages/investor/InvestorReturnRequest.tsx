@@ -43,7 +43,7 @@ const InvestorReturnRequest: React.FC = () => {
         if (!token) return toast.error("Please log in to view your investments.");
 
         const res = await axios.get(
-          "http://localhost:5000/api/project-payments/investments/history",
+          "https://agricorus.onrender.com/api/project-payments/investments/history",
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -70,7 +70,7 @@ const InvestorReturnRequest: React.FC = () => {
         const token = localStorage.getItem("token");
         if (!token) return toast.error("Please log in to view payout methods.");
 
-        const res = await axios.get("http://localhost:5000/api/payouts/", {
+        const res = await axios.get("https://agricorus.onrender.com/api/payouts/", {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -117,7 +117,7 @@ const InvestorReturnRequest: React.FC = () => {
     try {
       setLoading(true);
       const res = await axios.post(
-        "http://localhost:5000/api/investor/return-requests",
+        "https://agricorus.onrender.com/api/investor/return-requests",
         payload,
         {
           headers: {

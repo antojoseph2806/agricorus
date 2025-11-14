@@ -10,7 +10,7 @@ const path = require("path");
 const DUMMY_PHOTO_PATH = path.join(__dirname, '1.png'); 
 const DUMMY_DOC_PATH = path.join(__dirname, '2.png'); 
 
-const BASE_URL = "http://localhost:5173";
+const BASE_URL = "https://agricorus.vercel.app";
 const LOGIN_URL = `${BASE_URL}/login`;
 // CORRECTED URL based on user feedback
 const ADD_LAND_URL = `${BASE_URL}/lands/add`; 

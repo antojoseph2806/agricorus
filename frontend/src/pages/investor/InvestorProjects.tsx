@@ -24,7 +24,7 @@ export default function InvestorProjects() {
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/projects/investor", {
+        const res = await axios.get("https://agricorus.onrender.com/api/projects/investor", {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         });
         setProjects(res.data);
@@ -117,7 +117,7 @@ export default function InvestorProjects() {
 
                 {/* Footer */}
                 <div className="mt-4">
-                  <Link to={`http://localhost:5000/projects/${project._id}`} className="w-full block">
+                  <Link to={`https://agricorus.onrender.com/projects/${project._id}`} className="w-full block">
                     <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition">
                       View Details
                     </button>

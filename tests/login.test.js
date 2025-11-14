@@ -30,7 +30,7 @@ describe("AgriCorus Login Page Test (Edge)", function () {
 
   // --- Valid Login ---
   it("should login successfully with correct credentials", async function () {
-    await driver.get("http://localhost:5173/login");
+    await driver.get("https://agricorus.vercel.app/login");
     await driver.wait(until.elementLocated(By.id("email")), 10000);
 
     await driver.findElement(By.id("email")).sendKeys("nandu@gmail.com");
@@ -55,7 +55,7 @@ describe("AgriCorus Login Page Test (Edge)", function () {
 
   // --- Invalid Credentials ---
   it("should show error with invalid credentials", async function () {
-    await driver.get("http://localhost:5173/login");
+    await driver.get("https://agricorus.vercel.app/login");
     await driver.wait(until.elementLocated(By.id("email")), 10000);
 
     const email = await driver.findElement(By.id("email"));
@@ -83,7 +83,7 @@ describe("AgriCorus Login Page Test (Edge)", function () {
 
   // --- Empty Fields (Browser Validation) ---
   it("should prevent login with empty fields", async function () {
-    await driver.get("http://localhost:5173/login");
+    await driver.get("https://agricorus.vercel.app/login");
     await driver.wait(until.elementLocated(By.id("email")), 10000);
 
     const email = await driver.findElement(By.id("email"));
@@ -108,7 +108,7 @@ describe("AgriCorus Login Page Test (Edge)", function () {
 
   // --- Remember Me ---
   it('should keep user logged in if "Remember Me" is checked', async function () {
-    await driver.get("http://localhost:5173/login");
+    await driver.get("https://agricorus.vercel.app/login");
 
     await driver.findElement(By.id("email")).sendKeys("nandu@gmail.com");
     await driver.findElement(By.id("password")).sendKeys("Anto9862@");
@@ -125,7 +125,7 @@ describe("AgriCorus Login Page Test (Edge)", function () {
 
   // --- Logout ---
   it("should logout successfully", async function () {
-    await driver.get("http://localhost:5173/landownerdashboard");
+    await driver.get("https://agricorus.vercel.app/landownerdashboard");
 
     let logoutBtn;
     try {

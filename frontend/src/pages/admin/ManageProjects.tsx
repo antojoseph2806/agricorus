@@ -50,7 +50,7 @@ const ManageProjects: React.FC = () => {
 
   const getAxios = () =>
     axios.create({
-      baseURL: "http://localhost:5000",
+      baseURL: "https://agricorus.onrender.com",
       headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
     });
 

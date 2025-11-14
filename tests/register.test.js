@@ -10,7 +10,7 @@ const path = require("path");
 const addContext = require("mochawesome/addContext");
 
 // -------------------- Config --------------------
-const BASE_URL = process.env.BASE_URL || "http://localhost:5173";
+const BASE_URL = process.env.BASE_URL || "https://agricorus.vercel.app";
 const REGISTER_PATH = "/register"; // adjust if your route differs
 const REGISTER_URL = `${BASE_URL}${REGISTER_PATH}`;
 

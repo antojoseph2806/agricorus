@@ -3,7 +3,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { Layout } from "./Layout";
 
-const API_BASE = "http://localhost:5000/api/disputes/admin";
+const API_BASE = "https://agricorus.onrender.com/api/disputes/admin";
 
 interface UserRef {
   _id: string;

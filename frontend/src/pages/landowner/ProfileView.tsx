@@ -41,7 +41,7 @@ const ProfileView: React.FC = () => {
           return;
         }
 
-        const res = await axios.get("http://localhost:5000/api/profile", {
+        const res = await axios.get("https://agricorus.onrender.com/api/profile", {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -94,7 +94,7 @@ const ProfileView: React.FC = () => {
       data.append("phone", formData.phone);
       if (profilePicFile) data.append("profileImage", profilePicFile);
 
-      const res = await axios.put("http://localhost:5000/api/profile", data, {
+      const res = await axios.put("https://agricorus.onrender.com/api/profile", data, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data",
@@ -194,7 +194,7 @@ const ProfileView: React.FC = () => {
                 <div className="relative group">
                   {profile.profileImage ? (
                     <img
-                      src={`http://localhost:5000${profile.profileImage}`}
+                      src={`https://agricorus.onrender.com${profile.profileImage}`}
                       alt="Profile"
                       className="w-32 h-32 rounded-full object-cover border-4 border-white/20 shadow-2xl transition-all duration-300 ease-in-out group-hover:scale-110 group-hover:border-[#ff3b3b]/50"
                     />

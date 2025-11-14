@@ -38,7 +38,7 @@ const PublicViewLands: React.FC = () => {
     const fetchLands = async () => {
       try {
         const res = await fetch(
-          "http://localhost:5000/api/farmer/lands/public/available"
+          "https://agricorus.onrender.com/api/farmer/lands/public/available"
         );
         const data = await res.json();
         setLands(data);

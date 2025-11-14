@@ -29,7 +29,7 @@ const FarmerProfile: React.FC = () => {
   const [editing, setEditing] = useState(false); // Fixes the "never read" warning as it's used now
 
   // TypeScript is satisfied if vite-env.d.ts is present
-  const BASE_URL = "http://localhost:5000"; 
+  const BASE_URL = "https://agricorus.onrender.com"; 
 
   // Helper function to format the joined date
   const formatDate = (dateString: string) => {
