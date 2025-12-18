@@ -69,7 +69,7 @@ const PaymentHistory: React.FC = () => {
       }
 
       const { data } = await axios.get(
-        "https://agricorus.onrender.com/api/payment-requests/my-requests",
+        "http://localhost:5000/api/payment-requests/my-requests",
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -94,7 +94,7 @@ const PaymentHistory: React.FC = () => {
       if (!token) return;
 
       await axios.patch(
-        `https://agricorus.onrender.com/api/payment-requests/cancel-request/${requestId}`,
+        `http://localhost:5000/api/payment-requests/cancel-request/${requestId}`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -162,58 +162,23 @@ const PaymentHistory: React.FC = () => {
 
   return (
     <Layout>
-      <div 
-        className="min-h-screen p-6 relative"
-        style={{
-          background: 'linear-gradient(135deg, #0a1a55 0%, #1a2a88 50%, #2d3ba2 100%)',
-          fontFamily: 'Inter, sans-serif'
-        }}
-      >
-        {/* Glowing Overlay */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div 
-            className="absolute -top-40 -right-40 w-80 h-80 rounded-full"
-            style={{
-              background: 'radial-gradient(circle, rgba(255, 59, 59, 0.15) 0%, transparent 70%)',
-              filter: 'blur(40px)'
-            }}
-          ></div>
-          <div 
-            className="absolute -bottom-40 -left-40 w-80 h-80 rounded-full"
-            style={{
-              background: 'radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, transparent 70%)',
-              filter: 'blur(40px)'
-            }}
-          ></div>
-        </div>
-
-        <div className="relative max-w-7xl mx-auto">
+      <div className="min-h-screen bg-gray-50 p-6">
+        <div className="max-w-7xl mx-auto">
           {/* Header Section */}
-          <div 
-            className="bg-white/5 backdrop-blur-lg rounded-2xl border border-white/10 p-8 mb-8 shadow-2xl"
-            style={{
-              background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%)',
-            }}
-          >
+          <div className="bg-white rounded-2xl border border-gray-200 p-8 mb-8 shadow-sm">
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
               <div>
-                <h1 
-                  className="text-3xl font-bold text-white uppercase tracking-wider mb-2"
-                  style={{ fontFamily: 'Poppins, sans-serif' }}
-                >
+                <h1 className="text-3xl font-bold text-gray-900 mb-2">
                   Payment History
                 </h1>
-                <p className="text-gray-300 text-lg">
+                <p className="text-gray-600 text-lg">
                   Track and manage all your payment requests in one place
                 </p>
               </div>
               
               <button
                 onClick={exportToCSV}
-                className="mt-4 lg:mt-0 flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-white transition-all duration-300 hover:scale-105 hover:shadow-lg"
-                style={{
-                  background: 'linear-gradient(135deg, #ff3b3b 0%, #ff5e5e 100%)',
-                }}
+                className="mt-4 lg:mt-0 flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-white bg-emerald-600 hover:bg-emerald-700 transition-all duration-300 shadow-sm"
               >
                 <Download className="w-5 h-5" />
                 Export CSV
@@ -224,18 +189,10 @@ const PaymentHistory: React.FC = () => {
           {/* Filter and Stats Section */}
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-8">
             {/* Filter Card */}
-            <div 
-              className="lg:col-span-1 bg-white/5 backdrop-blur-lg rounded-2xl border border-white/10 p-6"
-              style={{
-                background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%)',
-              }}
-            >
+            <div className="lg:col-span-1 bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
               <div className="flex items-center gap-3 mb-4">
-                <Filter className="w-5 h-5 text-red-400" />
-                <h3 
-                  className="text-lg font-bold text-white uppercase tracking-wide"
-                  style={{ fontFamily: 'Poppins, sans-serif' }}
-                >
+                <Filter className="w-5 h-5 text-emerald-600" />
+                <h3 className="text-lg font-bold text-gray-900">
                   Filters
                 </h3>
               </div>
@@ -243,37 +200,32 @@ const PaymentHistory: React.FC = () => {
               <select
                 value={filter}
                 onChange={(e) => setFilter(e.target.value)}
-                className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all duration-300"
+                className="w-full bg-white border border-gray-300 rounded-xl px-4 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-300"
               >
-                <option value="all" className="bg-gray-800">All Requests</option>
-                <option value="pending" className="bg-gray-800">Pending</option>
-                <option value="completed" className="bg-gray-800">Completed</option>
-                <option value="canceled" className="bg-gray-800">Canceled</option>
+                <option value="all">All Requests</option>
+                <option value="pending">Pending</option>
+                <option value="completed">Completed</option>
+                <option value="canceled">Canceled</option>
               </select>
             </div>
 
             {/* Stats Cards */}
-            <div 
-              className="lg:col-span-3 grid grid-cols-1 md:grid-cols-3 gap-6"
-            >
+            <div className="lg:col-span-3 grid grid-cols-1 md:grid-cols-3 gap-6">
               {[
-                { status: "all", label: "Total Requests", count: requests.length, color: "from-blue-500 to-blue-600" },
-                { status: "pending", label: "Pending", count: requests.filter(r => r.status === "pending").length, color: "from-yellow-500 to-yellow-600" },
-                { status: "completed", label: "Completed", count: requests.filter(r => r.status === "completed").length, color: "from-green-500 to-green-600" },
+                { status: "all", label: "Total Requests", count: requests.length, color: "bg-blue-100" },
+                { status: "pending", label: "Pending", count: requests.filter(r => r.status === "pending").length, color: "bg-yellow-100" },
+                { status: "completed", label: "Completed", count: requests.filter(r => r.status === "completed").length, color: "bg-green-100" },
               ].map((stat, index) => (
                 <div
                   key={index}
-                  className="bg-white/5 backdrop-blur-lg rounded-2xl border border-white/10 p-6 hover:scale-105 transition-all duration-300 group"
-                  style={{
-                    background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%)',
-                  }}
+                  className="bg-white rounded-2xl border border-gray-200 p-6 hover:shadow-md transition-all duration-300 shadow-sm"
                 >
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-gray-400 text-sm uppercase tracking-wide mb-1">{stat.label}</p>
-                      <p className="text-3xl font-bold text-white">{stat.count}</p>
+                      <p className="text-gray-500 text-sm uppercase tracking-wide mb-1">{stat.label}</p>
+                      <p className="text-3xl font-bold text-gray-900">{stat.count}</p>
                     </div>
-                    <div className={`p-3 rounded-xl bg-gradient-to-br ${stat.color} group-hover:scale-110 transition-transform duration-300`}>
+                    <div className={`p-3 rounded-xl ${stat.color}`}>
                       {getStatusIcon(stat.status === "all" ? "pending" : stat.status)}
                     </div>
                   </div>
@@ -283,50 +235,45 @@ const PaymentHistory: React.FC = () => {
           </div>
 
           {/* Payment Requests Table */}
-          <div 
-            className="bg-white/5 backdrop-blur-lg rounded-2xl border border-white/10 overflow-hidden shadow-2xl"
-            style={{
-              background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%)',
-            }}
-          >
+          <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm">
             {loading ? (
               <div className="flex items-center justify-center py-16">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-500"></div>
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-500"></div>
               </div>
             ) : filteredRequests.length === 0 ? (
               <div className="text-center py-16">
                 <AlertCircle className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-xl font-bold text-white mb-2">No payment requests found</h3>
-                <p className="text-gray-400">No payment requests match your current filters.</p>
+                <h3 className="text-xl font-bold text-gray-900 mb-2">No payment requests found</h3>
+                <p className="text-gray-600">No payment requests match your current filters.</p>
               </div>
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead>
-                    <tr className="border-b border-white/10">
-                      <th className="text-left py-4 px-6 text-gray-400 font-semibold uppercase tracking-wide text-sm">Lease Details</th>
-                      <th className="text-left py-4 px-6 text-gray-400 font-semibold uppercase tracking-wide text-sm">Amount</th>
-                      <th className="text-left py-4 px-6 text-gray-400 font-semibold uppercase tracking-wide text-sm">Status</th>
-                      <th className="text-left py-4 px-6 text-gray-400 font-semibold uppercase tracking-wide text-sm">Requested</th>
-                      <th className="text-left py-4 px-6 text-gray-400 font-semibold uppercase tracking-wide text-sm">Payout Method</th>
-                      <th className="text-left py-4 px-6 text-gray-400 font-semibold uppercase tracking-wide text-sm">Actions</th>
+                    <tr className="border-b border-gray-200 bg-gray-50">
+                      <th className="text-left py-4 px-6 text-gray-700 font-semibold uppercase tracking-wide text-sm">Lease Details</th>
+                      <th className="text-left py-4 px-6 text-gray-700 font-semibold uppercase tracking-wide text-sm">Amount</th>
+                      <th className="text-left py-4 px-6 text-gray-700 font-semibold uppercase tracking-wide text-sm">Status</th>
+                      <th className="text-left py-4 px-6 text-gray-700 font-semibold uppercase tracking-wide text-sm">Requested</th>
+                      <th className="text-left py-4 px-6 text-gray-700 font-semibold uppercase tracking-wide text-sm">Payout Method</th>
+                      <th className="text-left py-4 px-6 text-gray-700 font-semibold uppercase tracking-wide text-sm">Actions</th>
                     </tr>
                   </thead>
                   <tbody>
                     {filteredRequests.map((req) => (
                       <tr 
                         key={req._id} 
-                        className="border-b border-white/5 hover:bg-white/5 transition-all duration-300 group"
+                        className="border-b border-gray-100 hover:bg-gray-50 transition-all duration-300"
                       >
                         <td className="py-4 px-6">
                           <div>
-                            <p className="font-semibold text-white">Lease #{req.lease._id.slice(-8)}</p>
-                            <p className="text-gray-400 text-sm">Farmer: {req.farmer.name || req.farmer.email}</p>
+                            <p className="font-semibold text-gray-900">Lease #{req.lease._id.slice(-8)}</p>
+                            <p className="text-gray-600 text-sm">Farmer: {req.farmer.name || req.farmer.email}</p>
                           </div>
                         </td>
                         <td className="py-4 px-6">
-                          <span className="text-xl font-bold text-white">₹{req.amount}</span>
-                          <p className="text-gray-400 text-sm">Monthly</p>
+                          <span className="text-xl font-bold text-gray-900">₹{req.amount}</span>
+                          <p className="text-gray-600 text-sm">Monthly</p>
                         </td>
                         <td className="py-4 px-6">
                           <span className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold border ${getStatusColor(req.status)}`}>
@@ -335,13 +282,13 @@ const PaymentHistory: React.FC = () => {
                           </span>
                         </td>
                         <td className="py-4 px-6">
-                          <p className="text-white">{new Date(req.requestedAt).toLocaleDateString()}</p>
-                          <p className="text-gray-400 text-sm">{new Date(req.requestedAt).toLocaleTimeString()}</p>
+                          <p className="text-gray-900">{new Date(req.requestedAt).toLocaleDateString()}</p>
+                          <p className="text-gray-600 text-sm">{new Date(req.requestedAt).toLocaleTimeString()}</p>
                         </td>
                         <td className="py-4 px-6">
                           <div>
-                            <p className="text-white font-medium">{req.payoutMethod.type.toUpperCase()}</p>
-                            <p className="text-gray-400 text-sm">
+                            <p className="text-gray-900 font-medium">{req.payoutMethod.type.toUpperCase()}</p>
+                            <p className="text-gray-600 text-sm">
                               {req.payoutMethod.name || req.payoutMethod.upiId || req.payoutMethod.accountNumber}
                             </p>
                           </div>
@@ -351,20 +298,17 @@ const PaymentHistory: React.FC = () => {
                             {req.status === "pending" && (
                               <button
                                 onClick={() => cancelRequest(req._id)}
-                                className="flex items-center gap-2 px-4 py-2 rounded-xl text-white transition-all duration-300 hover:scale-105 hover:shadow-lg"
-                                style={{
-                                  background: 'linear-gradient(135deg, #ff3b3b 0%, #ff5e5e 100%)',
-                                }}
+                                className="flex items-center gap-2 px-4 py-2 rounded-xl text-white bg-red-600 hover:bg-red-700 transition-all duration-300 shadow-sm"
                               >
                                 <Trash2 className="w-4 h-4" />
                                 Cancel
                               </button>
                             )}
                             <button 
-                              className="p-2 rounded-lg bg-white/10 hover:bg-white/20 transition-all duration-300 group-hover:scale-110"
+                              className="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition-all duration-300"
                               onClick={() => setActiveDropdown(activeDropdown === req._id ? null : req._id)}
                             >
-                              <MoreVertical className="w-4 h-4 text-white" />
+                              <MoreVertical className="w-4 h-4 text-gray-700" />
                             </button>
                           </div>
                         </td>

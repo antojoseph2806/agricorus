@@ -7,7 +7,6 @@ import {
   Home,
   Shield,
   FileText,
-  CreditCard,
   AlertTriangle,
   Menu,
   X,
@@ -17,7 +16,11 @@ import {
   ShoppingBag
 } from "lucide-react";
 
-const FarmerLayout: React.FC = () => {
+interface FarmerLayoutProps {
+  children?: React.ReactNode;
+}
+
+const FarmerLayout: React.FC<FarmerLayoutProps> = ({ children }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true); // Desktop default: open
   const [isMobileOpen, setIsMobileOpen] = useState(false); // Mobile overlay state
   const [openMenus, setOpenMenus] = useState<Record<string, boolean>>({});
@@ -77,6 +80,16 @@ const FarmerLayout: React.FC = () => {
   icon: AlertTriangle,
   href: '/disputes/my',
 },
+    {
+      label: 'Marketplace',
+      icon: ShoppingBag,
+      href: '#',
+      children: [
+        { label: 'Browse Products', icon: ShoppingBag, href: '/marketplace' },
+        { label: 'My Cart', icon: ShoppingBag, href: '/cart' },
+        { label: 'Order History', icon: FileText, href: '/orders' },
+      ],
+    },
   ];
 
   // -------------------- HANDLERS --------------------
@@ -255,7 +268,7 @@ const FarmerLayout: React.FC = () => {
         </div>
 
         <main className="flex-1 p-6 overflow-auto">
-          <Outlet />
+          {children || <Outlet />}
         </main>
       </div>
     </div>

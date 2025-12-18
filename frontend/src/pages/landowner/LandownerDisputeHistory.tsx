@@ -59,7 +59,7 @@ const LandownerDisputeHistory: React.FC = () => {
       setLoading(true);
       setError(null);
       try {
-        const url = "https://agricorus.onrender.com/api/landowner/disputes";
+        const url = "http://localhost:5000/api/landowner/disputes";
         const token = localStorage.getItem("token");
 
         if (!token) {
@@ -133,12 +133,11 @@ const LandownerDisputeHistory: React.FC = () => {
   if (loading) {
     return (
       <Layout>
-        <div
-          className="flex items-center justify-center min-h-screen relative"
-          style={{ background: 'linear-gradient(135deg, #0a1a55 0%, #1a2a88 50%, #2d3ba2 100%)', fontFamily: 'Inter, sans-serif' }}
-        >
-          <FaSpinner className="w-10 h-10 text-white animate-spin mr-2" />
-          <p className="text-gray-300 font-medium text-lg">Fetching dispute history...</p>
+        <div className="flex items-center justify-center min-h-screen bg-gray-50">
+          <div className="flex flex-col items-center">
+            <div className="w-16 h-16 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin mb-4"></div>
+            <p className="text-gray-700 font-medium text-lg">Fetching dispute history...</p>
+          </div>
         </div>
       </Layout>
     );
@@ -147,11 +146,8 @@ const LandownerDisputeHistory: React.FC = () => {
   if (error) {
     return (
       <Layout>
-        <div
-          className="min-h-screen p-6 relative"
-          style={{ background: 'linear-gradient(135deg, #0a1a55 0%, #1a2a88 50%, #2d3ba2 100%)' }}
-        >
-          <div className="bg-red-500/10 backdrop-blur-lg border border-red-500/20 text-red-400 px-6 py-4 rounded-2xl max-w-4xl mx-auto mt-8">
+        <div className="min-h-screen bg-gray-50 p-6">
+          <div className="bg-red-50 border border-red-200 text-red-700 px-6 py-4 rounded-2xl max-w-4xl mx-auto mt-8">
             <div className="flex items-center gap-3">
               <Shield className="w-5 h-5" />
               <div>
@@ -167,49 +163,35 @@ const LandownerDisputeHistory: React.FC = () => {
 
   return (
     <Layout>
-      <div
-        className="min-h-screen p-6 relative"
-        style={{
-          background: 'linear-gradient(135deg, #0a1a55 0%, #1a2a88 50%, #2d3ba2 100%)',
-          fontFamily: 'Inter, sans-serif'
-        }}
-      >
-        <div className="relative max-w-7xl mx-auto">
+      <div className="min-h-screen bg-gray-50 p-6">
+        <div className="max-w-7xl mx-auto">
           {/* Header */}
-          <div
-            className="bg-white/5 backdrop-blur-lg rounded-2xl border border-white/10 p-8 mb-8 shadow-2xl"
-            style={{
-              background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%)',
-            }}
-          >
+          <div className="bg-white rounded-2xl border border-gray-200 p-8 mb-8 shadow-sm">
             <div className="flex items-center gap-4">
-              <div className="p-3 rounded-xl bg-gradient-to-br from-red-500 to-red-600">
-                <Scale className="w-6 h-6" />
+              <div className="p-3 rounded-xl bg-emerald-600">
+                <Scale className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h1
-                  className="text-3xl font-bold text-white uppercase tracking-wider mb-2"
-                  style={{ fontFamily: 'Poppins, sans-serif' }}
-                >
+                <h1 className="text-3xl font-bold text-gray-900 mb-2">
                   Dispute History
                 </h1>
-                <p className="text-gray-300 text-lg">
+                <p className="text-gray-600 text-lg">
                   Track the status and details of all disputes you have raised.
                 </p>
               </div>
             </div>
           </div>
 
-          <div className="bg-white/5 backdrop-blur-lg rounded-2xl border border-white/10 p-6 shadow-2xl">
-            <h2 className="text-xl font-bold text-white mb-4 border-b border-white/10 pb-3 flex items-center">
-                <FaDatabase className="w-5 h-5 mr-2 text-red-400" />
-                Total Disputes Raised: <span className="text-red-400 ml-2">{disputes.length}</span>
+          <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
+            <h2 className="text-xl font-bold text-gray-900 mb-4 border-b border-gray-200 pb-3 flex items-center">
+                <FaDatabase className="w-5 h-5 mr-2 text-emerald-600" />
+                Total Disputes Raised: <span className="text-emerald-600 ml-2">{disputes.length}</span>
             </h2>
 
             {disputes.length === 0 ? (
-                <div className="text-center py-12 text-gray-400">
-                    <FaExclamationTriangle className="w-10 h-10 mx-auto mb-3" />
-                    <p className="text-lg">No dispute records found.</p>
+                <div className="text-center py-12 text-gray-600">
+                    <FaExclamationTriangle className="w-10 h-10 mx-auto mb-3 text-gray-400" />
+                    <p className="text-lg text-gray-900">No dispute records found.</p>
                     <p className="text-sm">Raise a dispute from an active lease request to begin.</p>
                 </div>
             ) : (
@@ -217,50 +199,46 @@ const LandownerDisputeHistory: React.FC = () => {
                     {disputes.map((dispute) => (
                         <div
                             key={dispute._id}
-                            className="bg-white/5 p-5 rounded-xl border border-white/10 hover:border-red-500/50 transition-all duration-300"
+                            className="bg-white p-5 rounded-xl border border-gray-200 hover:border-emerald-300 hover:shadow-md transition-all duration-300"
                         >
-                            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-3 border-b border-white/10 pb-3">
-                                <h3 className="text-xl font-bold text-white flex items-center">
-                                    <FaTag className="w-5 h-5 mr-2 text-yellow-400" />
+                            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-3 border-b border-gray-200 pb-3">
+                                <h3 className="text-xl font-bold text-gray-900 flex items-center">
+                                    <FaTag className="w-5 h-5 mr-2 text-emerald-600" />
                                     {dispute.reason}
                                 </h3>
-                                <span className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold border backdrop-blur-sm mt-2 sm:mt-0 ${getDisputeStatusColor(dispute.status)}`}>
+                                <span className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold border mt-2 sm:mt-0 ${getDisputeStatusColor(dispute.status)}`}>
                                     {getDisputeStatusIcon(dispute.status)}
                                     {getDisputeStatusText(dispute.status)}
                                 </span>
                             </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-gray-300 mb-4">
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-gray-600 mb-4">
                                 <p className="flex items-center">
-                                    <FileText className="w-4 h-4 mr-2 text-blue-400" />
-                                    <span className="font-semibold text-white mr-1">Lease:</span>
-                                    {/* 🚨 Safe access for missing lease title 🚨 */}
+                                    <FileText className="w-4 h-4 mr-2 text-blue-600" />
+                                    <span className="font-semibold text-gray-900 mr-1">Lease:</span>
                                     {dispute.lease?.title || `Lease ID: ${dispute.lease._id.substring(0, 8)}...`}
                                 </p>
                                 <p className="flex items-center">
-                                    <UserCheck className="w-4 h-4 mr-2 text-green-400" />
-                                    <span className="font-semibold text-white mr-1">Against:</span>
+                                    <UserCheck className="w-4 h-4 mr-2 text-emerald-600" />
+                                    <span className="font-semibold text-gray-900 mr-1">Against:</span>
                                     {dispute.against?.name || 'Unknown Farmer'}
                                 </p>
                                 <p className="flex items-center">
-                                    <FaRupeeSign className="w-4 h-4 mr-2 text-red-400" />
-                                    <span className="font-semibold text-white mr-1">Amount:</span>
+                                    <FaRupeeSign className="w-4 h-4 mr-2 text-red-600" />
+                                    <span className="font-semibold text-gray-900 mr-1">Amount:</span>
                                     ₹{dispute.amountInvolved?.toLocaleString() || '0'}
                                 </p>
                             </div>
                             
-                            <div className="mt-2 p-3 bg-white/5 rounded-lg border border-white/10">
-                                <p className="text-xs text-gray-400 uppercase tracking-wide mb-1">Details</p>
-                                <p className="text-white text-sm italic">{dispute.details || "No detailed description provided."}</p>
+                            <div className="mt-2 p-3 bg-gray-50 rounded-lg border border-gray-200">
+                                <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">Details</p>
+                                <p className="text-gray-900 text-sm italic">{dispute.details || "No detailed description provided."}</p>
                             </div>
 
                             <div className="flex justify-end mt-4">
                                 <button
                                     onClick={() => alert(`Viewing details for dispute ${dispute._id}`)}
-                                    className="flex items-center px-4 py-2 rounded-lg text-xs font-bold text-white transition-all duration-300 hover:scale-105"
-                                    style={{
-                                        background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
-                                    }}
+                                    className="flex items-center px-4 py-2 rounded-lg text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 transition-all duration-300 shadow-sm"
                                 >
                                     <FaFilePdf className="w-3 h-3 mr-2" />
                                     View Resolution

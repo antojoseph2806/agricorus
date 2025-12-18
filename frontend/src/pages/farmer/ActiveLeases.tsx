@@ -73,7 +73,7 @@ const ActiveLeases: React.FC = () => {
       }
       try {
         const res = await fetch(
-          "https://agricorus.onrender.com/api/farmer/leases/active",
+          "http://localhost:5000/api/farmer/leases/active",
           { headers: { Authorization: `Bearer ${token}` } }
         );
         const data = await res.json();
@@ -99,7 +99,7 @@ const ActiveLeases: React.FC = () => {
     try {
       const token = localStorage.getItem("token");
       const res = await fetch(
-        `https://agricorus.onrender.com/api/payments/order/${leaseId}`,
+        `http://localhost:5000/api/payments/order/${leaseId}`,
         { method: "POST", headers: { Authorization: `Bearer ${token}` } }
       );
       const orderData = await res.json();
@@ -117,7 +117,7 @@ const ActiveLeases: React.FC = () => {
         order_id: orderData.orderId,
         handler: async (response: any) => {
           const verifyRes = await fetch(
-            "https://agricorus.onrender.com/api/payments/verify",
+            "http://localhost:5000/api/payments/verify",
             {
               method: "POST",
               headers: {
@@ -215,7 +215,7 @@ const ActiveLeases: React.FC = () => {
         headers["Content-Type"] = "application/json";
       }
 
-      const res = await fetch("https://agricorus.onrender.com/api/disputes", {
+      const res = await fetch("http://localhost:5000/api/disputes", {
         method: "POST",
         headers,
         body,
@@ -238,49 +238,32 @@ const ActiveLeases: React.FC = () => {
 
   if (loading) {
     return (
-      <div 
-        className="flex items-center justify-center min-h-screen bg-gradient-to-br from-[#0a1a55] via-[#1a2a88] to-[#2d1a88] relative overflow-hidden"
-        style={{ fontFamily: "'Inter', 'Poppins', sans-serif" }}
-      >
-        <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute -top-40 -right-40 w-80 h-80 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
-          <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse animation-delay-2000"></div>
-        </div>
-        <div className="relative z-10 flex flex-col items-center">
-          <div className="w-16 h-16 border-4 border-white/20 border-t-white rounded-full animate-spin mb-4"></div>
-          <h3 className="text-white text-xl font-bold uppercase tracking-wider mb-2">LOADING DEPLOYMENTS</h3>
-          <p className="text-gray-300 font-light">Initializing active lease deployments</p>
+      <div className="flex items-center justify-center min-h-screen bg-gray-50">
+        <div className="flex flex-col items-center">
+          <div className="w-16 h-16 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin mb-4"></div>
+          <h3 className="text-gray-900 text-xl font-semibold mb-2">Loading Leases</h3>
+          <p className="text-gray-600">Fetching your active leases</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div 
-      className="min-h-screen bg-gradient-to-br from-[#0a1a55] via-[#1a2a88] to-[#2d1a88] p-4 relative overflow-hidden"
-      style={{ fontFamily: "'Inter', 'Poppins', sans-serif" }}
-    >
-      {/* Animated Background Elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse animation-delay-2000"></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-red-500 rounded-full mix-blend-multiply filter blur-xl opacity-10 animate-pulse animation-delay-4000"></div>
-      </div>
-
-      <div className="relative z-10 max-w-7xl mx-auto">
+    <div className="min-h-screen bg-gray-50 p-4">
+      <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 p-8 mb-8 shadow-2xl">
+        <div className="bg-white rounded-xl shadow-sm border p-8 mb-8">
           <div className="flex items-center mb-4">
-            <div className="w-12 h-12 bg-gradient-to-r from-[#ff3b3b] to-[#ff6b6b] rounded-2xl flex items-center justify-center mr-4 shadow-lg">
+            <div className="w-12 h-12 bg-emerald-500 rounded-lg flex items-center justify-center mr-4">
               <DocumentTextIcon className="h-6 w-6 text-white" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-white uppercase tracking-wider">ACTIVE DEPLOYMENTS</h1>
-              <div className="w-16 h-1 bg-gradient-to-r from-[#ff3b3b] to-[#ff6b6b] rounded-full mt-2"></div>
+              <h1 className="text-3xl font-bold text-gray-900">Active Leases</h1>
+              <div className="w-16 h-1 bg-emerald-500 rounded-full mt-2"></div>
             </div>
           </div>
-          <p className="text-gray-300 text-lg font-light max-w-2xl leading-relaxed">
-            Manage your current land deployments, process payments, and handle service issues
+          <p className="text-gray-600 text-lg max-w-2xl leading-relaxed">
+            Manage your current land leases, process payments, and handle any issues
           </p>
         </div>
 
@@ -293,13 +276,13 @@ const ActiveLeases: React.FC = () => {
         )}
 
         {leases.length === 0 ? (
-          <div className="bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 p-12 text-center shadow-2xl">
-            <div className="w-24 h-24 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-2xl flex items-center justify-center mx-auto mb-6 border border-white/10">
+          <div className="bg-white rounded-xl shadow-sm border p-12 text-center">
+            <div className="w-24 h-24 bg-gray-100 rounded-xl flex items-center justify-center mx-auto mb-6">
               <div className="text-4xl">🏞️</div>
             </div>
-            <h3 className="text-2xl font-bold text-white uppercase tracking-wider mb-3">NO ACTIVE DEPLOYMENTS</h3>
-            <p className="text-gray-300 text-lg max-w-md mx-auto leading-relaxed">
-              You don't have any active lease deployments at the moment.
+            <h3 className="text-2xl font-bold text-gray-900 mb-3">No Active Leases</h3>
+            <p className="text-gray-600 text-lg max-w-md mx-auto leading-relaxed">
+              You don't have any active leases at the moment.
             </p>
           </div>
         ) : (
@@ -307,7 +290,7 @@ const ActiveLeases: React.FC = () => {
             {leases.map((lease) => (
               <div
                 key={lease._id}
-                className="group bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:scale-[1.02] flex flex-col shadow-lg"
+                className="group bg-white rounded-xl border shadow-sm hover:shadow-lg transition-all duration-300 hover:scale-[1.02] flex flex-col"
               >
                 {/* Image Section */}
                 <div className="w-full h-48 relative flex-shrink-0">
@@ -315,16 +298,16 @@ const ActiveLeases: React.FC = () => {
                     <img
                       src={lease.land.landPhotos[0]}
                       alt={lease.land?.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 rounded-t-xl"
                     />
                   ) : (
-                    <div className="w-full h-full bg-gradient-to-br from-blue-500/10 to-purple-500/10 flex flex-col items-center justify-center text-gray-400">
-                      <PhotoIcon className="h-12 w-12 mb-3 text-white/40" />
-                      <span className="text-white/60 text-sm">No image available</span>
+                    <div className="w-full h-full bg-gray-100 flex flex-col items-center justify-center text-gray-400 rounded-t-xl">
+                      <PhotoIcon className="h-12 w-12 mb-3" />
+                      <span className="text-sm">No image available</span>
                     </div>
                   )}
                   {/* Status Badge */}
-                  <div className="absolute top-4 right-4 bg-green-500/20 backdrop-blur-sm text-green-400 text-xs font-bold uppercase tracking-wide px-3 py-1.5 rounded-full flex items-center border border-green-400/30">
+                  <div className="absolute top-4 right-4 bg-green-100 text-green-700 text-xs font-semibold px-3 py-1.5 rounded-full flex items-center border border-green-200">
                     <CheckCircleIcon className="h-3 w-3 mr-1.5" />
                     ACTIVE
                   </div>
@@ -334,36 +317,36 @@ const ActiveLeases: React.FC = () => {
                 <div className="flex-1 p-6">
                   <div className="flex flex-col h-full">
                     <div className="flex-1">
-                      <h2 className="text-xl font-bold text-white uppercase tracking-wide mb-3 line-clamp-2">
-                        {lease.land?.title || "Untitled Deployment"}
+                      <h2 className="text-xl font-bold text-gray-900 mb-3 line-clamp-2">
+                        {lease.land?.title || "Untitled Lease"}
                       </h2>
                       
-                      <p className="text-gray-300 text-sm mb-4 line-clamp-2">
+                      <p className="text-gray-600 text-sm mb-4 line-clamp-2">
                         {lease.land?.location?.address || "No address provided"}
                       </p>
 
                       <div className="grid grid-cols-2 gap-3 mb-6">
-                        <div className="bg-white/5 backdrop-blur-sm p-3 rounded-xl border border-white/10 group-hover:border-white/20 transition-all duration-300">
-                          <p className="text-xs text-gray-300 uppercase tracking-wide mb-1">Size</p>
-                          <p className="text-sm font-bold text-white">
+                        <div className="bg-gray-50 p-3 rounded-lg border">
+                          <p className="text-xs text-gray-500 mb-1">Size</p>
+                          <p className="text-sm font-semibold text-gray-900">
                             {lease.land?.sizeInAcres || "N/A"} acres
                           </p>
                         </div>
-                        <div className="bg-white/5 backdrop-blur-sm p-3 rounded-xl border border-white/10 group-hover:border-white/20 transition-all duration-300">
-                          <p className="text-xs text-gray-300 uppercase tracking-wide mb-1">Soil Type</p>
-                          <p className="text-sm font-bold text-white">
+                        <div className="bg-gray-50 p-3 rounded-lg border">
+                          <p className="text-xs text-gray-500 mb-1">Soil Type</p>
+                          <p className="text-sm font-semibold text-gray-900">
                             {lease.land?.soilType || "N/A"}
                           </p>
                         </div>
-                        <div className="bg-white/5 backdrop-blur-sm p-3 rounded-xl border border-white/10 group-hover:border-white/20 transition-all duration-300">
-                          <p className="text-xs text-gray-300 uppercase tracking-wide mb-1">Duration</p>
-                          <p className="text-sm font-bold text-white">
+                        <div className="bg-gray-50 p-3 rounded-lg border">
+                          <p className="text-xs text-gray-500 mb-1">Duration</p>
+                          <p className="text-sm font-semibold text-gray-900">
                             {lease.durationMonths} months
                           </p>
                         </div>
-                        <div className="bg-white/5 backdrop-blur-sm p-3 rounded-xl border border-white/10 group-hover:border-white/20 transition-all duration-300">
-                          <p className="text-xs text-gray-300 uppercase tracking-wide mb-1">Price</p>
-                          <p className="text-sm font-bold text-white">
+                        <div className="bg-gray-50 p-3 rounded-lg border">
+                          <p className="text-xs text-gray-500 mb-1">Price</p>
+                          <p className="text-sm font-semibold text-gray-900">
                             ₹{lease.pricePerMonth}/month
                           </p>
                         </div>
@@ -371,15 +354,15 @@ const ActiveLeases: React.FC = () => {
 
                       {/* Payment Progress */}
                       <div className="mb-6">
-                        <div className="flex justify-between text-sm text-gray-300 mb-2">
-                          <span className="font-bold uppercase tracking-wide">Payment Progress</span>
-                          <span className="font-bold text-white">
+                        <div className="flex justify-between text-sm text-gray-600 mb-2">
+                          <span className="font-semibold">Payment Progress</span>
+                          <span className="font-semibold text-gray-900">
                             {lease.paymentsMade} of {lease.totalPayments} paid
                           </span>
                         </div>
-                        <div className="w-full bg-white/20 rounded-full h-2">
+                        <div className="w-full bg-gray-200 rounded-full h-2">
                           <div
-                            className="bg-gradient-to-r from-[#ff3b3b] to-[#ff6b6b] h-2 rounded-full transition-all duration-500"
+                            className="bg-gradient-to-r from-emerald-500 to-blue-500 h-2 rounded-full transition-all duration-500"
                             style={{
                               width: `${(lease.paymentsMade! / lease.totalPayments!) * 100}%`
                             }}
@@ -389,19 +372,19 @@ const ActiveLeases: React.FC = () => {
                     </div>
 
                     {/* Action Buttons */}
-                    <div className="space-y-3 pt-6 border-t border-white/10">
+                    <div className="space-y-3 pt-6 border-t">
                       {lease.paymentsMade! < lease.totalPayments! ? (
                         <button
                           onClick={() => handleMakePayment(lease._id)}
-                          className="w-full flex items-center justify-center px-6 py-4 bg-gradient-to-r from-[#ff3b3b] to-[#ff6b6b] hover:shadow-2xl hover:shadow-[#ff3b3b]/30 text-white font-bold rounded-xl transition-all duration-300 transform hover:scale-105 border border-[#ff3b3b]/20 group/payment"
+                          className="w-full flex items-center justify-center px-6 py-4 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-lg transition-all duration-300 group/payment"
                         >
-                          <BanknotesIcon className="h-5 w-5 mr-3 group-hover/payment:scale-110 transition-transform duration-300" />
-                          PAY INSTALLMENT (₹{lease.pricePerMonth})
+                          <BanknotesIcon className="h-5 w-5 mr-3" />
+                          Pay Installment (₹{lease.pricePerMonth})
                           <ChevronRightIcon className="h-4 w-4 ml-2 group-hover/payment:translate-x-1 transition-transform duration-300" />
                         </button>
                       ) : (
-                        <div className="w-full text-center py-4 bg-green-500/20 backdrop-blur-sm text-green-400 font-bold rounded-xl border border-green-400/30">
-                          ✅ FULLY DEPLOYED
+                        <div className="w-full text-center py-4 bg-green-100 text-green-700 font-semibold rounded-lg border border-green-200">
+                          ✅ Fully Paid
                         </div>
                       )}
 
@@ -410,19 +393,19 @@ const ActiveLeases: React.FC = () => {
                           href={lease.agreementUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="w-full inline-flex items-center justify-center px-6 py-3 bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold rounded-xl transition-all duration-300 transform hover:scale-105 group/agreement"
+                          className="w-full inline-flex items-center justify-center px-6 py-3 bg-gray-100 hover:bg-gray-200 border text-gray-700 font-semibold rounded-lg transition-all duration-300 group/agreement"
                         >
-                          <DocumentArrowDownIcon className="h-4 w-4 mr-3 group-hover/agreement:scale-110 transition-transform duration-300" />
-                          VIEW AGREEMENT
+                          <DocumentArrowDownIcon className="h-4 w-4 mr-3" />
+                          View Agreement
                         </a>
                       )}
 
                       <button
                         onClick={() => handleRaiseDispute(lease._id)}
-                        className="w-full inline-flex items-center justify-center px-6 py-3 bg-red-500/20 hover:bg-red-500/30 border border-red-400/30 text-red-400 font-bold rounded-xl transition-all duration-300 transform hover:scale-105 group/dispute"
+                        className="w-full inline-flex items-center justify-center px-6 py-3 bg-red-50 hover:bg-red-100 border border-red-200 text-red-600 font-semibold rounded-lg transition-all duration-300 group/dispute"
                       >
-                        <ExclamationTriangleIcon className="h-4 w-4 mr-3 group-hover/dispute:scale-110 transition-transform duration-300" />
-                        RAISE DISPUTE
+                        <ExclamationTriangleIcon className="h-4 w-4 mr-3" />
+                        Raise Dispute
                       </button>
                     </div>
                   </div>
@@ -435,9 +418,9 @@ const ActiveLeases: React.FC = () => {
         {/* Stats Footer */}
         {leases.length > 0 && (
           <div className="mt-8 text-center">
-            <div className="inline-flex items-center bg-white/5 backdrop-blur-md rounded-2xl px-6 py-3 border border-white/10">
-              <span className="text-gray-300 text-sm font-bold uppercase tracking-wide">
-                Managing <span className="text-white">{leases.length}</span> Active Deployment{leases.length !== 1 ? 's' : ''}
+            <div className="inline-flex items-center bg-white rounded-lg shadow-sm border px-6 py-3">
+              <span className="text-gray-600 text-sm font-medium">
+                Managing <span className="text-gray-900 font-bold">{leases.length}</span> Active Lease{leases.length !== 1 ? 's' : ''}
               </span>
             </div>
           </div>
@@ -447,38 +430,38 @@ const ActiveLeases: React.FC = () => {
       {/* ✅ Dispute Modal */}
       {showDisputeModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-gradient-to-br from-[#0a1a55] to-[#1a2a88] rounded-2xl border border-white/20 shadow-2xl w-full max-w-md p-6 relative">
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-md p-6 relative">
             <button
               onClick={() => {
                 setShowDisputeModal(false);
                 resetDisputeForm();
               }}
-              className="absolute top-4 right-4 text-gray-300 hover:text-white transition-colors duration-300"
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors duration-300"
             >
               <XMarkIcon className="h-6 w-6" />
             </button>
             
             <div className="flex items-center mb-6">
-              <div className="w-10 h-10 bg-red-500/20 rounded-xl flex items-center justify-center mr-3 border border-red-400/30">
-                <ExclamationTriangleIcon className="h-5 w-5 text-red-400" />
+              <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center mr-3 border border-red-200">
+                <ExclamationTriangleIcon className="h-5 w-5 text-red-600" />
               </div>
-              <h3 className="text-xl font-bold text-white uppercase tracking-wider">REPORT ISSUE</h3>
+              <h3 className="text-xl font-bold text-gray-900">Report Issue</h3>
             </div>
 
             <div className="space-y-4">
               <select
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
-                className="w-full p-3 bg-white/5 backdrop-blur-sm border border-white/20 rounded-xl focus:outline-none focus:border-[#ff3b3b] focus:ring-2 focus:ring-[#ff3b3b]/30 text-white placeholder-gray-400 transition-all duration-300"
+                className="w-full p-3 bg-white border border-gray-300 rounded-lg focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/25 text-gray-900 transition-all duration-300"
               >
-                <option value="" className="bg-[#1a2a88]">Select Issue Category</option>
-                <option value="Payment Issue" className="bg-[#1a2a88]">Payment Issue</option>
-                <option value="Lease Issue" className="bg-[#1a2a88]">Service Issue</option>
-                <option value="Other" className="bg-[#1a2a88]">Other</option>
+                <option value="">Select Issue Category</option>
+                <option value="Payment Issue">Payment Issue</option>
+                <option value="Lease Issue">Lease Issue</option>
+                <option value="Other">Other</option>
               </select>
 
               <textarea
-                className="w-full p-3 bg-white/5 backdrop-blur-sm border border-white/20 rounded-xl focus:outline-none focus:border-[#ff3b3b] focus:ring-2 focus:ring-[#ff3b3b]/30 text-white placeholder-gray-400 resize-none transition-all duration-300"
+                className="w-full p-3 bg-white border border-gray-300 rounded-lg focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/25 text-gray-900 placeholder-gray-500 resize-none transition-all duration-300"
                 rows={3}
                 placeholder="Describe the issue..."
                 value={reason}
@@ -486,7 +469,7 @@ const ActiveLeases: React.FC = () => {
               />
 
               <textarea
-                className="w-full p-3 bg-white/5 backdrop-blur-sm border border-white/20 rounded-xl focus:outline-none focus:border-[#ff3b3b] focus:ring-2 focus:ring-[#ff3b3b]/30 text-white placeholder-gray-400 resize-none transition-all duration-300"
+                className="w-full p-3 bg-white border border-gray-300 rounded-lg focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/25 text-gray-900 placeholder-gray-500 resize-none transition-all duration-300"
                 rows={2}
                 placeholder="Additional details (optional)"
                 value={details}
@@ -494,10 +477,10 @@ const ActiveLeases: React.FC = () => {
               />
 
               <div className="flex items-center space-x-3">
-                <CalendarIcon className="h-5 w-5 text-[#ff3b3b] flex-shrink-0" />
+                <CalendarIcon className="h-5 w-5 text-emerald-600 flex-shrink-0" />
                 <input
                   type="date"
-                  className="w-full p-3 bg-white/5 backdrop-blur-sm border border-white/20 rounded-xl focus:outline-none focus:border-[#ff3b3b] focus:ring-2 focus:ring-[#ff3b3b]/30 text-white transition-all duration-300"
+                  className="w-full p-3 bg-white border border-gray-300 rounded-lg focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/25 text-gray-900 transition-all duration-300"
                   value={dateOfIncident}
                   onChange={(e) => setDateOfIncident(e.target.value)}
                 />
@@ -505,7 +488,7 @@ const ActiveLeases: React.FC = () => {
 
               <input
                 type="number"
-                className="w-full p-3 bg-white/5 backdrop-blur-sm border border-white/20 rounded-xl focus:outline-none focus:border-[#ff3b3b] focus:ring-2 focus:ring-[#ff3b3b]/30 text-white placeholder-gray-400 transition-all duration-300"
+                className="w-full p-3 bg-white border border-gray-300 rounded-lg focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/25 text-gray-900 placeholder-gray-500 transition-all duration-300"
                 placeholder="Amount involved (optional)"
                 value={amountInvolved}
                 onChange={(e) => {
@@ -516,19 +499,19 @@ const ActiveLeases: React.FC = () => {
 
               <input
                 type="text"
-                className="w-full p-3 bg-white/5 backdrop-blur-sm border border-white/20 rounded-xl focus:outline-none focus:border-[#ff3b3b] focus:ring-2 focus:ring-[#ff3b3b]/30 text-white placeholder-gray-400 transition-all duration-300"
+                className="w-full p-3 bg-white border border-gray-300 rounded-lg focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/25 text-gray-900 placeholder-gray-500 transition-all duration-300"
                 placeholder="Preferred resolution (optional)"
                 value={preferredResolution}
                 onChange={(e) => setPreferredResolution(e.target.value)}
               />
 
               <div>
-                <label className="block text-sm text-gray-300 mb-2 font-bold uppercase tracking-wide">Attachments (optional)</label>
+                <label className="block text-sm text-gray-700 mb-2 font-semibold">Attachments (optional)</label>
                 <input
                   type="file"
                   multiple
                   onChange={handleFileChange}
-                  className="w-full text-sm text-gray-300 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-bold file:bg-[#ff3b3b] file:text-white hover:file:bg-[#ff6b6b] transition-all duration-300"
+                  className="w-full text-sm text-gray-700 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-emerald-600 file:text-white hover:file:bg-emerald-700 transition-all duration-300"
                 />
               </div>
             </div>
@@ -539,16 +522,16 @@ const ActiveLeases: React.FC = () => {
                   setShowDisputeModal(false);
                   resetDisputeForm();
                 }}
-                className="px-6 py-3 bg-white/10 hover:bg-white/20 border border-white/30 text-white font-bold rounded-xl transition-all duration-300 transform hover:scale-105"
+                className="px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold rounded-lg transition-all duration-300"
               >
                 Cancel
               </button>
               <button
                 onClick={submitDispute}
                 disabled={submitting}
-                className="px-6 py-3 bg-gradient-to-r from-[#ff3b3b] to-[#ff6b6b] hover:shadow-xl hover:shadow-[#ff3b3b]/30 text-white font-bold rounded-xl transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:hover:scale-100 border border-[#ff3b3b]/20"
+                className="px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-lg transition-all duration-300 disabled:opacity-50"
               >
-                {submitting ? "SUBMITTING..." : "SUBMIT ISSUE"}
+                {submitting ? "Submitting..." : "Submit Issue"}
               </button>
             </div>
           </div>

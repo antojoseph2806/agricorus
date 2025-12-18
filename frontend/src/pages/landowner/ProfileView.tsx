@@ -41,7 +41,7 @@ const ProfileView: React.FC = () => {
           return;
         }
 
-        const res = await axios.get("https://agricorus.onrender.com/api/profile", {
+        const res = await axios.get("http://localhost:5000/api/profile", {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -94,7 +94,7 @@ const ProfileView: React.FC = () => {
       data.append("phone", formData.phone);
       if (profilePicFile) data.append("profileImage", profilePicFile);
 
-      const res = await axios.put("https://agricorus.onrender.com/api/profile", data, {
+      const res = await axios.put("http://localhost:5000/api/profile", data, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data",
@@ -129,12 +129,12 @@ const ProfileView: React.FC = () => {
   if (loading) {
     return (
       <Layout>
-        <div className="min-h-screen bg-gradient-to-br from-[#0a1a55] via-[#1a2a88] to-[#2d1a88] flex items-center justify-center p-4">
-          <div className="bg-gradient-to-br from-[#1a2a88]/80 to-[#2d1a88]/80 backdrop-blur-sm rounded-2xl shadow-2xl p-8 border border-white/10">
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-xl shadow-sm border p-8">
             <div className="flex flex-col items-center">
-              <div className="w-20 h-20 bg-gradient-to-r from-[#ff3b3b] to-[#ff6b6b] rounded-full mb-6 animate-pulse"></div>
-              <div className="h-6 bg-white/20 rounded w-48 mb-4 animate-pulse"></div>
-              <div className="h-4 bg-white/20 rounded w-32 animate-pulse"></div>
+              <div className="w-20 h-20 bg-emerald-500 rounded-full mb-6 animate-pulse"></div>
+              <div className="h-6 bg-gray-200 rounded w-48 mb-4 animate-pulse"></div>
+              <div className="h-4 bg-gray-200 rounded w-32 animate-pulse"></div>
             </div>
           </div>
         </div>
@@ -145,15 +145,15 @@ const ProfileView: React.FC = () => {
   if (!profile) {
     return (
       <Layout>
-        <div className="min-h-screen bg-gradient-to-br from-[#0a1a55] via-[#1a2a88] to-[#2d1a88] flex items-center justify-center p-4">
-          <div className="bg-gradient-to-br from-[#1a2a88]/80 to-[#2d1a88]/80 backdrop-blur-sm rounded-2xl shadow-2xl p-8 border border-white/10 text-center">
-            <div className="w-16 h-16 bg-gradient-to-r from-[#ff3b3b] to-[#ff6b6b] rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-xl shadow-sm border p-8 text-center">
+            <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
               </svg>
             </div>
-            <h3 className="text-white font-bold text-xl uppercase tracking-wider mb-2">No Profile Data</h3>
-            <p className="text-gray-300">Unable to load profile information.</p>
+            <h3 className="text-gray-900 font-bold text-xl mb-2">No Profile Data</h3>
+            <p className="text-gray-600">Unable to load profile information.</p>
           </div>
         </div>
       </Layout>
@@ -162,29 +162,29 @@ const ProfileView: React.FC = () => {
 
   return (
     <Layout>
-      <div className="min-h-screen bg-gradient-to-br from-[#0a1a55] via-[#1a2a88] to-[#2d1a88] py-8 px-4">
+      <div className="min-h-screen bg-gray-50 py-8 px-4">
         <div className="max-w-2xl mx-auto">
           {/* Header Section */}
           <div className="text-center mb-8">
-            <h1 className="text-4xl font-bold text-white uppercase tracking-widest mb-4 font-['Poppins']">
+            <h1 className="text-4xl font-bold text-gray-900 mb-4">
               User Profile
             </h1>
-            <p className="text-gray-300 text-lg font-['Inter']">
+            <p className="text-gray-600 text-lg">
               Manage your account settings and personal information
             </p>
           </div>
 
           {/* Main Profile Card */}
-          <div className="bg-gradient-to-br from-[#1a2a88]/80 to-[#2d1a88]/80 backdrop-blur-sm rounded-2xl shadow-2xl border border-white/10 overflow-hidden transition-transform duration-300 ease-in-out hover:scale-[1.02]">
+          <div className="bg-white rounded-xl shadow-sm border overflow-hidden transition-all duration-300 hover:shadow-lg">
             <div className="p-8">
               {/* Success/Error Messages */}
               {successMsg && (
-                <div className="mb-6 p-4 bg-green-500/20 border border-green-500/50 rounded-lg text-green-200 font-medium">
+                <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg text-green-700 font-medium">
                   {successMsg}
                 </div>
               )}
               {error && (
-                <div className="mb-6 p-4 bg-red-500/20 border border-red-500/50 rounded-lg text-red-200 font-medium">
+                <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 font-medium">
                   {error}
                 </div>
               )}
@@ -194,16 +194,15 @@ const ProfileView: React.FC = () => {
                 <div className="relative group">
                   {profile.profileImage ? (
                     <img
-                      src={`https://agricorus.onrender.com${profile.profileImage}`}
+                      src={`http://localhost:5000${profile.profileImage}`}
                       alt="Profile"
-                      className="w-32 h-32 rounded-full object-cover border-4 border-white/20 shadow-2xl transition-all duration-300 ease-in-out group-hover:scale-110 group-hover:border-[#ff3b3b]/50"
+                      className="w-32 h-32 rounded-full object-cover border-4 border-emerald-200 shadow-lg transition-all duration-300 ease-in-out group-hover:scale-110 group-hover:border-emerald-400"
                     />
                   ) : (
-                    <div className="w-32 h-32 rounded-full bg-gradient-to-r from-[#ff3b3b] to-[#ff6b6b] flex items-center justify-center text-white text-4xl font-bold border-4 border-white/20 shadow-2xl transition-all duration-300 ease-in-out group-hover:scale-110 group-hover:border-[#ff3b3b]/50">
+                    <div className="w-32 h-32 rounded-full bg-emerald-500 flex items-center justify-center text-white text-4xl font-bold border-4 border-emerald-200 shadow-lg transition-all duration-300 ease-in-out group-hover:scale-110 group-hover:border-emerald-400">
                       {profile.name ? profile.name.charAt(0).toUpperCase() : "U"}
                     </div>
                   )}
-                  <div className="absolute inset-0 rounded-full bg-gradient-to-r from-[#ff3b3b] to-[#ff6b6b] opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
                 </div>
               </div>
 
@@ -232,14 +231,14 @@ const ProfileView: React.FC = () => {
                     />
                     
                     <div className="space-y-4">
-                      <label className="block text-sm font-medium text-gray-300 uppercase tracking-wider">
+                      <label className="block text-sm font-medium text-gray-700">
                         Profile Image
                       </label>
                       <input
                         type="file"
                         name="profileImage"
                         onChange={handleFileChange}
-                        className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-[#ff3b3b] transition-colors duration-300"
+                        className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/25 transition-colors duration-300"
                       />
                     </div>
 
@@ -274,14 +273,14 @@ const ProfileView: React.FC = () => {
                           });
                           setProfilePicFile(null);
                         }}
-                        className="flex-1 py-3 px-6 bg-white/10 text-white rounded-lg font-medium hover:bg-white/20 transition-all duration-300 ease-in-out border border-white/20 hover:border-white/40"
+                        className="flex-1 py-3 px-6 bg-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-gray-300 transition-all duration-300"
                       >
                         Cancel
                       </button>
                       <button
                         type="submit"
                         disabled={isSubmitting}
-                        className="flex-1 py-3 px-6 bg-gradient-to-r from-[#ff3b3b] to-[#ff6b6b] text-white rounded-lg font-medium hover:from-[#ff6b6b] hover:to-[#ff3b3b] transition-all duration-300 ease-in-out shadow-lg hover:shadow-xl disabled:opacity-50"
+                        className="flex-1 py-3 px-6 bg-emerald-600 text-white rounded-lg font-semibold hover:bg-emerald-700 transition-all duration-300 disabled:opacity-50"
                       >
                         {isSubmitting ? "Saving..." : "Save Changes"}
                       </button>
@@ -320,7 +319,7 @@ const ProfileView: React.FC = () => {
                     <div className="pt-6">
                       <button
                         onClick={() => setIsEditing(true)}
-                        className="w-full py-3 px-6 bg-gradient-to-r from-[#ff3b3b] to-[#ff6b6b] text-white rounded-lg font-medium hover:from-[#ff6b6b] hover:to-[#ff3b3b] transition-all duration-300 ease-in-out shadow-lg hover:shadow-xl hover:scale-105 uppercase tracking-wider"
+                        className="w-full py-3 px-6 bg-emerald-600 text-white rounded-lg font-semibold hover:bg-emerald-700 transition-all duration-300"
                       >
                         Edit Profile
                       </button>
@@ -340,10 +339,10 @@ const ProfileDetail: React.FC<{ label: string; value: string }> = ({
   label,
   value,
 }) => (
-  <div className="bg-white/5 backdrop-blur-sm rounded-lg p-4 border border-white/10 hover:border-white/20 transition-all duration-300 ease-in-out hover:scale-105">
+  <div className="bg-gray-50 rounded-lg p-4 border hover:border-gray-300 transition-all duration-300">
     <div className="flex justify-between items-center">
-      <span className="text-gray-400 font-medium uppercase tracking-wider text-sm">{label}:</span>
-      <span className="text-white font-semibold text-right">{value}</span>
+      <span className="text-gray-500 font-medium text-sm">{label}:</span>
+      <span className="text-gray-900 font-semibold text-right">{value}</span>
     </div>
   </div>
 );
@@ -356,7 +355,7 @@ const ProfileEditField: React.FC<{
   disabled?: boolean;
 }> = ({ label, name, value, onChange, disabled = false }) => (
   <div className="space-y-2">
-    <label className="block text-sm font-medium text-gray-300 uppercase tracking-wider">
+    <label className="block text-sm font-medium text-gray-700">
       {label}
     </label>
     <input
@@ -365,8 +364,8 @@ const ProfileEditField: React.FC<{
       value={value}
       onChange={onChange}
       disabled={disabled}
-      className={`w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-[#ff3b3b] transition-all duration-300 ease-in-out ${
-        disabled ? "opacity-50 cursor-not-allowed" : "hover:border-white/40"
+      className={`w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/25 transition-all duration-300 ${
+        disabled ? "opacity-50 cursor-not-allowed bg-gray-100" : ""
       }`}
       placeholder={`Enter ${label.toLowerCase()}...`}
     />

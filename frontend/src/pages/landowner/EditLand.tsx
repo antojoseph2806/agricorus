@@ -78,7 +78,7 @@ const EditLand: React.FC = () => {
 
       const token = localStorage.getItem('token');
       try {
-        const response = await fetch(`https://agricorus.onrender.com/api/landowner/lands/${id}`, {
+        const response = await fetch(`http://localhost:5000/api/landowner/lands/${id}`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
 
@@ -177,7 +177,7 @@ const EditLand: React.FC = () => {
     const token = localStorage.getItem('token');
     
     try {
-      const response = await fetch(`https://agricorus.onrender.com/api/landowner/lands/${id}`, {
+      const response = await fetch(`http://localhost:5000/api/landowner/lands/${id}`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -259,32 +259,32 @@ const EditLand: React.FC = () => {
 
   return (
     <Layout>
-      <div className="min-h-screen bg-gradient-to-br from-[#0a1a55] via-[#1a2a88] to-[#2d1a88] py-8 px-4">
+      <div className="min-h-screen bg-gray-50 py-8 px-4">
         <div className="max-w-6xl mx-auto">
           {/* Header Section */}
           <div className="text-center mb-12">
-            <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-[#ff3b3b] to-[#ff6b6b] rounded-2xl mb-6 shadow-2xl">
+            <div className="inline-flex items-center justify-center w-20 h-20 bg-emerald-600 rounded-2xl mb-6 shadow-lg">
               <Edit3 className="w-10 h-10 text-white" />
             </div>
-            <h1 className="text-4xl font-bold text-white uppercase tracking-widest mb-4 font-['Poppins']">
+            <h1 className="text-4xl font-bold text-gray-900 mb-4">
               Edit Land Configuration
             </h1>
-            <p className="text-gray-300 text-lg max-w-2xl mx-auto font-['Inter']">
-              Update your land listing configuration with the latest details and specifications.
+            <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+              Update your land listing with the latest details and specifications.
             </p>
           </div>
 
           {/* Main Form Card */}
-          <div className="bg-gradient-to-br from-[#1a2a88]/80 to-[#2d1a88]/80 backdrop-blur-sm rounded-2xl shadow-2xl border border-white/10 p-8 transition-all duration-300 ease-in-out hover:shadow-2xl">
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
             <form onSubmit={handleSubmit} className="space-y-8">
               {/* Basic Information Grid */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 {/* Left Column */}
                 <div className="space-y-6">
-                  <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10 hover:border-white/20 transition-all duration-300">
-                    <label htmlFor="title" className="block text-sm font-medium text-gray-300 uppercase tracking-wider mb-3">
+                  <div className="bg-white rounded-xl p-6 border border-gray-200 hover:border-emerald-300 transition-all duration-300">
+                    <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-3">
                       <Badge className="w-5 h-5 inline mr-2" />
-                      Land Title <span className="text-red-400">*</span>
+                      Land Title <span className="text-red-600">*</span>
                     </label>
                     <input
                       type="text"
@@ -293,7 +293,7 @@ const EditLand: React.FC = () => {
                       value={formData.title}
                       onChange={handleChange}
                       required
-                      className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-[#ff3b3b] transition-colors duration-300"
+                      className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/25 transition-colors duration-300"
                       placeholder="e.g., Premium 5-Acre Agricultural Plot"
                     />
                   </div>

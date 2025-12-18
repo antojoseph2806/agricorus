@@ -12,6 +12,7 @@ import {
   AlertTriangle,
   FileText,
   Home,
+  ShoppingBag,
 } from "lucide-react";
 import { useNavigate, Link } from "react-router-dom";
 
@@ -72,13 +73,23 @@ const Sidebar: React.FC<SidebarProps> = ({
         { label: "Payment History", icon: UserCircle, href: "/investor/return-requests-history" },
       ],
     },
+    {
+      label: 'Marketplace',
+      icon: ShoppingBag,
+      href: '#',
+      children: [
+        { label: 'Browse Products', icon: ShoppingBag, href: '/marketplace' },
+        { label: 'My Cart', icon: ShoppingBag, href: '/cart' },
+        { label: 'Order History', icon: FileText, href: '/orders' },
+      ],
+    },
   ];
 
   const handleLogout = async () => {
     const token = localStorage.getItem("token");
     if (token) {
       try {
-        await fetch("https://agricorus.onrender.com/api/auth/logout", {
+        await fetch("http://localhost:5000/api/auth/logout", {
           method: "POST",
           headers: { Authorization: `Bearer ${token}` },
         });

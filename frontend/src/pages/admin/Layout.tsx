@@ -7,7 +7,6 @@ import {
   Menu,
   X,
   Shield,
-  Home,
   FileText,
   AlertTriangle,
   ChevronDown,
@@ -20,8 +19,9 @@ import {
   Database,
   Settings,
   BarChart3,
+  ShieldCheck,
 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 
 // Type definition for navigation items
 interface NavItem {
@@ -42,6 +42,7 @@ interface SidebarProps {
 const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, onToggleSidebar, isMobile }) => {
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const navigationItems: NavItem[] = [
     { 
@@ -84,10 +85,10 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, onToggleSidebar, isMob
       href: '/admin/manage-projects' 
     },
     {
-  label: "Manage Investments",
-  icon: DollarSign,
-  href: "/admin/manage-investments"
-},
+      label: "Manage Investments",
+      icon: DollarSign,
+      href: "/admin/manage-investments"
+    },
     {
       label: 'Handle Disputes',
       icon: AlertTriangle,
@@ -106,13 +107,22 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, onToggleSidebar, isMob
         { label: 'Lease Payouts', icon: AlertCircle, href: '/admin/payment-requests' },
       ],
     },
+    {
+      label: 'Vendor KYC',
+      icon: ShieldCheck,
+      href: '/admin/vendor-kyc',
+      children: [
+        { label: 'KYC Requests', icon: FileText, href: '/admin/vendor-kyc' },
+        { label: 'Verified Vendors', icon: CheckCircle, href: '/admin/verified-vendors' },
+      ],
+    },
   ];
 
   const handleLogout = async () => {
     const token = localStorage.getItem('token');
     if (token) {
       try {
-        await fetch('https://agricorus.onrender.com/api/auth/logout', {
+        await fetch('http://localhost:5000/api/auth/logout', {
           method: 'POST',
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -121,6 +131,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, onToggleSidebar, isMob
       }
     }
     localStorage.removeItem('token');
+    localStorage.removeItem('role');
     navigate('/login');
   };
 
@@ -128,100 +139,128 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, onToggleSidebar, isMob
     setOpenDropdown(openDropdown === label ? null : label);
   };
 
+  const isActive = (href: string) => {
+    if (href === '#') return false;
+    return location.pathname === href || location.pathname.startsWith(href + '/');
+  };
+
+  const isChildActive = (children?: NavItem[]) => {
+    if (!children) return false;
+    return children.some(child => location.pathname === child.href || location.pathname.startsWith(child.href + '/'));
+  };
+
   return (
-    <div
-      className={`flex flex-col h-full bg-gradient-to-b from-[#0a1a55] to-[#1a2a88] shadow-2xl border-r border-white/10 transition-all duration-300 ${
-        isMobile ? 'w-64' : isSidebarOpen ? 'w-64' : 'w-20'
-      }`}
-    >
-      <div className="flex items-center h-16 border-b border-white/10 px-4 relative">
-        <div
-          className={`flex items-center transition-opacity duration-300 ${
-            isSidebarOpen || isMobile ? 'opacity-100' : 'opacity-0'
-          }`}
-        >
-          <div className="w-8 h-8 bg-gradient-to-r from-[#ff3b3b] to-[#ff6b6b] rounded-lg flex items-center justify-center shadow-lg shadow-red-500/30">
+    <div className={`flex flex-col h-full bg-white shadow-xl border-r transition-all duration-300 ${
+        isMobile ? "w-64" : isSidebarOpen ? "w-64" : "w-20"
+      }`}>
+      {/* Header */}
+      <div className="flex items-center h-16 border-b px-4 relative">
+        <div className={`flex items-center transition-opacity duration-300 ${
+            isSidebarOpen || isMobile ? "opacity-100" : "opacity-0"
+          }`}>
+          <div className="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center">
             <Shield className="w-5 h-5 text-white" />
           </div>
-          <span className="text-xl font-bold text-white ml-2 font-['Poppins'] uppercase tracking-wide">Admin</span>
+          <span className="text-xl font-bold text-gray-900 ml-2">AgriCorus</span>
         </div>
         {!isMobile && (
           <button
             onClick={onToggleSidebar}
-            className={`absolute top-1/2 -translate-y-1/2 p-2 rounded-full bg-white/10 hover:bg-white/20 transition-all duration-300 backdrop-blur-sm ${
-              isSidebarOpen ? '-right-3' : 'right-2'
-            }`}
+            className={`absolute top-1/2 -translate-y-1/2 ${
+              isSidebarOpen ? "-right-4" : "right-4"
+            } p-1 rounded-full bg-gray-200 hover:bg-gray-300 transition z-50`}
           >
             {isSidebarOpen ? (
-              <ChevronDown className="w-4 h-4 rotate-90 text-white" />
+              <ChevronDown className="w-4 h-4 rotate-90" />
             ) : (
-              <ChevronDown className="w-4 h-4 -rotate-90 text-white" />
+              <ChevronDown className="w-4 h-4 -rotate-90" />
             )}
           </button>
         )}
       </div>
       
-      <nav className="flex-1 px-3 py-6 space-y-1 overflow-y-auto">
-        {navigationItems.map((item, index) => (
-          <div key={index}>
-            {item.children ? (
-              <>
-                <button
-                  onClick={() => toggleDropdown(item.label)}
-                  className="w-full flex items-center justify-between px-3 py-3 text-sm text-white/80 hover:text-white hover:bg-white/10 rounded-xl transition-all duration-300 group"
-                >
-                  <div className="flex items-center gap-3">
-                    <item.icon className="w-5 h-5 group-hover:scale-110 transition-transform" />
+      {/* Navigation */}
+      <nav className="flex-1 px-2 py-4 space-y-1 overflow-y-auto">
+        {navigationItems.map((item, index) => {
+          const active = isActive(item.href) || isChildActive(item.children);
+          
+          return (
+            <div key={index}>
+              {item.children ? (
+                <>
+                  <button
+                    onClick={() => toggleDropdown(item.label)}
+                    className={`w-full flex items-center justify-between px-3 py-2 text-sm rounded-lg transition-all duration-200 group ${
+                      active
+                        ? 'bg-emerald-50 text-emerald-700 font-medium'
+                        : 'text-gray-700 hover:bg-gray-100'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2">
+                       <item.icon className={`w-5 h-5 ${active ? 'text-emerald-600' : 'text-gray-500 group-hover:text-gray-700'} transition-colors`} />
+                      {(isSidebarOpen || isMobile) && (
+                        <span>{item.label}</span>
+                      )}
+                    </div>
                     {(isSidebarOpen || isMobile) && (
-                      <span className="font-['Inter'] font-medium">{item.label}</span>
+                      <ChevronDown
+                        className={`w-4 h-4 transition-transform duration-200 ${
+                          openDropdown === item.label ? 'rotate-180' : ''
+                        } ${active ? 'text-emerald-600' : 'text-gray-400'}`}
+                      />
                     )}
-                  </div>
-                  {(isSidebarOpen || isMobile) && (
-                    <ChevronDown
-                      className={`w-4 h-4 transition-transform duration-300 ${
-                        openDropdown === item.label ? 'rotate-180' : ''
-                      }`}
-                    />
+                  </button>
+                  {(isSidebarOpen || isMobile) && openDropdown === item.label && (
+                    <div className="ml-4 mt-1 space-y-1">
+                      {item.children.map((child, idx) => {
+                        const childActive = location.pathname === child.href || location.pathname.startsWith(child.href + '/');
+                        return (
+                          <Link
+                            key={idx}
+                            to={child.href}
+                            className={`flex items-center gap-2 px-3 py-2 text-sm rounded-lg transition-all duration-200 ${
+                              childActive
+                                ? 'bg-emerald-50 text-emerald-700 font-medium'
+                                : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                            }`}
+                          >
+                            <child.icon className={`w-4 h-4 ${childActive ? 'text-emerald-600' : 'text-gray-400'}`} />
+                            <span>{child.label}</span>
+                          </Link>
+                        );
+                      })}
+                    </div>
                   )}
-                </button>
-                {(isSidebarOpen || isMobile) && openDropdown === item.label && (
-                  <div className="ml-3 mt-1 space-y-1 border-l-2 border-white/10 pl-3">
-                    {item.children.map((child, idx) => (
-                      <a
-                        key={idx}
-                        href={child.href}
-                        className="flex items-center px-3 py-2 text-sm text-white/70 hover:text-white hover:bg-white/5 rounded-lg transition-all duration-300 group"
-                      >
-                        <child.icon className="w-4 h-4 mr-3 group-hover:scale-110 transition-transform" />
-                        <span className="font-['Inter']">{child.label}</span>
-                      </a>
-                    ))}
-                  </div>
-                )}
-              </>
-            ) : (
-              <a
-                href={item.href}
-                className="flex items-center gap-3 px-3 py-3 text-sm text-white/80 hover:text-white hover:bg-white/10 rounded-xl transition-all duration-300 group"
-              >
-                <item.icon className="w-5 h-5 group-hover:scale-110 transition-transform" />
-                {(isSidebarOpen || isMobile) && (
-                  <span className="font-['Inter'] font-medium">{item.label}</span>
-                )}
-              </a>
-            )}
-          </div>
-        ))}
+                </>
+              ) : (
+                <Link
+                  to={item.href}
+                  className={`flex items-center gap-2 px-3 py-2 text-sm rounded-lg transition-all duration-200 group ${
+                    active
+                      ? 'bg-emerald-50 text-emerald-700 font-medium'
+                      : 'text-gray-700 hover:bg-gray-100'
+                  }`}
+                >
+                  <item.icon className={`w-5 h-5 ${active ? 'text-emerald-600' : 'text-gray-500 group-hover:text-gray-700'} transition-colors`} />
+                  {(isSidebarOpen || isMobile) && (
+                    <span>{item.label}</span>
+                  )}
+                </Link>
+              )}
+            </div>
+          );
+        })}
       </nav>
       
-      <div className="px-4 py-4 border-t border-white/10">
+      {/* Logout Button */}
+      <div className="px-4 py-4 border-t">
         <button
           onClick={handleLogout}
-          className="w-full flex items-center justify-center gap-3 px-4 py-3 text-sm text-white bg-white/10 hover:bg-white/20 rounded-xl transition-all duration-300 group backdrop-blur-sm"
+          className="w-full flex items-center justify-center gap-2 px-4 py-2 text-sm text-red-600 bg-red-50 hover:bg-red-100 rounded-md transition"
         >
-          <LogOut className="w-4 h-4 group-hover:scale-110 transition-transform" />
+          <LogOut className="w-4 h-4" />
           {(isSidebarOpen || isMobile) && (
-            <span className="font-['Inter'] font-medium">Logout</span>
+            <span>Logout</span>
           )}
         </button>
       </div>
@@ -236,19 +275,7 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
 
   return (
-    <div className="flex min-h-screen bg-gradient-to-br from-[#0a1a55] via-[#1a2a88] to-[#2d1a88] relative">
-      {/* Background Effects */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#0a1a55]/90 via-[#1a2a88]/80 to-[#2d1a88]/90" />
-        <div className="absolute inset-0 opacity-20">
-          <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.1)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.1)_1px,transparent_1px)] bg-[size:50px_50px]" />
-        </div>
-        
-        {/* Floating tech elements */}
-        <div className="absolute top-20 right-20 w-32 h-32 bg-blue-500/10 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-20 left-20 w-40 h-40 bg-purple-500/10 rounded-full blur-3xl animate-pulse delay-1000" />
-      </div>
-
+    <div className="flex min-h-screen bg-gray-50 relative">
       {/* Sidebar for Desktop */}
       <aside
         className={`hidden lg:block fixed top-0 bottom-0 left-0 z-30 transition-all duration-300 ${
@@ -260,48 +287,50 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
 
       {/* Main Content Area */}
       <div
-        className={`flex-1 transition-all duration-300 relative z-10 ${
+        className={`flex-1 transition-all duration-300 ${
           isSidebarOpen ? 'lg:ml-64' : 'lg:ml-20'
         }`}
       >
         {/* Mobile Header */}
-        <div className="lg:hidden fixed top-0 left-0 right-0 bg-gradient-to-r from-[#0a1a55] to-[#1a2a88] border-b border-white/10 shadow-2xl z-40 h-16 flex items-center px-6 justify-between backdrop-blur-md">
-          <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 bg-gradient-to-r from-[#ff3b3b] to-[#ff6b6b] rounded-lg flex items-center justify-center shadow-lg shadow-red-500/30">
+         <div className="lg:hidden fixed top-0 left-0 right-0 bg-white border-b shadow z-40 h-16 flex items-center px-4 justify-between">
+          <div className="flex items-center space-x-2">
+            <div className="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center">
               <Shield className="w-5 h-5 text-white" />
             </div>
-            <span className="text-xl font-bold text-white font-['Poppins'] uppercase tracking-wide">Admin Panel</span>
+            <span className="text-xl font-bold text-gray-900">AgriCorus</span>
           </div>
           <button
             onClick={toggleSidebar}
-            className="p-2 rounded-xl bg-white/10 hover:bg-white/20 transition-all duration-300"
+            className="p-2 rounded-md text-gray-700 hover:text-emerald-600"
           >
-            <Menu className="w-6 h-6 text-white" />
+            <Menu className="w-6 h-6" />
           </button>
         </div>
 
         {/* Mobile Overlay Sidebar */}
-        {isSidebarOpen && (
-          <div className="lg:hidden fixed inset-0 z-50 bg-black/50 backdrop-blur-sm transition-opacity duration-300">
-            <div className="fixed top-0 bottom-0 left-0 w-64 bg-gradient-to-b from-[#0a1a55] to-[#1a2a88] shadow-2xl transform transition-transform duration-300 ease-in-out">
-              <div className="h-full relative">
-                <Sidebar isSidebarOpen={true} onToggleSidebar={toggleSidebar} isMobile={true} />
-                <button 
-                  onClick={toggleSidebar} 
-                  className="absolute top-4 right-4 p-2 rounded-xl bg-white/10 hover:bg-white/20 transition-all duration-300"
-                >
-                  <X className="w-6 h-6 text-white" />
-                </button>
-              </div>
-            </div>
-        </div>
-        )}
-
-        {/* Content Area with Top Margin for Mobile Header */}
-        <main className="p-6 lg:p-8 mt-16 lg:mt-0 min-h-screen">
-          <div className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-md border border-white/20 rounded-2xl shadow-2xl min-h-[calc(100vh-8rem)]">
-            {children}
+        <div
+          className={`lg:hidden fixed top-0 bottom-0 left-0 w-64 bg-white shadow-xl z-50 transition-transform duration-300 ease-in-out ${
+            isSidebarOpen ? "translate-x-0" : "-translate-x-full"
+          }`}
+        >
+          <div className="h-full relative">
+            <Sidebar
+              isSidebarOpen={true}
+              onToggleSidebar={toggleSidebar}
+              isMobile={true}
+            />
+            <button
+              onClick={toggleSidebar}
+              className="absolute top-4 right-4 text-gray-700"
+            >
+              <X className="w-6 h-6" />
+            </button>
           </div>
+        </div>
+
+        {/* Content Area */}
+        <main className="p-4 lg:p-8 mt-16 lg:mt-0 min-h-screen">
+          {children}
         </main>
       </div>
     </div>

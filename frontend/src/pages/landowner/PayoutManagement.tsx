@@ -50,7 +50,7 @@ export const PayoutManagement = ({ type }: { type: "upi" | "bank" }) => {
   const fetchPayouts = async () => {
     setLoading(true);
     try {
-      const res = await axios.get("https://agricorus.onrender.com/api/payouts", axiosConfig);
+      const res = await axios.get("http://localhost:5000/api/payouts", axiosConfig);
       setPayouts(res.data.filter((p: PayoutMethod) => p.type === type));
     } catch (err: any) {
       console.error("Error fetching payouts:", err);
@@ -80,13 +80,13 @@ export const PayoutManagement = ({ type }: { type: "upi" | "bank" }) => {
     try {
       if (editingId) {
         await axios.put(
-          `https://agricorus.onrender.com/api/payouts/${editingId}`,
+          `http://localhost:5000/api/payouts/${editingId}`,
           formData,
           axiosConfig
         );
       } else {
         await axios.post(
-          `https://agricorus.onrender.com/api/payouts/add-${type}`,
+          `http://localhost:5000/api/payouts/add-${type}`,
           formData,
           axiosConfig
         );
@@ -111,7 +111,7 @@ export const PayoutManagement = ({ type }: { type: "upi" | "bank" }) => {
     if (!window.confirm("Are you sure you want to delete this payout method?")) return;
 
     try {
-      await axios.delete(`https://agricorus.onrender.com/api/payouts/${id}`, axiosConfig);
+      await axios.delete(`http://localhost:5000/api/payouts/${id}`, axiosConfig);
       fetchPayouts();
     } catch (err: any) {
       console.error("Error deleting payout:", err);
@@ -126,38 +126,12 @@ export const PayoutManagement = ({ type }: { type: "upi" | "bank" }) => {
 
   return (
     <Layout>
-      <div
-        className="min-h-screen p-6 relative"
-        style={{
-          background: "linear-gradient(135deg, #0a1a55 0%, #1a2a88 50%, #2d3ba2 100%)",
-          fontFamily: "Inter, sans-serif",
-        }}
-      >
-        {/* Glow effects */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div
-            className="absolute -top-40 -right-40 w-80 h-80 rounded-full"
-            style={{
-              background:
-                "radial-gradient(circle, rgba(255, 59, 59, 0.15) 0%, transparent 70%)",
-              filter: "blur(40px)",
-            }}
-          ></div>
-          <div
-            className="absolute -bottom-40 -left-40 w-80 h-80 rounded-full"
-            style={{
-              background:
-                "radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, transparent 70%)",
-              filter: "blur(40px)",
-            }}
-          ></div>
-        </div>
-
-        <div className="relative max-w-6xl mx-auto">
+      <div className="min-h-screen bg-gray-50 p-6">
+        <div className="max-w-6xl mx-auto">
           {/* Header */}
-          <div className="bg-white/5 backdrop-blur-lg rounded-2xl border border-white/10 p-8 mb-8 shadow-2xl">
+          <div className="bg-white rounded-2xl border border-gray-200 p-8 mb-8 shadow-sm">
             <div className="flex items-center gap-4 mb-4">
-              <div className="p-3 rounded-xl bg-gradient-to-br from-red-500 to-red-600">
+              <div className="p-3 rounded-xl bg-emerald-600">
                 {type === "upi" ? (
                   <QrCode className="w-8 h-8 text-white" />
                 ) : (
@@ -165,10 +139,10 @@ export const PayoutManagement = ({ type }: { type: "upi" | "bank" }) => {
                 )}
               </div>
               <div>
-                <h1 className="text-3xl font-bold text-white uppercase tracking-wider mb-2">
+                <h1 className="text-3xl font-bold text-gray-900 mb-2">
                   {type === "upi" ? "UPI Payout Methods" : "Bank Account Management"}
                 </h1>
-                <p className="text-gray-300 text-lg">
+                <p className="text-gray-600 text-lg">
                   Manage your {type === "upi" ? "UPI IDs" : "bank accounts"} for
                   secure payment processing
                 </p>
@@ -179,15 +153,15 @@ export const PayoutManagement = ({ type }: { type: "upi" | "bank" }) => {
           {/* Add/Edit Section */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2">
-              <div className="bg-white/5 backdrop-blur-lg rounded-2xl border border-white/10 p-8 shadow-2xl">
+              <div className="bg-white rounded-2xl border border-gray-200 p-8 shadow-sm">
                 <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-xl font-bold text-white uppercase tracking-wide">
+                  <h2 className="text-xl font-bold text-gray-900">
                     {editingId ? "Edit Payout Method" : "Add New Payout Method"}
                   </h2>
                   {editingId && (
                     <button
                       onClick={resetForm}
-                      className="text-gray-400 hover:text-white"
+                      className="text-gray-600 hover:text-gray-900"
                     >
                       Cancel Edit
                     </button>
@@ -199,7 +173,7 @@ export const PayoutManagement = ({ type }: { type: "upi" | "bank" }) => {
                   {type === "upi" ? (
                     <>
                       <div>
-                        <label className="block text-sm font-semibold text-white mb-2">
+                        <label className="block text-sm font-semibold text-gray-700 mb-2">
                           Display Name
                         </label>
                         <input
@@ -209,11 +183,11 @@ export const PayoutManagement = ({ type }: { type: "upi" | "bank" }) => {
                           onChange={(e) =>
                             setFormData({ ...formData, name: e.target.value })
                           }
-                          className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-gray-400"
+                          className="w-full bg-white border border-gray-300 rounded-xl px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-semibold text-white mb-2">
+                        <label className="block text-sm font-semibold text-gray-700 mb-2">
                           UPI ID
                         </label>
                         <input
@@ -223,7 +197,7 @@ export const PayoutManagement = ({ type }: { type: "upi" | "bank" }) => {
                           onChange={(e) =>
                             setFormData({ ...formData, upiId: e.target.value })
                           }
-                          className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-gray-400"
+                          className="w-full bg-white border border-gray-300 rounded-xl px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
                         />
                       </div>
                     </>
@@ -299,7 +273,7 @@ export const PayoutManagement = ({ type }: { type: "upi" | "bank" }) => {
                 </div>
 
                 {/* Default toggle + Submit */}
-                <div className="flex items-center justify-between pt-4 border-t border-white/10">
+                <div className="flex items-center justify-between pt-4 border-t border-gray-200">
                   <label className="flex items-center gap-2 cursor-pointer">
                     <input
                       type="checkbox"
@@ -307,17 +281,18 @@ export const PayoutManagement = ({ type }: { type: "upi" | "bank" }) => {
                       onChange={(e) =>
                         setFormData({ ...formData, isDefault: e.target.checked })
                       }
+                      className="rounded border-gray-300 text-emerald-600 focus:ring-emerald-500"
                     />
-                    <span className="text-white">Set as default</span>
+                    <span className="text-gray-700">Set as default</span>
                   </label>
 
                   <button
                     onClick={handleAddOrUpdate}
                     disabled={isSubmitting}
-                    className={`flex items-center gap-2 px-8 py-3 rounded-xl font-bold text-white transition-all ${
+                    className={`flex items-center gap-2 px-8 py-3 rounded-xl font-bold text-white transition-all shadow-sm ${
                       isSubmitting
-                        ? "bg-gray-600 cursor-not-allowed"
-                        : "bg-gradient-to-r from-red-500 to-red-600 hover:scale-105"
+                        ? "bg-gray-400 cursor-not-allowed"
+                        : "bg-emerald-600 hover:bg-emerald-700"
                     }`}
                   >
                     {isSubmitting ? (
@@ -335,27 +310,27 @@ export const PayoutManagement = ({ type }: { type: "upi" | "bank" }) => {
 
             {/* Sidebar */}
             <div className="lg:col-span-1 space-y-6">
-              <div className="bg-white/5 p-6 rounded-2xl border border-white/10">
+              <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
                 <div className="flex items-center gap-3 mb-4">
-                  <Shield className="w-6 h-6 text-green-400" />
-                  <h3 className="text-lg font-bold text-white uppercase">
+                  <Shield className="w-6 h-6 text-emerald-600" />
+                  <h3 className="text-lg font-bold text-gray-900">
                     Security Info
                   </h3>
                 </div>
-                <p className="text-gray-300 text-sm">
+                <p className="text-gray-600 text-sm">
                   Your payout methods are securely encrypted and PCI DSS compliant.
                 </p>
               </div>
 
-              <div className="bg-gradient-to-br from-red-500/10 to-red-600/10 p-6 rounded-2xl border border-red-500/20">
-                <h3 className="text-lg font-bold text-white mb-4 uppercase">
+              <div className="bg-emerald-50 p-6 rounded-2xl border border-emerald-200">
+                <h3 className="text-lg font-bold text-gray-900 mb-4">
                   Quick Stats
                 </h3>
-                <div className="space-y-2 text-sm text-gray-300">
-                  <p>Total Methods: <b className="text-white">{payouts.length}</b></p>
+                <div className="space-y-2 text-sm text-gray-700">
+                  <p>Total Methods: <b className="text-gray-900">{payouts.length}</b></p>
                   <p>
                     Default Method:{" "}
-                    <b className="text-green-400">
+                    <b className="text-emerald-700">
                       {payouts.find((p) => p.isDefault) ? "Set" : "Not Set"}
                     </b>
                   </p>
@@ -365,25 +340,25 @@ export const PayoutManagement = ({ type }: { type: "upi" | "bank" }) => {
           </div>
 
           {/* List Section */}
-          <div className="bg-white/5 backdrop-blur-lg rounded-2xl border border-white/10 mt-8 overflow-hidden">
-            <div className="px-8 py-6 border-b border-white/10">
-              <h2 className="text-xl font-bold text-white uppercase">
+          <div className="bg-white rounded-2xl border border-gray-200 mt-8 overflow-hidden shadow-sm">
+            <div className="px-8 py-6 border-b border-gray-200 bg-gray-50">
+              <h2 className="text-xl font-bold text-gray-900">
                 Saved {type === "upi" ? "UPI Methods" : "Bank Accounts"}{" "}
-                <span className="text-red-400 ml-2">({payouts.length})</span>
+                <span className="text-emerald-600 ml-2">({payouts.length})</span>
               </h2>
             </div>
 
             {loading ? (
               <div className="flex justify-center py-16">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-500"></div>
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-500"></div>
               </div>
             ) : payouts.length === 0 ? (
               <div className="text-center py-16">
-                <CreditCard className="w-16 h-16 mx-auto text-white/40 mb-4" />
-                <h3 className="text-lg font-bold text-white mb-2">
+                <CreditCard className="w-16 h-16 mx-auto text-gray-400 mb-4" />
+                <h3 className="text-lg font-bold text-gray-900 mb-2">
                   No payout methods added
                 </h3>
-                <p className="text-gray-400">
+                <p className="text-gray-600">
                   Add your first {type === "upi" ? "UPI ID" : "bank account"} to get
                   started.
                 </p>

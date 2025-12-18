@@ -44,7 +44,7 @@ export default function InvestorProjectDetails() {
       if (!token) return;
       try {
         const res = await axios.get(
-          `https://agricorus.onrender.com/api/projects/investor/${id}`,
+          `http://localhost:5000/api/projects/investor/${id}`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -90,7 +90,7 @@ export default function InvestorProjectDetails() {
       setLoading(true);
       // Step 1: Create order on backend
       const res = await axios.post(
-        "https://agricorus.onrender.com/api/project-payments/create-order",
+        "http://localhost:5000/api/project-payments/create-order",
         { amount: investAmount, projectId: project._id },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -109,7 +109,7 @@ export default function InvestorProjectDetails() {
           try {
             // Step 3: Verify payment
             await axios.post(
-              "https://agricorus.onrender.com/api/project-payments/verify",
+              "http://localhost:5000/api/project-payments/verify",
               {
                 razorpay_payment_id: response.razorpay_payment_id,
                 razorpay_order_id: response.razorpay_order_id,
@@ -124,7 +124,7 @@ export default function InvestorProjectDetails() {
 
             // Refresh project to update funding progress
             const updated = await axios.get(
-              `https://agricorus.onrender.com/api/projects/investor/${project._id}`,
+              `http://localhost:5000/api/projects/investor/${project._id}`,
               { headers: { Authorization: `Bearer ${token}` } }
             );
             setProject(updated.data);

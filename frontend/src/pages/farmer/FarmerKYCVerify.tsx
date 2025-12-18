@@ -10,7 +10,7 @@ const FarmerKYCVerify: React.FC = () => {
   const [loading, setLoading] = useState(false);
 
   // ✅ Backend URL (no .env needed)
-  const API_URL = "https://agricorus.onrender.com"; // Change to your backend URL if hosted (e.g., Render/AWS)
+  const API_URL = "http://localhost:5000"; // Change to your backend URL if hosted (e.g., Render/AWS)
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selected = e.target.files?.[0];

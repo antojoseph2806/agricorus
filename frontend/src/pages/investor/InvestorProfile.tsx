@@ -28,7 +28,7 @@ const InvestorProfile: React.FC = () => {
       if (!token) return;
       try {
         setLoading(true);
-        const { data } = await axios.get<UserProfile>("https://agricorus.onrender.com/api/profile", {
+        const { data } = await axios.get<UserProfile>("http://localhost:5000/api/profile", {
           headers: { Authorization: `Bearer ${token}` },
         });
         setUser(data);
@@ -87,7 +87,7 @@ const InvestorProfile: React.FC = () => {
 
     try {
       setLoading(true);
-      const { data } = await axios.put<UserProfile>("https://agricorus.onrender.com/api/profile", submitData, {
+      const { data } = await axios.put<UserProfile>("http://localhost:5000/api/profile", submitData, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data",

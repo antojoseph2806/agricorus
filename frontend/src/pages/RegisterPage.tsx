@@ -220,7 +220,7 @@ const RegisterPage: React.FC = () => {
 
     try {
       const sanitizedPhone = formData.phone.replace(/^(\+91)?/, "");
-      const res = await fetch("https://agricorus.onrender.com/api/auth/register", {
+      const res = await fetch("http://localhost:5000/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ...formData, phone: sanitizedPhone }),
@@ -320,7 +320,7 @@ const RegisterPage: React.FC = () => {
     }
 
     try {
-      const res = await fetch("https://agricorus.onrender.com/api/auth/verify-otp", {
+      const res = await fetch("http://localhost:5000/api/auth/verify-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: formData.email, otp: otpValue.trim() }),
@@ -356,7 +356,7 @@ const RegisterPage: React.FC = () => {
     setAlert(null);
 
     try {
-      const res = await fetch("https://agricorus.onrender.com/api/auth/resend-otp", {
+      const res = await fetch("http://localhost:5000/api/auth/resend-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: formData.email }),
@@ -383,7 +383,7 @@ const RegisterPage: React.FC = () => {
     <>
       <Navbar />
 
-      <div className="min-h-screen flex items-start justify-center pt-20 md:pt-32 pb-8 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-green-50 to-green-100">
+      <div className="min-h-screen flex items-center justify-center py-8 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-green-50 to-green-100">
         {/* decorative floating shapes - hidden on mobile for performance */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none hidden sm:block">
           <motion.div
@@ -402,20 +402,20 @@ const RegisterPage: React.FC = () => {
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          className="w-full max-w-2xl space-y-6 md:space-y-8 relative z-10"
+          className="w-full max-w-md space-y-4 relative z-10"
         >
-          <div className="bg-white p-6 md:p-10 rounded-xl shadow-lg md:shadow-2xl border border-gray-100 mx-auto w-full">
-            <div className="text-center mb-6">
+          <div className="bg-white p-6 md:p-8 rounded-xl shadow-lg border border-gray-100 mx-auto w-full">
+            <div className="text-center mb-5">
               <motion.div
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ delay: 0.15, type: "spring", stiffness: 250 }}
-                className="mx-auto h-12 w-12 md:h-16 md:w-16 bg-primary-600 rounded-full flex items-center justify-center mb-3 md:mb-4"
+                className="mx-auto h-12 w-12 bg-primary-600 rounded-full flex items-center justify-center mb-3"
               >
-                <Sprout className="h-6 w-6 md:h-8 md:w-8 text-white" />
+                <Sprout className="h-6 w-6 text-white" />
               </motion.div>
-              <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">Join AgriCorus</h2>
-              <p className="text-sm md:text-base text-gray-600">Start your agricultural investment journey</p>
+              <h2 className="text-2xl font-bold text-gray-900 mb-1">Join AgriCorus</h2>
+              <p className="text-sm text-gray-600">Start your agricultural investment journey</p>
             </div>
 
             {/* Alerts */}
@@ -423,17 +423,17 @@ const RegisterPage: React.FC = () => {
               <AlertMessage type={alert.type} message={alert.message} onClose={() => setAlert(null)} />
             )}
 
-            <form className="space-y-4 md:space-y-6" onSubmit={handleSubmit} noValidate>
-              <div className="grid grid-cols-1 gap-4">
+            <form className="space-y-3" onSubmit={handleSubmit} noValidate>
+              <div className="grid grid-cols-1 gap-3">
                 {/* Name Field */}
                 <div className="relative">
-                  <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 md:h-5 md:w-5 text-gray-400" />
+                  <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                   <input
                     id="name"
                     name="name"
                     type="text"
                     required
-                    className={`input-field pl-10 text-sm md:text-base ${formErrors.name ? "border-red-500" : ""}`}
+                    className={`input-field pl-10 text-sm py-2 ${formErrors.name ? "border-red-500" : ""}`}
                     placeholder="Full Name"
                     value={formData.name}
                     onChange={handleInputChange}
@@ -444,13 +444,13 @@ const RegisterPage: React.FC = () => {
 
                 {/* Email Field */}
                 <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 md:h-5 md:w-5 text-gray-400" />
+                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                   <input
                     id="email"
                     name="email"
                     type="email"
                     required
-                    className={`input-field pl-10 text-sm md:text-base ${formErrors.email ? "border-red-500" : ""}`}
+                    className={`input-field pl-10 text-sm py-2 ${formErrors.email ? "border-red-500" : ""}`}
                     placeholder="Email address"
                     value={formData.email}
                     onChange={handleInputChange}
@@ -461,13 +461,13 @@ const RegisterPage: React.FC = () => {
 
                 {/* Phone Field */}
                 <div className="relative">
-                  <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 md:h-5 md:w-5 text-gray-400" />
+                  <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                   <input
                     id="phone"
                     name="phone"
                     type="tel"
                     required
-                    className={`input-field pl-10 text-sm md:text-base ${formErrors.phone ? "border-red-500" : ""}`}
+                    className={`input-field pl-10 text-sm py-2 ${formErrors.phone ? "border-red-500" : ""}`}
                     placeholder="Phone number"
                     value={formData.phone}
                     onChange={handleInputChange}
@@ -478,13 +478,13 @@ const RegisterPage: React.FC = () => {
 
                 {/* Password Field */}
                 <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 md:h-5 md:w-5 text-gray-400" />
+                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                   <input
                     id="password"
                     name="password"
                     type={showPassword ? "text" : "password"}
                     required
-                    className={`input-field pl-10 pr-10 text-sm md:text-base ${formErrors.password ? "border-red-500" : ""}`}
+                    className={`input-field pl-10 pr-10 text-sm py-2 ${formErrors.password ? "border-red-500" : ""}`}
                     placeholder="Password"
                     value={formData.password}
                     onChange={handleInputChange}
@@ -496,8 +496,8 @@ const RegisterPage: React.FC = () => {
                     onClick={() => setShowPassword((s) => !s)}
                   >
                     {showPassword ? 
-                      <EyeOff className="h-4 w-4 md:h-5 md:w-5 text-gray-400" /> : 
-                      <Eye className="h-4 w-4 md:h-5 md:w-5 text-gray-400" />
+                      <EyeOff className="h-4 w-4 text-gray-400" /> : 
+                      <Eye className="h-4 w-4 text-gray-400" />
                     }
                   </button>
                   {formErrors.password && <p className="text-red-500 text-xs mt-1">{formErrors.password}</p>}
@@ -505,13 +505,13 @@ const RegisterPage: React.FC = () => {
 
                 {/* Confirm Password Field */}
                 <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 md:h-5 md:w-5 text-gray-400" />
+                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                   <input
                     id="confirmPassword"
                     name="confirmPassword"
                     type={showConfirmPassword ? "text" : "password"}
                     required
-                    className={`input-field pl-10 pr-10 text-sm md:text-base ${formErrors.confirmPassword ? "border-red-500" : ""}`}
+                    className={`input-field pl-10 pr-10 text-sm py-2 ${formErrors.confirmPassword ? "border-red-500" : ""}`}
                     placeholder="Confirm password"
                     value={formData.confirmPassword}
                     onChange={handleInputChange}
@@ -523,22 +523,22 @@ const RegisterPage: React.FC = () => {
                     onClick={() => setShowConfirmPassword((s) => !s)}
                   >
                     {showConfirmPassword ? 
-                      <EyeOff className="h-4 w-4 md:h-5 md:w-5 text-gray-400" /> : 
-                      <Eye className="h-4 w-4 md:h-5 md:w-5 text-gray-400" />
+                      <EyeOff className="h-4 w-4 text-gray-400" /> : 
+                      <Eye className="h-4 w-4 text-gray-400" />
                     }
                   </button>
                   {formErrors.confirmPassword && <p className="text-red-500 text-xs mt-1">{formErrors.confirmPassword}</p>}
                 </div>
               </div>
 
-              {/* Role Selection - Mobile Optimized */}
+              {/* Role Selection - Compact */}
               <div className="space-y-2">
                 <label className={`block text-sm font-medium ${formErrors.role ? "text-red-500" : "text-gray-700"}`}>
                   Select your role
                 </label>
-                <div className="flex flex-col sm:flex-row sm:space-x-6 space-y-2 sm:space-y-0">
+                <div className="flex flex-row space-x-4">
                   {["landowner", "farmer", "investor"].map((r) => (
-                    <label key={r} className="flex items-center space-x-2 py-1">
+                    <label key={r} className="flex items-center space-x-1.5">
                       <input
                         type="radio"
                         name="role"
@@ -554,10 +554,10 @@ const RegisterPage: React.FC = () => {
                 {formErrors.role && <p className="text-red-500 text-xs mt-1">{formErrors.role}</p>}
               </div>
 
-              <div className="space-y-3">
+              <div className="space-y-2.5 pt-2">
                 <button 
                   type="submit" 
-                  className="btn-primary w-full text-sm md:text-base py-3"
+                  className="btn-primary w-full text-sm py-2.5"
                   disabled={isSubmitting}
                 >
                   {isSubmitting ? "Creating account..." : "Create Account"}
@@ -567,14 +567,14 @@ const RegisterPage: React.FC = () => {
                   <div className="absolute inset-0 flex items-center">
                     <div className="w-full border-t border-gray-200" />
                   </div>
-                  <div className="relative flex justify-center text-sm">
-                    <span className="px-2 bg-white text-gray-500 text-xs md:text-sm">Or continue with</span>
+                  <div className="relative flex justify-center text-xs">
+                    <span className="px-2 bg-white text-gray-500">Or continue with</span>
                   </div>
                 </div>
 
                 <GoogleButton text="Sign up with Google" />
 
-                <p className="text-xs md:text-sm text-gray-600 text-center">
+                <p className="text-xs text-gray-600 text-center pt-1">
                   Already have an account?{" "}
                   <Link to="/login" className="font-medium text-primary-600 hover:text-primary-500">
                     Sign in

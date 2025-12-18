@@ -21,7 +21,7 @@ const KycStatus: React.FC = () => {
     const fetchStatus = async () => {
       try {
         const token = localStorage.getItem('token');
-        const { data } = await axios.get<KycStatusResponse>('https://agricorus.onrender.com/api/kyc/status', {
+        const { data } = await axios.get<KycStatusResponse>('http://localhost:5000/api/kyc/status', {
           headers: { Authorization: `Bearer ${token}` },
         });
         setStatus(data);
@@ -39,10 +39,10 @@ const KycStatus: React.FC = () => {
   if (loading)
     return (
       <Layout>
-        <div className="flex justify-center items-center min-h-[400px]">
-          <div className="animate-pulse text-center">
-            <div className="w-16 h-16 bg-gradient-to-r from-[#ff3b3b] to-[#ff6b6b] rounded-full mx-auto mb-4"></div>
-            <p className="text-white text-lg font-light">Loading KYC Status...</p>
+        <div className="flex justify-center items-center min-h-[400px] bg-gray-50">
+          <div className="text-center">
+            <div className="w-16 h-16 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+            <p className="text-gray-700 text-lg font-medium">Loading KYC Status...</p>
           </div>
         </div>
       </Layout>
@@ -50,33 +50,33 @@ const KycStatus: React.FC = () => {
 
   return (
     <Layout>
-      <div className="min-h-screen bg-gradient-to-br from-[#0a1a55] via-[#1a2a88] to-[#2d1a88] py-8 px-4">
+      <div className="min-h-screen bg-gray-50 py-8 px-4">
         <div className="max-w-4xl mx-auto">
           {/* Header */}
           <div className="text-center mb-12">
-            <h1 className="text-4xl md:text-5xl font-bold text-white uppercase tracking-wider mb-4 font-poppins">
+            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
               KYC Verification
             </h1>
-            <p className="text-gray-300 text-lg max-w-2xl mx-auto font-light">
+            <p className="text-gray-600 text-lg max-w-2xl mx-auto">
               Secure identity verification powered by advanced document recognition technology
             </p>
           </div>
 
           {/* Status Card */}
-          <div className="bg-gradient-to-br from-[#0f2a6d] to-[#1a3a8d] rounded-2xl shadow-2xl border border-[#2d4aaf] overflow-hidden transition-all duration-300 hover:shadow-2xl hover:shadow-[#ff3b3b]/20">
+          <div className="bg-white rounded-xl shadow-sm border overflow-hidden transition-all duration-300 hover:shadow-lg">
             <div className="p-8">
               <div className="flex items-center justify-between mb-8">
-                <h2 className="text-2xl font-bold text-white uppercase tracking-wide font-montserrat">
+                <h2 className="text-2xl font-bold text-gray-900">
                   Verification Status
                 </h2>
                 {status && (
                   <div
-                    className={`px-6 py-2 rounded-full font-semibold text-sm uppercase tracking-wide ${
+                    className={`px-6 py-2 rounded-full font-semibold text-sm ${
                       status.status === 'approved'
-                        ? 'bg-green-500/20 text-green-400 border border-green-500/40'
+                        ? 'bg-green-100 text-green-700 border border-green-200'
                         : status.status === 'rejected'
-                        ? 'bg-red-500/20 text-red-400 border border-red-500/40'
-                        : 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/40'
+                        ? 'bg-red-100 text-red-700 border border-red-200'
+                        : 'bg-yellow-100 text-yellow-700 border border-yellow-200'
                     }`}
                   >
                     {status.status}
@@ -87,9 +87,9 @@ const KycStatus: React.FC = () => {
               {/* If error message */}
               {message ? (
                 <div className="text-center py-8">
-                  <div className="w-20 h-20 bg-gradient-to-r from-red-500 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
                     <svg
-                      className="w-10 h-10 text-white"
+                      className="w-10 h-10 text-red-600"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -102,48 +102,48 @@ const KycStatus: React.FC = () => {
                       />
                     </svg>
                   </div>
-                  <p className="text-gray-300 text-lg">{message}</p>
+                  <p className="text-gray-600 text-lg">{message}</p>
                 </div>
               ) : status ? (
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                   {/* Left side - Info */}
                   <div className="space-y-6">
-                    <div className="bg-black/20 rounded-xl p-6 border border-[#2d4aaf]/50">
-                      <h3 className="text-white font-semibold uppercase tracking-wide text-sm mb-4 font-montserrat">
+                    <div className="bg-gray-50 rounded-lg p-6 border">
+                      <h3 className="text-gray-900 font-semibold text-sm mb-4">
                         Document Information
                       </h3>
                       <div className="space-y-4">
                         <div>
-                          <label className="text-gray-400 text-sm font-medium uppercase tracking-wide">
+                          <label className="text-gray-500 text-sm font-medium">
                             Document Type
                           </label>
-                          <p className="text-white text-lg font-semibold mt-1">{status.documentType}</p>
+                          <p className="text-gray-900 text-lg font-semibold mt-1">{status.documentType}</p>
                         </div>
                         <div>
-                          <label className="text-gray-400 text-sm font-medium uppercase tracking-wide">
+                          <label className="text-gray-500 text-sm font-medium">
                             Document Number
                           </label>
-                          <p className="text-white text-lg font-semibold mt-1 font-mono">
+                          <p className="text-gray-900 text-lg font-semibold mt-1 font-mono">
                             {status.extractedNumber}
                           </p>
                         </div>
                         <div>
-                          <label className="text-gray-400 text-sm font-medium uppercase tracking-wide">
+                          <label className="text-gray-500 text-sm font-medium">
                             Submitted At
                           </label>
-                          <p className="text-white font-medium mt-1">
+                          <p className="text-gray-900 font-medium mt-1">
                             {new Date(status.createdAt).toLocaleString()}
                           </p>
                         </div>
                       </div>
                     </div>
 
-                    <div className="bg-black/20 rounded-xl p-6 border border-[#2d4aaf]/50">
-                      <h3 className="text-white font-semibold uppercase tracking-wide text-sm mb-4 font-montserrat">
+                    <div className="bg-gray-50 rounded-lg p-6 border">
+                      <h3 className="text-gray-900 font-semibold text-sm mb-4">
                         Verification Progress
                       </h3>
                       <div className="flex items-center space-x-4">
-                        <div className="flex-1 bg-gray-700 rounded-full h-2">
+                        <div className="flex-1 bg-gray-200 rounded-full h-2">
                           <div
                             className={`h-2 rounded-full transition-all duration-500 ${
                               status.status === 'approved'
@@ -154,7 +154,7 @@ const KycStatus: React.FC = () => {
                             }`}
                           ></div>
                         </div>
-                        <span className="text-white text-sm font-semibold">
+                        <span className="text-gray-900 text-sm font-semibold">
                           {status.status === 'pending' ? 'In Review' : status.status}
                         </span>
                       </div>
@@ -162,15 +162,15 @@ const KycStatus: React.FC = () => {
                   </div>
 
                   {/* Right side - Document Image */}
-                  <div className="bg-black/20 rounded-xl p-6 border border-[#2d4aaf]/50">
-                    <h3 className="text-white font-semibold uppercase tracking-wide text-sm mb-4 font-montserrat">
+                  <div className="bg-gray-50 rounded-lg p-6 border">
+                    <h3 className="text-gray-900 font-semibold text-sm mb-4">
                       Document Preview
                     </h3>
                     <div className="relative group">
                       <img
                         src={status.documentImage}
                         alt="KYC Document"
-                        className="w-full h-64 object-contain rounded-lg border-2 border-[#2d4aaf] transition-all duration-300 group-hover:scale-105 group-hover:shadow-2xl group-hover:shadow-[#ff3b3b]/10"
+                        className="w-full h-64 object-contain rounded-lg border-2 border-gray-200 transition-all duration-300 group-hover:scale-105"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center p-4">
                         <button
@@ -178,20 +178,20 @@ const KycStatus: React.FC = () => {
                             setSelectedImage(status.documentImage);
                             setIsModalOpen(true);
                           }}
-                          className="bg-[#ff3b3b] text-white px-4 py-2 rounded-lg font-semibold text-sm uppercase tracking-wide transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300 hover:bg-[#ff5252] hover:shadow-lg hover:shadow-[#ff3b3b]/30"
+                          className="bg-emerald-600 text-white px-4 py-2 rounded-lg font-semibold text-sm transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300 hover:bg-emerald-700"
                         >
                           View Full Size
                         </button>
                       </div>
                     </div>
-                    <p className="text-gray-400 text-xs text-center mt-3">
+                    <p className="text-gray-500 text-xs text-center mt-3">
                       Click to view document in full resolution
                     </p>
                   </div>
                 </div>
               ) : (
                 <div className="text-center py-12">
-                  <div className="w-24 h-24 bg-gradient-to-r from-gray-600 to-gray-700 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
                     <svg
                       className="w-12 h-12 text-gray-400"
                       fill="none"
@@ -206,9 +206,9 @@ const KycStatus: React.FC = () => {
                       />
                     </svg>
                   </div>
-                  <h3 className="text-white text-xl font-bold mb-2">No KYC Record Found</h3>
-                  <p className="text-gray-400 mb-6">You haven't submitted any KYC documents yet.</p>
-                  <button className="bg-[#ff3b3b] text-white px-8 py-3 rounded-lg font-semibold text-sm uppercase tracking-wide hover:bg-[#ff5252] hover:shadow-lg hover:shadow-[#ff3b3b]/30 transition-all duration-300">
+                  <h3 className="text-gray-900 text-xl font-bold mb-2">No KYC Record Found</h3>
+                  <p className="text-gray-600 mb-6">You haven't submitted any KYC documents yet.</p>
+                  <button className="bg-emerald-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-emerald-700 transition-all duration-300">
                     Start KYC Verification
                   </button>
                 </div>
@@ -259,9 +259,9 @@ const KycStatus: React.FC = () => {
               ].map((item, idx) => (
                 <div
                   key={idx}
-                  className="bg-gradient-to-br from-[#0f2a6d] to-[#1a3a8d] rounded-xl p-6 text-center border border-[#2d4aaf] transition-all duration-300 hover:scale-105 hover:shadow-xl"
+                  className="bg-white rounded-xl shadow-sm border p-6 text-center transition-all duration-300 hover:scale-105 hover:shadow-lg"
                 >
-                  <div className="w-12 h-12 bg-[#ff3b3b] rounded-full flex items-center justify-center mx-auto mb-4">
+                  <div className="w-12 h-12 bg-emerald-500 rounded-full flex items-center justify-center mx-auto mb-4">
                     <svg
                       className="w-6 h-6 text-white"
                       fill="none"
@@ -271,10 +271,10 @@ const KycStatus: React.FC = () => {
                       {item.icon}
                     </svg>
                   </div>
-                  <h4 className="text-white font-semibold text-sm uppercase tracking-wide mb-2">
+                  <h4 className="text-gray-900 font-semibold text-sm mb-2">
                     {item.title}
                   </h4>
-                  <p className="text-gray-400 text-xs">{item.desc}</p>
+                  <p className="text-gray-600 text-xs">{item.desc}</p>
                 </div>
               ))}
             </div>
@@ -286,19 +286,19 @@ const KycStatus: React.FC = () => {
       {isModalOpen && selectedImage && (
         <div
           onClick={() => setIsModalOpen(false)}
-          className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 cursor-zoom-out animate-fadeIn"
+          className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 cursor-zoom-out"
         >
           <div className="relative max-w-4xl w-full mx-4">
             <button
               onClick={() => setIsModalOpen(false)}
-              className="absolute top-4 right-4 text-white bg-[#ff3b3b] rounded-full p-2 hover:bg-[#ff5252]"
+              className="absolute top-4 right-4 text-white bg-emerald-600 rounded-full p-2 hover:bg-emerald-700"
             >
               ✕
             </button>
             <img
               src={selectedImage}
               alt="Full Size Document"
-              className="w-full max-h-[90vh] object-contain rounded-lg shadow-2xl border border-[#2d4aaf]"
+              className="w-full max-h-[90vh] object-contain rounded-lg shadow-2xl border border-gray-200"
             />
           </div>
         </div>

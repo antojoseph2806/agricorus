@@ -14,7 +14,7 @@ const SelectRolePage = () => {
     if (!userId || !tempToken) return alert('Invalid session');
 
     try {
-      const res = await axios.post('https://agricorus.onrender.com/api/auth/set-role', {
+      const res = await axios.post('http://localhost:5000/api/auth/set-role', {
         userId,
         role,
       });

@@ -52,7 +52,7 @@ const RequestPayment: React.FC = () => {
   const fetchLeases = async () => {
     try {
       const res = await axios.get(
-        "https://agricorus.onrender.com/api/leases/owner/eligible-payments",
+        "http://localhost:5000/api/leases/owner/eligible-payments",
         { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
       );
       setLeases(res.data);
@@ -66,7 +66,7 @@ const RequestPayment: React.FC = () => {
 
   const fetchPayoutMethods = async () => {
     try {
-      const res = await axios.get("https://agricorus.onrender.com/api/payouts/", {
+      const res = await axios.get("http://localhost:5000/api/payouts/", {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
       setPayoutMethods(res.data);
@@ -95,7 +95,7 @@ const RequestPayment: React.FC = () => {
     setLoading(true);
     try {
       const res = await axios.post(
-        `https://agricorus.onrender.com/api/payment-requests/request-payment/${selectedLease}`,
+        `http://localhost:5000/api/payment-requests/request-payment/${selectedLease}`,
         { payoutMethodId: selectedMethod, amount },
         { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
       );
@@ -122,70 +122,36 @@ const RequestPayment: React.FC = () => {
 
   return (
     <Layout>
-      <div 
-        className="min-h-screen p-6"
-        style={{
-          background: 'linear-gradient(135deg, #0a1a55 0%, #1a2a88 50%, #2d3ba2 100%)',
-          fontFamily: 'Inter, sans-serif'
-        }}
-      >
-        {/* Glowing Overlay */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div 
-            className="absolute -top-40 -right-40 w-80 h-80 rounded-full"
-            style={{
-              background: 'radial-gradient(circle, rgba(255, 59, 59, 0.15) 0%, transparent 70%)',
-              filter: 'blur(40px)'
-            }}
-          ></div>
-          <div 
-            className="absolute -bottom-40 -left-40 w-80 h-80 rounded-full"
-            style={{
-              background: 'radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, transparent 70%)',
-              filter: 'blur(40px)'
-            }}
-          ></div>
-        </div>
-
-        <div className="relative max-w-6xl mx-auto">
+      <div className="min-h-screen bg-gray-50 p-6">
+        <div className="max-w-6xl mx-auto">
           {/* Header Card */}
-          <div 
-            className="bg-white/5 backdrop-blur-lg rounded-2xl border border-white/10 p-8 mb-8 shadow-2xl"
-            style={{
-              background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%)',
-            }}
-          >
-            <h1 className="text-3xl font-bold text-white uppercase tracking-wider mb-3" style={{ fontFamily: 'Poppins, sans-serif' }}>
+          <div className="bg-white rounded-2xl border border-gray-200 p-8 mb-8 shadow-sm">
+            <h1 className="text-3xl font-bold text-gray-900 mb-3">
               Request Payment
             </h1>
-            <p className="text-gray-300 text-lg">Request payment for your leased lands from the admin</p>
+            <p className="text-gray-600 text-lg">Request payment for your leased lands from the admin</p>
           </div>
 
           {/* Main Content Grid */}
           <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
             {/* Left Column - Payment Form */}
             <div className="xl:col-span-2">
-              <div 
-                className="bg-white/5 backdrop-blur-lg rounded-2xl border border-white/10 p-8 shadow-2xl hover:shadow-2xl transition-all duration-300 hover:transform hover:scale-[1.02]"
-                style={{
-                  background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%)',
-                }}
-              >
-                <h2 className="text-xl font-bold text-white uppercase tracking-wide mb-6" style={{ fontFamily: 'Poppins, sans-serif' }}>
+              <div className="bg-white rounded-2xl border border-gray-200 p-8 shadow-sm">
+                <h2 className="text-xl font-bold text-gray-900 mb-6">
                   Payment Request Details
                 </h2>
                 
                 {/* Lease Selection */}
                 <div className="mb-8">
-                  <label className="block text-sm font-semibold text-white uppercase tracking-wide mb-3">Select Lease Agreement</label>
+                  <label className="block text-sm font-semibold text-gray-700 mb-3">Select Lease Agreement</label>
                   <select
-                    className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all duration-300"
+                    className="w-full bg-white border border-gray-300 rounded-xl px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-300"
                     value={selectedLease}
                     onChange={(e) => handleLeaseChange(e.target.value)}
                   >
-                    <option value="" className="bg-gray-800 text-white">Choose a lease agreement</option>
+                    <option value="">Choose a lease agreement</option>
                     {leases.map((lease) => (
-                      <option key={lease._id} value={lease._id} className="bg-gray-800 text-white">
+                      <option key={lease._id} value={lease._id}>
                         {lease.land.title} - {lease.farmer.name || lease.farmer.email}
                       </option>
                     ))}
@@ -194,27 +160,21 @@ const RequestPayment: React.FC = () => {
 
                 {/* Payout Method Selection */}
                 <div className="mb-8">
-                  <label className="block text-sm font-semibold text-white uppercase tracking-wide mb-3">Payout Method</label>
+                  <label className="block text-sm font-semibold text-gray-700 mb-3">Payout Method</label>
                   <select
-                    className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all duration-300"
+                    className="w-full bg-white border border-gray-300 rounded-xl px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-300"
                     value={selectedMethod}
                     onChange={(e) => setSelectedMethod(e.target.value)}
                   >
-                    <option value="" className="bg-gray-800 text-white">Select payout method</option>
+                    <option value="">Select payout method</option>
                     {payoutMethods.map((method) => (
-                      <option key={method._id} value={method._id} className="bg-gray-800 text-white">
-                        <span className="flex items-center justify-between">
-                          <span>
-                            {method.type.toUpperCase()} - {method.type === "upi" ? method.upiId : `${method.bankName}`}
-                          </span>
-                          {method.isDefault && (
-                            <span className="bg-red-500 text-white text-xs px-2 py-1 rounded-full ml-2">Default</span>
-                          )}
-                        </span>
+                      <option key={method._id} value={method._id}>
+                        {method.type.toUpperCase()} - {method.type === "upi" ? method.upiId : `${method.bankName}`}
+                        {method.isDefault && " (Default)"}
                       </option>
                     ))}
                   </select>
-                  <p className="text-sm text-gray-300 mt-2">
+                  <p className="text-sm text-gray-600 mt-2">
                     {getDefaultPayoutMethod() && !selectedMethod ? 
                       `Default method: ${getDefaultPayoutMethod()?.type.toUpperCase()} - ${getDefaultPayoutMethod()?.type === "upi" ? getDefaultPayoutMethod()?.upiId : getDefaultPayoutMethod()?.bankName}` 
                       : "Select your preferred payout method"}
@@ -223,27 +183,27 @@ const RequestPayment: React.FC = () => {
 
                 {/* Amount Display */}
                 <div className="mb-8">
-                  <label className="block text-sm font-semibold text-white uppercase tracking-wide mb-3">Payment Amount</label>
+                  <label className="block text-sm font-semibold text-gray-700 mb-3">Payment Amount</label>
                   <div className="relative">
                     <input
                       type="number"
-                      className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white font-semibold focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                      className="w-full bg-white border border-gray-300 rounded-xl px-4 py-3 text-gray-900 font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
                       value={amount}
                       readOnly
                     />
                     <div className="absolute inset-y-0 right-0 flex items-center pr-4">
-                      <span className="text-white font-bold text-lg">₹</span>
+                      <span className="text-gray-900 font-bold text-lg">₹</span>
                     </div>
                   </div>
-                  <p className="text-sm text-gray-300 mt-2">Amount is auto-calculated based on lease agreement</p>
+                  <p className="text-sm text-gray-600 mt-2">Amount is auto-calculated based on lease agreement</p>
                 </div>
 
                 {/* Submit Button */}
                 <button
-                  className={`w-full py-4 px-6 rounded-xl font-bold text-white transition-all duration-300 ${
+                  className={`w-full py-4 px-6 rounded-xl font-bold text-white transition-all duration-300 shadow-sm ${
                     loading || !selectedLease || !selectedMethod
-                      ? "bg-gray-600 cursor-not-allowed opacity-50"
-                      : "bg-red-500 hover:bg-red-600 hover:shadow-2xl hover:shadow-red-500/25 transform hover:scale-105"
+                      ? "bg-gray-400 cursor-not-allowed opacity-50"
+                      : "bg-emerald-600 hover:bg-emerald-700"
                   }`}
                   onClick={handleRequestPayment}
                   disabled={loading || !selectedLease || !selectedMethod}

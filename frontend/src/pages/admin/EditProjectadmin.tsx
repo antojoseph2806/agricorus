@@ -31,7 +31,7 @@ const EditProjectadmin: React.FC = () => {
 
   const getAxios = () =>
     axios.create({
-      baseURL: "https://agricorus.onrender.com",
+      baseURL: "http://localhost:5000",
       headers: { Authorization: `Bearer ${token}` },
     });
 
@@ -88,7 +88,7 @@ const EditProjectadmin: React.FC = () => {
     setSuccess(null);
 
     try {
-      await getAxios().put(`https://agricorus.onrender.com/api/projects/${id}`, formData);
+      await getAxios().put(`http://localhost:5000/api/projects/${id}`, formData);
       setSuccess("Project updated successfully!");
       // Optional: navigate back to ManageProjects page after update
       setTimeout(() => navigate("/admin/manage-projects"), 1000);

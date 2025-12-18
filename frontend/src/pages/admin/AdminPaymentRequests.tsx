@@ -62,7 +62,7 @@ const AdminPaymentRequests: React.FC = () => {
       setLoading(true);
       const token = localStorage.getItem("token");
       const { data } = await axios.get(
-        "https://agricorus.onrender.com/api/payment-requests/admin",
+        "http://localhost:5000/api/payment-requests/admin",
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setRequests(data.paymentRequests || []);
@@ -84,7 +84,7 @@ const AdminPaymentRequests: React.FC = () => {
       setUpdatingId(id);
       const token = localStorage.getItem("token");
       const { data } = await axios.patch(
-        `https://agricorus.onrender.com/api/payment-requests/admin/${id}`,
+        `http://localhost:5000/api/payment-requests/admin/${id}`,
         { status },
         { headers: { Authorization: `Bearer ${token}` } }
       );

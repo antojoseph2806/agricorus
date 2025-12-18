@@ -28,8 +28,8 @@ const FarmerProfile: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [editing, setEditing] = useState(false); // Fixes the "never read" warning as it's used now
 
-  // TypeScript is satisfied if vite-env.d.ts is present
-  const BASE_URL = "https://agricorus.onrender.com"; 
+  const BASE_URL =
+    (import.meta as any).env.VITE_BACKEND_URL || "http://localhost:5000"; 
 
   // Helper function to format the joined date
   const formatDate = (dateString: string) => {
@@ -160,15 +160,42 @@ const FarmerProfile: React.FC = () => {
   // 6. Render UI
   // ======================================================
   if (loading && !profile) 
-    return <p className="text-center mt-10 text-xl font-medium">Loading profile...</p>;
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-14 h-14 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-800 font-semibold">Loading profile...</p>
+        </div>
+      </div>
+    );
     
-  if (!profile) return <p className="text-center mt-10 text-xl text-red-600">Profile data not available.</p>;
+  if (!profile) return (
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="bg-white border rounded-xl shadow-sm p-8 text-center max-w-md">
+        <div className="text-4xl mb-3">🙁</div>
+        <p className="text-gray-900 font-semibold mb-1">Profile data not available.</p>
+        <p className="text-gray-600 text-sm">Please re-login or try again.</p>
+      </div>
+    </div>
+  );
 
   return (
-    <div className="max-w-xl mx-auto p-6 bg-white rounded-2xl shadow-xl mt-10">
-      <h1 className="text-2xl font-bold mb-6 text-center text-green-700">🧑‍🌾 Farmer Profile</h1>
+    <div className="min-h-screen bg-gray-50 p-4 md:p-8">
+      <div className="max-w-2xl mx-auto space-y-6">
+        <div className="bg-white border rounded-2xl shadow-sm p-6">
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 bg-emerald-100 text-emerald-700 rounded-xl flex items-center justify-center text-lg font-semibold">
+              👩‍🌾
+            </div>
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900">Farmer Profile</h1>
+              <p className="text-gray-600 text-sm">Manage your details used across the marketplace.</p>
+            </div>
+          </div>
+        </div>
 
-      <form onSubmit={handleSubmit} className="space-y-5">
+        <div className="bg-white border rounded-2xl shadow-sm p-6">
+          <form onSubmit={handleSubmit} className="space-y-5">
         
         {/* Profile Image Section - Editable */}
         <div className="flex flex-col items-center">
@@ -179,15 +206,15 @@ const FarmerProfile: React.FC = () => {
                   ? preview
                   : profile.profileImage
                   ? `${BASE_URL}${profile.profileImage}`
-                  : "https://via.placeholder.com/120/008000/FFFFFF?text=FP"
+                  : "https://via.placeholder.com/120/10B981/FFFFFF?text=FP"
               }
               alt="Profile"
-              className="w-28 h-28 rounded-full object-cover border-4 border-green-300"
+              className="w-28 h-28 rounded-full object-cover border-4 border-emerald-200"
             />
             {editing && (
               <label 
                 htmlFor="profile-image-upload"
-                className="absolute bottom-1 right-1 bg-green-600 p-2 rounded-full cursor-pointer text-white transition hover:bg-green-700 shadow-lg"
+                className="absolute bottom-1 right-1 bg-emerald-600 p-2 rounded-full cursor-pointer text-white transition hover:bg-emerald-700 shadow-lg"
               >
                 <Camera className="w-4 h-4" />
                 <input
@@ -249,7 +276,7 @@ const FarmerProfile: React.FC = () => {
             <button
               type="button"
               onClick={() => setEditing(true)}
-              className="w-full bg-green-600 text-white font-semibold px-6 py-2 rounded-lg hover:bg-green-700 transition shadow-md"
+              className="w-full bg-emerald-600 text-white font-semibold px-6 py-2 rounded-lg hover:bg-emerald-700 transition"
             >
               ✏️ Edit Profile
             </button>
@@ -259,21 +286,23 @@ const FarmerProfile: React.FC = () => {
                 type="button"
                 onClick={handleCancel}
                 disabled={loading}
-                className="w-1/3 bg-gray-500 text-white font-semibold px-4 py-2 rounded-lg hover:bg-gray-600 transition disabled:opacity-50"
+                className="w-1/3 bg-gray-200 text-gray-700 font-semibold px-4 py-2 rounded-lg hover:bg-gray-300 transition disabled:opacity-50"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={loading}
-                className="w-2/3 bg-blue-600 text-white font-semibold px-6 py-2 rounded-lg hover:bg-blue-700 flex items-center justify-center gap-2 transition shadow-md disabled:opacity-50"
+                className="w-2/3 bg-emerald-600 text-white font-semibold px-6 py-2 rounded-lg hover:bg-emerald-700 flex items-center justify-center gap-2 transition disabled:opacity-50"
               >
                 <Save className="w-4 h-4" /> {loading ? "Saving..." : "Save Changes"}
               </button>
             </div>
           )}
         </div>
-      </form>
+          </form>
+        </div>
+      </div>
     </div>
   );
 };
@@ -301,7 +330,7 @@ const ProfileInputField: React.FC<ProfileInputFieldProps> = ({
     // Class names for styling based on read-only mode
     const inputClasses = `w-full border rounded-lg px-3 py-2 transition duration-150 ${
         !isReadOnly 
-          ? "bg-white border-green-400 focus:ring-green-500 focus:border-green-500" 
+          ? "bg-white border-gray-300 focus:ring-emerald-500 focus:border-emerald-500" 
           : "bg-gray-100 border-gray-200 text-gray-700 cursor-default"
     }`;
 

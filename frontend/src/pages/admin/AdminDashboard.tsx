@@ -49,32 +49,29 @@ interface RecentActivity {
 
 const AdminDashboard = () => {
   // Static data arrays have been cleared to prepare for dynamic data fetching
-  const stats: Stat[] = []; 
+  const stats: Stat[] = [];
   const quickActions: QuickAction[] = [];
   const systemMetrics: SystemMetric[] = [];
-  const recentActivity: RecentActivity[] = []; // Used an empty array for the Activity feed
+  const recentActivity: RecentActivity[] = [];
 
   return (
     <Layout>
       {/* Hero Header */}
-      <div className="bg-gradient-to-r from-[#0a1a55] via-[#1a2a88] to-[#2d1a88] rounded-2xl p-8 text-white mb-8 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(255,59,59,0.2),_transparent_50%)]" />
-        <div className="relative z-10">
-          <h1 className="text-4xl font-bold mb-3 font-['Poppins'] uppercase tracking-wide">
-            Admin Control Panel
-          </h1>
-          <p className="text-gray-300 text-lg font-['Inter'] max-w-2xl">
-            Monitor and manage all platform activities with real-time analytics and powerful administrative tools.
-          </p>
-          <div className="flex items-center gap-4 mt-4">
-            <div className="flex items-center gap-2 text-green-400">
-              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-              <span className="font-['Inter'] font-medium">System Operational</span>
-            </div>
-            <div className="flex items-center gap-2 text-blue-400">
-              <Zap className="w-4 h-4" />
-              <span className="font-['Inter']">Last updated: Just now</span>
-            </div>
+      <div className="bg-gradient-to-r from-emerald-500 to-blue-600 rounded-2xl p-8 text-white mb-8 shadow-lg">
+        <h1 className="text-3xl font-bold mb-2">
+          Admin Control Panel
+        </h1>
+        <p className="text-emerald-100 text-lg max-w-2xl mb-4">
+          Monitor and manage all platform activities with real-time analytics and powerful administrative tools.
+        </p>
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 text-emerald-100 bg-white/20 px-3 py-1 rounded-full text-sm">
+            <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+            <span className="font-medium">System Operational</span>
+          </div>
+          <div className="flex items-center gap-2 text-emerald-100">
+            <Zap className="w-4 h-4" />
+            <span className="text-sm">Last updated: Just now</span>
           </div>
         </div>
       </div>
@@ -85,24 +82,23 @@ const AdminDashboard = () => {
           {stats.map((stat, index) => (
             <div
               key={index}
-              className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-md border border-white/20 rounded-2xl p-6 shadow-2xl hover:shadow-purple-500/20 transition-all duration-300 hover:scale-[1.02] group"
+              className="bg-white rounded-xl p-6 shadow-md border border-gray-100 hover:shadow-lg transition-all duration-300 hover:scale-[1.02] group"
             >
               <div className="flex items-center justify-between mb-4">
-                <div className={`p-3 rounded-xl bg-gradient-to-r ${stat.color} shadow-lg`}>
-                  <stat.icon className="w-6 h-6 text-white" />
+                <div className={`p-3 rounded-xl bg-gray-50 group-hover:bg-emerald-50 transition-colors`}>
+                  <stat.icon className={`w-6 h-6 text-gray-600 group-hover:text-emerald-600 transition-colors`} />
                 </div>
-                <div className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium font-['Inter'] ${
-                  stat.trend === 'up' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'
-                }`}>
+                <div className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${stat.trend === 'up' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+                  }`}>
                   <TrendingUp className={`w-3 h-3 ${stat.trend === 'down' ? 'rotate-180' : ''}`} />
                   {stat.change}
                 </div>
               </div>
               <div>
-                <p className="text-gray-400 text-sm font-['Inter'] uppercase tracking-wide mb-1">
+                <p className="text-gray-500 text-sm font-medium mb-1">
                   {stat.label}
                 </p>
-                <p className="text-3xl font-bold text-white font-['Poppins']">{stat.value}</p>
+                <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
               </div>
             </div>
           ))}
@@ -112,55 +108,54 @@ const AdminDashboard = () => {
       {/* Main Content Sections - Render only if data is present */}
       {(quickActions.length > 0 || systemMetrics.length > 0) && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-          
-          {/* Quick Actions - Renders only if quickActions data is present */}
+
+          {/* Quick Actions */}
           {quickActions.length > 0 && (
-            <div className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-md border border-white/20 rounded-2xl p-6 shadow-2xl">
+            <div className="bg-white rounded-xl p-6 shadow-md border border-gray-100">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-bold text-white font-['Poppins'] uppercase tracking-wide">
+                <h2 className="text-xl font-bold text-gray-800">
                   Quick Actions
                 </h2>
-                <Zap className="w-5 h-5 text-yellow-400" />
+                <Zap className="w-5 h-5 text-amber-500" />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 {quickActions.map((action, index) => (
                   <a
                     key={index}
                     href={action.href}
-                    className="group bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl p-4 transition-all duration-300 hover:scale-105 hover:border-white/20"
+                    className="group bg-gray-50 hover:bg-emerald-50 border border-transparent hover:border-emerald-200 rounded-xl p-4 transition-all duration-300"
                   >
-                    <div className={`p-2 rounded-lg bg-gradient-to-r ${action.color} w-fit mb-3`}>
-                      <action.icon className="w-4 h-4 text-white" />
+                    <div className={`p-2 rounded-lg bg-white shadow-sm mb-3 w-fit`}>
+                      <action.icon className="w-5 h-5 text-gray-700 group-hover:text-emerald-600" />
                     </div>
-                    <span className="text-white font-['Inter'] font-medium text-sm">{action.label}</span>
+                    <span className="text-gray-700 font-medium text-sm group-hover:text-emerald-700">{action.label}</span>
                   </a>
                 ))}
               </div>
             </div>
           )}
 
-          {/* System Metrics - Renders only if systemMetrics data is present */}
+          {/* System Metrics */}
           {systemMetrics.length > 0 && (
-            <div className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-md border border-white/20 rounded-2xl p-6 shadow-2xl">
+            <div className="bg-white rounded-xl p-6 shadow-md border border-gray-100">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-bold text-white font-['Poppins'] uppercase tracking-wide">
+                <h2 className="text-xl font-bold text-gray-800">
                   System Metrics
                 </h2>
-                <Activity className="w-5 h-5 text-green-400" />
+                <Activity className="w-5 h-5 text-emerald-500" />
               </div>
               <div className="space-y-4">
                 {systemMetrics.map((metric, index) => (
-                  <div key={index} className="flex items-center justify-between p-3 bg-white/5 rounded-lg">
+                  <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                     <div className="flex items-center gap-3">
-                      <metric.icon className="w-4 h-4 text-gray-400" />
-                      <span className="text-gray-300 font-['Inter'] text-sm">{metric.label}</span>
+                      <metric.icon className="w-4 h-4 text-gray-500" />
+                      <span className="text-gray-600 font-medium text-sm">{metric.label}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className="text-white font-['Poppins'] font-medium">{metric.value}</span>
-                      <div className={`w-2 h-2 rounded-full ${
-                        metric.status === 'optimal' ? 'bg-green-500' :
-                        metric.status === 'fast' ? 'bg-blue-500' : 'bg-yellow-500'
-                      }`} />
+                      <span className="text-gray-900 font-bold">{metric.value}</span>
+                      <div className={`w-2 h-2 rounded-full ${metric.status === 'optimal' ? 'bg-green-500' :
+                          metric.status === 'fast' ? 'bg-blue-500' : 'bg-yellow-500'
+                        }`} />
                     </div>
                   </div>
                 ))}
@@ -170,32 +165,31 @@ const AdminDashboard = () => {
         </div>
       )}
 
-      {/* Recent Activity - Renders only if recentActivity data is present */}
+      {/* Recent Activity */}
       {recentActivity.length > 0 && (
-        <div className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-md border border-white/20 rounded-2xl p-6 shadow-2xl">
+        <div className="bg-white rounded-xl p-6 shadow-md border border-gray-100">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-bold text-white font-['Poppins'] uppercase tracking-wide">
+            <h2 className="text-xl font-bold text-gray-800">
               Recent Activity
             </h2>
-            <BarChart3 className="w-5 h-5 text-purple-400" />
+            <BarChart3 className="w-5 h-5 text-purple-500" />
           </div>
           <div className="space-y-3">
             {recentActivity.map((activity, index) => (
-              <div key={index} className="flex items-center justify-between p-3 bg-white/5 rounded-lg hover:bg-white/10 transition-all duration-300">
+              <div key={index} className="flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg transition-colors">
                 <div className="flex items-center gap-3">
-                  <div className={`p-2 rounded-lg ${
-                    activity.type === 'user' ? 'bg-blue-500/20' :
-                    activity.type === 'land' ? 'bg-green-500/20' :
-                    activity.type === 'payment' ? 'bg-purple-500/20' : 'bg-orange-500/20'
-                  }`}>
-                    <Eye className="w-3 h-3 text-white" />
+                  <div className={`p-2 rounded-lg ${activity.type === 'user' ? 'bg-blue-100 text-blue-600' :
+                      activity.type === 'land' ? 'bg-green-100 text-green-600' :
+                        activity.type === 'payment' ? 'bg-purple-100 text-purple-600' : 'bg-orange-100 text-orange-600'
+                    }`}>
+                    <Eye className="w-4 h-4" />
                   </div>
                   <div>
-                    <p className="text-white font-['Inter'] text-sm">{activity.action}</p>
-                    <p className="text-gray-400 text-xs">by {activity.user}</p>
+                    <p className="text-gray-800 font-medium text-sm">{activity.action}</p>
+                    <p className="text-gray-500 text-xs">by {activity.user}</p>
                   </div>
                 </div>
-                <span className="text-gray-400 text-xs font-['Inter']">{activity.time}</span>
+                <span className="text-gray-400 text-xs font-medium">{activity.time}</span>
               </div>
             ))}
           </div>

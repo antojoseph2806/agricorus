@@ -41,7 +41,7 @@ export default function ViewProjects() {
     const fetchProjects = async () => {
       try {
         setLoading(true);
-        const res = await axios.get("https://agricorus.onrender.com/api/projects/projects");
+        const res = await axios.get("http://localhost:5000/api/projects/projects");
         if (Array.isArray(res.data)) {
           setProjects(res.data);
           setFilteredProjects(res.data);
@@ -74,7 +74,7 @@ export default function ViewProjects() {
   const handleDelete = async (id: string) => {
     if (!window.confirm("Are you sure you want to delete this project?")) return;
     try {
-      await axios.delete(`https://agricorus.onrender.com/api/projects/${id}`, {
+      await axios.delete(`http://localhost:5000/api/projects/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setProjects(projects.filter((p) => p._id !== id));
@@ -94,13 +94,13 @@ export default function ViewProjects() {
   const getStatusColors = (status: string) => {
     switch (status.toLowerCase()) {
       case "submitted": 
-        return "text-blue-400 bg-blue-500/20 border border-blue-400/30";
+        return "text-blue-700 bg-blue-100 border border-blue-200";
       case "open": 
-        return "text-green-400 bg-green-500/20 border border-green-400/30";
+        return "text-green-700 bg-green-100 border border-green-200";
       case "completed": 
-        return "text-purple-400 bg-purple-500/20 border border-purple-400/30";
+        return "text-purple-700 bg-purple-100 border border-purple-200";
       default: 
-        return "text-gray-400 bg-gray-500/20 border border-gray-400/30";
+        return "text-gray-700 bg-gray-100 border border-gray-200";
     }
   };
 
@@ -109,64 +109,41 @@ export default function ViewProjects() {
 
   if (loading)
     return (
-      <div 
-        className="flex items-center justify-center min-h-screen bg-gradient-to-br from-[#0a1a55] via-[#1a2a88] to-[#2d1a88] relative overflow-hidden"
-        style={{ fontFamily: "'Inter', 'Poppins', sans-serif" }}
-      >
-        <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute -top-40 -right-40 w-80 h-80 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
-          <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse animation-delay-2000"></div>
-        </div>
-        <div className="relative z-10 text-center">
-          <div className="w-16 h-16 border-4 border-white/20 border-t-white rounded-full animate-spin mx-auto mb-4"></div>
-          <h3 className="text-white text-xl font-semibold tracking-wider">LOADING PROJECTS...</h3>
-          <p className="text-gray-300 mt-2">Initializing your project dashboard</p>
+      <div className="flex items-center justify-center min-h-screen bg-gray-50">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <h3 className="text-gray-900 text-xl font-semibold">Loading Projects...</h3>
+          <p className="text-gray-600 mt-2">Fetching your project dashboard</p>
         </div>
       </div>
     );
 
   if (error)
     return (
-      <div 
-        className="flex items-center justify-center min-h-screen bg-gradient-to-br from-[#0a1a55] via-[#1a2a88] to-[#2d1a88] relative overflow-hidden"
-        style={{ fontFamily: "'Inter', 'Poppins', sans-serif" }}
-      >
-        <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute -top-40 -right-40 w-80 h-80 bg-red-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
-        </div>
-        <div className="relative z-10 bg-white/10 backdrop-blur-md rounded-2xl p-8 max-w-md text-center border border-white/20">
+      <div className="flex items-center justify-center min-h-screen bg-gray-50">
+        <div className="bg-white rounded-xl shadow-sm border p-8 max-w-md text-center">
           <div className="text-6xl mb-4">🚨</div>
-          <h3 className="text-white text-xl font-bold uppercase tracking-wider mb-2">SYSTEM ALERT</h3>
-          <p className="text-gray-200">{error}</p>
+          <h3 className="text-gray-900 text-xl font-bold mb-2">Error Loading Projects</h3>
+          <p className="text-gray-600">{error}</p>
         </div>
       </div>
     );
 
   return (
-    <div 
-      className="min-h-screen bg-gradient-to-br from-[#0a1a55] via-[#1a2a88] to-[#2d1a88] p-4 relative overflow-hidden"
-      style={{ fontFamily: "'Inter', 'Poppins', sans-serif" }}
-    >
-      {/* Animated Background Elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse animation-delay-2000"></div>
-        <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-red-500 rounded-full mix-blend-multiply filter blur-xl opacity-10 animate-pulse animation-delay-4000"></div>
-      </div>
-
-      <div className="relative z-10 max-w-7xl mx-auto">
+    <div className="min-h-screen bg-gray-50 p-4">
+      <div className="max-w-7xl mx-auto">
         {/* Header Section */}
         <div className="flex flex-col lg:flex-row lg:items-center justify-between mb-8 gap-6">
-          <div className="text-center lg:text-left">
-            <div className="flex items-center justify-center lg:justify-start mb-3">
-              <div className="w-12 h-12 bg-gradient-to-r from-[#ff3b3b] to-[#ff6b6b] rounded-2xl flex items-center justify-center mr-3 shadow-lg">
+          <div>
+            <div className="flex items-center mb-3">
+              <div className="w-12 h-12 bg-emerald-500 rounded-lg flex items-center justify-center mr-3">
                 <FaDatabase className="text-white text-xl" />
               </div>
-              <h1 className="text-3xl font-bold text-white uppercase tracking-wider">
-                PROJECT DASHBOARD
+              <h1 className="text-3xl font-bold text-gray-900">
+                Project Dashboard
               </h1>
             </div>
-            <p className="text-gray-300 text-lg font-light">
+            <p className="text-gray-600 text-lg">
               Manage and monitor your agricultural initiatives
             </p>
           </div>
@@ -175,49 +152,49 @@ export default function ViewProjects() {
             {/* Search Bar */}
             <div className="relative group">
               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                <FaSearch className="text-gray-400 group-focus-within:text-[#ff3b3b] transition-colors duration-300" />
+                <FaSearch className="text-gray-400 group-focus-within:text-emerald-500 transition-colors duration-300" />
               </div>
               <input
                 type="text"
-                placeholder="Search deployments..."
+                placeholder="Search projects..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-12 pr-4 py-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl focus:outline-none focus:border-[#ff3b3b] focus:ring-2 focus:ring-[#ff3b3b]/30 text-white placeholder-gray-400 w-full transition-all duration-300"
+                className="pl-12 pr-4 py-3 bg-white border border-gray-300 rounded-lg focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/25 text-gray-900 placeholder-gray-500 w-full transition-all duration-300"
               />
             </div>
             
             <button
               onClick={() => navigate("/farmer/projects/add")}
-              className="flex items-center justify-center bg-gradient-to-r from-[#ff3b3b] to-[#ff6b6b] hover:shadow-2xl hover:shadow-[#ff3b3b]/30 text-white px-6 py-3 rounded-xl font-bold transition-all duration-300 transform hover:scale-105 border border-[#ff3b3b]/20"
+              className="flex items-center justify-center bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-300"
             >
               <FaRocket className="mr-2 text-sm" />
-              NEW DEPLOYMENT
+              New Project
             </button>
           </div>
         </div>
 
         {/* Projects Grid */}
         {filteredProjects.length === 0 ? (
-          <div className="flex flex-col items-center justify-center bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 p-12 text-center shadow-2xl">
-            <div className="w-24 h-24 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-2xl flex items-center justify-center mb-6 border border-white/10">
+          <div className="flex flex-col items-center justify-center bg-white rounded-xl shadow-sm border p-12 text-center">
+            <div className="w-24 h-24 bg-gray-100 rounded-xl flex items-center justify-center mb-6">
               <div className="text-4xl">📋</div>
             </div>
-            <h3 className="text-2xl font-bold text-white uppercase tracking-wider mb-3">
-              {searchQuery ? "NO DEPLOYMENTS FOUND" : "NO ACTIVE DEPLOYMENTS"}
+            <h3 className="text-2xl font-bold text-gray-900 mb-3">
+              {searchQuery ? "No Projects Found" : "No Active Projects"}
             </h3>
-            <p className="text-gray-300 text-lg mb-8 max-w-md">
+            <p className="text-gray-600 text-lg mb-8 max-w-md">
               {searchQuery 
                 ? "Adjust your search parameters and try again" 
-                : "Launch your first agricultural initiative to get started"
+                : "Create your first agricultural project to get started"
               }
             </p>
             {!searchQuery && (
               <button
                 onClick={() => navigate("/farmer/projects/add")}
-                className="flex items-center justify-center bg-gradient-to-r from-[#ff3b3b] to-[#ff6b6b] hover:shadow-2xl hover:shadow-[#ff3b3b]/30 text-white px-8 py-4 rounded-xl font-bold transition-all duration-300 transform hover:scale-105 border border-[#ff3b3b]/20"
+                className="flex items-center justify-center bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-4 rounded-lg font-semibold transition-all duration-300"
               >
                 <FaRocket className="mr-3" />
-                INITIATE DEPLOYMENT
+                Create Project
               </button>
             )}
           </div>
@@ -231,49 +208,49 @@ export default function ViewProjects() {
               return (
                 <div
                   key={project._id}
-                  className="group bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:scale-[1.02] flex flex-col shadow-lg"
+                  className="group bg-white rounded-xl border shadow-sm hover:shadow-lg transition-all duration-300 hover:scale-[1.02] flex flex-col"
                 >
                   <div className="p-6 flex-grow">
                     {/* Header with Status */}
                     <div className="flex justify-between items-start mb-4">
-                      <h2 className="text-xl font-bold text-white tracking-wide line-clamp-2 flex-grow mr-3" style={{ minHeight: '64px' }}>
+                      <h2 className="text-xl font-bold text-gray-900 line-clamp-2 flex-grow mr-3" style={{ minHeight: '64px' }}>
                         {project.title}
                       </h2>
-                      <span className={`inline-flex items-center rounded-xl px-3 py-1 text-xs font-bold uppercase tracking-wide ${getStatusColors(project.status)}`}>
+                      <span className={`inline-flex items-center rounded-lg px-3 py-1 text-xs font-semibold ${getStatusColors(project.status)}`}>
                         {getStatusText(project.status)}
                       </span>
                     </div>
                     
                     {/* Description */}
-                    <p className="text-gray-300 text-sm mb-6 line-clamp-3 leading-relaxed">
+                    <p className="text-gray-600 text-sm mb-6 line-clamp-3 leading-relaxed">
                       {project.description}
                     </p>
                     
                     {/* Progress Section */}
                     <div className="mt-4">
                       <div className="flex justify-between items-baseline mb-2">
-                        <span className="text-sm font-semibold text-white uppercase tracking-wide">Funding Progress</span>
-                        <span className="text-sm text-gray-300 font-mono">{progressPercentage.toFixed(0)}%</span>
+                        <span className="text-sm font-semibold text-gray-700">Funding Progress</span>
+                        <span className="text-sm text-gray-600">{progressPercentage.toFixed(0)}%</span>
                       </div>
-                      <div className="w-full bg-white/20 rounded-full h-2.5 mb-3">
+                      <div className="w-full bg-gray-200 rounded-full h-2.5 mb-3">
                         <div
-                          className="bg-gradient-to-r from-[#ff3b3b] to-[#ff6b6b] h-2.5 rounded-full transition-all duration-500"
+                          className="bg-gradient-to-r from-emerald-500 to-blue-500 h-2.5 rounded-full transition-all duration-500"
                           style={{ width: `${progressPercentage}%` }}
                         ></div>
                       </div>
                       <div className="flex justify-between text-sm">
-                        <span className="font-bold text-white font-mono">{formatCurrency(project.currentFunding)}</span>
-                        <span className="text-gray-300 font-mono">Target: {formatCurrency(project.fundingGoal)}</span>
+                        <span className="font-bold text-gray-900">{formatCurrency(project.currentFunding)}</span>
+                        <span className="text-gray-600">Target: {formatCurrency(project.fundingGoal)}</span>
                       </div>
                     </div>
                   </div>
 
                   {/* Action Buttons */}
-                  <div className="px-6 py-4 bg-white/5 border-t border-white/10">
+                  <div className="px-6 py-4 bg-gray-50 border-t">
                     <div className="flex justify-between items-center">
                       <button
                         onClick={() => handleView(project._id)}
-                        className="text-white hover:text-[#ff3b3b] text-sm font-bold uppercase tracking-wide transition-all duration-300 hover:scale-105 group/view"
+                        className="text-emerald-600 hover:text-emerald-700 text-sm font-semibold transition-all duration-300 group/view"
                       >
                         <span className="flex items-center">
                           View Details
@@ -285,15 +262,15 @@ export default function ViewProjects() {
                         <div className="flex space-x-3">
                           <button
                             onClick={(e) => { e.stopPropagation(); handleEdit(project._id); }}
-                            className="p-2 text-gray-300 hover:text-white hover:bg-white/10 rounded-xl transition-all duration-300 transform hover:scale-110"
-                            title="Edit deployment"
+                            className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-200 rounded-lg transition-all duration-300"
+                            title="Edit project"
                           >
                             <FaEdit className="text-lg" />
                           </button>
                           <button
                             onClick={(e) => { e.stopPropagation(); handleDelete(project._id); }}
-                            className="p-2 text-gray-300 hover:text-[#ff3b3b] hover:bg-red-500/10 rounded-xl transition-all duration-300 transform hover:scale-110"
-                            title="Delete deployment"
+                            className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all duration-300"
+                            title="Delete project"
                           >
                             <FaTrashAlt className="text-lg" />
                           </button>
@@ -310,9 +287,9 @@ export default function ViewProjects() {
         {/* Stats Footer */}
         {filteredProjects.length > 0 && (
           <div className="mt-8 text-center">
-            <div className="inline-flex items-center bg-white/5 backdrop-blur-md rounded-2xl px-6 py-3 border border-white/10">
-              <span className="text-gray-300 text-sm font-medium uppercase tracking-wide">
-                Displaying <span className="text-white font-bold">{filteredProjects.length}</span> of <span className="text-white font-bold">{projects.length}</span> Active Deployments
+            <div className="inline-flex items-center bg-white rounded-lg shadow-sm border px-6 py-3">
+              <span className="text-gray-600 text-sm font-medium">
+                Displaying <span className="text-gray-900 font-bold">{filteredProjects.length}</span> of <span className="text-gray-900 font-bold">{projects.length}</span> Projects
               </span>
             </div>
           </div>

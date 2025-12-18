@@ -2,13 +2,14 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import {
-  FaSeedling,
-  FaDollarSign,
-  FaCalendarAlt,
-  FaPenNib,
-  FaRocket,
-  FaArrowLeft,
-} from "react-icons/fa";
+  Sprout,
+  DollarSign,
+  Calendar,
+  FileText,
+  Rocket,
+  ArrowLeft,
+  AlertCircle
+} from "lucide-react";
 
 export default function AddProject() {
   const navigate = useNavigate();
@@ -48,7 +49,7 @@ export default function AddProject() {
         fundingGoal: Number(form.fundingGoal),
       };
 
-      await axios.post("https://agricorus.onrender.com/api/projects/projects", projectData, {
+      await axios.post("http://localhost:5000/api/projects/projects", projectData, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
@@ -70,212 +71,182 @@ export default function AddProject() {
   };
 
   return (
-    <div
-      className="min-h-screen bg-gradient-to-br from-[#0a1a55] via-[#1a2a88] to-[#2d1a88] p-4 relative overflow-hidden"
-      style={{ fontFamily: "'Inter', 'Poppins', sans-serif" }}
-    >
-      {/* Animated background elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse animation-delay-2000"></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-red-500 rounded-full mix-blend-multiply filter blur-xl opacity-10 animate-pulse animation-delay-4000"></div>
-      </div>
-
-      <div className="relative z-10 flex justify-center items-center min-h-screen">
-        <div className="w-full max-w-2xl bg-white/10 backdrop-blur-md rounded-2xl shadow-2xl border border-white/20 p-8">
-          {/* Header Section */}
-          <div className="text-center mb-8">
-            <div className="flex items-center justify-center mb-4">
-              <div className="w-12 h-12 bg-gradient-to-r from-[#ff3b3b] to-[#ff6b6b] rounded-2xl flex items-center justify-center mr-3 shadow-lg">
-                <FaRocket className="text-white text-xl" />
-              </div>
-              <h1 className="text-3xl font-bold text-white uppercase tracking-wider">
-                Launch New Project
-              </h1>
+    <div className="min-h-screen bg-gray-50 p-4">
+      <div className="max-w-3xl mx-auto">
+        {/* Header */}
+        <div className="bg-white rounded-lg shadow-sm border p-6 mb-6">
+          <div className="flex items-center mb-4">
+            <div className="w-12 h-12 bg-emerald-600 rounded-lg flex items-center justify-center mr-4">
+              <Rocket className="h-6 w-6 text-white" />
             </div>
-
-            <p className="text-gray-200 text-lg font-light max-w-md mx-auto leading-relaxed">
-              Deploy your agricultural initiative and connect with global supporters
-            </p>
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">Launch New Project</h1>
+              <p className="text-gray-600 mt-1">Deploy your agricultural initiative and connect with global supporters</p>
+            </div>
           </div>
+        </div>
 
-          {/* Error Alert */}
-          {error && (
-            <div className="flex items-center bg-red-500/20 backdrop-blur-sm border border-red-400/50 text-white px-6 py-4 rounded-xl mb-8 shadow-lg">
-              <span className="mr-3 text-xl">⚠️</span>
-              <div>
-                <p className="font-semibold text-sm">System Alert</p>
-                <p className="text-sm opacity-90">{error}</p>
-              </div>
+        {/* Error Alert */}
+        {error && (
+          <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6 flex items-start">
+            <AlertCircle className="h-5 w-5 text-red-600 mr-3 flex-shrink-0 mt-0.5" />
+            <div>
+              <p className="font-semibold text-red-900 text-sm">Error</p>
+              <p className="text-red-700 text-sm">{error}</p>
             </div>
-          )}
+          </div>
+        )}
 
-          {/* Form Section */}
-          <form onSubmit={handleSubmit} className="space-y-8">
+        {/* Form */}
+        <div className="bg-white rounded-lg shadow-sm border p-6">
+          <form onSubmit={handleSubmit} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Title */}
-              <div className="relative group">
-                <div className="flex items-center bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl overflow-hidden focus-within:border-[#ff3b3b] focus-within:ring-2 focus-within:ring-[#ff3b3b]/30 transition-all duration-300 group-hover:scale-[1.02]">
-                  <div className="pl-4 text-gray-300 group-focus-within:text-[#ff3b3b] transition-colors duration-300">
-                    <FaPenNib />
-                  </div>
-                  <input
-                    type="text"
-                    name="title"
-                    placeholder="Project Title"
-                    value={form.title}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-4 py-4 outline-none bg-transparent text-white placeholder-gray-400 font-medium"
-                  />
-                </div>
-                <label className="block text-xs text-gray-300 mt-2 ml-1 font-light">
-                  Give your project a powerful name
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <FileText className="inline h-4 w-4 mr-1" />
+                  Project Title *
                 </label>
+                <input
+                  type="text"
+                  name="title"
+                  placeholder="e.g., Organic Tomato Greenhouse"
+                  value={form.title}
+                  onChange={handleChange}
+                  required
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                />
+                <p className="text-xs text-gray-500 mt-1">Give your project a powerful name</p>
               </div>
 
               {/* Crop Type */}
-              <div className="relative group">
-                <div className="flex items-center bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl overflow-hidden focus-within:border-[#ff3b3b] focus-within:ring-2 focus-within:ring-[#ff3b3b]/30 transition-all duration-300 group-hover:scale-[1.02]">
-                  <div className="pl-4 text-gray-300 group-focus-within:text-[#ff3b3b] transition-colors duration-300">
-                    <FaSeedling />
-                  </div>
-                  <input
-                    type="text"
-                    name="cropType"
-                    placeholder="e.g., Tomatoes, Wheat, Corn"
-                    value={form.cropType}
-                    onChange={handleChange}
-                    className="w-full px-4 py-4 outline-none bg-transparent text-white placeholder-gray-400 font-medium"
-                  />
-                </div>
-                <label className="block text-xs text-gray-300 mt-2 ml-1 font-light">
-                  Specify your crop type
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <Sprout className="inline h-4 w-4 mr-1" />
+                  Crop Type
                 </label>
+                <input
+                  type="text"
+                  name="cropType"
+                  placeholder="e.g., Tomatoes, Wheat, Corn"
+                  value={form.cropType}
+                  onChange={handleChange}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                />
+                <p className="text-xs text-gray-500 mt-1">Specify your crop type</p>
               </div>
 
               {/* Funding Goal */}
-              <div className="relative group">
-                <div className="flex items-center bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl overflow-hidden focus-within:border-[#ff3b3b] focus-within:ring-2 focus-within:ring-[#ff3b3b]/30 transition-all duration-300 group-hover:scale-[1.02]">
-                  <div className="pl-4 text-gray-300 group-focus-within:text-[#ff3b3b] transition-colors duration-300">
-                    <FaDollarSign />
-                  </div>
-                  <input
-                    type="number"
-                    name="fundingGoal"
-                    placeholder="e.g., 50000"
-                    value={form.fundingGoal}
-                    onChange={handleChange}
-                    required
-                    min={100}
-                    className="w-full px-4 py-4 outline-none bg-transparent text-white placeholder-gray-400 font-medium"
-                  />
-                </div>
-                <label className="block text-xs text-gray-300 mt-2 ml-1 font-light">
-                  Set your funding target (USD)
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <DollarSign className="inline h-4 w-4 mr-1" />
+                  Funding Goal (₹) *
                 </label>
+                <input
+                  type="number"
+                  name="fundingGoal"
+                  placeholder="e.g., 50000"
+                  value={form.fundingGoal}
+                  onChange={handleChange}
+                  required
+                  min={100}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                />
+                <p className="text-xs text-gray-500 mt-1">Set your funding target</p>
               </div>
 
               {/* End Date */}
-              <div className="relative group">
-                <div className="flex items-center bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl overflow-hidden focus-within:border-[#ff3b3b] focus-within:ring-2 focus-within:ring-[#ff3b3b]/30 transition-all duration-300 group-hover:scale-[1.02]">
-                  <div className="pl-4 text-gray-300 group-focus-within:text-[#ff3b3b] transition-colors duration-300">
-                    <FaCalendarAlt />
-                  </div>
-                  <input
-                    type="date"
-                    name="endDate"
-                    id="endDate"
-                    value={form.endDate}
-                    onChange={handleChange}
-                    required
-                    min={new Date().toISOString().split("T")[0]}
-                    className="w-full px-4 py-4 outline-none bg-transparent text-white font-medium [color-scheme:dark]"
-                  />
-                </div>
-                <label className="block text-xs text-gray-300 mt-2 ml-1 font-light">
-                  Campaign deployment deadline
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <Calendar className="inline h-4 w-4 mr-1" />
+                  Campaign End Date *
                 </label>
+                <input
+                  type="date"
+                  name="endDate"
+                  value={form.endDate}
+                  onChange={handleChange}
+                  required
+                  min={new Date().toISOString().split("T")[0]}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                />
+                <p className="text-xs text-gray-500 mt-1">Campaign deployment deadline</p>
               </div>
             </div>
 
             {/* Description */}
-            <div className="relative group">
-              <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl overflow-hidden focus-within:border-[#ff3b3b] focus-within:ring-2 focus-within:ring-[#ff3b3b]/30 transition-all duration-300 group-hover:scale-[1.02]">
-                <textarea
-                  name="description"
-                  placeholder="Describe your project vision, technology, and impact..."
-                  value={form.description}
-                  onChange={handleChange}
-                  required
-                  rows={6}
-                  className="w-full px-4 py-4 outline-none bg-transparent text-white placeholder-gray-400 resize-none font-medium"
-                />
-              </div>
-              <label className="block text-xs text-gray-300 mt-2 ml-1 font-light">
-                Detail your project specifications and vision
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Project Description *
               </label>
+              <textarea
+                name="description"
+                placeholder="Describe your project vision, technology, and impact..."
+                value={form.description}
+                onChange={handleChange}
+                required
+                rows={6}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 resize-none"
+              />
+              <p className="text-xs text-gray-500 mt-1">Detail your project specifications and vision</p>
             </div>
 
             {/* Submit Button */}
-            <button
-              type="submit"
-              disabled={loading}
-              className={`w-full font-bold py-4 rounded-xl transition-all duration-300 transform hover:scale-[1.02] active:scale-95 ${
-                loading
-                  ? "bg-gray-400 cursor-not-allowed text-gray-600 shadow-inner"
-                  : "bg-gradient-to-r from-[#ff3b3b] to-[#ff6b6b] text-white hover:shadow-2xl hover:shadow-[#ff3b3b]/30 border border-[#ff3b3b]/20"
-              } shadow-lg`}
-            >
-              <div className="flex items-center justify-center space-x-2">
+            <div className="flex items-center gap-4">
+              <button
+                type="submit"
+                disabled={loading}
+                className={`flex-1 flex items-center justify-center px-6 py-3 rounded-lg font-semibold transition-colors duration-200 ${
+                  loading
+                    ? "bg-gray-400 cursor-not-allowed text-gray-600"
+                    : "bg-emerald-600 hover:bg-emerald-700 text-white"
+                }`}
+              >
                 {loading ? (
                   <>
-                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                    <span>Deploying Project...</span>
+                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2"></div>
+                    Creating Project...
                   </>
                 ) : (
                   <>
-                    <FaRocket className="text-sm" />
-                    <span>Launch Project</span>
+                    <Rocket className="h-5 w-5 mr-2" />
+                    Launch Project
                   </>
                 )}
-              </div>
-            </button>
-          </form>
+              </button>
 
-          {/* Back Button */}
-          <div className="mt-8 text-center">
-            <button
-              onClick={() => navigate("/farmer/projects")}
-              className="inline-flex items-center text-white/80 hover:text-white font-medium text-sm transition-all duration-300 hover:scale-105 group"
-            >
-              <FaArrowLeft className="mr-2 group-hover:-translate-x-1 transition-transform duration-300" />
-              Return to Project Dashboard
-            </button>
+              <button
+                type="button"
+                onClick={() => navigate("/farmer/projects")}
+                className="flex items-center px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-semibold transition-colors duration-200"
+              >
+                <ArrowLeft className="h-5 w-5 mr-2" />
+                Cancel
+              </button>
+            </div>
+          </form>
+        </div>
+
+        {/* Info Box */}
+        <div className="mt-6 bg-emerald-50 border border-emerald-200 rounded-lg p-4">
+          <div className="flex items-start">
+            <div className="flex-shrink-0">
+              <div className="w-8 h-8 bg-emerald-600 rounded-lg flex items-center justify-center">
+                <Rocket className="h-4 w-4 text-white" />
+              </div>
+            </div>
+            <div className="ml-3">
+              <h3 className="text-sm font-semibold text-emerald-900 mb-1">Project Guidelines</h3>
+              <ul className="text-sm text-emerald-800 space-y-1">
+                <li>• Projects require admin approval before going live</li>
+                <li>• Provide detailed and accurate information</li>
+                <li>• Set realistic funding goals and timelines</li>
+                <li>• Keep your project description clear and compelling</li>
+              </ul>
+            </div>
           </div>
         </div>
       </div>
-
-      {/* Add custom styles for date input in dark mode */}
-      <style>{`
-        input[type="date"]::-webkit-calendar-picker-indicator {
-          filter: invert(1);
-          opacity: 0.7;
-          cursor: pointer;
-        }
-        input[type="date"]::-webkit-datetime-edit-text,
-        input[type="date"]::-webkit-datetime-edit-month-field,
-        input[type="date"]::-webkit-datetime-edit-day-field,
-        input[type="date"]::-webkit-datetime-edit-year-field {
-          color: white;
-        }
-        input[type="date"]:invalid::-webkit-datetime-edit-text,
-        input[type="date"]:invalid::-webkit-datetime-edit-month-field,
-        input[type="date"]:invalid::-webkit-datetime-edit-day-field,
-        input[type="date"]:invalid::-webkit-datetime-edit-year-field {
-          color: #9CA3AF;
-        }
-      `}</style>
     </div>
   );
 }

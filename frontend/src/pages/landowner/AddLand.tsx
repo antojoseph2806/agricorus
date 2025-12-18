@@ -262,7 +262,7 @@ const AddLand: React.FC = () => {
     }
 
     try {
-      const response = await fetch('https://agricorus.onrender.com/api/landowner/lands', { 
+      const response = await fetch('http://localhost:5000/api/landowner/lands', { 
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -294,39 +294,39 @@ const AddLand: React.FC = () => {
 
   return (
     <Layout> 
-      <div className="min-h-screen bg-gradient-to-br from-[#0a1a55] via-[#1a2a88] to-[#2d1a88] py-8 px-4">
+      <div className="min-h-screen bg-gray-50 py-8 px-4">
         <div className="max-w-6xl mx-auto">
-          {/* Header Section (omitted) */}
+          {/* Header Section */}
           <div className="text-center mb-12">
-            <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-[#ff3b3b] to-[#ff6b6b] rounded-2xl mb-6 shadow-2xl">
+            <div className="inline-flex items-center justify-center w-20 h-20 bg-emerald-600 rounded-2xl mb-6 shadow-lg">
               <Server className="w-10 h-10 text-white" />
             </div>
-            <h1 className="text-4xl font-bold text-white uppercase tracking-widest mb-4 font-['Poppins']">
+            <h1 className="text-4xl font-bold text-gray-900 mb-4">
               List New Land
             </h1>
-            <p className="text-gray-300 text-lg max-w-2xl mx-auto font-['Inter']">
-              Deploy your land listing with our secure platform. Fill in the details below.
+            <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+              Add your land listing to our platform. Fill in the details below.
             </p>
           </div>
 
           {/* Main Form Card */}
-          <div className="bg-gradient-to-br from-[#1a2a88]/80 to-[#2d1a88]/80 backdrop-blur-sm rounded-2xl shadow-2xl border border-white/10 p-8 transition-all duration-300 ease-in-out hover:shadow-2xl">
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
             {/* Status Messages */}
             {(status === 'success' || status === 'error' || isLocating || isSearching) && (
-              <div className={`mb-8 p-6 rounded-xl flex items-center shadow-lg 
-                ${status === 'success' ? 'bg-green-500/20 border border-green-500/50' : 
-                  (status === 'error' ? 'bg-red-500/20 border border-red-500/50' : 
-                  'bg-blue-500/20 border border-blue-500/50')
+              <div className={`mb-8 p-6 rounded-xl flex items-center border
+                ${status === 'success' ? 'bg-green-50 border-green-200' : 
+                  (status === 'error' ? 'bg-red-50 border-red-200' : 
+                  'bg-blue-50 border-blue-200')
                 }`}>
                 {isLocating || isSearching ? 
-                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-400 mr-4"></div> : 
-                  (status === 'success' ? <CheckCircle className="w-6 h-6 mr-4 text-green-400" /> : <XCircle className="w-6 h-6 mr-4 text-red-400" />)
+                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600 mr-4"></div> : 
+                  (status === 'success' ? <CheckCircle className="w-6 h-6 mr-4 text-green-600" /> : <XCircle className="w-6 h-6 mr-4 text-red-600" />)
                 }
                 <div>
-                  <p className={`font-semibold text-lg ${status === 'success' ? 'text-green-200' : (status === 'error' ? 'text-red-200' : 'text-blue-200')}`}>
+                  <p className={`font-semibold text-lg ${status === 'success' ? 'text-green-900' : (status === 'error' ? 'text-red-900' : 'text-blue-900')}`}>
                     {isLocating ? 'Fetching Current Location...' : (isSearching ? 'Searching Coordinates by Address...' : (status === 'success' ? 'Operation Successful!' : 'Operation Failed'))}
                   </p>
-                  <p className={status === 'success' ? 'text-green-300' : (status === 'error' ? 'text-red-300' : 'text-blue-300')}>
+                  <p className={status === 'success' ? 'text-green-700' : (status === 'error' ? 'text-red-700' : 'text-blue-700')}>
                     {message}
                   </p>
                 </div>
@@ -339,10 +339,10 @@ const AddLand: React.FC = () => {
                 <div className="space-y-6">
                   {/* ... Land Title, Soil Type, Water Source, Accessibility fields ... */}
                   {/* Land Title */}
-                  <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10 hover:border-white/20 transition-all duration-300">
-                    <label htmlFor="title" className="block text-sm font-medium text-gray-300 uppercase tracking-wider mb-3">
+                  <div className="bg-white rounded-xl p-6 border border-gray-200 hover:border-emerald-300 transition-all duration-300">
+                    <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-3">
                       <Badge className="w-5 h-5 inline mr-2" />
-                      Land Title <span className="text-red-400">*</span>
+                      Land Title <span className="text-red-600">*</span>
                     </label>
                     <input
                       type="text"
@@ -351,16 +351,16 @@ const AddLand: React.FC = () => {
                       value={landData.title}
                       onChange={handleChange}
                       required
-                      className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-[#ff3b3b] transition-colors duration-300"
+                      className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/25 transition-colors duration-300"
                       placeholder="e.g., Premium 5-Acre Agricultural Plot"
                     />
                   </div>
 
                   {/* Soil Type */}
-                  <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10 hover:border-white/20 transition-all duration-300">
-                    <label htmlFor="soilType" className="block text-sm font-medium text-gray-300 uppercase tracking-wider mb-3">
+                  <div className="bg-white rounded-xl p-6 border border-gray-200 hover:border-emerald-300 transition-all duration-300">
+                    <label htmlFor="soilType" className="block text-sm font-medium text-gray-700 mb-3">
                       <Tractor className="w-5 h-5 inline mr-2" />
-                      Soil Type <span className="text-red-400">*</span>
+                      Soil Type <span className="text-red-600">*</span>
                     </label>
                     <input
                       type="text"
@@ -369,14 +369,14 @@ const AddLand: React.FC = () => {
                       value={landData.soilType}
                       onChange={handleChange}
                       required
-                      className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-[#ff3b3b] transition-colors duration-300"
+                      className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/25 transition-colors duration-300"
                       placeholder="e.g., Alluvial, Red Soil, Black Cotton"
                     />
                   </div>
 
                   {/* Water Source */}
-                  <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10 hover:border-white/20 transition-all duration-300">
-                    <label htmlFor="waterSource" className="block text-sm font-medium text-gray-300 uppercase tracking-wider mb-3">
+                  <div className="bg-white rounded-xl p-6 border border-gray-200 hover:border-emerald-300 transition-all duration-300">
+                    <label htmlFor="waterSource" className="block text-sm font-medium text-gray-700 mb-3">
                       <Waves className="w-5 h-5 inline mr-2" />
                       Water Source
                     </label>
@@ -386,14 +386,14 @@ const AddLand: React.FC = () => {
                       id="waterSource"
                       value={landData.waterSource}
                       onChange={handleChange}
-                      className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-[#ff3b3b] transition-colors duration-300"
+                      className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/25 transition-colors duration-300"
                       placeholder="e.g., Borewell, River, Canal"
                     />
                   </div>
 
                   {/* Accessibility */}
-                  <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10 hover:border-white/20 transition-all duration-300">
-                    <label htmlFor="accessibility" className="block text-sm font-medium text-gray-300 uppercase tracking-wider mb-3">
+                  <div className="bg-white rounded-xl p-6 border border-gray-200 hover:border-emerald-300 transition-all duration-300">
+                    <label htmlFor="accessibility" className="block text-sm font-medium text-gray-700 mb-3">
                       <Route className="w-5 h-5 inline mr-2" />
                       Accessibility
                     </label>
@@ -403,7 +403,7 @@ const AddLand: React.FC = () => {
                       id="accessibility"
                       value={landData.accessibility}
                       onChange={handleChange}
-                      className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-[#ff3b3b] transition-colors duration-300"
+                      className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/25 transition-colors duration-300"
                       placeholder="e.g., Paved Road Access, Highway Nearby"
                     />
                   </div>

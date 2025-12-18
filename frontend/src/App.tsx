@@ -7,8 +7,16 @@ import RegisterPage from "./pages/RegisterPage";
 import LoginPage from "./pages/LoginPage";
 import Contact from "./pages/Contact";
 import About from "./pages/About";
-import PublicViewLands from "./pages/PublicViewLands"; 
+import PublicViewLands from "./pages/PublicViewLands";
 import PublicLandDetail from "./pages/PublicLandDetail";
+
+// Marketplace Pages
+import Marketplace from "./pages/marketplace/Marketplace";
+import ProductDetails from "./pages/marketplace/ProductDetails";
+import Cart from "./pages/marketplace/Cart";
+import Checkout from "./pages/marketplace/Checkout";
+import OrderHistory from "./pages/marketplace/OrderHistory";
+import OrderDetails from "./pages/marketplace/OrderDetails";
 
 // Farmer Pages
 import FarmerDashboard from "./pages/farmer/FarmerDashboard";
@@ -58,6 +66,19 @@ import InvestorProfile from "./pages/investor/InvestorProfile";
 import InvestorReturnRequest from "./pages/investor/InvestorReturnRequest";
 import ReturnRequestHistory from "./pages/investor/ReturnRequestHistory";
 
+
+//vendor pages
+import VendorRegister from "./pages/vendor/VendorRegister";
+import VendorLogin from "./pages/vendor/VendorLogin";
+import VendorDashboard from "./pages/vendor/VendorDashboard";
+import ProductList from "./pages/vendor/ProductList";
+import AddProduct from "./pages/vendor/AddProduct";
+import EditProduct from "./pages/vendor/EditProduct";
+import VendorProfile from "./pages/vendor/VendorProfile";
+import VendorOrders from "./pages/vendor/VendorOrders";
+import VendorFeedback from "./pages/vendor/VendorFeedback";
+
+
 // Admin Pages
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminLandManagement from "./pages/admin/AdminLandManagement";
@@ -69,9 +90,10 @@ import ManageProjects from "./pages/admin/ManageProjects";
 import EditProjectadmin from "./pages/admin/EditProjectadmin";
 import ManageInvestments from "./pages/admin/ManageInvestments";
 import AdminDisputeDashboard from "./pages/admin/AdminDisputeDashboard";
-import FarmerDisputeManager from "./pages/admin/AdminDisputeManager";
 import ReturnRequestsAdmin from "./pages/admin/ReturnRequests";
 import AdminPaymentRequests from "./pages/admin/AdminPaymentRequests";
+import VendorKycManagement from "./pages/admin/VendorKycManagement";
+import VerifiedVendors from "./pages/admin/VerifiedVendors";
 
 // Profile Pages
 import ProfileView from "./pages/landowner/ProfileView";
@@ -99,6 +121,10 @@ function App() {
           <Route path="/public-lands" element={<PublicViewLands />} />
           <Route path="/land-details" element={<PublicLandDetail />} />
 
+          {/* Marketplace Routes (Public) */}
+          <Route path="/marketplace" element={<Marketplace />} />
+          <Route path="/marketplace/product/:id" element={<ProductDetails />} />
+
           {/* ----------------- Farmer Routes ----------------- */}
           <Route
             element={
@@ -112,10 +138,10 @@ function App() {
             <Route path="/farmer/leases/cancelled" element={<CancelledLeases />} />
             <Route path="/farmer/leases/active" element={<ActiveLeases />} />
 
-            <Route 
-          path="/farmer/profile" 
-          element={<FarmerProfile />} 
-        />
+            <Route
+              path="/farmer/profile"
+              element={<FarmerProfile />}
+            />
 
             {/* Farmer Project Routes */}
             <Route path="/farmer/projects" element={<ViewProjects />} />
@@ -127,13 +153,13 @@ function App() {
             <Route path="/ongoing-projects" element={<OngoingProjects />} />
 
             <Route path="/farmer/kyc/verify" element={<FarmerKYCVerify />} />
-<Route path="/farmer/kyc/status" element={<FarmerKYCStatus />} />
+            <Route path="/farmer/kyc/status" element={<FarmerKYCStatus />} />
 
 
 
             {/* farmer disputes routes*/}
-             <Route path="/disputes/my" element={<MyDisputes />} />
-             <Route path="/disputes/against" element={<AgainstDisputes />} />
+            <Route path="/disputes/my" element={<MyDisputes />} />
+            <Route path="/disputes/against" element={<AgainstDisputes />} />
           </Route>
 
           {/* ----------------- Landowner Routes ----------------- */}
@@ -151,7 +177,7 @@ function App() {
           <Route path="/request-payment" element={<RequestPayment />} />
           <Route path="/payment-history" element={<PaymentHistory />} />
           <Route path="/profile/kyc-verify" element={<KycVerify />} />
-        <Route path="/profile/kyc-status" element={<KycStatus />} />
+          <Route path="/profile/kyc-status" element={<KycStatus />} />
 
           <Route
             path="/lands/add"
@@ -209,10 +235,10 @@ function App() {
               />
             }
           />
-          <Route 
-          path="/landowner/disputes" 
-          element={<LandownerDisputeHistory />} 
-        />
+          <Route
+            path="/landowner/disputes"
+            element={<LandownerDisputeHistory />}
+          />
           <Route
             path="/leaserequests/active"
             element={
@@ -224,36 +250,100 @@ function App() {
           />
 
           {/* ----------------- Investor Routes ----------------- */}
-<Route
-  path="/investordashboard"
-  element={
-    <ProtectedRoute element={<InvestorDashboard />} allowedRoles={["investor"]} />
-  }
-/>
+          <Route
+            path="/investordashboard"
+            element={
+              <ProtectedRoute element={<InvestorDashboard />} allowedRoles={["investor"]} />
+            }
+          />
 
-<Route
-  path="/projects"
-  element={
-    <ProtectedRoute element={<InvestorProjects />} allowedRoles={["investor"]} />
-  }
-/>
+          <Route
+            path="/projects"
+            element={
+              <ProtectedRoute element={<InvestorProjects />} allowedRoles={["investor"]} />
+            }
+          />
 
-<Route
-  path="/projects/:id"
-  element={
-    <ProtectedRoute element={<InvestorProjectDetails />} allowedRoles={["investor"]} />
-  }
-/>
-<Route path="/investor/verify-identity" element={<VerifyIdentity />} />
-<Route path="/investor/kyc-status" element={<KYCStatus />} />
-<Route path="/investments/history" element={<InvestmentHistory />} />
-<Route path="/investor/upi/manage" element={<ManageUPI />} />
-<Route path="/investor/profile" element={<InvestorProfile />} />
-        <Route path="/investor/bank/manage" element={<ManageBank />} />
-        <Route path="/investor/return-request" element={<InvestorReturnRequest />} />
-        <Route path="/investor/return-requests-history" element={<ReturnRequestHistory />} />
-
-
+          <Route
+            path="/projects/:id"
+            element={
+              <ProtectedRoute element={<InvestorProjectDetails />} allowedRoles={["investor"]} />
+            }
+          />
+          <Route path="/investor/verify-identity" element={<VerifyIdentity />} />
+          <Route path="/investor/kyc-status" element={<KYCStatus />} />
+          <Route path="/investments/history" element={<InvestmentHistory />} />
+          <Route path="/investor/upi/manage" element={<ManageUPI />} />
+          <Route path="/investor/profile" element={<InvestorProfile />} />
+          <Route path="/investor/bank/manage" element={<ManageBank />} />
+          <Route path="/investor/return-request" element={<InvestorReturnRequest />} />
+          <Route path="/investor/return-requests-history" element={<ReturnRequestHistory />} />
+          {/* ----------------- Vendor Routes ----------------- */}
+          <Route path="/vendor/register" element={<VendorRegister />} />
+          <Route path="/vendor/login" element={<VendorLogin />} />
+          <Route
+            path="/vendor/dashboard"
+            element={
+              <ProtectedRoute
+                element={<VendorDashboard />}
+                allowedRoles={["vendor"]}
+              />
+            }
+          />
+          <Route
+            path="/vendor/products"
+            element={
+              <ProtectedRoute
+                element={<ProductList />}
+                allowedRoles={["vendor"]}
+              />
+            }
+          />
+          <Route
+            path="/vendor/products/add"
+            element={
+              <ProtectedRoute
+                element={<AddProduct />}
+                allowedRoles={["vendor"]}
+              />
+            }
+          />
+          <Route
+            path="/vendor/products/edit/:id"
+            element={
+              <ProtectedRoute
+                element={<EditProduct />}
+                allowedRoles={["vendor"]}
+              />
+            }
+          />
+          <Route
+            path="/vendor/profile"
+            element={
+              <ProtectedRoute
+                element={<VendorProfile />}
+                allowedRoles={["vendor"]}
+              />
+            }
+          />
+          <Route
+            path="/vendor/orders"
+            element={
+              <ProtectedRoute
+                element={<VendorOrders />}
+                allowedRoles={["vendor"]}
+              />
+            }
+          />
+          <Route
+            path="/vendor/feedback"
+            element={
+              <ProtectedRoute
+                element={<VendorFeedback />}
+                allowedRoles={["vendor"]}
+              />
+            }
+          />
           {/* ----------------- Admin Routes ----------------- */}
           <Route
             path="/admindashboard"
@@ -287,42 +377,88 @@ function App() {
             path="/admin/lands/:id"
             element={<ProtectedRoute element={<AdminViewSpecificLand />} allowedRoles={["admin"]} />}
           />
-          <Route 
+          <Route
             path="/admin/users/landowners"
-            element={<ManageUsers role="landowner" />} 
+            element={<ManageUsers role="landowner" />}
           />
           <Route
-            path="/admin/users/farmers" 
-            element={<ManageUsers role="farmer" />} 
+            path="/admin/users/farmers"
+            element={<ManageUsers role="farmer" />}
           />
-          <Route 
+          <Route
             path="/admin/users/investors"
-            element={<ManageUsers role="investor" />} 
+            element={<ManageUsers role="investor" />}
           />
           <Route
-          path="/admin/manage-investments"
-          element={<ManageInvestments />}
-        />
-        <Route path="/admin/return-requests" element={<ReturnRequestsAdmin />}/>
-          <Route 
-            path="/admin/leases"
-            element={<AdminLeasesPage />} 
+            path="/admin/manage-investments"
+            element={<ManageInvestments />}
           />
-          <Route 
-            path="/admin/leases/:id/edit" 
-            element={<AdminEditLeasePage />} 
+          <Route path="/admin/return-requests" element={<ReturnRequestsAdmin />} />
+          <Route
+            path="/admin/vendor-kyc"
+            element={<ProtectedRoute element={<VendorKycManagement />} allowedRoles={["admin"]} />}
+          />
+          <Route
+            path="/admin/verified-vendors"
+            element={<ProtectedRoute element={<VerifiedVendors />} allowedRoles={["admin"]} />}
+          />
+          <Route
+            path="/admin/leases"
+            element={<AdminLeasesPage />}
+          />
+          <Route
+            path="/admin/leases/:id/edit"
+            element={<AdminEditLeasePage />}
           />
           <Route path="/admin/manage-projects" element={<ManageProjects />} />
           <Route path="projects/:id" element={<ManageProjects />} />
           <Route path="/admin/projects/edit/:id" element={<EditProjectadmin />} />
-          <Route path="/admin/landowner/disputes" element={  <AdminDisputeDashboard />}/>
+          <Route path="/admin/landowner/disputes" element={<AdminDisputeDashboard />} />
           <Route path="/admin/farmer/disputes" element={<AdminDisputeManager />} />
           <Route
-          path="/admin/payment-requests"
-          element={
+            path="/admin/payment-requests"
+            element={
               <AdminPaymentRequests />
-          }
-        />
+            }
+          />
+          {/* ----------------- Marketplace Routes (Protected) ----------------- */}
+          <Route
+            path="/cart"
+            element={
+              <ProtectedRoute
+                element={<Cart />}
+                allowedRoles={["farmer", "landowner", "investor"]}
+              />
+            }
+          />
+          <Route
+            path="/checkout"
+            element={
+              <ProtectedRoute
+                element={<Checkout />}
+                allowedRoles={["farmer", "landowner", "investor"]}
+              />
+            }
+          />
+          <Route
+            path="/orders"
+            element={
+              <ProtectedRoute
+                element={<OrderHistory />}
+                allowedRoles={["farmer", "landowner", "investor"]}
+              />
+            }
+          />
+          <Route
+            path="/orders/:id"
+            element={
+              <ProtectedRoute
+                element={<OrderDetails />}
+                allowedRoles={["farmer", "landowner", "investor"]}
+              />
+            }
+          />
+
           {/* ----------------- Profile Routes ----------------- */}
           <Route
             path="/profile/view"

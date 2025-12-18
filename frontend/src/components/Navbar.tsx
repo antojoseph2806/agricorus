@@ -32,6 +32,7 @@ const Navbar: React.FC = () => {
             <Link to="/about" className="text-gray-700 hover:text-primary-600 transition-colors">About Us</Link>
             <Link to="/contact" className="text-gray-700 hover:text-primary-600 transition-colors">Contact Us</Link>
             <Link to="/register" className="btn-primary">Get Started</Link>
+            <Link to="/vendor/register" className="btn-primary">Register as a vendor?</Link>
           </div>
 
           {/* Mobile Menu Button */}

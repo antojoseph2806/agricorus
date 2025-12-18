@@ -50,6 +50,8 @@ interface Land {
 
 const FarmerLandDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
+  const backendUrl =
+    (import.meta as any).env.VITE_BACKEND_URL || "http://localhost:5000";
   const [land, setLand] = useState<Land | null>(null);
   const [loading, setLoading] = useState(true);
   const [requesting, setRequesting] = useState(false);
@@ -60,14 +62,19 @@ const FarmerLandDetail: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
-  // Type the icons so TS knows they are React components
+  // Type the icons so TS knows they are React components (defined once)
   const techIcons: LucideIcon[] = [Server, Cloud, Shield, Cpu];
+
+  // Uppercase component variable (must be declared before conditional returns to avoid hook order issues)
+  const RandomTechIcon = useMemo<LucideIcon>(() => {
+    return techIcons[Math.floor(Math.random() * techIcons.length)];
+  }, [techIcons]);
 
   useEffect(() => {
     const fetchLand = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await fetch(`https://agricorus.onrender.com/api/farmer/lands/${id}`, {
+        const res = await fetch(`${backendUrl}/api/farmer/lands/${id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (!res.ok) throw new Error("Failed to fetch land details");
@@ -83,7 +90,7 @@ const FarmerLandDetail: React.FC = () => {
     };
 
     fetchLand();
-  }, [id]);
+  }, [id, backendUrl]);
 
   const handleLeaseRequest = async () => {
     if (!id || !land) return;
@@ -106,7 +113,7 @@ const FarmerLandDetail: React.FC = () => {
     try {
       const token = localStorage.getItem("token");
       const res = await fetch(
-        `https://agricorus.onrender.com/api/farmer/leases/${id}/request`,
+        `${backendUrl}/api/farmer/leases/${id}/request`,
         {
           method: "POST",
           headers: {
@@ -159,15 +166,15 @@ const FarmerLandDetail: React.FC = () => {
           <p className="text-gray-400 font-inter text-lg">
             The requested land details could not be loaded from our network.
           </p>
+          {error && (
+            <p className="text-red-300 mt-2 text-sm">
+              {error}
+            </p>
+          )}
         </div>
       </div>
     );
   }
-
-  // Uppercase component variable
-  const RandomTechIcon = useMemo<LucideIcon>(() => {
-    return techIcons[Math.floor(Math.random() * techIcons.length)];
-  }, []); // choose once per mount
 
   const actionDisabled =
     requesting ||
@@ -176,83 +183,78 @@ const FarmerLandDetail: React.FC = () => {
     land.status !== "available";
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-4 lg:p-6">
+    <div className="min-h-screen bg-gray-50 px-4 py-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <motion.div
-          className="relative bg-gradient-to-r from-blue-600/20 via-purple-600/20 to-blue-600/20 rounded-2xl p-6 lg:p-8 mb-8 border border-white/10 backdrop-blur-sm overflow-hidden"
+          className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 lg:p-8 mb-6"
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.6 }}
         >
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent animate-pulse"></div>
-          <div className="absolute -top-20 -right-20 w-40 h-40 bg-purple-500/20 rounded-full blur-3xl"></div>
-
-          <div className="relative z-10">
-            <div className="flex items-center mb-4">
-              <div className="h-10 w-1 bg-red-500 mr-4 rounded-full shadow-lg shadow-red-500/25"></div>
+          <div className="flex items-center mb-4">
+            <div className="h-10 w-1 bg-emerald-500 mr-4 rounded-full"></div>
               <div>
-                <h1 className="text-3xl lg:text-4xl font-bold text-white font-poppins uppercase tracking-wider">
+                <h1 className="text-3xl lg:text-4xl font-bold text-gray-900">
                   {land.title}
                 </h1>
-                <p className="text-gray-300 font-inter text-lg mt-2">
-                  Complete technical specifications for this agricultural land
+                <p className="text-gray-600 mt-2">
+                  Complete technical specifications for this agricultural land.
                 </p>
               </div>
             </div>
 
             {/* Status Badge */}
-            <div className="inline-flex items-center gap-2 bg-gray-800/50 px-4 py-2 rounded-full border border-white/10">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gray-50 border border-gray-200">
               <div
                 className={`w-2 h-2 rounded-full ${
                   land.status === "available"
-                    ? "bg-green-500 animate-pulse"
+                    ? "bg-emerald-500"
                     : land.status === "leased"
                     ? "bg-red-500"
                     : "bg-yellow-500"
                 }`}
               ></div>
-              <span className="text-sm text-gray-300 uppercase tracking-wide font-poppins">
-                {land.status} • {land.isApproved ? "Verified" : "Pending Verification"}
+              <span className="text-sm text-gray-700 font-medium">
+                {land.status.toUpperCase()} •{" "}
+                {land.isApproved ? "Verified" : "Pending Verification"}
               </span>
             </div>
-          </div>
         </motion.div>
 
         {/* Images Gallery */}
         <motion.div
-          className="mb-8"
+          className="mb-4"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.3, duration: 0.7 }}
+          transition={{ delay: 0.1, duration: 0.4 }}
         >
           {land.landPhotos && land.landPhotos.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {land.landPhotos.map((photo, idx) => (
                 <motion.div
                   key={idx}
-                  className="group relative cursor-pointer overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-gray-900/50 to-gray-800/50 backdrop-blur-sm"
-                  whileHover={{ scale: 1.02 }}
-                  transition={{ type: "spring", stiffness: 200 }}
+                  className="group relative cursor-pointer overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm"
+                  whileHover={{ scale: 1.01 }}
+                  transition={{ type: "spring", stiffness: 220 }}
                   onClick={() => setSelectedImage(photo)}
                 >
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"></div>
                   <img
                     src={photo}
                     alt={`Land photo ${idx + 1}`}
-                    className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-700"
+                    className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-500"
                   />
-                  <div className="absolute bottom-3 left-3 bg-black/50 text-white text-xs px-2 py-1 rounded-lg backdrop-blur-sm">
+                  <div className="absolute bottom-3 left-3 bg-black/60 text-white text-xs px-2 py-1 rounded-lg">
                     View {idx + 1}
                   </div>
                 </motion.div>
               ))}
             </div>
           ) : (
-            <div className="flex items-center justify-center h-48 bg-gradient-to-br from-gray-900/50 to-gray-800/50 rounded-2xl border border-white/10 backdrop-blur-sm">
-              <MapPin className="w-16 h-16 text-gray-500/30" />
-              <span className="ml-4 text-gray-400 font-inter">
-                No images available in database
+            <div className="flex items-center justify-center h-48 bg-white rounded-xl border border-dashed border-gray-300">
+              <MapPin className="w-10 h-10 text-gray-300" />
+              <span className="ml-3 text-gray-500">
+                No images available for this land yet.
               </span>
             </div>
           )}
@@ -262,17 +264,17 @@ const FarmerLandDetail: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Land Details */}
           <motion.div
-            className="lg:col-span-2 bg-gradient-to-br from-gray-900/50 to-gray-800/50 rounded-2xl p-6 border border-white/10 backdrop-blur-sm"
-            initial={{ y: 40, opacity: 0 }}
+            className="lg:col-span-2 bg-white rounded-xl border border-gray-200 shadow-sm p-6"
+            initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.5, duration: 0.6 }}
+            transition={{ delay: 0.15, duration: 0.4 }}
           >
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-bold text-white font-poppins uppercase tracking-wide">
+              <h2 className="text-xl font-semibold text-gray-900">
                 Land Specifications
               </h2>
-              <div className="bg-gradient-to-r from-red-500 to-pink-500 p-2 rounded-xl">
-                <RandomTechIcon className="w-5 h-5 text-white" />
+              <div className="bg-emerald-50 p-2 rounded-lg">
+                <RandomTechIcon className="w-5 h-5 text-emerald-600" />
               </div>
             </div>
 
@@ -318,26 +320,18 @@ const FarmerLandDetail: React.FC = () => {
               ].map((item, index) => (
                 <motion.div
                   key={index}
-                  className="group bg-gray-800/30 rounded-xl p-4 border border-white/5 hover:border-white/20 transition-all duration-300 hover:scale-105"
+                  className="group bg-gray-50 rounded-lg p-4 border border-gray-200 hover:border-emerald-200 hover:bg-emerald-50/40 transition-all"
                   whileHover={{ y: -2 }}
                 >
-                  <div className="flex items-center mb-3">
-                    <div
-                      className={`p-2 rounded-lg bg-gradient-to-r ${item.color} mr-3 shadow-lg`}
-                    >
-                      <item.icon className="w-4 h-4 text-white" />
+                  <div className="flex items-center mb-2">
+                    <div className="p-2 rounded-md bg-emerald-50 mr-3">
+                      <item.icon className="w-4 h-4 text-emerald-600" />
                     </div>
-                    <span className="text-sm text-gray-400 uppercase tracking-wide font-poppins">
+                    <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">
                       {item.label}
                     </span>
                   </div>
-                  <p
-                    className={`text-lg font-semibold font-inter ${
-                      item.special
-                        ? "bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent"
-                        : "text-white"
-                    }`}
-                  >
+                  <p className="text-base font-semibold text-gray-900">
                     {item.value}
                   </p>
                 </motion.div>
@@ -357,20 +351,20 @@ const FarmerLandDetail: React.FC = () => {
             </h2>
 
             {/* Pricing Card */}
-            <div className="mb-6 p-4 bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-xl border border-blue-500/20">
+            <div className="mb-6 p-4 bg-emerald-50 rounded-lg border border-emerald-100">
               <div className="flex justify-between items-center mb-3">
-                <span className="text-sm text-gray-300 uppercase tracking-wide font-poppins">
+                <span className="text-xs font-medium text-gray-600 uppercase tracking-wide">
                   Monthly Rate
                 </span>
-                <span className="text-2xl font-bold text-white font-poppins">
+                <span className="text-2xl font-bold text-emerald-700">
                   ₹{land.leasePricePerMonth.toLocaleString()}
                 </span>
               </div>
-              <div className="flex justify-between items-center text-sm">
-                <span className="text-gray-400">
+              <div className="flex justify-between items-center text-sm text-gray-700">
+                <span>
                   Total for {land.leaseDurationMonths} months
                 </span>
-                <span className="font-semibold text-gray-300">
+                <span className="font-semibold">
                   ₹
                   {(
                     land.leasePricePerMonth * land.leaseDurationMonths
@@ -381,22 +375,18 @@ const FarmerLandDetail: React.FC = () => {
 
             {/* Owner Information */}
             {land.owner && (
-              <div className="mb-6 p-4 bg-gray-800/30 rounded-xl border border-white/5">
-                <h3 className="text-sm font-semibold text-gray-300 uppercase tracking-wide mb-3 font-poppins">
+              <div className="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                <h3 className="text-sm font-semibold text-gray-800 mb-3">
                   Owner Contact
                 </h3>
-                <div className="space-y-3">
-                  <div className="flex items-center text-sm text-gray-400 hover:text-white transition-colors duration-300">
-                    <Mail className="w-4 h-4 mr-3 text-red-400" />
-                    <span className="font-inter">
-                      {land.owner.email || "N/A"}
-                    </span>
+                <div className="space-y-2 text-sm text-gray-700">
+                  <div className="flex items-center">
+                    <Mail className="w-4 h-4 mr-2 text-emerald-600" />
+                    <span>{land.owner.email || "N/A"}</span>
                   </div>
-                  <div className="flex items-center text-sm text-gray-400 hover:text-white transition-colors duration-300">
-                    <Phone className="w-4 h-4 mr-3 text-green-400" />
-                    <span className="font-inter">
-                      {land.owner.phone || "N/A"}
-                    </span>
+                  <div className="flex items-center">
+                    <Phone className="w-4 h-4 mr-2 text-emerald-600" />
+                    <span>{land.owner.phone || "N/A"}</span>
                   </div>
                 </div>
               </div>
@@ -406,26 +396,26 @@ const FarmerLandDetail: React.FC = () => {
             <motion.button
               onClick={handleLeaseRequest}
               disabled={actionDisabled}
-              className={`w-full py-4 rounded-xl font-semibold transition-all duration-300 ${
+              className={`w-full py-3 rounded-lg font-semibold text-sm transition-all ${
                 actionDisabled
-                  ? "bg-gray-700 text-gray-400 cursor-not-allowed border border-gray-600"
-                  : "bg-red-500 hover:bg-red-600 text-white hover:scale-105 hover:shadow-2xl hover:shadow-red-500/25 border border-red-400/50"
+                  ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+                  : "bg-emerald-600 text-white hover:bg-emerald-700 shadow-sm"
               }`}
-              whileHover={actionDisabled ? undefined : { scale: 1.05 }}
+              whileHover={actionDisabled ? undefined : { scale: 1.02 }}
             >
               {requesting ? (
-                <div className="flex items-center justify-center">
-                  <Clock className="w-4 h-4 mr-2 animate-spin" />
-                  Processing Request...
+                <div className="flex items-center justify-center gap-2">
+                  <Clock className="w-4 h-4 animate-spin" />
+                  <span>Processing Request...</span>
                 </div>
               ) : leaseStatus === "pending" ? (
-                "⌛ Request Pending"
+                "Request Pending"
               ) : leaseStatus === "approved" ? (
-                "✅ Lease Active"
+                "Lease Active"
               ) : land.status !== "available" ? (
-                "❌ Not Available"
+                "Not Available"
               ) : (
-                "🚀 Request Lease"
+                "Request Lease"
               )}
             </motion.button>
 

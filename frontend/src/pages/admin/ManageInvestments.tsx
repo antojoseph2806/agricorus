@@ -148,7 +148,7 @@ const ManageInvestments: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const API_BASE = "https://agricorus.onrender.com/api/admin/investments";
+  const API_BASE = "http://localhost:5000/api/admin/investments";
 
   // Helper to get token from localStorage
   const getToken = () => localStorage.getItem("token");

@@ -27,10 +27,20 @@ const payoutRoutes = require("./routes/payoutRoutes");
 const paymentRequestRoutes = require("./routes/paymentRequestRoutes");
 const projectPaymentsRoutes = require("./routes/projectPayments");
 const kycRoutes = require('./routes/kycRoute');
+const adminKycRoutes = require('./routes/adminKycRoutes');
+const adminUserKycRoutes = require('./routes/adminUserKycRoutes');
 const adminLeasePaymentRoutes = require("./routes/adminLeasePaymentRoutes");
 const adminInvestmentRoutes = require("./routes/adminInvestmentRoutes");
 const landownerDisputeRoutes = require("./routes/landownerDispute");
 const investorReturnRequestRoutes = require("./routes/investorReturnRequest");
+const vendorAuthRoutes = require("./routes/vendorAuth");
+const productRoutes = require("./routes/productRoutes");
+const vendorProfileRoutes = require("./routes/vendorProfileRoutes");
+const marketplaceRoutes = require("./routes/marketplaceRoutes");
+const cartRoutes = require("./routes/cartRoutes");
+const orderRoutes = require("./routes/orderRoutes");
+const reviewRoutes = require("./routes/reviewRoutes");
+const vendorReviewRoutes = require("./routes/vendorReviewRoutes");
 
 
 // ------------------------
@@ -42,7 +52,7 @@ const auth = require('./middleware/auth');
 // Middleware
 // ------------------------
 app.use(cors({
-  origin: 'https://agricorus.vercel.app', // Adjust for frontend URL in production
+  origin: 'http://localhost:5173',
   credentials: true
 }));
 app.use(express.json());
@@ -122,10 +132,22 @@ app.use("/api/payouts", payoutRoutes);
 app.use("/api/payment-requests", paymentRequestRoutes);
 app.use("/api/project-payments", projectPaymentsRoutes);
 app.use('/api/kyc', kycRoutes);
+app.use('/api/admin/kyc', adminKycRoutes);
+app.use('/api/admin/user-kyc', adminUserKycRoutes);
 app.use("/api/admin/leases", adminLeasePaymentRoutes);
 app.use("/api/admin/investments", adminInvestmentRoutes);
 app.use("/api/landowner/disputes", landownerDisputeRoutes);
 app.use("/api/investor/return-requests", investorReturnRequestRoutes);
+app.use("/api/vendors", require("./routes/vendorAuth"));
+app.use("/api/vendor/products", productRoutes);
+app.use("/api/vendor/profile", vendorProfileRoutes);
+app.use("/api/vendor/orders", require("./routes/vendorOrderRoutes"));
+app.use("/api/marketplace/products", marketplaceRoutes);
+app.use("/api/marketplace/payments", require("./routes/marketplacePaymentRoutes"));
+app.use("/api/cart", cartRoutes);
+app.use("/api/orders", orderRoutes);
+app.use("/api/reviews", reviewRoutes);
+app.use("/api/vendor/reviews", vendorReviewRoutes);
 // ------------------------
 // Test protected route
 // ------------------------

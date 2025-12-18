@@ -1,0 +1,13 @@
+The AddLand.tsx file is too complex to update via string replacement. 
+
+Key changes needed:
+1. Change background from dark gradient to bg-gray-50
+2. Change all cards from bg-white/5 to bg-white with border-gray-200
+3. Change all text from text-white/text-gray-300 to text-gray-900/text-gray-600
+4. Change all inputs from bg-white/10 to bg-white with border-gray-300
+5. Change focus colors from red to emerald-500
+6. Change buttons from red gradient to bg-emerald-600
+7. Update all status badges to light backgrounds
+
+The file has similar structure to EditLand.tsx which was already updated successfully.
+Please manually apply the same design pattern used in EditLand.tsx to AddLand.tsx.
