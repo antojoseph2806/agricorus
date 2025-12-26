@@ -1,5 +1,6 @@
 const Order = require('../models/Order');
 const Product = require('../models/Product');
+const NotificationService = require('../utils/notificationService');
 
 /**
  * @desc    Get all orders containing vendor's products
@@ -154,13 +155,123 @@ exports.updateOrderStatus = async (req, res) => {
       });
     }
 
+    // Store previous status for stock management
+    const previousStatus = order.orderStatus;
+    const newStatus = orderStatus.toUpperCase();
+
     // Normalize payment status casing to match enum
     if (order.paymentStatus && typeof order.paymentStatus === 'string') {
       order.paymentStatus = order.paymentStatus.toUpperCase();
     }
 
+    // AUTO STOCK REDUCTION LOGIC
+    // Reduce stock when order moves to CONFIRMED or PROCESSING (first time)
+    if ((newStatus === 'CONFIRMED' || newStatus === 'PROCESSING') && 
+        !['CONFIRMED', 'PROCESSING', 'SHIPPED', 'DELIVERED'].includes(previousStatus)) {
+      
+      console.log(`Processing stock reduction for order ${order.orderNumber}`);
+      
+      // Process stock reduction for vendor's items
+      for (const item of order.items) {
+        if (item.vendorId.toString() === vendorId) {
+          try {
+            const product = await Product.findById(item.productId);
+            if (product) {
+              const oldStock = product.stock;
+              const newStock = Math.max(0, oldStock - item.quantity);
+              
+              product.stock = newStock;
+              await product.save();
+              
+              console.log(`Stock reduced for ${product.name}: ${oldStock} -> ${newStock} (Qty: ${item.quantity})`);
+              
+              // Add stock reduction note to order
+              const stockNote = `Stock reduced: ${product.name} (${oldStock} -> ${newStock})`;
+              order.notes = order.notes 
+                ? `${order.notes}\n${stockNote}` 
+                : stockNote;
+
+              // Check for low stock or out of stock notifications
+              if (newStock === 0) {
+                await NotificationService.notifyOutOfStock(vendorId, product);
+              } else if (newStock <= (product.lowStockThreshold || 10)) {
+                await NotificationService.notifyLowStock(vendorId, product);
+              }
+            }
+          } catch (stockError) {
+            console.error(`Failed to reduce stock for product ${item.productId}:`, stockError);
+            // Continue processing other items even if one fails
+          }
+        }
+      }
+    }
+
+    // STOCK RESTORATION LOGIC (if order is cancelled)
+    if (newStatus === 'CANCELLED' && 
+        ['CONFIRMED', 'PROCESSING', 'SHIPPED'].includes(previousStatus)) {
+      
+      console.log(`Processing stock restoration for cancelled order ${order.orderNumber}`);
+      
+      // Restore stock for vendor's items
+      for (const item of order.items) {
+        if (item.vendorId.toString() === vendorId) {
+          try {
+            const product = await Product.findById(item.productId);
+            if (product) {
+              const oldStock = product.stock;
+              const newStock = oldStock + item.quantity;
+              
+              product.stock = newStock;
+              await product.save();
+              
+              console.log(`Stock restored for ${product.name}: ${oldStock} -> ${newStock} (Qty: ${item.quantity})`);
+              
+              // Add stock restoration note to order
+              const stockNote = `Stock restored: ${product.name} (${oldStock} -> ${newStock})`;
+              order.notes = order.notes 
+                ? `${order.notes}\n${stockNote}` 
+                : stockNote;
+
+              // Notify about stock restoration if it was previously out of stock
+              if (oldStock === 0 && newStock > 0) {
+                await NotificationService.notifyStockRestored(vendorId, product, oldStock, newStock);
+              }
+            }
+          } catch (stockError) {
+            console.error(`Failed to restore stock for product ${item.productId}:`, stockError);
+            // Continue processing other items even if one fails
+          }
+        }
+      }
+
+      // Send cancellation notification to vendor
+      try {
+        await NotificationService.notifyOrderCancelled(vendorId, order);
+      } catch (notificationError) {
+        console.error('Failed to send order cancellation notification:', notificationError);
+      }
+    }
+
+    // DELIVERY NOTIFICATION
+    if (newStatus === 'DELIVERED' && previousStatus !== 'DELIVERED') {
+      try {
+        await NotificationService.notifyOrderDelivered(vendorId, order);
+      } catch (notificationError) {
+        console.error('Failed to send order delivery notification:', notificationError);
+      }
+    }
+
+    // DELIVERY NOTIFICATION
+    if (newStatus === 'DELIVERED' && previousStatus !== 'DELIVERED') {
+      try {
+        await NotificationService.notifyOrderDelivered(vendorId, order);
+      } catch (notificationError) {
+        console.error('Failed to send order delivered notification:', notificationError);
+      }
+    }
+
     // Update order status
-    order.orderStatus = orderStatus.toUpperCase();
+    order.orderStatus = newStatus;
 
     // Track delivery timestamp
     if (order.orderStatus === 'DELIVERED' && !order.deliveredAt) {

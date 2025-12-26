@@ -9,21 +9,37 @@ const returnRequestSchema = new mongoose.Schema(
     },
     investmentId: {
       type: mongoose.Schema.Types.ObjectId,
-      required: true, // keep as ObjectId; remove ref if you don’t have a model
+      required: true,
     },
     payoutMethodId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "PayoutMethod", // corrected to match your model name
+      ref: "PayoutMethod",
       required: true,
     },
     status: {
       type: String,
-      enum: ["pending", "approved", "rejected", "completed"],
+      enum: ["pending", "approved", "rejected", "completed", "paid"],
       default: "pending",
     },
     adminComment: {
       type: String,
     },
+    // Payment receipt/proof fields
+    paymentReceipt: { type: String }, // URL to uploaded receipt
+    paymentDate: { type: Date },
+    transactionId: { type: String },
+    amountPaid: { type: Number },
+    
+    // Track admin action history
+    history: [
+      {
+        status: { type: String, enum: ["pending", "approved", "rejected", "completed", "paid"] },
+        adminNote: { type: String },
+        changedAt: { type: Date, default: Date.now },
+        changedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" }, // admin
+      }
+    ],
+    reviewedAt: { type: Date },
   },
   { timestamps: true }
 );

@@ -4,7 +4,35 @@ const auth = require("../middleware/auth");
 const PaymentRequest = require("../models/PaymentRequest"); // ✅ correct import
 const Lease = require("../models/Lease");
 const PayoutMethod = require("../models/PayoutMethod");
-const authorizeRoles = require("../middleware/authorizeRoles"); 
+const authorizeRoles = require("../middleware/authorizeRoles");
+const multer = require("multer");
+const path = require("path");
+
+// Configure multer for receipt uploads
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "uploads/payment-receipts/");
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    cb(null, "receipt-" + uniqueSuffix + path.extname(file.originalname));
+  },
+});
+
+const upload = multer({
+  storage,
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
+  fileFilter: (req, file, cb) => {
+    const allowedTypes = /jpeg|jpg|png|pdf/;
+    const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
+    const mimetype = allowedTypes.test(file.mimetype);
+    if (extname && mimetype) {
+      cb(null, true);
+    } else {
+      cb(new Error("Only images (JPEG, PNG) and PDF files are allowed"));
+    }
+  },
+}); 
 
 // Landowner can submit a request for lease payment
 router.post("/request-payment/:leaseId", auth, async (req, res) => {
@@ -189,26 +217,78 @@ router.get("/admin", auth, authorizeRoles("admin"), async (req, res) => {
 });
 
 // =============================
-// PATCH: approve/reject payment request
+// POST: Upload payment receipt
 // =============================
-router.patch("/admin/:requestId", auth, authorizeRoles("admin"), async (req, res) => {
+router.post("/admin/:requestId/upload-receipt", auth, authorizeRoles("admin"), upload.single("receipt"), async (req, res) => {
   try {
     const { requestId } = req.params;
-    const { status } = req.body;
 
-    if (!["approved", "rejected"].includes(status)) {
-      return res.status(400).json({ error: "Invalid status. Must be 'approved' or 'rejected'." });
+    if (!req.file) {
+      return res.status(400).json({ error: "No receipt file uploaded." });
     }
 
     const request = await PaymentRequest.findById(requestId);
     if (!request) return res.status(404).json({ error: "Payment request not found." });
 
-    if (request.status !== "pending") {
-      return res.status(400).json({ error: "Only pending requests can be updated." });
+    // Store the file path
+    request.paymentReceipt = `/uploads/payment-receipts/${req.file.filename}`;
+    await request.save();
+
+    res.status(200).json({ 
+      message: "Receipt uploaded successfully.", 
+      receiptUrl: request.paymentReceipt,
+      request 
+    });
+  } catch (err) {
+    console.error("❌ Error uploading receipt:", err);
+    res.status(500).json({ error: "Failed to upload receipt." });
+  }
+});
+
+// =============================
+// PATCH: approve/reject/paid payment request with receipt
+// =============================
+router.patch("/admin/:requestId", auth, authorizeRoles("admin"), async (req, res) => {
+  try {
+    const { requestId } = req.params;
+    const { status, adminNote, transactionId, paymentDate } = req.body;
+
+    if (!["approved", "rejected", "paid", "pending"].includes(status)) {
+      return res.status(400).json({ error: "Invalid status. Must be 'approved', 'rejected', 'paid', or 'pending'." });
     }
 
+    const request = await PaymentRequest.findById(requestId).populate("lease");
+    if (!request) return res.status(404).json({ error: "Payment request not found." });
+
+    // Track history if status changes
+    if (request.status !== status) {
+      request.history = request.history || [];
+      request.history.push({
+        status,
+        adminNote: adminNote || "",
+        changedAt: new Date(),
+        changedBy: req.user._id,
+      });
+    }
+
+    // Update status and fields
     request.status = status;
-    request.processedAt = new Date();
+    if (adminNote) request.adminNote = adminNote;
+    if (transactionId) request.transactionId = transactionId;
+    if (paymentDate) request.paymentDate = new Date(paymentDate);
+    request.reviewedAt = new Date();
+
+    // Update lease payments if marked as paid
+    if (status === "paid" && request.lease) {
+      if (request.lease.paymentsMade < request.lease.totalPayments) {
+        request.lease.paymentsMade += 1;
+        if (request.lease.paymentsMade >= request.lease.totalPayments) {
+          request.lease.status = "completed";
+        }
+        await request.lease.save();
+      }
+    }
+
     await request.save();
 
     res.status(200).json({ message: `Payment request ${status} successfully.`, request });

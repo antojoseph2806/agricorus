@@ -4,6 +4,8 @@ const Order = require('../models/Order');
 const Cart = require('../models/Cart');
 const Product = require('../models/Product');
 const VendorProfile = require('../models/VendorProfile');
+const Payment = require('../models/Payment');
+const NotificationService = require('../utils/notificationService');
 const mongoose = require('mongoose');
 
 /**
@@ -16,8 +18,69 @@ const generateOrderNumber = () => {
 };
 
 /**
- * Helper function to format API response
+ * Helper function to create payment records for vendors
  */
+const createPaymentRecords = async (order, session) => {
+  try {
+    // Group items by vendor
+    const vendorGroups = {};
+    order.items.forEach(item => {
+      const vendorId = item.vendorId.toString();
+      if (!vendorGroups[vendorId]) {
+        vendorGroups[vendorId] = {
+          vendorId,
+          items: [],
+          totalAmount: 0
+        };
+      }
+      vendorGroups[vendorId].items.push(item);
+      vendorGroups[vendorId].totalAmount += item.subtotal;
+    });
+
+    // Create payment record for each vendor
+    const paymentPromises = Object.values(vendorGroups).map(async (vendorGroup) => {
+      const platformFee = vendorGroup.totalAmount * 0.05; // 5% platform fee
+      const vendorAmount = vendorGroup.totalAmount - platformFee;
+
+      const paymentData = {
+        orderId: order._id,
+        vendorId: vendorGroup.vendorId,
+        buyerId: order.buyerId,
+        orderNumber: order.orderNumber,
+        paymentMethod: order.paymentMethod,
+        vendorAmount,
+        platformFee,
+        totalAmount: vendorGroup.totalAmount,
+        paymentStatus: order.paymentStatus,
+        razorpayOrderId: order.razorpayOrderId,
+        razorpayPaymentId: order.razorpayPaymentId,
+        paidAt: order.paymentStatus === 'PAID' ? new Date() : null
+      };
+
+      return Payment.create([paymentData], { session });
+    });
+
+    await Promise.all(paymentPromises);
+
+    // Send payment notifications to vendors
+    if (order.paymentStatus === 'PAID') {
+      Object.values(vendorGroups).forEach(async (vendorGroup) => {
+        try {
+          await NotificationService.notifyPaymentReceived(
+            vendorGroup.vendorId,
+            vendorGroup.totalAmount,
+            order._id
+          );
+        } catch (notificationError) {
+          console.error('Failed to send payment notification:', notificationError);
+        }
+      });
+    }
+  } catch (error) {
+    console.error('Error creating payment records:', error);
+    throw error;
+  }
+};
 const sendResponse = (res, success, message, data = null, statusCode = 200) => {
   res.status(statusCode).json({
     success,
@@ -252,6 +315,9 @@ exports.verifyPayment = async (req, res) => {
     cart.items = [];
     await cart.save({ session });
 
+    // Create payment records for vendors
+    await createPaymentRecords(order[0], session);
+
     // Commit transaction
     await session.commitTransaction();
 
@@ -379,6 +445,9 @@ exports.createCodOrder = async (req, res) => {
 
     cart.items = [];
     await cart.save({ session });
+
+    // Create payment records for vendors
+    await createPaymentRecords(order[0], session);
 
     await session.commitTransaction();
 

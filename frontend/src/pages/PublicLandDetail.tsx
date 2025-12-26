@@ -1,8 +1,9 @@
-// src/pages/FarmerLandDetail.tsx
+// src/pages/PublicLandDetail.tsx
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { Loader, MapPin, Droplet, Route, Ruler } from "lucide-react";
+import { useParams, useNavigate } from "react-router-dom";
+import { Loader, MapPin, Droplet, Route, Ruler, X } from "lucide-react";
 import { motion } from "framer-motion";
+import Navbar from "../components/Navbar";
 
 interface Owner {
   _id: string;
@@ -36,6 +37,7 @@ interface Land {
 
 const PublicLandDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const [land, setLand] = useState<Land | null>(null);
   const [loading, setLoading] = useState(true);
   const [requesting, setRequesting] = useState(false);
@@ -44,17 +46,34 @@ const PublicLandDetail: React.FC = () => {
   >("idle");
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [userRole, setUserRole] = useState<string | null>(null);
+
+  const backendUrl =
+    (import.meta as any).env.VITE_BACKEND_URL || "http://localhost:5000";
+
+  /** -------------------- Check Authentication & Role -------------------- */
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    const role = localStorage.getItem("role");
+    setIsAuthenticated(!!token);
+    setUserRole(role);
+  }, []);
 
   /** -------------------- Fetch Land Details -------------------- */
   useEffect(() => {
     const fetchLand = async () => {
       try {
         const token = localStorage.getItem("token");
+        const headers: HeadersInit = {};
+        if (token) {
+          headers.Authorization = `Bearer ${token}`;
+        }
+
         const res = await fetch(
-          `http://localhost:5000/api/farmer/lands/public/${id}`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
+          `${backendUrl}/api/farmer/lands/public/${id}`,
+          { headers }
         );
         if (!res.ok) throw new Error("Failed to fetch land details");
         const data: Land = await res.json();
@@ -70,7 +89,16 @@ const PublicLandDetail: React.FC = () => {
     };
 
     fetchLand();
-  }, [id]);
+  }, [id, backendUrl]);
+
+  /** -------------------- Handle Lease Request Button Click -------------------- */
+  const handleLeaseRequestClick = () => {
+    if (!isAuthenticated || userRole !== "farmer") {
+      setShowAuthModal(true);
+      return;
+    }
+    handleLeaseRequest();
+  };
 
   /** -------------------- Handle Lease Request -------------------- */
   const handleLeaseRequest = async () => {
@@ -81,12 +109,12 @@ const PublicLandDetail: React.FC = () => {
     setError(null);
 
     if (leaseStatus === "pending") {
-      setMessage("You already have a pending lease request.");
+      setMessage("You already have a pending availability check for this land.");
       setRequesting(false);
       return;
     }
     if (leaseStatus === "approved") {
-      setMessage("You already have an approved lease.");
+      setMessage("You already have an approved lease for this land.");
       setRequesting(false);
       return;
     }
@@ -94,7 +122,7 @@ const PublicLandDetail: React.FC = () => {
     try {
       const token = localStorage.getItem("token");
       const res = await fetch(
-        `http://localhost:5000/api/farmer/leases/${id}/request`,
+        `${backendUrl}/api/farmer/leases/${id}/request`,
         {
           method: "POST",
           headers: {
@@ -108,9 +136,9 @@ const PublicLandDetail: React.FC = () => {
 
       if (res.ok) {
         setLeaseStatus("pending");
-        setMessage("Lease request submitted successfully. Awaiting approval.");
+        setMessage("Availability check submitted successfully. The landowner will review your request.");
       } else {
-        setError(data.error || "Failed to submit lease request.");
+        setError(data.error || "Failed to check land availability.");
       }
     } catch (err) {
       console.error(err);
@@ -150,8 +178,10 @@ const PublicLandDetail: React.FC = () => {
 
   /** -------------------- Main Land Detail Page -------------------- */
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-emerald-50 py-10">
-      <div className="max-w-6xl mx-auto px-4">
+    <>
+      <Navbar />
+      <div className="min-h-screen bg-gradient-to-b from-gray-50 to-emerald-50 py-10 pt-24">
+        <div className="max-w-6xl mx-auto px-4">
         {/* Title */}
         <motion.h1
           className="text-4xl font-extrabold text-gray-900 mb-6 text-center"
@@ -278,15 +308,15 @@ const PublicLandDetail: React.FC = () => {
           transition={{ delay: 0.9, duration: 0.5 }}
         >
           <button
-            onClick={handleLeaseRequest}
+            onClick={handleLeaseRequestClick}
             disabled={
-              requesting ||
+              (isAuthenticated && userRole === "farmer" && requesting) ||
               leaseStatus === "pending" ||
               leaseStatus === "approved" ||
               land.status !== "available"
             }
             className={`px-6 py-3 rounded-xl font-semibold shadow-lg transition ${
-              requesting ||
+              (isAuthenticated && userRole === "farmer" && requesting) ||
               leaseStatus === "pending" ||
               leaseStatus === "approved" ||
               land.status !== "available"
@@ -295,12 +325,12 @@ const PublicLandDetail: React.FC = () => {
             }`}
           >
             {leaseStatus === "pending"
-              ? "Request Pending"
+              ? "Availability Pending"
               : leaseStatus === "approved"
               ? "Lease Approved"
               : leaseStatus === "cancelled" || leaseStatus === "rejected"
-              ? "Re-request Lease"
-              : "Request for Lease"}
+              ? "Check Land Availability"
+              : "Check Land Availability"}
           </button>
 
           {message && (
@@ -308,8 +338,98 @@ const PublicLandDetail: React.FC = () => {
           )}
           {error && <p className="mt-4 text-red-600 font-medium">{error}</p>}
         </motion.div>
+        </div>
       </div>
-    </div>
+
+      {/* Authentication Modal */}
+      {showAuthModal && (
+        <motion.div
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          onClick={() => setShowAuthModal(false)}
+        >
+          <motion.div
+            className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 relative"
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Close Button */}
+            <button
+              onClick={() => setShowAuthModal(false)}
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition"
+            >
+              <X className="w-6 h-6" />
+            </button>
+
+            {/* Modal Content */}
+            <div className="text-center mb-6">
+              <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <MapPin className="w-8 h-8 text-emerald-600" />
+              </div>
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                {isAuthenticated && userRole !== "farmer" 
+                  ? "Farmer Account Required" 
+                  : "Authentication Required"}
+              </h2>
+              <p className="text-gray-600">
+                {isAuthenticated && userRole !== "farmer"
+                  ? "To check land availability and request a lease, you need to be logged in as a farmer."
+                  : "To check land availability and request a lease, you need to register as a farmer and login."}
+              </p>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="space-y-3">
+              {isAuthenticated && userRole !== "farmer" ? (
+                <>
+                  <button
+                    onClick={() => {
+                      localStorage.clear();
+                      navigate("/register");
+                    }}
+                    className="w-full px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl transition shadow-md"
+                  >
+                    Register as Farmer
+                  </button>
+                  <button
+                    onClick={() => {
+                      localStorage.clear();
+                      navigate("/login");
+                    }}
+                    className="w-full px-6 py-3 bg-white hover:bg-gray-50 text-emerald-600 font-semibold rounded-xl transition border-2 border-emerald-600"
+                  >
+                    Login as Farmer
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button
+                    onClick={() => navigate("/register")}
+                    className="w-full px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl transition shadow-md"
+                  >
+                    Register as Farmer
+                  </button>
+                  <button
+                    onClick={() => navigate("/login")}
+                    className="w-full px-6 py-3 bg-white hover:bg-gray-50 text-emerald-600 font-semibold rounded-xl transition border-2 border-emerald-600"
+                  >
+                    Login to Farmer Account
+                  </button>
+                </>
+              )}
+            </div>
+
+            <p className="text-xs text-gray-500 text-center mt-6">
+              {isAuthenticated && userRole !== "farmer"
+                ? "You're currently logged in as a different user type. Please logout and login as a farmer."
+                : "Already have a farmer account? Click 'Login' to access your dashboard."}
+            </p>
+          </motion.div>
+        </motion.div>
+      )}
+    </>
   );
 };
 

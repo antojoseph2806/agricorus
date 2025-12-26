@@ -12,7 +12,10 @@ import {
   Clock,
   MoreVertical,
   Trash2,
-  Eye
+  FileText,
+  CreditCard,
+  Calendar,
+  MessageSquare
 } from "lucide-react";
 
 interface PayoutMethod {
@@ -46,6 +49,11 @@ interface PaymentRequest {
   status: string;
   requestedAt: string;
   payoutMethod: PayoutMethod;
+  paymentReceipt?: string;
+  transactionId?: string;
+  paymentDate?: string;
+  adminNote?: string;
+  reviewedAt?: string;
 }
 
 const PaymentHistory: React.FC = () => {
@@ -125,12 +133,16 @@ const PaymentHistory: React.FC = () => {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "completed":
+      case "paid":
         return "bg-green-500/20 text-green-400 border-green-500/30";
+      case "approved":
+        return "bg-blue-500/20 text-blue-400 border-blue-500/30";
       case "pending":
         return "bg-yellow-500/20 text-yellow-400 border-yellow-500/30";
-      case "canceled":
+      case "rejected":
         return "bg-red-500/20 text-red-400 border-red-500/30";
+      case "canceled":
+        return "bg-gray-500/20 text-gray-400 border-gray-500/30";
       default:
         return "bg-gray-500/20 text-gray-400 border-gray-500/30";
     }
@@ -204,7 +216,9 @@ const PaymentHistory: React.FC = () => {
               >
                 <option value="all">All Requests</option>
                 <option value="pending">Pending</option>
-                <option value="completed">Completed</option>
+                <option value="approved">Approved</option>
+                <option value="paid">Paid</option>
+                <option value="rejected">Rejected</option>
                 <option value="canceled">Canceled</option>
               </select>
             </div>
@@ -214,7 +228,7 @@ const PaymentHistory: React.FC = () => {
               {[
                 { status: "all", label: "Total Requests", count: requests.length, color: "bg-blue-100" },
                 { status: "pending", label: "Pending", count: requests.filter(r => r.status === "pending").length, color: "bg-yellow-100" },
-                { status: "completed", label: "Completed", count: requests.filter(r => r.status === "completed").length, color: "bg-green-100" },
+                { status: "paid", label: "Paid", count: requests.filter(r => r.status === "paid").length, color: "bg-green-100" },
               ].map((stat, index) => (
                 <div
                   key={index}
@@ -256,6 +270,7 @@ const PaymentHistory: React.FC = () => {
                       <th className="text-left py-4 px-6 text-gray-700 font-semibold uppercase tracking-wide text-sm">Status</th>
                       <th className="text-left py-4 px-6 text-gray-700 font-semibold uppercase tracking-wide text-sm">Requested</th>
                       <th className="text-left py-4 px-6 text-gray-700 font-semibold uppercase tracking-wide text-sm">Payout Method</th>
+                      <th className="text-left py-4 px-6 text-gray-700 font-semibold uppercase tracking-wide text-sm">Payment Info</th>
                       <th className="text-left py-4 px-6 text-gray-700 font-semibold uppercase tracking-wide text-sm">Actions</th>
                     </tr>
                   </thead>
@@ -291,6 +306,42 @@ const PaymentHistory: React.FC = () => {
                             <p className="text-gray-600 text-sm">
                               {req.payoutMethod.name || req.payoutMethod.upiId || req.payoutMethod.accountNumber}
                             </p>
+                          </div>
+                        </td>
+                        <td className="py-4 px-6">
+                          <div className="space-y-2">
+                            {req.transactionId && (
+                              <div className="flex items-center gap-2 text-sm">
+                                <CreditCard className="w-4 h-4 text-emerald-600" />
+                                <span className="text-gray-900 font-medium">{req.transactionId}</span>
+                              </div>
+                            )}
+                            {req.paymentDate && (
+                              <div className="flex items-center gap-2 text-sm">
+                                <Calendar className="w-4 h-4 text-blue-600" />
+                                <span className="text-gray-900">{new Date(req.paymentDate).toLocaleDateString()}</span>
+                              </div>
+                            )}
+                            {req.paymentReceipt && (
+                              <a
+                                href={`http://localhost:5000${req.paymentReceipt}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex items-center gap-2 text-sm text-emerald-600 hover:text-emerald-700 font-medium"
+                              >
+                                <FileText className="w-4 h-4" />
+                                View Receipt
+                              </a>
+                            )}
+                            {req.adminNote && (
+                              <div className="flex items-start gap-2 text-sm">
+                                <MessageSquare className="w-4 h-4 text-purple-600 mt-0.5" />
+                                <span className="text-gray-700 italic">{req.adminNote}</span>
+                              </div>
+                            )}
+                            {!req.transactionId && !req.paymentDate && !req.paymentReceipt && !req.adminNote && (
+                              <span className="text-sm text-gray-400">No payment info yet</span>
+                            )}
                           </div>
                         </td>
                         <td className="py-4 px-6">
@@ -359,6 +410,42 @@ const PaymentHistory: React.FC = () => {
                     {req.payoutMethod.name || req.payoutMethod.upiId || req.payoutMethod.accountNumber}
                   </p>
                 </div>
+
+                {/* Payment Info */}
+                {(req.transactionId || req.paymentDate || req.paymentReceipt || req.adminNote) && (
+                  <div className="mb-4 space-y-2 border-t border-white/10 pt-4">
+                    <p className="text-gray-400 text-sm font-semibold">Payment Information</p>
+                    {req.transactionId && (
+                      <div className="flex items-center gap-2 text-sm">
+                        <CreditCard className="w-4 h-4 text-emerald-400" />
+                        <span className="text-white">{req.transactionId}</span>
+                      </div>
+                    )}
+                    {req.paymentDate && (
+                      <div className="flex items-center gap-2 text-sm">
+                        <Calendar className="w-4 h-4 text-blue-400" />
+                        <span className="text-white">{new Date(req.paymentDate).toLocaleDateString()}</span>
+                      </div>
+                    )}
+                    {req.paymentReceipt && (
+                      <a
+                        href={`http://localhost:5000${req.paymentReceipt}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 text-sm text-emerald-400 hover:text-emerald-300"
+                      >
+                        <FileText className="w-4 h-4" />
+                        View Receipt
+                      </a>
+                    )}
+                    {req.adminNote && (
+                      <div className="flex items-start gap-2 text-sm">
+                        <MessageSquare className="w-4 h-4 text-purple-400 mt-0.5" />
+                        <span className="text-gray-300 italic">{req.adminNote}</span>
+                      </div>
+                    )}
+                  </div>
+                )}
                 
                 {req.status === "pending" && (
                   <button

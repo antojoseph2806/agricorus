@@ -12,9 +12,11 @@ import {
   Settings,
   LogOut,
   ChevronDown,
-  Store
+  Store,
+  Bell
 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
+import NotificationBell from "../../components/vendor/NotificationBell";
 
 /* ---------- Types ---------- */
 interface NavItem {
@@ -59,6 +61,11 @@ const VendorSidebar = ({
       label: "Orders",
       icon: ShoppingCart,
       href: "/vendor/orders",
+    },
+    {
+      label: "Notifications",
+      icon: Bell,
+      href: "/vendor/notifications",
     },
     {
       label: "Payments",
@@ -107,13 +114,16 @@ const VendorSidebar = ({
             </span>
           )}
         </div>
-        <button onClick={toggleSidebar}>
-          <ChevronDown
-            className={`w-5 h-5 transition-transform ${
-              isOpen ? "rotate-90" : "-rotate-90"
-            }`}
-          />
-        </button>
+        <div className="flex items-center space-x-2">
+          <NotificationBell />
+          <button onClick={toggleSidebar}>
+            <ChevronDown
+              className={`w-5 h-5 transition-transform ${
+                isOpen ? "rotate-90" : "-rotate-90"
+              }`}
+            />
+          </button>
+        </div>
       </div>
 
       {/* Navigation */}

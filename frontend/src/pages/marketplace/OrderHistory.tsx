@@ -13,7 +13,10 @@ import {
   XCircle,
   AlertCircle,
   RefreshCw,
-  ShoppingCart
+  ShoppingCart,
+  X,
+  RotateCcw,
+  Repeat
 } from 'lucide-react';
 import MarketplaceLayout from '../../components/MarketplaceLayout';
 
@@ -48,6 +51,10 @@ const OrderHistory: React.FC = () => {
   const navigate = useNavigate();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showCancelModal, setShowCancelModal] = useState(false);
+  const [showReturnModal, setShowReturnModal] = useState(false);
+  const [showReplaceModal, setShowReplaceModal] = useState(false);
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
 
   const fetchOrders = async () => {
     try {
@@ -116,6 +123,33 @@ const OrderHistory: React.FC = () => {
         {status.charAt(0) + status.slice(1).toLowerCase()}
       </span>
     );
+  };
+
+  const canCancelOrder = (order: Order) => {
+    return ['PLACED', 'CONFIRMED'].includes(order.orderStatus);
+  };
+
+  const canReturnOrder = (order: Order) => {
+    return order.orderStatus === 'DELIVERED';
+  };
+
+  const canReplaceOrder = (order: Order) => {
+    return order.orderStatus === 'DELIVERED';
+  };
+
+  const handleCancelOrder = (order: Order) => {
+    setSelectedOrder(order);
+    setShowCancelModal(true);
+  };
+
+  const handleReturnOrder = (order: Order) => {
+    setSelectedOrder(order);
+    setShowReturnModal(true);
+  };
+
+  const handleReplaceOrder = (order: Order) => {
+    setSelectedOrder(order);
+    setShowReplaceModal(true);
   };
 
   useEffect(() => {
@@ -231,6 +265,37 @@ const OrderHistory: React.FC = () => {
                           <Eye className="w-4 h-4" />
                           View Details
                         </Link>
+                        
+                        {/* Action Buttons */}
+                        {canCancelOrder(order) && (
+                          <button
+                            onClick={() => handleCancelOrder(order)}
+                            className="flex items-center gap-2 px-4 py-2 border border-red-300 text-red-700 rounded-lg hover:bg-red-50 transition"
+                          >
+                            <XCircle className="w-4 h-4" />
+                            Cancel
+                          </button>
+                        )}
+                        
+                        {canReturnOrder(order) && (
+                          <button
+                            onClick={() => handleReturnOrder(order)}
+                            className="flex items-center gap-2 px-4 py-2 border border-orange-300 text-orange-700 rounded-lg hover:bg-orange-50 transition"
+                          >
+                            <RotateCcw className="w-4 h-4" />
+                            Return
+                          </button>
+                        )}
+                        
+                        {canReplaceOrder(order) && (
+                          <button
+                            onClick={() => handleReplaceOrder(order)}
+                            className="flex items-center gap-2 px-4 py-2 border border-blue-300 text-blue-700 rounded-lg hover:bg-blue-50 transition"
+                          >
+                            <Repeat className="w-4 h-4" />
+                            Replace
+                          </button>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -284,7 +349,455 @@ const OrderHistory: React.FC = () => {
           </div>
         )}
       </div>
+
+      {/* Cancel Order Modal */}
+      {showCancelModal && selectedOrder && (
+        <CancelOrderModal
+          order={selectedOrder}
+          onClose={() => {
+            setShowCancelModal(false);
+            setSelectedOrder(null);
+          }}
+          onSuccess={() => {
+            fetchOrders();
+            setShowCancelModal(false);
+            setSelectedOrder(null);
+          }}
+        />
+      )}
+
+      {/* Return Order Modal */}
+      {showReturnModal && selectedOrder && (
+        <ReturnOrderModal
+          order={selectedOrder}
+          onClose={() => {
+            setShowReturnModal(false);
+            setSelectedOrder(null);
+          }}
+          onSuccess={() => {
+            fetchOrders();
+            setShowReturnModal(false);
+            setSelectedOrder(null);
+          }}
+        />
+      )}
+
+      {/* Replace Order Modal */}
+      {showReplaceModal && selectedOrder && (
+        <ReplaceOrderModal
+          order={selectedOrder}
+          onClose={() => {
+            setShowReplaceModal(false);
+            setSelectedOrder(null);
+          }}
+          onSuccess={() => {
+            fetchOrders();
+            setShowReplaceModal(false);
+            setSelectedOrder(null);
+          }}
+        />
+      )}
     </MarketplaceLayout>
+  );
+};
+
+// Cancel Order Modal Component
+interface CancelOrderModalProps {
+  order: Order;
+  onClose: () => void;
+  onSuccess: () => void;
+}
+
+const CancelOrderModal: React.FC<CancelOrderModalProps> = ({ order, onClose, onSuccess }) => {
+  const [reason, setReason] = useState('');
+  const [customReason, setCustomReason] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const cancelReasons = [
+    'Changed my mind',
+    'Found a better price elsewhere',
+    'Ordered by mistake',
+    'Delivery taking too long',
+    'Product no longer needed',
+    'Other'
+  ];
+
+  const handleCancel = async () => {
+    if (!reason) {
+      alert('Please select a reason for cancellation');
+      return;
+    }
+
+    if (reason === 'Other' && !customReason.trim()) {
+      alert('Please provide a custom reason');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`http://localhost:5000/api/orders/${order._id}/cancel`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          reason: reason === 'Other' ? customReason : reason
+        })
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        alert('Order cancelled successfully');
+        onSuccess();
+      } else {
+        alert(data.message || 'Failed to cancel order');
+      }
+    } catch (error) {
+      console.error('Error cancelling order:', error);
+      alert('Failed to cancel order');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6">
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="text-xl font-bold text-gray-900">Cancel Order</h3>
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
+            <X className="w-6 h-6" />
+          </button>
+        </div>
+
+        <div className="mb-4">
+          <p className="text-gray-600 mb-4">
+            Order #{order.orderNumber} - ₹{order.totalAmount.toLocaleString()}
+          </p>
+          <p className="text-sm text-gray-500 mb-4">
+            Please select a reason for cancelling this order:
+          </p>
+        </div>
+
+        <div className="space-y-3 mb-6">
+          {cancelReasons.map((reasonOption) => (
+            <label key={reasonOption} className="flex items-center">
+              <input
+                type="radio"
+                name="reason"
+                value={reasonOption}
+                checked={reason === reasonOption}
+                onChange={(e) => setReason(e.target.value)}
+                className="mr-3 text-red-600 focus:ring-red-500"
+              />
+              <span className="text-gray-700">{reasonOption}</span>
+            </label>
+          ))}
+        </div>
+
+        {reason === 'Other' && (
+          <div className="mb-6">
+            <textarea
+              placeholder="Please specify your reason..."
+              value={customReason}
+              onChange={(e) => setCustomReason(e.target.value)}
+              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+              rows={3}
+            />
+          </div>
+        )}
+
+        <div className="flex gap-3">
+          <button
+            onClick={onClose}
+            className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+          >
+            Keep Order
+          </button>
+          <button
+            onClick={handleCancel}
+            disabled={loading}
+            className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50"
+          >
+            {loading ? 'Cancelling...' : 'Cancel Order'}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Return Order Modal Component
+interface ReturnOrderModalProps {
+  order: Order;
+  onClose: () => void;
+  onSuccess: () => void;
+}
+
+const ReturnOrderModal: React.FC<ReturnOrderModalProps> = ({ order, onClose, onSuccess }) => {
+  const [reason, setReason] = useState('');
+  const [customReason, setCustomReason] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const returnReasons = [
+    'Product damaged/defective',
+    'Wrong item received',
+    'Product not as described',
+    'Quality issues',
+    'Size/fit issues',
+    'Changed my mind',
+    'Other'
+  ];
+
+  const handleReturn = async () => {
+    if (!reason) {
+      alert('Please select a reason for return');
+      return;
+    }
+
+    if (reason === 'Other' && !customReason.trim()) {
+      alert('Please provide a custom reason');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`http://localhost:5000/api/orders/${order._id}/return`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          reason: reason === 'Other' ? customReason : reason
+        })
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        alert('Return request submitted successfully');
+        onSuccess();
+      } else {
+        alert(data.message || 'Failed to submit return request');
+      }
+    } catch (error) {
+      console.error('Error submitting return request:', error);
+      alert('Failed to submit return request');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6">
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="text-xl font-bold text-gray-900">Return Order</h3>
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
+            <X className="w-6 h-6" />
+          </button>
+        </div>
+
+        <div className="mb-4">
+          <p className="text-gray-600 mb-4">
+            Order #{order.orderNumber} - ₹{order.totalAmount.toLocaleString()}
+          </p>
+          <p className="text-sm text-gray-500 mb-4">
+            Please select a reason for returning this order:
+          </p>
+        </div>
+
+        <div className="space-y-3 mb-6">
+          {returnReasons.map((reasonOption) => (
+            <label key={reasonOption} className="flex items-center">
+              <input
+                type="radio"
+                name="reason"
+                value={reasonOption}
+                checked={reason === reasonOption}
+                onChange={(e) => setReason(e.target.value)}
+                className="mr-3 text-orange-600 focus:ring-orange-500"
+              />
+              <span className="text-gray-700">{reasonOption}</span>
+            </label>
+          ))}
+        </div>
+
+        {reason === 'Other' && (
+          <div className="mb-6">
+            <textarea
+              placeholder="Please specify your reason..."
+              value={customReason}
+              onChange={(e) => setCustomReason(e.target.value)}
+              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+              rows={3}
+            />
+          </div>
+        )}
+
+        <div className="mb-4 p-3 bg-orange-50 border border-orange-200 rounded-lg">
+          <p className="text-sm text-orange-800">
+            <strong>Return Policy:</strong> Items can be returned within 7 days of delivery. 
+            Return shipping will be arranged by our team.
+          </p>
+        </div>
+
+        <div className="flex gap-3">
+          <button
+            onClick={onClose}
+            className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={handleReturn}
+            disabled={loading}
+            className="flex-1 px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 disabled:opacity-50"
+          >
+            {loading ? 'Submitting...' : 'Submit Return'}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Replace Order Modal Component
+interface ReplaceOrderModalProps {
+  order: Order;
+  onClose: () => void;
+  onSuccess: () => void;
+}
+
+const ReplaceOrderModal: React.FC<ReplaceOrderModalProps> = ({ order, onClose, onSuccess }) => {
+  const [reason, setReason] = useState('');
+  const [customReason, setCustomReason] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const replaceReasons = [
+    'Product damaged/defective',
+    'Wrong item received',
+    'Product not as described',
+    'Quality issues',
+    'Size/fit issues',
+    'Missing parts/accessories',
+    'Other'
+  ];
+
+  const handleReplace = async () => {
+    if (!reason) {
+      alert('Please select a reason for replacement');
+      return;
+    }
+
+    if (reason === 'Other' && !customReason.trim()) {
+      alert('Please provide a custom reason');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`http://localhost:5000/api/orders/${order._id}/replace`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          reason: reason === 'Other' ? customReason : reason
+        })
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        alert('Replacement request submitted successfully');
+        onSuccess();
+      } else {
+        alert(data.message || 'Failed to submit replacement request');
+      }
+    } catch (error) {
+      console.error('Error submitting replacement request:', error);
+      alert('Failed to submit replacement request');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6">
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="text-xl font-bold text-gray-900">Replace Order</h3>
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
+            <X className="w-6 h-6" />
+          </button>
+        </div>
+
+        <div className="mb-4">
+          <p className="text-gray-600 mb-4">
+            Order #{order.orderNumber} - ₹{order.totalAmount.toLocaleString()}
+          </p>
+          <p className="text-sm text-gray-500 mb-4">
+            Please select a reason for replacing this order:
+          </p>
+        </div>
+
+        <div className="space-y-3 mb-6">
+          {replaceReasons.map((reasonOption) => (
+            <label key={reasonOption} className="flex items-center">
+              <input
+                type="radio"
+                name="reason"
+                value={reasonOption}
+                checked={reason === reasonOption}
+                onChange={(e) => setReason(e.target.value)}
+                className="mr-3 text-blue-600 focus:ring-blue-500"
+              />
+              <span className="text-gray-700">{reasonOption}</span>
+            </label>
+          ))}
+        </div>
+
+        {reason === 'Other' && (
+          <div className="mb-6">
+            <textarea
+              placeholder="Please specify your reason..."
+              value={customReason}
+              onChange={(e) => setCustomReason(e.target.value)}
+              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              rows={3}
+            />
+          </div>
+        )}
+
+        <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+          <p className="text-sm text-blue-800">
+            <strong>Replacement Policy:</strong> Items can be replaced within 7 days of delivery. 
+            We'll arrange pickup of the defective item and deliver a replacement.
+          </p>
+        </div>
+
+        <div className="flex gap-3">
+          <button
+            onClick={onClose}
+            className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={handleReplace}
+            disabled={loading}
+            className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
+          >
+            {loading ? 'Submitting...' : 'Submit Replacement'}
+          </button>
+        </div>
+      </div>
+    </div>
   );
 };
 

@@ -13,6 +13,7 @@ import {
   XCircle,
   AlertCircle
 } from "lucide-react";
+import Navbar from "../../components/Navbar";
 
 const VendorRegister = () => {
   const navigate = useNavigate();
@@ -180,8 +181,10 @@ const VendorRegister = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-50 flex items-center justify-center p-4 py-6">
-      <div className="w-full max-w-md">
+    <>
+      <Navbar />
+      <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-50 flex items-center justify-center p-4 py-6 pt-24">
+        <div className="w-full max-w-md">
         {/* Logo/Brand Section */}
         <div className="text-center mb-5">
           <div className="inline-flex items-center justify-center w-12 h-12 bg-green-600 rounded-xl mb-3 shadow-lg">
@@ -471,7 +474,8 @@ const VendorRegister = () => {
           </div>
         </div>
       </div>
-    </div>
+      </div>
+    </>
   );
 };
 

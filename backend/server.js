@@ -148,6 +148,10 @@ app.use("/api/cart", cartRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/reviews", reviewRoutes);
 app.use("/api/vendor/reviews", vendorReviewRoutes);
+app.use("/api/vendor/inventory", require("./routes/inventoryRoutes"));
+app.use("/api/vendor/notifications", require("./routes/notificationRoutes"));
+app.use("/api/vendor/payments", require("./routes/vendorPaymentRoutes"));
+app.use("/api/vendor/notifications", require("./routes/notificationRoutes"));
 // ------------------------
 // Test protected route
 // ------------------------

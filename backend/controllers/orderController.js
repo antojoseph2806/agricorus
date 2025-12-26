@@ -2,6 +2,7 @@ const Order = require('../models/Order');
 const Cart = require('../models/Cart');
 const Product = require('../models/Product');
 const VendorProfile = require('../models/VendorProfile');
+const NotificationService = require('../utils/notificationService');
 const mongoose = require('mongoose');
 
 /**
@@ -147,6 +148,18 @@ exports.checkout = async (req, res) => {
       .populate('items.vendorId', 'businessName')
       .lean();
 
+    // Send notifications to vendors about new order
+    try {
+      const vendorIds = [...new Set(orderItems.map(item => item.vendorId.toString()))];
+      
+      for (const vendorId of vendorIds) {
+        await NotificationService.notifyNewOrder(vendorId, populatedOrder);
+      }
+    } catch (notificationError) {
+      console.error('Failed to send new order notifications:', notificationError);
+      // Don't fail the order creation if notification fails
+    }
+
     sendResponse(res, true, 'Order placed successfully', populatedOrder, 201);
   } catch (error) {
     await session.abortTransaction();
@@ -252,7 +265,7 @@ exports.getUserOrders = async (req, res) => {
 /**
  * @route   GET /api/orders/:id
  * @desc    Get single order details
- * @access  Private (Farmer/Landowner only)
+ * @access  Private (Farmer/Landowner/Investor only)
  */
 exports.getOrderDetails = async (req, res) => {
   try {
@@ -283,6 +296,207 @@ exports.getOrderDetails = async (req, res) => {
   } catch (error) {
     console.error('Get order details error:', error);
     sendResponse(res, false, 'Error retrieving order details', null, 500);
+  }
+};
+
+/**
+ * @route   PUT /api/orders/:id/cancel
+ * @desc    Cancel an order (only if PLACED or CONFIRMED)
+ * @access  Private (Farmer/Landowner/Investor only)
+ */
+exports.cancelOrder = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const { id } = req.params;
+    const { reason } = req.body;
+
+    if (!['farmer', 'landowner', 'investor'].includes(req.user.role)) {
+      return sendResponse(res, false, 'Access denied. Only buyers can cancel orders.', null, 403);
+    }
+
+    if (!isValidObjectId(id)) {
+      return sendResponse(res, false, 'Invalid order ID', null, 400);
+    }
+
+    if (!reason || !reason.trim()) {
+      return sendResponse(res, false, 'Cancellation reason is required', null, 400);
+    }
+
+    const order = await Order.findOne({ _id: id, buyerId: userId });
+    if (!order) {
+      return sendResponse(res, false, 'Order not found', null, 404);
+    }
+
+    // Check if order can be cancelled
+    if (!['PLACED', 'CONFIRMED'].includes(order.orderStatus)) {
+      return sendResponse(res, false, 'Order cannot be cancelled at this stage', null, 400);
+    }
+
+    if (order.orderStatus === 'CANCELLED') {
+      return sendResponse(res, false, 'Order is already cancelled', null, 400);
+    }
+
+    // Start session for transaction
+    const session = await mongoose.startSession();
+    session.startTransaction();
+
+    try {
+      // Update order status
+      order.orderStatus = 'CANCELLED';
+      order.cancelledAt = new Date();
+      order.cancellationReason = reason.trim();
+      await order.save({ session });
+
+      // Restore product stock
+      for (const item of order.items) {
+        await Product.findByIdAndUpdate(
+          item.productId,
+          { $inc: { stock: item.quantity } },
+          { session }
+        );
+      }
+
+      await session.commitTransaction();
+      
+      sendResponse(res, true, 'Order cancelled successfully', {
+        _id: order._id,
+        orderStatus: order.orderStatus,
+        cancelledAt: order.cancelledAt,
+        cancellationReason: order.cancellationReason
+      });
+    } catch (error) {
+      await session.abortTransaction();
+      throw error;
+    } finally {
+      session.endSession();
+    }
+  } catch (error) {
+    console.error('Cancel order error:', error);
+    sendResponse(res, false, error.message || 'Error cancelling order', null, 500);
+  }
+};
+
+/**
+ * @route   POST /api/orders/:id/return
+ * @desc    Request a return for delivered order
+ * @access  Private (Farmer/Landowner/Investor only)
+ */
+exports.returnOrder = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const { id } = req.params;
+    const { reason } = req.body;
+
+    if (!['farmer', 'landowner', 'investor'].includes(req.user.role)) {
+      return sendResponse(res, false, 'Access denied. Only buyers can request returns.', null, 403);
+    }
+
+    if (!isValidObjectId(id)) {
+      return sendResponse(res, false, 'Invalid order ID', null, 400);
+    }
+
+    if (!reason || !reason.trim()) {
+      return sendResponse(res, false, 'Return reason is required', null, 400);
+    }
+
+    const order = await Order.findOne({ _id: id, buyerId: userId });
+    if (!order) {
+      return sendResponse(res, false, 'Order not found', null, 404);
+    }
+
+    if (order.orderStatus !== 'DELIVERED') {
+      return sendResponse(res, false, 'Returns are only allowed for delivered orders', null, 400);
+    }
+
+    // Check if return window is still open (7 days)
+    if (order.deliveredAt) {
+      const daysSinceDelivery = (new Date() - order.deliveredAt) / (1000 * 60 * 60 * 24);
+      if (daysSinceDelivery > 7) {
+        return sendResponse(res, false, 'Return window (7 days) has expired', null, 400);
+      }
+    }
+
+    if (order.returnStatus && order.returnStatus !== 'NONE') {
+      return sendResponse(res, false, 'Return request already exists for this order', null, 400);
+    }
+
+    // Update order with return request
+    order.returnStatus = 'REQUESTED';
+    order.returnReason = reason.trim();
+    order.returnRequestedAt = new Date();
+    await order.save();
+
+    sendResponse(res, true, 'Return request submitted successfully', {
+      _id: order._id,
+      returnStatus: order.returnStatus,
+      returnReason: order.returnReason,
+      returnRequestedAt: order.returnRequestedAt
+    });
+  } catch (error) {
+    console.error('Return order error:', error);
+    sendResponse(res, false, error.message || 'Error submitting return request', null, 500);
+  }
+};
+
+/**
+ * @route   POST /api/orders/:id/replace
+ * @desc    Request a replacement for delivered order
+ * @access  Private (Farmer/Landowner/Investor only)
+ */
+exports.replaceOrder = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const { id } = req.params;
+    const { reason } = req.body;
+
+    if (!['farmer', 'landowner', 'investor'].includes(req.user.role)) {
+      return sendResponse(res, false, 'Access denied. Only buyers can request replacements.', null, 403);
+    }
+
+    if (!isValidObjectId(id)) {
+      return sendResponse(res, false, 'Invalid order ID', null, 400);
+    }
+
+    if (!reason || !reason.trim()) {
+      return sendResponse(res, false, 'Replacement reason is required', null, 400);
+    }
+
+    const order = await Order.findOne({ _id: id, buyerId: userId });
+    if (!order) {
+      return sendResponse(res, false, 'Order not found', null, 404);
+    }
+
+    if (order.orderStatus !== 'DELIVERED') {
+      return sendResponse(res, false, 'Replacements are only allowed for delivered orders', null, 400);
+    }
+
+    // Check if replacement window is still open (7 days)
+    if (order.deliveredAt) {
+      const daysSinceDelivery = (new Date() - order.deliveredAt) / (1000 * 60 * 60 * 24);
+      if (daysSinceDelivery > 7) {
+        return sendResponse(res, false, 'Replacement window (7 days) has expired', null, 400);
+      }
+    }
+
+    if (order.replacementStatus && order.replacementStatus !== 'NONE') {
+      return sendResponse(res, false, 'Replacement request already exists for this order', null, 400);
+    }
+
+    // Update order with replacement request
+    order.replacementStatus = 'REQUESTED';
+    order.replacementReason = reason.trim();
+    order.replacementRequestedAt = new Date();
+    await order.save();
+
+    sendResponse(res, true, 'Replacement request submitted successfully', {
+      _id: order._id,
+      replacementStatus: order.replacementStatus,
+      replacementReason: order.replacementReason,
+      replacementRequestedAt: order.replacementRequestedAt
+    });
+  } catch (error) {
+    console.error('Replace order error:', error);
+    sendResponse(res, false, error.message || 'Error submitting replacement request', null, 500);
   }
 };
 

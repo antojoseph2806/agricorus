@@ -6,7 +6,10 @@ const {
   checkout,
   getUserOrders,
   getOrderDetails,
-  requestReturn
+  requestReturn,
+  cancelOrder,
+  returnOrder,
+  replaceOrder
 } = require('../controllers/orderController');
 
 /**
@@ -36,6 +39,27 @@ router.get('/:id', auth, authorizeRoles('farmer', 'landowner', 'investor'), getO
  * @access  Private (Farmer/Landowner/Investor only)
  */
 router.post('/:id/return-request', auth, authorizeRoles('farmer', 'landowner', 'investor'), requestReturn);
+
+/**
+ * @route   PUT /api/orders/:id/cancel
+ * @desc    Cancel an order (only if PLACED or CONFIRMED)
+ * @access  Private (Farmer/Landowner/Investor only)
+ */
+router.put('/:id/cancel', auth, authorizeRoles('farmer', 'landowner', 'investor'), cancelOrder);
+
+/**
+ * @route   POST /api/orders/:id/return
+ * @desc    Request a return for delivered order
+ * @access  Private (Farmer/Landowner/Investor only)
+ */
+router.post('/:id/return', auth, authorizeRoles('farmer', 'landowner', 'investor'), returnOrder);
+
+/**
+ * @route   POST /api/orders/:id/replace
+ * @desc    Request a replacement for delivered order
+ * @access  Private (Farmer/Landowner/Investor only)
+ */
+router.post('/:id/replace', auth, authorizeRoles('farmer', 'landowner', 'investor'), replaceOrder);
 
 module.exports = router;
 

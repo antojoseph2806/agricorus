@@ -114,6 +114,13 @@ const orderSchema = new mongoose.Schema(
     deliveredAt: {
       type: Date
     },
+    cancelledAt: {
+      type: Date
+    },
+    cancellationReason: {
+      type: String,
+      maxlength: [500, 'Cancellation reason cannot exceed 500 characters']
+    },
     returnStatus: {
       type: String,
       enum: ['NONE', 'REQUESTED', 'APPROVED', 'REJECTED'],
@@ -124,6 +131,18 @@ const orderSchema = new mongoose.Schema(
       maxlength: [500, 'Return reason cannot exceed 500 characters']
     },
     returnRequestedAt: {
+      type: Date
+    },
+    replacementStatus: {
+      type: String,
+      enum: ['NONE', 'REQUESTED', 'APPROVED', 'REJECTED'],
+      default: 'NONE'
+    },
+    replacementReason: {
+      type: String,
+      maxlength: [500, 'Replacement reason cannot exceed 500 characters']
+    },
+    replacementRequestedAt: {
       type: Date
     },
     razorpayOrderId: {

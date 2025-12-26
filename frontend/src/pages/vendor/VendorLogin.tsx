@@ -1,7 +1,9 @@
 import { useState } from "react";
+import React from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 import { Store, Mail, Lock, Eye, EyeOff, AlertCircle } from "lucide-react";
+import Navbar from "../../components/Navbar";
 
 const VendorLogin = () => {
   const [email, setEmail] = useState("");
@@ -39,7 +41,9 @@ const VendorLogin = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-50 flex items-center justify-center p-4">
+    <>
+      <Navbar />
+      <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-50 flex items-center justify-center p-4 pt-24">
       <div className="w-full max-w-md">
         {/* Logo/Brand Section */}
         <div className="text-center mb-8">
@@ -157,7 +161,8 @@ const VendorLogin = () => {
           <ForgotPasswordModal onClose={() => setShowForgotPassword(false)} />
         )}
       </div>
-    </div>
+      </div>
+    </>
   );
 };
 
@@ -177,10 +182,57 @@ const ForgotPasswordModal = ({ onClose }: ForgotPasswordModalProps) => {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  const [otpCountdown, setOtpCountdown] = useState(0);
+  const [resendCountdown, setResendCountdown] = useState(0);
+
+  // OTP expiry countdown (1 minute)
+  React.useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (otpCountdown > 0) {
+      interval = setInterval(() => {
+        setOtpCountdown((prev) => prev - 1);
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [otpCountdown]);
+
+  // Resend OTP countdown (2 minutes)
+  React.useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (resendCountdown > 0) {
+      interval = setInterval(() => {
+        setResendCountdown((prev) => prev - 1);
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [resendCountdown]);
+
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  // Auto-reset to step 1 when OTP expires
+  React.useEffect(() => {
+    if (otpCountdown === 0 && step === 2) {
+      setError("OTP has expired. Please request a new one.");
+      setTimeout(() => {
+        setStep(1);
+        setOtp("");
+        setError("");
+      }, 3000);
+    }
+  }, [otpCountdown, step]);
 
   const sendOTP = async () => {
     if (!email) {
       setError("Email is required");
+      return;
+    }
+
+    if (resendCountdown > 0) {
+      setError(`Please wait ${formatTime(resendCountdown)} before requesting another OTP`);
       return;
     }
 
@@ -195,6 +247,8 @@ const ForgotPasswordModal = ({ onClose }: ForgotPasswordModalProps) => {
       if (res.data.success) {
         setMessage("OTP sent to your email");
         setStep(2);
+        setOtpCountdown(60); // 1 minute countdown for OTP expiry
+        setResendCountdown(120); // 2 minutes countdown for resend
       }
     } catch (err: any) {
       setError(err.response?.data?.message || "Failed to send OTP");
@@ -206,6 +260,11 @@ const ForgotPasswordModal = ({ onClose }: ForgotPasswordModalProps) => {
   const verifyOTP = async () => {
     if (!otp || otp.length !== 6) {
       setError("Please enter a valid 6-digit OTP");
+      return;
+    }
+
+    if (otpCountdown === 0) {
+      setError("OTP has expired. Please request a new one.");
       return;
     }
 
@@ -221,6 +280,7 @@ const ForgotPasswordModal = ({ onClose }: ForgotPasswordModalProps) => {
       if (res.data.success) {
         setMessage("OTP verified successfully");
         setStep(3);
+        setOtpCountdown(0); // Clear countdown
       }
     } catch (err: any) {
       setError(err.response?.data?.message || "Invalid or expired OTP");
@@ -315,11 +375,16 @@ const ForgotPasswordModal = ({ onClose }: ForgotPasswordModalProps) => {
             </div>
             <button
               onClick={sendOTP}
-              disabled={loading}
-              className="w-full bg-green-600 text-white py-2 rounded-lg font-semibold hover:bg-green-700 disabled:opacity-50"
+              disabled={loading || resendCountdown > 0}
+              className="w-full bg-green-600 text-white py-2 rounded-lg font-semibold hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {loading ? "Sending..." : "Send OTP"}
+              {loading ? "Sending..." : resendCountdown > 0 ? `Wait ${formatTime(resendCountdown)}` : "Send OTP"}
             </button>
+            {resendCountdown > 0 && (
+              <p className="text-xs text-gray-500 text-center">
+                You can request another OTP in {formatTime(resendCountdown)}
+              </p>
+            )}
           </div>
         )}
 
@@ -328,6 +393,14 @@ const ForgotPasswordModal = ({ onClose }: ForgotPasswordModalProps) => {
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Enter OTP
+                {otpCountdown > 0 && (
+                  <span className="text-green-600 ml-2">
+                    (Expires in {formatTime(otpCountdown)})
+                  </span>
+                )}
+                {otpCountdown === 0 && (
+                  <span className="text-red-600 ml-2">(Expired)</span>
+                )}
               </label>
               <input
                 type="text"
@@ -336,20 +409,39 @@ const ForgotPasswordModal = ({ onClose }: ForgotPasswordModalProps) => {
                 placeholder="000000"
                 maxLength={6}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 text-center text-2xl tracking-widest"
-                disabled={loading}
+                disabled={loading || otpCountdown === 0}
               />
             </div>
+            
+            {/* Resend OTP Button */}
+            <div className="text-center">
+              <button
+                onClick={sendOTP}
+                disabled={loading || resendCountdown > 0}
+                className="text-sm text-green-600 hover:text-green-700 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {resendCountdown > 0 
+                  ? `Resend OTP in ${formatTime(resendCountdown)}`
+                  : "Resend OTP"
+                }
+              </button>
+            </div>
+
             <div className="flex gap-2">
               <button
-                onClick={() => setStep(1)}
+                onClick={() => {
+                  setStep(1);
+                  setOtpCountdown(0);
+                  setOtp("");
+                }}
                 className="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
               >
                 Back
               </button>
               <button
                 onClick={verifyOTP}
-                disabled={loading}
-                className="flex-1 bg-green-600 text-white py-2 rounded-lg font-semibold hover:bg-green-700 disabled:opacity-50"
+                disabled={loading || otpCountdown === 0 || otp.length !== 6}
+                className="flex-1 bg-green-600 text-white py-2 rounded-lg font-semibold hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? "Verifying..." : "Verify OTP"}
               </button>

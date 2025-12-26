@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import VendorLayout from "../vendor/VendorLayout";
+import InventoryWidget from "../../components/vendor/InventoryWidget";
 
 interface VendorInfo {
   businessName: string;
@@ -94,46 +95,62 @@ const VendorDashboard = () => {
           </div>
         </div>
 
-        {/* Quick Actions */}
-        <div className="bg-white p-6 rounded-lg shadow">
-          <h2 className="text-xl font-semibold text-gray-800 mb-4">
-            Quick Actions
-          </h2>
+        {/* Dashboard Content */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-10">
+          {/* Inventory Widget */}
+          <div className="lg:col-span-1">
+            <InventoryWidget />
+          </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <button
-              onClick={() => navigate("/vendor/products/add")}
-              className="border rounded-lg p-4 text-left hover:bg-green-50 transition"
-            >
-              <h4 className="font-semibold text-green-700">Add Products</h4>
-              <p className="text-sm text-gray-600 mt-1">
-                List fertilizers, tools & equipment
-              </p>
-            </button>
+          {/* Quick Actions */}
+          <div className="lg:col-span-2">
+            <div className="bg-white p-6 rounded-lg shadow">
+              <h2 className="text-xl font-semibold text-gray-800 mb-4">
+                Quick Actions
+              </h2>
 
-            <button
-              onClick={() => navigate("/vendor/products")}
-              className="border rounded-lg p-4 text-left hover:bg-green-50 transition"
-            >
-              <h4 className="font-semibold text-green-700">Manage Products</h4>
-              <p className="text-sm text-gray-600 mt-1">
-                Update stock & pricing
-              </p>
-            </button>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <button
+                  onClick={() => navigate("/vendor/products/add")}
+                  className="border rounded-lg p-4 text-left hover:bg-green-50 transition"
+                >
+                  <h4 className="font-semibold text-green-700">Add Products</h4>
+                  <p className="text-sm text-gray-600 mt-1">
+                    List fertilizers, tools & equipment
+                  </p>
+                </button>
 
-            <button className="border rounded-lg p-4 text-left hover:bg-green-50 transition">
-              <h4 className="font-semibold text-green-700">View Orders</h4>
-              <p className="text-sm text-gray-600 mt-1">
-                Track farmer orders & delivery
-              </p>
-            </button>
+                <button
+                  onClick={() => navigate("/vendor/products")}
+                  className="border rounded-lg p-4 text-left hover:bg-green-50 transition"
+                >
+                  <h4 className="font-semibold text-green-700">Manage Products</h4>
+                  <p className="text-sm text-gray-600 mt-1">
+                    Update stock & pricing
+                  </p>
+                </button>
 
-            <button className="border rounded-lg p-4 text-left hover:bg-green-50 transition">
-              <h4 className="font-semibold text-green-700">Payments</h4>
-              <p className="text-sm text-gray-600 mt-1">
-                Escrow & payment history
-              </p>
-            </button>
+                <button
+                  onClick={() => navigate("/vendor/inventory")}
+                  className="border rounded-lg p-4 text-left hover:bg-green-50 transition"
+                >
+                  <h4 className="font-semibold text-green-700">Inventory Control</h4>
+                  <p className="text-sm text-gray-600 mt-1">
+                    Monitor stock levels & alerts
+                  </p>
+                </button>
+
+                <button
+                  onClick={() => navigate("/vendor/orders")}
+                  className="border rounded-lg p-4 text-left hover:bg-green-50 transition"
+                >
+                  <h4 className="font-semibold text-green-700">View Orders</h4>
+                  <p className="text-sm text-gray-600 mt-1">
+                    Track farmer orders & delivery
+                  </p>
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>

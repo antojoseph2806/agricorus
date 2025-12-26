@@ -7,15 +7,20 @@ const paymentRequestSchema = new mongoose.Schema(
     farmer: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
     owner: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
     amount: { type: Number, required: true },
-    status: { type: String, enum: ["pending", "approved", "rejected", "paid"], default: "pending" },
+    status: { type: String, enum: ["pending", "approved", "rejected", "paid", "canceled"], default: "pending" },
     requestedAt: { type: Date, default: Date.now },
     reviewedAt: { type: Date },
     payoutMethod: { type: mongoose.Schema.Types.ObjectId, ref: "PayoutMethod", required: true },
 
+    // Payment receipt/proof fields
+    paymentReceipt: { type: String }, // URL to uploaded receipt
+    paymentDate: { type: Date },
+    transactionId: { type: String },
+
     // ✅ Track full admin action history
     history: [
       {
-        status: { type: String, enum: ["pending", "approved", "rejected", "paid"] },
+        status: { type: String, enum: ["pending", "approved", "rejected", "paid", "canceled"] },
         adminNote: { type: String },
         changedAt: { type: Date, default: Date.now },
         changedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" }, // admin

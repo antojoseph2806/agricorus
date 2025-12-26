@@ -147,7 +147,7 @@ const PublicViewLands: React.FC = () => {
               {filteredLands.map((land) => (
                 <div
                   key={land._id}
-                  onClick={() => navigate(`/land-details`)}
+                  onClick={() => navigate(`/land-details/${land._id}`)}
                   className="cursor-pointer bg-white rounded-3xl shadow-md hover:shadow-xl transition overflow-hidden border border-gray-200 transform hover:-translate-y-1"
                 >
                   <div className="relative h-52">

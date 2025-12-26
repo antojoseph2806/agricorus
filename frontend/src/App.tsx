@@ -77,6 +77,9 @@ import EditProduct from "./pages/vendor/EditProduct";
 import VendorProfile from "./pages/vendor/VendorProfile";
 import VendorOrders from "./pages/vendor/VendorOrders";
 import VendorFeedback from "./pages/vendor/VendorFeedback";
+import VendorInventory from "./pages/vendor/VendorInventory";
+import VendorNotifications from "./pages/vendor/VendorNotifications";
+import VendorPayments from "./pages/vendor/VendorPayments";
 
 
 // Admin Pages
@@ -119,7 +122,7 @@ function App() {
 
           {/* Public Lands List */}
           <Route path="/public-lands" element={<PublicViewLands />} />
-          <Route path="/land-details" element={<PublicLandDetail />} />
+          <Route path="/land-details/:id" element={<PublicLandDetail />} />
 
           {/* Marketplace Routes (Public) */}
           <Route path="/marketplace" element={<Marketplace />} />
@@ -340,6 +343,33 @@ function App() {
             element={
               <ProtectedRoute
                 element={<VendorFeedback />}
+                allowedRoles={["vendor"]}
+              />
+            }
+          />
+          <Route
+            path="/vendor/inventory"
+            element={
+              <ProtectedRoute
+                element={<VendorInventory />}
+                allowedRoles={["vendor"]}
+              />
+            }
+          />
+          <Route
+            path="/vendor/notifications"
+            element={
+              <ProtectedRoute
+                element={<VendorNotifications />}
+                allowedRoles={["vendor"]}
+              />
+            }
+          />
+          <Route
+            path="/vendor/payments"
+            element={
+              <ProtectedRoute
+                element={<VendorPayments />}
                 allowedRoles={["vendor"]}
               />
             }

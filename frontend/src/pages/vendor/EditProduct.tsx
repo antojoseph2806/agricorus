@@ -2,14 +2,23 @@ import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import VendorLayout from "./VendorLayout";
-import { ArrowLeft, Upload, X } from "lucide-react";
+import FormField from "../../components/vendor/FormField";
+import { ArrowLeft, Upload, X, AlertTriangle, CheckCircle } from "lucide-react";
+import { 
+  validateProductForm, 
+  validateFiles, 
+  validateSpecialRequirements, 
+  validateField,
+  ProductFormData,
+  ValidationError 
+} from "../../utils/productValidation";
 
 const EditProduct = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<ProductFormData>({
     name: "",
     category: "Fertilizers",
     price: "",
@@ -23,6 +32,12 @@ const EditProduct = () => {
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const [existingImages, setExistingImages] = useState<string[]>([]);
   const [existingSafetyDocs, setExistingSafetyDocs] = useState<string[]>([]);
+  
+  // Validation states
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+  const [fileErrors, setFileErrors] = useState<ValidationError[]>([]);
+  const [isFormValid, setIsFormValid] = useState(false);
+  const [showValidation, setShowValidation] = useState(false);
 
   useEffect(() => {
     if (id) {
@@ -30,11 +45,44 @@ const EditProduct = () => {
     }
   }, [id]);
 
+  // Validate form whenever data changes
+  const validateForm = () => {
+    const formValidation = validateProductForm(formData);
+    const imageValidation = validateFiles(images, 'images');
+    const safetyDocValidation = validateFiles(safetyDocs, 'safetyDocuments');
+    const specialValidation = validateSpecialRequirements(
+      formData, 
+      images, 
+      existingImages, 
+      safetyDocs, 
+      existingSafetyDocs
+    );
+
+    const allErrors = [
+      ...imageValidation,
+      ...safetyDocValidation,
+      ...specialValidation
+    ];
+
+    setFileErrors(allErrors);
+    
+    // Convert form validation errors to field errors
+    const newFieldErrors: Record<string, string> = {};
+    formValidation.errors.forEach(error => {
+      newFieldErrors[error.field] = error.message;
+    });
+    setFieldErrors(newFieldErrors);
+
+    const isValid = formValidation.isValid && allErrors.length === 0;
+    setIsFormValid(isValid);
+    return isValid;
+  };
+
   const fetchProduct = async () => {
     try {
       const token = localStorage.getItem("token");
       const res = await axios.get(
-        `http://localhost:5000/api/vendor/products/${id}`,
+        `${(import.meta as any).env.VITE_BACKEND_URL || "http://localhost:5000"}/api/vendor/products/${id}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -65,14 +113,45 @@ const EditProduct = () => {
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+    
+    // Clear field error when user starts typing
+    if (fieldErrors[name]) {
+      setFieldErrors({ ...fieldErrors, [name]: '' });
+    }
+  };
+
+  const handleFieldBlur = (
+    e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+    const error = validateField(name, value, formData);
+    
+    if (error) {
+      setFieldErrors({ ...fieldErrors, [name]: error });
+    } else {
+      const newErrors = { ...fieldErrors };
+      delete newErrors[name];
+      setFieldErrors(newErrors);
+    }
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const files = Array.from(e.target.files);
-      if (images.length + files.length > 5) {
-        alert("Maximum 5 images allowed");
+      
+      // Validate files before adding
+      const validationErrors = validateFiles(files, 'images');
+      if (validationErrors.length > 0) {
+        setFileErrors(prev => [...prev.filter(err => err.field !== 'images'), ...validationErrors]);
+        return;
+      }
+
+      // Check total count including existing images
+      if (existingImages.length + images.length + files.length > 5) {
+        setFileErrors(prev => [...prev.filter(err => err.field !== 'images'), 
+          { field: 'images', message: 'Maximum 5 images allowed (including existing)' }]);
         return;
       }
 
@@ -82,6 +161,9 @@ const EditProduct = () => {
       // Create previews
       const newPreviews = files.map((file) => URL.createObjectURL(file));
       setImagePreviews([...imagePreviews, ...newPreviews]);
+      
+      // Clear image errors
+      setFileErrors(prev => prev.filter(err => err.field !== 'images'));
     }
   };
 
@@ -90,16 +172,33 @@ const EditProduct = () => {
     const newPreviews = imagePreviews.filter((_, i) => i !== index);
     setImages(newImages);
     setImagePreviews(newPreviews);
+    
+    // Clear image errors when removing
+    setFileErrors(prev => prev.filter(err => err.field !== 'images'));
   };
 
   const removeExistingImage = (index: number) => {
     setExistingImages(existingImages.filter((_, i) => i !== index));
+    
+    // Clear image errors when removing
+    setFileErrors(prev => prev.filter(err => err.field !== 'images'));
   };
 
   const handleSafetyDocChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const files = Array.from(e.target.files);
+      
+      // Validate files before adding
+      const validationErrors = validateFiles(files, 'safetyDocuments');
+      if (validationErrors.length > 0) {
+        setFileErrors(prev => [...prev.filter(err => err.field !== 'safetyDocuments'), ...validationErrors]);
+        return;
+      }
+
       setSafetyDocs([...safetyDocs, ...files]);
+      
+      // Clear safety doc errors
+      setFileErrors(prev => prev.filter(err => err.field !== 'safetyDocuments'));
     }
   };
 
@@ -113,44 +212,35 @@ const EditProduct = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setShowValidation(true);
+    
+    // Validate entire form
+    const isValid = validateForm();
+    
+    if (!isValid) {
+      // Scroll to first error
+      const firstErrorElement = document.querySelector('.text-red-600');
+      if (firstErrorElement) {
+        firstErrorElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+      return;
+    }
+
     setSubmitting(true);
 
     try {
-      // Validate required fields
-      if (!formData.name || !formData.category || !formData.price || !formData.stock) {
-        alert("Please fill in all required fields");
-        setSubmitting(false);
-        return;
-      }
-
-      // Validate safety documents for Pesticides
-      const totalSafetyDocs = existingSafetyDocs.length + safetyDocs.length;
-      if (formData.category === "Pesticides" && totalSafetyDocs === 0) {
-        alert("Safety documents are required for Pesticides");
-        setSubmitting(false);
-        return;
-      }
-
-      // Validate images count
-      const totalImages = existingImages.length + images.length;
-      if (totalImages > 5) {
-        alert("Maximum 5 images allowed");
-        setSubmitting(false);
-        return;
-      }
-
       const token = localStorage.getItem("token");
       const formDataToSend = new FormData();
 
       // Add form fields
-      formDataToSend.append("name", formData.name);
+      formDataToSend.append("name", formData.name.trim());
       formDataToSend.append("category", formData.category);
       formDataToSend.append("price", formData.price);
       formDataToSend.append("stock", formData.stock);
-      if (formData.description) {
-        formDataToSend.append("description", formData.description);
+      if (formData.description.trim()) {
+        formDataToSend.append("description", formData.description.trim());
       }
-      if (formData.category === "Equipment & Tools" && formData.warrantyPeriod) {
+      if (formData.category === "Equipment & Tools" && formData.warrantyPeriod.trim()) {
         formDataToSend.append("warrantyPeriod", formData.warrantyPeriod);
       }
 
@@ -165,7 +255,7 @@ const EditProduct = () => {
       });
 
       const res = await axios.put(
-        `http://localhost:5000/api/vendor/products/${id}`,
+        `${(import.meta as any).env.VITE_BACKEND_URL || "http://localhost:5000"}/api/vendor/products/${id}`,
         formDataToSend,
         {
           headers: {
@@ -181,9 +271,19 @@ const EditProduct = () => {
       }
     } catch (error: any) {
       console.error("Error updating product:", error);
-      alert(
-        error.response?.data?.message || "Failed to update product. Please try again."
-      );
+      
+      // Handle validation errors from backend
+      if (error.response?.status === 400 && error.response?.data?.errors) {
+        const backendErrors: Record<string, string> = {};
+        error.response.data.errors.forEach((err: any) => {
+          backendErrors[err.path || err.field] = err.message || err.msg;
+        });
+        setFieldErrors(backendErrors);
+      } else {
+        alert(
+          error.response?.data?.message || "Failed to update product. Please try again."
+        );
+      }
     } finally {
       setSubmitting(false);
     }

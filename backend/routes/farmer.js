@@ -59,19 +59,20 @@ router.get("/lands/:landId", auth, authorizeRoles("farmer"), async (req, res) =>
 });
 
 /**
- * GET LAND BY ID - FOR PUBLIC VIEW
+ * GET LAND BY ID - FOR PUBLIC VIEW (with optional auth)
  * Endpoint: GET /api/lands/public/:landId
+ * If user is authenticated, also return their lease status
  */
 router.get("/lands/public/:landId", async (req, res) => {
   try {
-    const land = await Land.findById(req.params.landId);
+    const land = await Land.findById(req.params.landId).populate("owner", "email phone");
 
     if (!land) {
       return res.status(404).json({ error: "Land not found" });
     }
 
-    // Only return public info (exclude owner/lease info)
-    res.json({
+    // Base response with public info
+    const response = {
       _id: land._id,
       title: land.title,
       location: land.location,
@@ -82,7 +83,38 @@ router.get("/lands/public/:landId", async (req, res) => {
       landDocuments: land.landDocuments,
       status: land.status,
       isApproved: land.isApproved,
-    });
+      waterSource: land.waterSource,
+      accessibility: land.accessibility,
+      sizeInAcres: land.sizeInAcres,
+      owner: land.owner,
+    };
+
+    // Check if user is authenticated (optional)
+    const token = req.headers.authorization?.split(" ")[1];
+    if (token) {
+      try {
+        const jwt = require("jsonwebtoken");
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        
+        // Check if this user already has a lease on this land
+        const lease = await Lease.findOne({ 
+          land: land._id, 
+          farmer: decoded.id 
+        });
+
+        if (lease) {
+          response.currentUserLease = {
+            _id: lease._id,
+            status: lease.status,
+          };
+        }
+      } catch (authErr) {
+        // Token invalid or expired, just return public info
+        console.log("Optional auth failed:", authErr.message);
+      }
+    }
+
+    res.json(response);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
