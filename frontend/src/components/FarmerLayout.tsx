@@ -88,6 +88,7 @@ const FarmerLayout: React.FC<FarmerLayoutProps> = ({ children }) => {
         { label: 'Browse Products', icon: ShoppingBag, href: '/marketplace' },
         { label: 'My Cart', icon: ShoppingBag, href: '/cart' },
         { label: 'Order History', icon: FileText, href: '/orders' },
+        { label: 'Manage Addresses', icon: MapPin, href: '/addresses' },
       ],
     },
   ];

@@ -81,6 +81,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         { label: 'Browse Products', icon: ShoppingBag, href: '/marketplace' },
         { label: 'My Cart', icon: ShoppingBag, href: '/cart' },
         { label: 'Order History', icon: FileText, href: '/orders' },
+        { label: 'Manage Addresses', icon: UserCircle, href: '/addresses' },
       ],
     },
   ];

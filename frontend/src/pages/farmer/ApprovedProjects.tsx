@@ -29,7 +29,7 @@ export default function ApprovedProjects() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:5000/api/projects/projects/approved")
+      .get("http://localhost:5000/api/projects/approved")
       .then((res) => setProjects(res.data))
       .catch((err) => console.error(err))
       .finally(() => setLoading(false));

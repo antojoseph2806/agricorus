@@ -113,6 +113,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, onToggleSidebar, isMob
         { label: 'Browse Products', icon: Package, href: '/marketplace' },
         { label: 'My Cart', icon: ShoppingCart, href: '/cart' },
         { label: 'Order History', icon: FileText, href: '/orders' },
+        { label: 'Manage Addresses', icon: MapPin, href: '/addresses' },
       ],
     },
   ];

@@ -32,7 +32,7 @@ export default function ClosedProjects() {
       try {
         const token = localStorage.getItem("token");
         const res = await axios.get(
-          "http://localhost:5000/api/projects/projects/closed",
+          "http://localhost:5000/api/projects/closed",
           {
             headers: {
               Authorization: `Bearer ${token}`,

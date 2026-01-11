@@ -14,13 +14,13 @@ const features = [
     icon: Sprout,
     title: 'Land Lease Marketplace',
     description: 'Browse and lease agricultural land with transparent terms and verified ownership.',
-    color: 'text-primary-600'
+    color: 'text-emerald-600'
   },
   {
     icon: Users,
     title: 'Crowdfunding Platform',
     description: 'Pool resources with other investors to fund large-scale agricultural projects.',
-    color: 'text-earth-600'
+    color: 'text-green-600'
   },
   {
     icon: TrendingUp,
@@ -44,7 +44,7 @@ const features = [
     icon: DollarSign,
     title: 'Flexible Returns',
     description: 'Choose from various return models including profit sharing and fixed returns.',
-    color: 'text-green-600'
+    color: 'text-emerald-600'
   }
 ];
 

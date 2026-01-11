@@ -17,6 +17,7 @@ import Cart from "./pages/marketplace/Cart";
 import Checkout from "./pages/marketplace/Checkout";
 import OrderHistory from "./pages/marketplace/OrderHistory";
 import OrderDetails from "./pages/marketplace/OrderDetails";
+import ManageAddresses from "./pages/marketplace/ManageAddresses";
 
 // Farmer Pages
 import FarmerDashboard from "./pages/farmer/FarmerDashboard";
@@ -36,8 +37,6 @@ import EditProject from "./pages/farmer/EditProject";
 import MyDisputes from "./pages/farmer/MyDisputes";
 import AgainstDisputes from "./pages/farmer/AgainstDisputes";
 import FarmerProfile from './pages/farmer/FarmerProfile';
-import FarmerVerifyKyc from "./pages/farmer/FarmerKYCVerify";
-import FarmerKycStatus from "./pages/farmer/FarmerKYCStatus";
 
 // Landowner Pages
 import LandownerDashboard from "./pages/landowner/LandownerDashboard";
@@ -273,14 +272,54 @@ function App() {
               <ProtectedRoute element={<InvestorProjectDetails />} allowedRoles={["investor"]} />
             }
           />
-          <Route path="/investor/verify-identity" element={<VerifyIdentity />} />
-          <Route path="/investor/kyc-status" element={<KYCStatus />} />
-          <Route path="/investments/history" element={<InvestmentHistory />} />
-          <Route path="/investor/upi/manage" element={<ManageUPI />} />
-          <Route path="/investor/profile" element={<InvestorProfile />} />
-          <Route path="/investor/bank/manage" element={<ManageBank />} />
-          <Route path="/investor/return-request" element={<InvestorReturnRequest />} />
-          <Route path="/investor/return-requests-history" element={<ReturnRequestHistory />} />
+          <Route
+            path="/investor/verify-identity"
+            element={
+              <ProtectedRoute element={<VerifyIdentity />} allowedRoles={["investor"]} />
+            }
+          />
+          <Route
+            path="/investor/kyc-status"
+            element={
+              <ProtectedRoute element={<KYCStatus />} allowedRoles={["investor"]} />
+            }
+          />
+          <Route
+            path="/investments/history"
+            element={
+              <ProtectedRoute element={<InvestmentHistory />} allowedRoles={["investor"]} />
+            }
+          />
+          <Route
+            path="/investor/upi/manage"
+            element={
+              <ProtectedRoute element={<ManageUPI />} allowedRoles={["investor"]} />
+            }
+          />
+          <Route
+            path="/investor/profile"
+            element={
+              <ProtectedRoute element={<InvestorProfile />} allowedRoles={["investor"]} />
+            }
+          />
+          <Route
+            path="/investor/bank/manage"
+            element={
+              <ProtectedRoute element={<ManageBank />} allowedRoles={["investor"]} />
+            }
+          />
+          <Route
+            path="/investor/return-request"
+            element={
+              <ProtectedRoute element={<InvestorReturnRequest />} allowedRoles={["investor"]} />
+            }
+          />
+          <Route
+            path="/investor/return-requests-history"
+            element={
+              <ProtectedRoute element={<ReturnRequestHistory />} allowedRoles={["investor"]} />
+            }
+          />
           {/* ----------------- Vendor Routes ----------------- */}
           <Route path="/vendor/register" element={<VendorRegister />} />
           <Route path="/vendor/login" element={<VendorLogin />} />
@@ -441,7 +480,7 @@ function App() {
             element={<AdminEditLeasePage />}
           />
           <Route path="/admin/manage-projects" element={<ManageProjects />} />
-          <Route path="projects/:id" element={<ManageProjects />} />
+          <Route path="/admin/projects/:id" element={<ManageProjects />} />
           <Route path="/admin/projects/edit/:id" element={<EditProjectadmin />} />
           <Route path="/admin/landowner/disputes" element={<AdminDisputeDashboard />} />
           <Route path="/admin/farmer/disputes" element={<AdminDisputeManager />} />
@@ -484,6 +523,15 @@ function App() {
             element={
               <ProtectedRoute
                 element={<OrderDetails />}
+                allowedRoles={["farmer", "landowner", "investor"]}
+              />
+            }
+          />
+          <Route
+            path="/addresses"
+            element={
+              <ProtectedRoute
+                element={<ManageAddresses />}
                 allowedRoles={["farmer", "landowner", "investor"]}
               />
             }

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Layout as LandownerLayout } from '../pages/landowner/LandownerDashboard';
 import FarmerLayout from './FarmerLayout';
 import { InvestorLayout } from '../pages/investor/InvestorLayout';
+import Navbar from './Navbar';
 
 interface MarketplaceLayoutProps {
   children: React.ReactNode;
@@ -44,8 +45,15 @@ const MarketplaceLayout: React.FC<MarketplaceLayoutProps> = ({ children }) => {
     case 'investor':
       return <InvestorLayout>{children}</InvestorLayout>;
     default:
-      // For public access or unknown roles, render without sidebar
-      return <div className="min-h-screen bg-gray-50">{children}</div>;
+      // For public access or unknown roles, render with main navbar
+      return (
+        <div className="min-h-screen bg-gray-50">
+          <Navbar />
+          <div className="pt-16">
+            {children}
+          </div>
+        </div>
+      );
   }
 };
 

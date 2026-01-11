@@ -117,7 +117,7 @@ export default function InvestorProjects() {
 
                 {/* Footer */}
                 <div className="mt-4">
-                  <Link to={`http://localhost:5000/projects/${project._id}`} className="w-full block">
+                  <Link to={`/projects/${project._id}`} className="w-full block">
                     <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition">
                       View Details
                     </button>

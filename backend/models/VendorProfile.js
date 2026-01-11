@@ -6,8 +6,7 @@ const vendorProfileSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Vendor',
       required: true,
-      unique: true,
-      index: true
+      unique: true
     },
     
     // Basic Profile
@@ -155,8 +154,7 @@ const vendorProfileSchema = new mongoose.Schema(
         values: ['PENDING', 'SUBMITTED', 'VERIFIED', 'REJECTED'],
         message: 'KYC status must be one of: PENDING, SUBMITTED, VERIFIED, REJECTED'
       },
-      default: 'PENDING',
-      index: true
+      default: 'PENDING'
     },
     rejectionReason: {
       type: String,

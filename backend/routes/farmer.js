@@ -229,10 +229,21 @@ router.get("/leases/active", auth, authorizeRoles("farmer"), async (req, res) =>
   try {
     const leases = await Lease.find({
       farmer: req.user.id,
-      status: "active",   // 👈 FIXED (was "accepted")
+      status: { $in: ["active", "accepted"] }   // Check both active and accepted
     })
       .populate("land")
-      .populate("owner", "email phone");
+      .populate("owner", "name email phone");
+
+    console.log("All leases found (active/accepted):", leases.length);
+    leases.forEach((lease, index) => {
+      console.log(`Lease ${index + 1}: status=${lease.status}, land=${!!lease.land}, owner=${!!lease.owner}`);
+      if (lease.land) {
+        console.log(`  Land photos: ${lease.land.landPhotos?.length || 0} photos`);
+        if (lease.land.landPhotos?.length > 0) {
+          console.log(`  First photo: ${lease.land.landPhotos[0]}`);
+        }
+      }
+    });
 
     // Optionally, keep date filtering if you want only leases still within duration
     const activeLeases = leases.filter((lease) => {
@@ -242,7 +253,36 @@ router.get("/leases/active", auth, authorizeRoles("farmer"), async (req, res) =>
       return new Date() <= endDate;
     });
 
+    console.log("Active leases found:", activeLeases.length);
+    if (activeLeases.length > 0) {
+      console.log("First lease land data:", activeLeases[0].land);
+      console.log("First lease owner data:", activeLeases[0].owner);
+    }
     res.json(activeLeases);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Debug endpoint to check all leases for a farmer
+router.get("/leases/debug", auth, authorizeRoles("farmer"), async (req, res) => {
+  try {
+    const allLeases = await Lease.find({ farmer: req.user.id })
+      .populate("land")
+      .populate("owner", "name email phone");
+    
+    console.log("DEBUG: All leases for farmer:", allLeases.length);
+    const summary = allLeases.map(lease => ({
+      id: lease._id,
+      status: lease.status,
+      hasLand: !!lease.land,
+      landTitle: lease.land?.title,
+      landPhotos: lease.land?.landPhotos?.length || 0,
+      hasOwner: !!lease.owner,
+      ownerName: lease.owner?.name
+    }));
+    
+    res.json({ total: allLeases.length, leases: summary });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

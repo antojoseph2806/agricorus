@@ -93,14 +93,12 @@ const orderSchema = new mongoose.Schema(
     paymentStatus: {
       type: String,
       enum: ['PENDING', 'PAID', 'FAILED', 'REFUNDED'],
-      default: 'PENDING',
-      index: true
+      default: 'PENDING'
     },
     orderStatus: {
       type: String,
       enum: ['PLACED', 'CONFIRMED', 'PROCESSING', 'SHIPPED', 'DELIVERED', 'CANCELLED'],
-      default: 'PLACED',
-      index: true
+      default: 'PLACED'
     },
     deliveryAddress: {
       type: deliveryAddressSchema,

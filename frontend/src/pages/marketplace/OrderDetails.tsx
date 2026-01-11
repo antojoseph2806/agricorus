@@ -5,7 +5,6 @@ import {
   Package,
   Calendar,
   MapPin,
-  CreditCard,
   CheckCircle,
   Clock,
   Truck,
@@ -15,10 +14,9 @@ import {
   User,
   Building,
   FileText,
-  Phone,
   Mail
 } from 'lucide-react';
-import MarketplaceLayout from '../../components/MarketplaceLayout';
+import ReviewWithPhotos from '../../components/ReviewWithPhotos';
 
 interface OrderItem {
   productId: {
@@ -75,10 +73,11 @@ const OrderDetails: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [requestingReturn, setRequestingReturn] = useState(false);
   const [returnReason, setReturnReason] = useState('');
-  const [userReviews, setUserReviews] = useState<Record<string, { rating: number; comment?: string }>>({});
-  const [submittingReview, setSubmittingReview] = useState<Record<string, boolean>>({});
-  const [draftRating, setDraftRating] = useState<Record<string, number>>({});
-  const [draftComment, setDraftComment] = useState<Record<string, string>>({});
+  const [userReviews, setUserReviews] = useState<Record<string, { 
+    rating: number; 
+    comment?: string; 
+    photos?: Array<{ url: string; caption?: string }> 
+  }>>({});
   
   // Check if we came from order placement
   const orderPlaced = location.state?.orderPlaced;
@@ -178,9 +177,13 @@ const OrderDetails: React.FC = () => {
       });
       const data = await response.json();
       if (data.success && Array.isArray(data.data)) {
-        const map: Record<string, { rating: number; comment?: string }> = {};
+        const map: Record<string, { rating: number; comment?: string; photos?: Array<{ url: string; caption?: string }> }> = {};
         data.data.forEach((r: any) => {
-          map[r.productId] = { rating: r.rating, comment: r.comment };
+          map[r.productId] = { 
+            rating: r.rating, 
+            comment: r.comment,
+            photos: r.photos || []
+          };
         });
         setUserReviews(map);
       }
@@ -195,46 +198,16 @@ const OrderDetails: React.FC = () => {
     return days >= 7;
   };
 
-  const submitReview = async (productId: string) => {
-    if (!order) return;
-    if (submittingReview[productId]) return;
-    setSubmittingReview((prev) => ({ ...prev, [productId]: true }));
-    try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        navigate('/login');
-        return;
-      }
-      const rating = draftRating[productId];
-      if (!rating || rating < 1 || rating > 5) {
-        alert('Please select a rating between 1 and 5');
-        return;
-      }
-      const response = await fetch(`${(import.meta as any).env.VITE_BACKEND_URL || 'http://localhost:5000'}/api/reviews`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          orderId: order._id,
-          productId,
-          rating,
-          comment: draftComment[productId]
-        })
-      });
-      const data = await response.json();
-      if (data.success) {
-        await fetchUserReviews(order._id);
-      } else {
-        alert(data.message || 'Failed to submit review');
-      }
-    } catch (err) {
-      console.error('Submit review error:', err);
-      alert('Error submitting review');
-    } finally {
-      setSubmittingReview((prev) => ({ ...prev, [productId]: false }));
-    }
+  const canReturn = (orderObj: Order) => {
+    if (orderObj.orderStatus !== 'DELIVERED' || !orderObj.deliveredAt) return false;
+    const days = (Date.now() - new Date(orderObj.deliveredAt).getTime()) / (1000 * 60 * 60 * 24);
+    return days < 7; // Return window is only open for first 7 days
+  };
+
+  const getDaysUntilReturnExpiry = (orderObj: Order) => {
+    if (orderObj.orderStatus !== 'DELIVERED' || !orderObj.deliveredAt) return 0;
+    const days = (Date.now() - new Date(orderObj.deliveredAt).getTime()) / (1000 * 60 * 60 * 24);
+    return Math.max(0, 7 - Math.floor(days));
   };
 
   useEffect(() => {
@@ -342,7 +315,8 @@ const OrderDetails: React.FC = () => {
                 </div>
                 <div className="flex flex-col gap-2">
                   {orderStatusInfo.badge}
-                  {getPaymentStatusBadge(order.paymentStatus)}
+                  {/* Only show payment status for non-COD orders or if payment is completed/failed */}
+                  {order.orderStatus !== 'DELIVERED' && order.paymentStatus !== 'PENDING' && getPaymentStatusBadge(order.paymentStatus)}
                 </div>
               </div>
 
@@ -365,49 +339,51 @@ const OrderDetails: React.FC = () => {
               
               <div className="space-y-4">
                 {order.items.map((item, index) => (
-                  <div key={index} className="flex gap-4 p-4 border border-gray-200 rounded-lg">
-                    {/* Product Image */}
-                    <div className="w-20 h-20 flex-shrink-0">
-                      <img
-                        src={
-                          item.productId.images && item.productId.images.length > 0
-                            ? `${(import.meta as any).env.VITE_BACKEND_URL || 'http://localhost:5000'}${item.productId.images[0]}`
-                            : '/placeholder-product.jpg'
-                        }
-                        alt={item.productName}
-                        className="w-full h-full object-cover rounded-lg"
-                      />
-                    </div>
+                  <div key={index} className="border border-gray-200 rounded-lg p-4">
+                    <div className="flex gap-4">
+                      {/* Product Image */}
+                      <div className="w-20 h-20 flex-shrink-0">
+                        <img
+                          src={
+                            item.productId.images && item.productId.images.length > 0
+                              ? `${(import.meta as any).env.VITE_BACKEND_URL || 'http://localhost:5000'}${item.productId.images[0]}`
+                              : '/placeholder-product.jpg'
+                          }
+                          alt={item.productName}
+                          className="w-full h-full object-cover rounded-lg"
+                        />
+                      </div>
 
-                    {/* Product Info */}
-                    <div className="flex-1">
-                      <div className="flex items-start justify-between">
-                        <div>
-                          <div className="flex items-center gap-2 mb-1">
-                            <span className="text-sm">{getCategoryIcon(item.productId.category)}</span>
-                            <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
-                              {item.productId.category}
-                            </span>
-                          </div>
-                          <h4 className="font-medium text-gray-900 mb-1">{item.productName}</h4>
-                          <div className="flex items-center gap-2 text-sm text-gray-600">
-                            <Building className="w-4 h-4" />
-                            <span>by {item.vendorId.businessName}</span>
-                          </div>
-                          {item.productId.warrantyPeriod && (
-                            <div className="flex items-center gap-1 mt-1 text-sm text-green-600">
-                              <CheckCircle className="w-3 h-3" />
-                              <span>{item.productId.warrantyPeriod} months warranty</span>
+                      {/* Product Info */}
+                      <div className="flex-1">
+                        <div className="flex items-start justify-between">
+                          <div>
+                            <div className="flex items-center gap-2 mb-1">
+                              <span className="text-sm">{getCategoryIcon(item.productId.category)}</span>
+                              <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
+                                {item.productId.category}
+                              </span>
                             </div>
-                          )}
-                        </div>
-
-                        <div className="text-right">
-                          <div className="font-semibold text-gray-900">
-                            ₹{item.subtotal.toLocaleString()}
+                            <h4 className="font-medium text-gray-900 mb-1">{item.productName}</h4>
+                            <div className="flex items-center gap-2 text-sm text-gray-600">
+                              <Building className="w-4 h-4" />
+                              <span>by {item.vendorId.businessName}</span>
+                            </div>
+                            {item.productId.warrantyPeriod && (
+                              <div className="flex items-center gap-1 mt-1 text-sm text-green-600">
+                                <CheckCircle className="w-3 h-3" />
+                                <span>{item.productId.warrantyPeriod} months warranty</span>
+                              </div>
+                            )}
                           </div>
-                          <div className="text-sm text-gray-600">
-                            ₹{item.price.toLocaleString()} × {item.quantity}
+
+                          <div className="text-right">
+                            <div className="font-semibold text-gray-900">
+                              ₹{item.subtotal.toLocaleString()}
+                            </div>
+                            <div className="text-sm text-gray-600">
+                              ₹{item.price.toLocaleString()} × {item.quantity}
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -415,54 +391,18 @@ const OrderDetails: React.FC = () => {
 
                     {/* Review Section */}
                     {canReview(order) && (
-                      <div className="mt-4 w-full">
-                        {userReviews[item.productId._id] ? (
-                          <div className="bg-green-50 border border-green-200 rounded-lg p-3 text-sm text-green-800">
-                            You rated this product {userReviews[item.productId._id].rating}/5.
-                            {userReviews[item.productId._id].comment && (
-                              <div className="text-gray-700 mt-1">
-                                "{userReviews[item.productId._id].comment}"
-                              </div>
-                            )}
-                          </div>
-                        ) : (
-                          <div className="space-y-2">
-                            <div className="flex items-center gap-2">
-                              <span className="text-sm text-gray-700">Your Rating:</span>
-                              <select
-                                value={draftRating[item.productId._id] || ''}
-                                onChange={(e) =>
-                                  setDraftRating((prev) => ({ ...prev, [item.productId._id]: Number(e.target.value) }))
-                                }
-                                className="border border-gray-300 rounded px-2 py-1 text-sm"
-                              >
-                                <option value="">Select</option>
-                                {[1, 2, 3, 4, 5].map((r) => (
-                                  <option key={r} value={r}>
-                                    {r} Star{r > 1 ? 's' : ''}
-                                  </option>
-                                ))}
-                              </select>
-                            </div>
-                            <textarea
-                              value={draftComment[item.productId._id] || ''}
-                              onChange={(e) =>
-                                setDraftComment((prev) => ({ ...prev, [item.productId._id]: e.target.value }))
-                              }
-                              placeholder="Share your experience (optional)"
-                              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
-                              rows={2}
-                              maxLength={1000}
-                            />
-                            <button
-                              onClick={() => submitReview(item.productId._id)}
-                              disabled={submittingReview[item.productId._id]}
-                              className="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-sm"
-                            >
-                              {submittingReview[item.productId._id] ? 'Submitting...' : 'Submit Review'}
-                            </button>
-                          </div>
-                        )}
+                      <div className="mt-4 pt-4 border-t border-gray-200">
+                        <ReviewWithPhotos
+                          productId={item.productId._id}
+                          orderId={order._id}
+                          productName={item.productName}
+                          onReviewSubmitted={() => fetchUserReviews(order._id)}
+                          existingReview={userReviews[item.productId._id] ? {
+                            rating: userReviews[item.productId._id].rating,
+                            comment: userReviews[item.productId._id].comment,
+                            photos: userReviews[item.productId._id].photos
+                          } : undefined}
+                        />
                       </div>
                     )}
                   </div>
@@ -558,11 +498,20 @@ const OrderDetails: React.FC = () => {
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Payment Status</span>
-                  <div>{getPaymentStatusBadge(order.paymentStatus)}</div>
+                  <div>
+                    {order.orderStatus === 'DELIVERED' && order.paymentStatus === 'PENDING' ? (
+                      <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                        <CheckCircle className="w-4 h-4" />
+                        Collected on Delivery
+                      </span>
+                    ) : (
+                      getPaymentStatusBadge(order.paymentStatus)
+                    )}
+                  </div>
                 </div>
               </div>
 
-              {order.paymentStatus === 'PENDING' && (
+              {order.paymentStatus === 'PENDING' && order.orderStatus !== 'DELIVERED' && (
                 <div className="mt-4 bg-yellow-50 border border-yellow-200 rounded-lg p-3">
                   <div className="flex items-start gap-2">
                     <AlertCircle className="w-4 h-4 text-yellow-600 mt-0.5" />
@@ -622,11 +571,16 @@ const OrderDetails: React.FC = () => {
                   <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-sm text-red-800">
                     Return rejected. Reason: {order.returnReason || 'not specified'}.
                   </div>
-                ) : (
+                ) : canReturn(order) ? (
                   <div className="space-y-3">
-                    <p className="text-sm text-gray-700">
-                      You can request a return within 7 days of delivery.
-                    </p>
+                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                      <p className="text-sm text-blue-800 font-medium">
+                        Return Window Open
+                      </p>
+                      <p className="text-sm text-blue-700">
+                        You have {getDaysUntilReturnExpiry(order)} day{getDaysUntilReturnExpiry(order) !== 1 ? 's' : ''} left to request a return.
+                      </p>
+                    </div>
                     <textarea
                       value={returnReason}
                       onChange={(e) => setReturnReason(e.target.value)}
@@ -669,6 +623,19 @@ const OrderDetails: React.FC = () => {
                     >
                       {requestingReturn ? 'Submitting...' : 'Request Return'}
                     </button>
+                  </div>
+                ) : (
+                  <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                    <div className="flex items-center gap-2 mb-2">
+                      <XCircle className="w-5 h-5 text-gray-500" />
+                      <p className="text-sm font-medium text-gray-700">Return Window Closed</p>
+                    </div>
+                    <p className="text-sm text-gray-600">
+                      The 7-day return window has expired. Returns are no longer available for this order.
+                    </p>
+                    <p className="text-xs text-gray-500 mt-2">
+                      Delivered on {order.deliveredAt ? new Date(order.deliveredAt).toLocaleDateString() : 'Unknown date'}
+                    </p>
                   </div>
                 )}
               </div>

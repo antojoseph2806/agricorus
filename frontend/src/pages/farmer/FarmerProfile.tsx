@@ -1,8 +1,18 @@
 import React, { useState, useEffect, ChangeEvent, FormEvent } from "react";
 import axios from "axios";
-// NOTE: Ensure 'react-toastify' is installed and configured in your root App component
 import { toast } from "react-toastify"; 
-import { Camera, Save } from "lucide-react";
+import { 
+  FaUser, 
+  FaEdit, 
+  FaSave, 
+  FaTimes, 
+  FaCamera, 
+  FaEnvelope, 
+  FaPhone, 
+  FaCalendarAlt,
+  FaUserCircle,
+  FaShieldAlt
+} from "react-icons/fa";
 
 // ======================================================
 // 1. Types
@@ -14,7 +24,7 @@ interface FarmerProfile {
   phone: string;
   role: string;
   profileImage?: string;
-  createdAt: string; // Used for "Joined" date
+  createdAt: string;
 }
 
 // ======================================================
@@ -26,7 +36,7 @@ const FarmerProfile: React.FC = () => {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const [editing, setEditing] = useState(false); // Fixes the "never read" warning as it's used now
+  const [editing, setEditing] = useState(false);
 
   const BASE_URL =
     (import.meta as any).env.VITE_BACKEND_URL || "http://localhost:5000"; 
@@ -74,7 +84,7 @@ const FarmerProfile: React.FC = () => {
     fetchProfile();
   }, [BASE_URL]);
 
-  // Cleanup for image preview URL (Crucial for memory management)
+  // Cleanup for image preview URL
   useEffect(() => {
     const currentPreview = preview;
     return () => {
@@ -100,7 +110,6 @@ const FarmerProfile: React.FC = () => {
   };
 
   const handleCancel = () => {
-    // Revert form data and state back to the original profile data
     setEditing(false);
     if (profile) {
       setFormData(profile); 
@@ -123,13 +132,12 @@ const FarmerProfile: React.FC = () => {
 
       const data = new FormData();
       
-      // Append only the fields that are allowed to be edited
       if (formData.name && formData.name !== profile.name) data.append("name", formData.name);
       if (formData.email && formData.email !== profile.email) data.append("email", formData.email);
       if (imageFile) data.append("profileImage", imageFile);
 
       if (!data.get("name") && !data.get("email") && !data.get("profileImage")) {
-        toast.info("No editable changes detected.");
+        toast.info("No changes detected.");
         setEditing(false);
         setLoading(false);
         return;
@@ -141,7 +149,6 @@ const FarmerProfile: React.FC = () => {
         },
       });
 
-      // Reset state upon successful save
       setProfile(res.data);
       setFormData(res.data);
       setImageFile(null);
@@ -163,144 +170,228 @@ const FarmerProfile: React.FC = () => {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="w-14 h-14 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-800 font-semibold">Loading profile...</p>
+          <div className="w-16 h-16 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <h3 className="text-gray-900 text-xl font-semibold">Loading Profile...</h3>
+          <p className="text-gray-600 mt-2">Fetching your account details</p>
         </div>
       </div>
     );
     
   if (!profile) return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-      <div className="bg-white border rounded-xl shadow-sm p-8 text-center max-w-md">
-        <div className="text-4xl mb-3">🙁</div>
-        <p className="text-gray-900 font-semibold mb-1">Profile data not available.</p>
-        <p className="text-gray-600 text-sm">Please re-login or try again.</p>
+      <div className="bg-white rounded-xl shadow-sm border p-8 max-w-md text-center">
+        <div className="text-6xl mb-4">🚨</div>
+        <h3 className="text-gray-900 text-xl font-bold mb-2">Profile Not Found</h3>
+        <p className="text-gray-600">Please re-login or try again later.</p>
       </div>
     </div>
   );
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 md:p-8">
-      <div className="max-w-2xl mx-auto space-y-6">
-        <div className="bg-white border rounded-2xl shadow-sm p-6">
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 bg-emerald-100 text-emerald-700 rounded-xl flex items-center justify-center text-lg font-semibold">
-              👩‍🌾
+    <div className="min-h-screen bg-gray-50 p-4">
+      <div className="max-w-4xl mx-auto">
+        {/* Header Section */}
+        <div className="mb-8">
+          <div className="flex items-center mb-3">
+            <div className="w-12 h-12 bg-emerald-500 rounded-lg flex items-center justify-center mr-3">
+              <FaUser className="text-white text-xl" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">Farmer Profile</h1>
-              <p className="text-gray-600 text-sm">Manage your details used across the marketplace.</p>
+              <h1 className="text-3xl font-bold text-gray-900">Profile Management</h1>
+              <p className="text-gray-600 text-lg">Manage your account details and preferences</p>
             </div>
           </div>
         </div>
 
-        <div className="bg-white border rounded-2xl shadow-sm p-6">
-          <form onSubmit={handleSubmit} className="space-y-5">
-        
-        {/* Profile Image Section - Editable */}
-        <div className="flex flex-col items-center">
-          <div className="relative w-28 h-28">
-            <img
-              src={
-                preview
-                  ? preview
-                  : profile.profileImage
-                  ? `${BASE_URL}${profile.profileImage}`
-                  : "https://via.placeholder.com/120/10B981/FFFFFF?text=FP"
-              }
-              alt="Profile"
-              className="w-28 h-28 rounded-full object-cover border-4 border-emerald-200"
-            />
-            {editing && (
-              <label 
-                htmlFor="profile-image-upload"
-                className="absolute bottom-1 right-1 bg-emerald-600 p-2 rounded-full cursor-pointer text-white transition hover:bg-emerald-700 shadow-lg"
-              >
-                <Camera className="w-4 h-4" />
-                <input
-                  id="profile-image-upload"
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  onChange={handleFileChange}
-                  disabled={loading}
-                />
-              </label>
-            )}
-          </div>
-        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Profile Card */}
+          <div className="lg:col-span-1">
+            <div className="bg-white rounded-xl shadow-sm border p-6 text-center">
+              {/* Profile Image */}
+              <div className="relative inline-block mb-6">
+                <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-emerald-200 shadow-lg">
+                  <img
+                    src={
+                      preview
+                        ? preview
+                        : profile.profileImage
+                        ? `${BASE_URL}${profile.profileImage}`
+                        : "https://via.placeholder.com/128/10B981/FFFFFF?text=" + (profile.name?.charAt(0) || "F")
+                    }
+                    alt="Profile"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                {editing && (
+                  <label 
+                    htmlFor="profile-image-upload"
+                    className="absolute bottom-2 right-2 bg-emerald-600 hover:bg-emerald-700 p-3 rounded-full cursor-pointer text-white transition-all duration-300 shadow-lg hover:shadow-xl"
+                  >
+                    <FaCamera className="w-4 h-4" />
+                    <input
+                      id="profile-image-upload"
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={handleFileChange}
+                      disabled={loading}
+                    />
+                  </label>
+                )}
+              </div>
 
-        {/* Editable Fields */}
-        <ProfileInputField
-            label="Name"
-            name="name"
-            value={formData.name || ""}
-            onChange={handleChange}
-            disabled={loading}
-            isReadOnly={!editing} // Only editable when 'editing' is true
-            type="text"
-        />
+              {/* Profile Info */}
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">{profile.name}</h2>
+              <div className="flex items-center justify-center mb-4">
+                <FaShieldAlt className="text-emerald-600 mr-2" />
+                <span className="text-emerald-700 font-semibold bg-emerald-100 px-3 py-1 rounded-full text-sm">
+                  {profile.role.charAt(0).toUpperCase() + profile.role.slice(1)}
+                </span>
+              </div>
+              
+              {/* Quick Stats */}
+              <div className="bg-gray-50 rounded-lg p-4 mb-6">
+                <div className="flex items-center justify-center text-gray-600 mb-2">
+                  <FaCalendarAlt className="mr-2" />
+                  <span className="text-sm">Member Since</span>
+                </div>
+                <p className="font-semibold text-gray-900">{formatDate(profile.createdAt)}</p>
+              </div>
 
-        <ProfileInputField
-            label="Email"
-            name="email"
-            value={formData.email || ""}
-            onChange={handleChange}
-            disabled={loading}
-            isReadOnly={!editing} // Only editable when 'editing' is true
-            type="email"
-        />
-
-        {/* Read-Only Fields */}
-        <ProfileInputField
-            label="Phone (Read-Only)"
-            name="phone"
-            value={formData.phone || ""}
-            onChange={handleChange} 
-            disabled={true} // Always disabled
-            isReadOnly={true} // Always read-only
-            type="text"
-        />
-
-        {/* Joined Date Field - Read-Only Display */}
-        <div>
-          <label className="block text-gray-600 mb-1 font-medium">Joined Date</label>
-          <div className="w-full bg-gray-100 text-gray-700 border border-gray-200 rounded-lg px-3 py-2">
-            {formatDate(profile.createdAt)}
-          </div>
-        </div>
-
-        {/* Action Button Section */}
-        <div className="text-center pt-4">
-          {!editing ? (
-            <button
-              type="button"
-              onClick={() => setEditing(true)}
-              className="w-full bg-emerald-600 text-white font-semibold px-6 py-2 rounded-lg hover:bg-emerald-700 transition"
-            >
-              ✏️ Edit Profile
-            </button>
-          ) : (
-            <div className="flex justify-between gap-4">
-              <button
-                type="button"
-                onClick={handleCancel}
-                disabled={loading}
-                className="w-1/3 bg-gray-200 text-gray-700 font-semibold px-4 py-2 rounded-lg hover:bg-gray-300 transition disabled:opacity-50"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-2/3 bg-emerald-600 text-white font-semibold px-6 py-2 rounded-lg hover:bg-emerald-700 flex items-center justify-center gap-2 transition disabled:opacity-50"
-              >
-                <Save className="w-4 h-4" /> {loading ? "Saving..." : "Save Changes"}
-              </button>
+              {/* Action Button */}
+              {!editing ? (
+                <button
+                  onClick={() => setEditing(true)}
+                  className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-6 py-3 rounded-lg transition-all duration-300 flex items-center justify-center gap-2"
+                >
+                  <FaEdit className="text-sm" />
+                  Edit Profile
+                </button>
+              ) : (
+                <div className="space-y-3">
+                  <button
+                    type="submit"
+                    form="profile-form"
+                    disabled={loading}
+                    className="w-full bg-emerald-600 hover:bg-emerald-700 disabled:bg-emerald-400 text-white font-semibold px-6 py-3 rounded-lg transition-all duration-300 flex items-center justify-center gap-2"
+                  >
+                    <FaSave className="text-sm" />
+                    {loading ? "Saving..." : "Save Changes"}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleCancel}
+                    disabled={loading}
+                    className="w-full bg-gray-200 hover:bg-gray-300 disabled:bg-gray-100 text-gray-700 font-semibold px-6 py-3 rounded-lg transition-all duration-300 flex items-center justify-center gap-2"
+                  >
+                    <FaTimes className="text-sm" />
+                    Cancel
+                  </button>
+                </div>
+              )}
             </div>
-          )}
-        </div>
-          </form>
+          </div>
+
+          {/* Profile Form */}
+          <div className="lg:col-span-2">
+            <div className="bg-white rounded-xl shadow-sm border p-6">
+              <div className="flex items-center mb-6">
+                <FaUserCircle className="text-emerald-600 text-2xl mr-3" />
+                <h3 className="text-xl font-bold text-gray-900">Account Information</h3>
+              </div>
+
+              <form id="profile-form" onSubmit={handleSubmit} className="space-y-6">
+                {/* Name Field */}
+                <div>
+                  <label className="flex items-center text-gray-700 font-semibold mb-2">
+                    <FaUser className="text-emerald-600 mr-2" />
+                    Full Name
+                  </label>
+                  <input
+                    type="text"
+                    name="name"
+                    value={formData.name || ""}
+                    onChange={handleChange}
+                    disabled={!editing || loading}
+                    className={`w-full px-4 py-3 border rounded-lg transition-all duration-300 ${
+                      editing && !loading
+                        ? "border-gray-300 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/25 bg-white"
+                        : "border-gray-200 bg-gray-50 text-gray-600 cursor-not-allowed"
+                    }`}
+                    placeholder="Enter your full name"
+                  />
+                </div>
+
+                {/* Email Field */}
+                <div>
+                  <label className="flex items-center text-gray-700 font-semibold mb-2">
+                    <FaEnvelope className="text-emerald-600 mr-2" />
+                    Email Address
+                  </label>
+                  <input
+                    type="email"
+                    name="email"
+                    value={formData.email || ""}
+                    onChange={handleChange}
+                    disabled={!editing || loading}
+                    className={`w-full px-4 py-3 border rounded-lg transition-all duration-300 ${
+                      editing && !loading
+                        ? "border-gray-300 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/25 bg-white"
+                        : "border-gray-200 bg-gray-50 text-gray-600 cursor-not-allowed"
+                    }`}
+                    placeholder="Enter your email address"
+                  />
+                </div>
+
+                {/* Phone Field (Read-only) */}
+                <div>
+                  <label className="flex items-center text-gray-700 font-semibold mb-2">
+                    <FaPhone className="text-emerald-600 mr-2" />
+                    Phone Number
+                    <span className="ml-2 text-xs bg-gray-200 text-gray-600 px-2 py-1 rounded-full">Read Only</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.phone || ""}
+                    disabled
+                    className="w-full px-4 py-3 border border-gray-200 bg-gray-50 text-gray-600 rounded-lg cursor-not-allowed"
+                    placeholder="Phone number not available"
+                  />
+                  <p className="text-sm text-gray-500 mt-1">
+                    Contact support to update your phone number
+                  </p>
+                </div>
+
+                {/* Account Type (Read-only) */}
+                <div>
+                  <label className="flex items-center text-gray-700 font-semibold mb-2">
+                    <FaShieldAlt className="text-emerald-600 mr-2" />
+                    Account Type
+                  </label>
+                  <div className="w-full px-4 py-3 border border-gray-200 bg-gray-50 text-gray-600 rounded-lg">
+                    {profile.role.charAt(0).toUpperCase() + profile.role.slice(1)} Account
+                  </div>
+                </div>
+              </form>
+            </div>
+
+            {/* Additional Info Card */}
+            <div className="bg-blue-50 border border-blue-200 rounded-xl p-6 mt-6">
+              <div className="flex items-start">
+                <div className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center mr-4 flex-shrink-0">
+                  <FaUserCircle className="text-white text-lg" />
+                </div>
+                <div>
+                  <h4 className="font-semibold text-blue-900 mb-2">Profile Tips</h4>
+                  <ul className="text-blue-800 text-sm space-y-1">
+                    <li>• Keep your profile information up to date for better service</li>
+                    <li>• A profile picture helps build trust with other users</li>
+                    <li>• Your email is used for important account notifications</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -308,46 +399,3 @@ const FarmerProfile: React.FC = () => {
 };
 
 export default FarmerProfile;
-
-
-// ======================================================
-// Helper Component for Input Fields (for clean reusable UI)
-// ======================================================
-interface ProfileInputFieldProps {
-    label: string;
-    name: string;
-    value: string;
-    onChange: (e: ChangeEvent<HTMLInputElement>) => void;
-    disabled: boolean;
-    isReadOnly: boolean;
-    type: string;
-}
-
-const ProfileInputField: React.FC<ProfileInputFieldProps> = ({ 
-    label, name, value, onChange, disabled, isReadOnly, type
-}) => {
-    
-    // Class names for styling based on read-only mode
-    const inputClasses = `w-full border rounded-lg px-3 py-2 transition duration-150 ${
-        !isReadOnly 
-          ? "bg-white border-gray-300 focus:ring-emerald-500 focus:border-emerald-500" 
-          : "bg-gray-100 border-gray-200 text-gray-700 cursor-default"
-    }`;
-
-    return (
-        <div>
-            <label htmlFor={name} className="block text-gray-600 mb-1 font-medium">{label}</label>
-            <input
-                id={name}
-                type={type}
-                name={name}
-                // If it's read-only OR currently loading, the input is disabled
-                disabled={isReadOnly || disabled} 
-                readOnly={isReadOnly} // Use readOnly for better UX on fields you don't want edited
-                value={value}
-                onChange={onChange}
-                className={inputClasses}
-            />
-        </div>
-    );
-};

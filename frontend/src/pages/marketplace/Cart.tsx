@@ -42,12 +42,18 @@ const Cart: React.FC = () => {
   const [cart, setCart] = useState<CartData | null>(null);
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState<string | null>(null);
+  const [userRole, setUserRole] = useState<string | null>(null);
   const backendUrl = (import.meta as any).env.VITE_BACKEND_URL || 'http://localhost:5000';
 
   const fetchCart = async () => {
     try {
       setLoading(true);
       const token = localStorage.getItem('token');
+      const role = localStorage.getItem('role');
+      
+      // Set user role for validation
+      setUserRole(role);
+      
       if (!token) {
         navigate('/login');
         return;
@@ -335,6 +341,22 @@ const Cart: React.FC = () => {
                         className="w-full px-6 py-3 bg-gray-300 text-gray-500 rounded-lg cursor-not-allowed"
                       >
                         Cannot Proceed to Checkout
+                      </button>
+                    </div>
+                  ) : !userRole || !['farmer', 'landowner', 'investor'].includes(userRole) ? (
+                    <div className="text-center">
+                      <div className="flex items-center justify-center gap-2 text-amber-600 mb-2">
+                        <AlertCircle className="w-4 h-4" />
+                        <span className="text-sm">
+                          {userRole ? 'Invalid account type for marketplace' : 'Authentication required'}
+                        </span>
+                      </div>
+                      <button
+                        onClick={() => navigate('/checkout')}
+                        className="w-full px-6 py-3 bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition"
+                      >
+                        <CreditCard className="w-4 h-4 inline mr-2" />
+                        Continue to Authentication
                       </button>
                     </div>
                   ) : (

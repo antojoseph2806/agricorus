@@ -65,9 +65,19 @@ const ProductDetails: React.FC = () => {
     try {
       setAddingToCart(true);
       const token = localStorage.getItem('token');
+      const role = localStorage.getItem('role');
+      
       if (!token) {
         alert('Please login to add items to cart');
         navigate('/login');
+        return;
+      }
+      
+      // Check if user has valid role for marketplace
+      const validRoles = ['farmer', 'landowner', 'investor'];
+      if (!role || !validRoles.includes(role)) {
+        alert('To purchase from the marketplace, you need to be registered as a farmer, landowner, or investor.');
+        navigate('/register');
         return;
       }
 

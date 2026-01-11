@@ -10,7 +10,7 @@ const stats = [
 
 const Stats: React.FC = () => {
   return (
-    <section className="py-20 bg-gradient-to-r from-primary-600 to-earth-600">
+    <section className="py-20 bg-gradient-to-r from-emerald-600 to-green-600">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

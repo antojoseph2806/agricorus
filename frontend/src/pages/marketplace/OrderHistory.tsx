@@ -45,6 +45,7 @@ interface Order {
   notes?: string;
   createdAt: string;
   updatedAt: string;
+  deliveredAt?: string; // Added for proper return window calculation
 }
 
 const OrderHistory: React.FC = () => {
@@ -130,11 +131,26 @@ const OrderHistory: React.FC = () => {
   };
 
   const canReturnOrder = (order: Order) => {
-    return order.orderStatus === 'DELIVERED';
+    if (order.orderStatus !== 'DELIVERED') return false;
+    
+    // Check if order has deliveredAt date (we need to add this to the interface)
+    // For now, we'll use createdAt as a fallback, but ideally we need deliveredAt
+    const deliveryDate = order.deliveredAt || order.updatedAt;
+    if (!deliveryDate) return false;
+    
+    const daysSinceDelivery = (Date.now() - new Date(deliveryDate).getTime()) / (1000 * 60 * 60 * 24);
+    return daysSinceDelivery < 7; // Return window is only open for first 7 days
   };
 
   const canReplaceOrder = (order: Order) => {
-    return order.orderStatus === 'DELIVERED';
+    if (order.orderStatus !== 'DELIVERED') return false;
+    
+    // Check if order has deliveredAt date
+    const deliveryDate = order.deliveredAt || order.updatedAt;
+    if (!deliveryDate) return false;
+    
+    const daysSinceDelivery = (Date.now() - new Date(deliveryDate).getTime()) / (1000 * 60 * 60 * 24);
+    return daysSinceDelivery < 7; // Replace window is also only open for first 7 days
   };
 
   const handleCancelOrder = (order: Order) => {
@@ -240,7 +256,8 @@ const OrderHistory: React.FC = () => {
                             Order #{order.orderNumber}
                           </h3>
                           {getOrderStatusBadge(order.orderStatus)}
-                          {getPaymentStatusBadge(order.paymentStatus)}
+                          {/* Don't show payment status badge for delivered orders */}
+                          {order.orderStatus.toUpperCase() !== 'DELIVERED' && getPaymentStatusBadge(order.paymentStatus)}
                         </div>
                         <div className="flex items-center gap-4 text-sm text-gray-600">
                           <div className="flex items-center gap-1">

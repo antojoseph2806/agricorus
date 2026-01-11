@@ -41,6 +41,7 @@ const cartRoutes = require("./routes/cartRoutes");
 const orderRoutes = require("./routes/orderRoutes");
 const reviewRoutes = require("./routes/reviewRoutes");
 const vendorReviewRoutes = require("./routes/vendorReviewRoutes");
+const addressRoutes = require("./routes/addressRoutes");
 
 
 // ------------------------
@@ -152,6 +153,7 @@ app.use("/api/vendor/inventory", require("./routes/inventoryRoutes"));
 app.use("/api/vendor/notifications", require("./routes/notificationRoutes"));
 app.use("/api/vendor/payments", require("./routes/vendorPaymentRoutes"));
 app.use("/api/vendor/notifications", require("./routes/notificationRoutes"));
+app.use("/api/addresses", addressRoutes);
 // ------------------------
 // Test protected route
 // ------------------------

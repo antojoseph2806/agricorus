@@ -162,45 +162,45 @@ const LandownerLeaseRequests: React.FC<LeaseRequestsProps> = ({
   };
 
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      setError(null);
+  const fetchLeases = async () => {
+    setLoading(true);
+    setError(null);
 
-      try {
-        let url = "http://localhost:5000/api/leases/owner/requests";
-        if (statusFilter !== "all") {
-          url = `http://localhost:5000/api/leases/owner/requests/${statusFilter}`;
-        }
-
-        const token = localStorage.getItem("token");
-        if (!token) {
-          setError("Unauthorized: Please login as a landowner.");
-          setLoading(false);
-          return;
-        }
-
-        const res = await axios.get(url, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        setLeases(res.data);
-      } catch (err: any) {
-        if (err.response?.status === 401) {
-          setError(
-            "Unauthorized: You must be logged in as a landowner to view requests."
-          );
-        } else {
-          setError("Failed to fetch lease requests.");
-        }
-      } finally {
-        setLoading(false);
+    try {
+      let url = "http://localhost:5000/api/leases/owner/requests";
+      if (statusFilter !== "all") {
+        url = `http://localhost:5000/api/leases/owner/requests/${statusFilter}`;
       }
-    };
 
-    fetchData();
+      const token = localStorage.getItem("token");
+      if (!token) {
+        setError("Unauthorized: Please login as a landowner.");
+        setLoading(false);
+        return;
+      }
+
+      const res = await axios.get(url, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      setLeases(res.data);
+    } catch (err: any) {
+      if (err.response?.status === 401) {
+        setError(
+          "Unauthorized: You must be logged in as a landowner to view requests."
+        );
+      } else {
+        setError("Failed to fetch lease requests.");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchLeases();
   }, [statusFilter]);
 
   const handleAction = async (leaseId: string, action: "accept" | "cancel") => {
@@ -233,16 +233,56 @@ const LandownerLeaseRequests: React.FC<LeaseRequestsProps> = ({
   };
 
   /**
-   * ✅ SIMPLIFIED LOGIC: ONLY uses the agreementUrl provided in the lease object
-   * as requested by the user. No secondary API call is performed.
+   * Enhanced agreement viewing with automatic generation for missing agreements
    */
-  const handleViewAgreement = (agreementUrl?: string) => {
-    if (agreementUrl) {
-      // Directly opens the URL in a new tab
-      window.open(agreementUrl, "_blank");
+  const handleViewAgreement = async (lease: any) => {
+    if (lease.agreementUrl) {
+      // Agreement exists, open it directly
+      window.open(lease.agreementUrl, "_blank");
+      return;
+    }
+
+    // Agreement doesn't exist, try to generate it
+    if (lease.status === 'active') {
+      try {
+        setActionLoading(lease._id);
+        
+        // Try to access the agreement endpoint, which will generate it if missing
+        const token = localStorage.getItem('token');
+        const response = await fetch(`http://localhost:5000/api/lease/${lease._id}/agreement`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+
+        if (response.ok) {
+          // Agreement was generated successfully, download it
+          const blob = await response.blob();
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `Lease_Agreement_${lease._id}.pdf`;
+          document.body.appendChild(a);
+          a.click();
+          window.URL.revokeObjectURL(url);
+          document.body.removeChild(a);
+          
+          // Refresh the leases to get the updated agreement URL
+          fetchLeases();
+        } else {
+          const errorData = await response.json();
+          console.error("Agreement generation failed:", errorData);
+          alert(errorData.message || "Failed to generate agreement. Please contact support.");
+        }
+      } catch (error) {
+        console.error("Error accessing agreement:", error);
+        alert("Failed to access agreement. Please check your connection and try again.");
+      } finally {
+        setActionLoading(null);
+      }
     } else {
-      console.error("Agreement URL not found in lease data.");
-      alert("Agreement URL is not available for this lease."); 
+      alert(`Agreement is not available. Lease status: ${lease.status}. Agreements are only available for active leases.`);
     }
   };
 
@@ -534,11 +574,21 @@ const LandownerLeaseRequests: React.FC<LeaseRequestsProps> = ({
 
                           {["accepted", "active"].includes(lease.status) && (
                             <button
-                              onClick={() => handleViewAgreement(lease.agreementUrl)}
-                              className="flex items-center justify-center px-6 py-3 rounded-lg font-semibold text-white bg-blue-600 hover:bg-blue-700 transition-all duration-300"
+                              onClick={() => handleViewAgreement(lease)}
+                              disabled={actionLoading === lease._id}
+                              className="flex items-center justify-center px-6 py-3 rounded-lg font-semibold text-white bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 disabled:cursor-not-allowed transition-all duration-300"
                             >
-                              <FaFilePdf className="mr-2" />
-                              View Agreement
+                              {actionLoading === lease._id ? (
+                                <>
+                                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                                  Generating...
+                                </>
+                              ) : (
+                                <>
+                                  <FaFilePdf className="mr-2" />
+                                  View Agreement
+                                </>
+                              )}
                             </button>
                           )}
 

@@ -5,6 +5,7 @@ const Project = require("../models/Project");
 const Investment = require("../models/Investment");
 const auth = require("../middleware/auth");
 const authorizeRoles = require("../middleware/authorizeRoles");
+const { createVerifiedProject, getVerificationStatus } = require("../controllers/verifiedProjectController");
 
 const router = express.Router();
 
@@ -23,6 +24,16 @@ router.post("/projects", auth, authorizeRoles("farmer"), async (req, res) => {
     res.status(400).json({ error: err.message });
   }
 });
+
+/* -----------------------------
+   CREATE VERIFIED PROJECT (Farmer)
+------------------------------ */
+router.post("/projects/create-verified", auth, authorizeRoles("farmer"), createVerifiedProject);
+
+/* -----------------------------
+   GET PROJECT VERIFICATION STATUS (Farmer)
+------------------------------ */
+router.get("/projects/:id/verification-status", auth, authorizeRoles("farmer"), getVerificationStatus);
 /* -----------------------------
    GET ALL PROJECTS (Admin only)
 ------------------------------ */
@@ -365,8 +376,41 @@ router.patch(
       if (!project) return res.status(404).json({ error: "Project not found" });
 
       project.isApproved = true;
+      project.status = "open"; // Make it available for funding
       await project.save();
       res.json({ message: "Project approved successfully", project });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  }
+);
+
+/* -----------------------------
+   REJECT PROJECT (Admin)
+------------------------------ */
+router.patch(
+  "/projects/:id/reject",
+  auth,
+  authorizeRoles("admin"),
+  async (req, res) => {
+    try {
+      if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+        return res.status(400).json({ error: "Invalid project ID" });
+      }
+      const { reason } = req.body;
+      if (!reason) {
+        return res.status(400).json({ error: "Rejection reason is required" });
+      }
+
+      const project = await Project.findById(req.params.id);
+      if (!project) return res.status(404).json({ error: "Project not found" });
+
+      project.isApproved = false;
+      project.status = "closed";
+      project.rejectionReason = reason;
+      await project.save();
+      
+      res.json({ message: "Project rejected successfully", project });
     } catch (err) {
       res.status(500).json({ error: err.message });
     }

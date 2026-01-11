@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Search,
-  Filter,
   ShoppingCart,
   Eye,
   Package,
@@ -185,13 +184,6 @@ const Marketplace: React.FC = () => {
               >
                 <ShoppingCart className="w-4 h-4" />
                 Cart
-              </Link>
-              <Link
-                to="/orders"
-                className="flex items-center gap-2 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition"
-              >
-                <Package className="w-4 h-4" />
-                Orders
               </Link>
             </div>
           </div>

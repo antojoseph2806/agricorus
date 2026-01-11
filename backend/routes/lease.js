@@ -125,25 +125,119 @@ router.put("/:leaseId/cancel", auth, authorizeRoles("landowner"), async (req, re
  */
 router.get("/:leaseId/agreement", auth, async (req, res) => {
   try {
-    const lease = await Lease.findById(req.params.leaseId);
+    const lease = await Lease.findById(req.params.leaseId)
+      .populate('land', 'title location')
+      .populate('farmer', 'name email')
+      .populate('owner', 'name email');
 
     if (!lease) return res.status(404).json({ error: "Lease not found" });
 
     // ✅ Only farmer or owner can view
     if (
-      lease.farmer.toString() !== req.user.id &&
-      lease.owner.toString() !== req.user.id
+      lease.farmer._id.toString() !== req.user.id &&
+      lease.owner._id.toString() !== req.user.id
     ) {
       return res.status(403).json({ error: "Unauthorized" });
     }
 
+    // If agreement doesn't exist but lease is active, generate it
+    if (!lease.agreementUrl && lease.status === "active") {
+      try {
+        console.log("🔄 Generating missing agreement for lease:", lease._id);
+        
+        const generateLeasePDF = require('../utils/generateLeasePDF');
+        const cloudinary = require('cloudinary').v2;
+        
+        const pdfPath = await generateLeasePDF(lease);
+        
+        const uploadResult = await cloudinary.uploader.upload(pdfPath, {
+          folder: "agreements",
+          resource_type: "raw",
+        });
+        
+        lease.agreementUrl = uploadResult.secure_url;
+        await lease.save();
+        
+        console.log("✅ Agreement generated successfully:", uploadResult.secure_url);
+      } catch (generateError) {
+        console.error("❌ Error generating agreement:", generateError);
+        return res.status(500).json({ 
+          error: "Failed to generate agreement. Please contact support.",
+          details: generateError.message 
+        });
+      }
+    }
+
     if (!lease.agreementUrl) {
-      return res.status(404).json({ error: "Agreement not generated yet." });
+      return res.status(404).json({ 
+        error: "Agreement not available for this lease.",
+        leaseStatus: lease.status,
+        message: lease.status === "active" 
+          ? "Agreement generation failed. Please contact support." 
+          : "Agreement will be generated when the lease becomes active."
+      });
     }
 
     // Send download response
     res.download(lease.agreementUrl, `Lease_Agreement_${lease._id}.pdf`);
   } catch (err) {
+    console.error("❌ Error accessing agreement:", err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+/**
+ * Admin or system route to regenerate agreement for a lease
+ */
+router.post("/:leaseId/regenerate-agreement", auth, async (req, res) => {
+  try {
+    const lease = await Lease.findById(req.params.leaseId)
+      .populate('land', 'title location')
+      .populate('farmer', 'name email')
+      .populate('owner', 'name email');
+
+    if (!lease) return res.status(404).json({ error: "Lease not found" });
+
+    // ✅ Only farmer, owner, or admin can regenerate
+    if (
+      lease.farmer._id.toString() !== req.user.id &&
+      lease.owner._id.toString() !== req.user.id &&
+      req.user.role !== 'admin'
+    ) {
+      return res.status(403).json({ error: "Unauthorized" });
+    }
+
+    if (lease.status !== "active") {
+      return res.status(400).json({ 
+        error: "Can only generate agreements for active leases",
+        currentStatus: lease.status 
+      });
+    }
+
+    const generateLeasePDF = require('../utils/generateLeasePDF');
+    const cloudinary = require('cloudinary').v2;
+    
+    console.log("🔄 Regenerating agreement for lease:", lease._id);
+    
+    const pdfPath = await generateLeasePDF(lease);
+    
+    const uploadResult = await cloudinary.uploader.upload(pdfPath, {
+      folder: "agreements",
+      resource_type: "raw",
+    });
+    
+    lease.agreementUrl = uploadResult.secure_url;
+    await lease.save();
+    
+    console.log("✅ Agreement regenerated successfully:", uploadResult.secure_url);
+    
+    res.json({
+      message: "Agreement regenerated successfully",
+      agreementUrl: lease.agreementUrl,
+      leaseId: lease._id
+    });
+  } catch (err) {
+    console.error("❌ Error regenerating agreement:", err);
     res.status(500).json({ error: err.message });
   }
 });
