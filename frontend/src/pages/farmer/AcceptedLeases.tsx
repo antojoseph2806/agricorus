@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { CheckCircle, IndianRupee, Image as ImageIcon, MapPin, Calendar, User, Phone, Mail } from "lucide-react";
+import { CheckCircle, IndianRupee, Image as ImageIcon, MapPin, Calendar, Phone, Mail, Maximize2, Layers, Clock } from "lucide-react";
 
-// Add Razorpay types
 declare global {
   interface Window {
     Razorpay: any;
@@ -40,16 +39,10 @@ const AcceptedLeases: React.FC = () => {
         const res = await fetch("http://localhost:5000/api/farmer/leases/accepted", {
           headers: { Authorization: `Bearer ${token}` },
         });
-
         const data = await res.json();
-
-        if (Array.isArray(data)) {
-          setLeases(data);
-        } else if (data.leases && Array.isArray(data.leases)) {
-          setLeases(data.leases);
-        } else {
-          setLeases([]);
-        }
+        if (Array.isArray(data)) setLeases(data);
+        else if (data.leases && Array.isArray(data.leases)) setLeases(data.leases);
+        else setLeases([]);
       } catch (err) {
         console.error("Error fetching accepted leases", err);
         setLeases([]);
@@ -57,28 +50,21 @@ const AcceptedLeases: React.FC = () => {
         setLoading(false);
       }
     };
-
     fetchAcceptedLeases();
   }, []);
 
-  // Handle Payment with Razorpay
   const handlePayment = async (leaseId: string) => {
     try {
       const token = localStorage.getItem("token");
-
-      // Step 1: Create Razorpay order
       const res = await fetch(`http://localhost:5000/api/payments/order/${leaseId}`, {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
       });
-
       const orderData = await res.json();
       if (!res.ok) {
         alert("Error creating payment order: " + orderData.error);
         return;
       }
-
-      // Step 2: Open Razorpay Checkout
       const options = {
         key: orderData.key,
         amount: orderData.amount,
@@ -87,13 +73,9 @@ const AcceptedLeases: React.FC = () => {
         description: "Lease Payment",
         order_id: orderData.orderId,
         handler: async function (response: any) {
-          // Step 3: Verify payment on backend
           const verifyRes = await fetch(`http://localhost:5000/api/payments/verify`, {
             method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
+            headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
             body: JSON.stringify({
               razorpay_order_id: response.razorpay_order_id,
               razorpay_payment_id: response.razorpay_payment_id,
@@ -101,22 +83,16 @@ const AcceptedLeases: React.FC = () => {
               leaseId,
             }),
           });
-
           const verifyData = await verifyRes.json();
           if (verifyRes.ok) {
             alert("✅ Payment Successful!");
-            setLeases((prev) =>
-              prev.map((l) => (l._id === leaseId ? { ...l, status: "active" } : l))
-            );
+            setLeases((prev) => prev.map((l) => (l._id === leaseId ? { ...l, status: "active" } : l)));
           } else {
             alert("❌ Payment verification failed: " + verifyData.error);
           }
         },
-        theme: {
-          color: "#059669",
-        },
+        theme: { color: "#059669" },
       };
-
       const razorpay = new window.Razorpay(options);
       razorpay.open();
     } catch (err) {
@@ -138,155 +114,118 @@ const AcceptedLeases: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4">
+    <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="bg-white rounded-lg shadow-sm border p-6 mb-6">
-          <div className="flex items-center mb-4">
-            <div className="w-12 h-12 bg-emerald-600 rounded-lg flex items-center justify-center mr-4">
-              <CheckCircle className="h-6 w-6 text-white" />
+        <div className="bg-white rounded-xl shadow-sm border p-6 mb-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center">
+              <div className="w-12 h-12 bg-emerald-600 rounded-xl flex items-center justify-center mr-4">
+                <CheckCircle className="h-6 w-6 text-white" />
+              </div>
+              <div>
+                <h1 className="text-2xl font-bold text-gray-900">Accepted Leases</h1>
+                <p className="text-gray-600 text-sm">Your approved land lease agreements ready for activation</p>
+              </div>
             </div>
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900">Active Leases</h1>
-              <p className="text-gray-600 mt-1">Your approved land lease agreements ready for activation</p>
+            <div className="hidden md:flex items-center gap-2 bg-emerald-50 px-4 py-2 rounded-lg">
+              <span className="text-emerald-700 font-semibold text-lg">{leases.length}</span>
+              <span className="text-emerald-600 text-sm">Total Leases</span>
             </div>
           </div>
         </div>
 
         {leases.length === 0 ? (
-          <div className="bg-white rounded-lg shadow-sm border p-12 text-center">
+          <div className="bg-white rounded-xl shadow-sm border p-12 text-center">
             <ImageIcon className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">No Active Leases</h3>
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">No Accepted Leases</h3>
             <p className="text-gray-600">You don't have any approved lease agreements at the moment.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
             {leases.map((lease) => (
-              <div
-                key={lease._id}
-                className="bg-white rounded-lg shadow-sm border hover:shadow-md transition-all duration-300 flex flex-col overflow-hidden"
-              >
-                {/* Image Section */}
-                <div className="w-full h-48 relative flex-shrink-0">
+              <div key={lease._id} className="bg-white rounded-xl shadow-sm border hover:shadow-lg transition-all duration-300 overflow-hidden group">
+                {/* Compact Image with Overlay Info */}
+                <div className="relative h-40">
                   {lease.land?.landPhotos?.length ? (
-                    <img
-                      src={lease.land.landPhotos[0]}
-                      alt={lease.land.title}
-                      className="w-full h-full object-cover"
-                    />
+                    <img src={lease.land.landPhotos[0]} alt={lease.land.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                   ) : (
-                    <div className="w-full h-full bg-gray-100 flex flex-col items-center justify-center text-gray-400">
-                      <ImageIcon className="h-12 w-12 mb-2" />
-                      <span className="text-sm">No image available</span>
+                    <div className="w-full h-full bg-gradient-to-br from-emerald-100 to-emerald-50 flex items-center justify-center">
+                      <ImageIcon className="h-10 w-10 text-emerald-300" />
                     </div>
                   )}
+                  {/* Gradient Overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
                   {/* Status Badge */}
-                  <div className="absolute top-4 right-4 bg-emerald-100 text-emerald-800 text-xs font-semibold px-3 py-1 rounded-full flex items-center">
+                  <div className="absolute top-3 right-3 bg-emerald-500 text-white text-xs font-bold px-2.5 py-1 rounded-full flex items-center shadow-lg">
                     <CheckCircle className="h-3 w-3 mr-1" />
                     {lease.status.toUpperCase()}
                   </div>
+                  {/* Title on Image */}
+                  <div className="absolute bottom-3 left-3 right-3">
+                    <h2 className="text-white font-bold text-lg leading-tight line-clamp-1 drop-shadow-lg">
+                      {lease.land?.title || "Untitled Lease"}
+                    </h2>
+                    <div className="flex items-center text-white/90 text-xs mt-1">
+                      <MapPin className="h-3 w-3 mr-1" />
+                      <span className="line-clamp-1">{lease.land?.location?.address || "No address"}</span>
+                    </div>
+                  </div>
                 </div>
 
-                {/* Content Section */}
-                <div className="flex-1 p-6">
-                  <div className="flex flex-col h-full">
-                    <div className="flex-1">
-                      <h2 className="text-xl font-bold text-gray-900 mb-3 line-clamp-2">
-                        {lease.land?.title || "Untitled Lease"}
-                      </h2>
-                      
-                      <div className="flex items-start text-gray-600 mb-4">
-                        <MapPin className="h-4 w-4 mr-2 text-emerald-600 flex-shrink-0 mt-0.5" />
-                        <p className="text-sm">
-                          {lease.land?.location?.address || "No address provided"}
-                        </p>
-                      </div>
-
-                      <div className="grid grid-cols-2 gap-3 mb-4">
-                        <div className="bg-gray-50 p-3 rounded-lg border border-gray-200">
-                          <p className="text-xs text-gray-600 mb-1">Size</p>
-                          <p className="text-sm font-semibold text-gray-900">
-                            {lease.land?.sizeInAcres || "N/A"} acres
-                          </p>
-                        </div>
-                        <div className="bg-gray-50 p-3 rounded-lg border border-gray-200">
-                          <p className="text-xs text-gray-600 mb-1">Soil Type</p>
-                          <p className="text-sm font-semibold text-gray-900">
-                            {lease.land?.soilType || "N/A"}
-                          </p>
-                        </div>
-                        <div className="bg-gray-50 p-3 rounded-lg border border-gray-200">
-                          <p className="text-xs text-gray-600 mb-1">Duration</p>
-                          <p className="text-sm font-semibold text-gray-900">
-                            {lease.durationMonths} months
-                          </p>
-                        </div>
-                        <div className="bg-gray-50 p-3 rounded-lg border border-gray-200">
-                          <p className="text-xs text-gray-600 mb-1">Price</p>
-                          <p className="text-sm font-semibold text-gray-900">
-                            ₹{lease.pricePerMonth}/mo
-                          </p>
-                        </div>
-                      </div>
-
-                      <div className="text-sm text-gray-600 space-y-2 pb-4 border-b border-gray-200">
-                        <div className="flex items-center">
-                          <Mail className="h-4 w-4 mr-2 text-gray-400" />
-                          <span className="font-medium text-gray-900 mr-2">Owner:</span>
-                          {lease.owner?.email}
-                        </div>
-                        <div className="flex items-center">
-                          <Phone className="h-4 w-4 mr-2 text-gray-400" />
-                          <span className="font-medium text-gray-900 mr-2">Contact:</span>
-                          {lease.owner?.phone || "N/A"}
-                        </div>
-                        {lease.createdAt && (
-                          <div className="flex items-center">
-                            <Calendar className="h-4 w-4 mr-2 text-gray-400" />
-                            <span className="font-medium text-gray-900 mr-2">Created:</span>
-                            {new Date(lease.createdAt).toLocaleDateString('en-IN')}
-                          </div>
-                        )}
-                      </div>
+                {/* Compact Content */}
+                <div className="p-4">
+                  {/* Quick Stats Row */}
+                  <div className="flex items-center justify-between gap-2 mb-3">
+                    <div className="flex items-center gap-1 text-gray-600">
+                      <Maximize2 className="h-3.5 w-3.5 text-emerald-600" />
+                      <span className="text-sm font-medium">{lease.land?.sizeInAcres || "N/A"} acres</span>
                     </div>
-
-                    {/* Payment Button */}
-                    {lease.status === "accepted" && (
-                      <div className="mt-4">
-                        <button
-                          onClick={() => handlePayment(lease._id)}
-                          className="w-full flex items-center justify-center px-4 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-lg transition-colors duration-200"
-                        >
-                          <IndianRupee className="h-5 w-5 mr-2" />
-                          Activate Lease
-                        </button>
-                      </div>
-                    )}
-
-                    {lease.status === "active" && (
-                      <div className="mt-4">
-                        <div className="w-full flex items-center justify-center px-4 py-3 bg-emerald-100 text-emerald-800 font-semibold rounded-lg">
-                          <CheckCircle className="h-5 w-5 mr-2" />
-                          Lease Active
-                        </div>
-                      </div>
-                    )}
+                    <div className="flex items-center gap-1 text-gray-600">
+                      <Layers className="h-3.5 w-3.5 text-amber-600" />
+                      <span className="text-sm font-medium">{lease.land?.soilType || "N/A"}</span>
+                    </div>
+                    <div className="flex items-center gap-1 text-gray-600">
+                      <Clock className="h-3.5 w-3.5 text-blue-600" />
+                      <span className="text-sm font-medium">{lease.durationMonths} mo</span>
+                    </div>
                   </div>
+
+                  {/* Price Highlight */}
+                  <div className="bg-emerald-50 rounded-lg px-3 py-2 mb-3 flex items-center justify-between">
+                    <span className="text-emerald-700 text-sm font-medium">Monthly Rent</span>
+                    <span className="text-emerald-700 font-bold text-lg">₹{lease.pricePerMonth?.toLocaleString()}</span>
+                  </div>
+
+                  {/* Owner Info - Compact */}
+                  <div className="flex items-center justify-between text-xs text-gray-500 mb-3 pb-3 border-b">
+                    <div className="flex items-center gap-1">
+                      <Mail className="h-3 w-3" />
+                      <span className="truncate max-w-[120px]">{lease.owner?.email || "N/A"}</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Phone className="h-3 w-3" />
+                      <span>{lease.owner?.phone || "N/A"}</span>
+                    </div>
+                  </div>
+
+                  {/* Action Button */}
+                  {lease.status === "accepted" && (
+                    <button onClick={() => handlePayment(lease._id)}
+                      className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-lg transition-all duration-200 text-sm">
+                      <IndianRupee className="h-4 w-4" />
+                      Activate Lease
+                    </button>
+                  )}
+                  {lease.status === "active" && (
+                    <div className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-emerald-100 text-emerald-700 font-semibold rounded-lg text-sm">
+                      <CheckCircle className="h-4 w-4" />
+                      Lease Active
+                    </div>
+                  )}
                 </div>
               </div>
             ))}
-          </div>
-        )}
-
-        {/* Stats Footer */}
-        {leases.length > 0 && (
-          <div className="mt-6 text-center">
-            <div className="inline-flex items-center bg-white rounded-lg px-6 py-3 border shadow-sm">
-              <CheckCircle className="h-5 w-5 text-emerald-600 mr-2" />
-              <span className="text-gray-600 text-sm font-medium">
-                Displaying <span className="text-gray-900 font-semibold">{leases.length}</span> active lease{leases.length !== 1 ? 's' : ''}
-              </span>
-            </div>
           </div>
         )}
       </div>

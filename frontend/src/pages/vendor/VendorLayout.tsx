@@ -13,7 +13,13 @@ import {
   LogOut,
   ChevronDown,
   Store,
-  Bell
+  Bell,
+  BarChart3,
+  TrendingUp,
+  FileText,
+  Download,
+  Calendar,
+  PieChart
 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import NotificationBell from "../../components/vendor/NotificationBell";
@@ -61,6 +67,17 @@ const VendorSidebar = ({
       label: "Orders",
       icon: ShoppingCart,
       href: "/vendor/orders",
+    },
+    {
+      label: "Sales Analytics",
+      icon: BarChart3,
+      children: [
+        { label: "Sales Dashboard", icon: TrendingUp, href: "/vendor/analytics/dashboard" },
+        { label: "Monthly Reports", icon: Calendar, href: "/vendor/analytics/monthly" },
+        { label: "Product Performance", icon: PieChart, href: "/vendor/analytics/products" },
+        { label: "Custom Reports", icon: FileText, href: "/vendor/analytics/reports" },
+        { label: "Download Center", icon: Download, href: "/vendor/analytics/downloads" },
+      ],
     },
     {
       label: "Notifications",

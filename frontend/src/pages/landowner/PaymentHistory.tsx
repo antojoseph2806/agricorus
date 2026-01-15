@@ -43,8 +43,8 @@ interface Lease {
 
 interface PaymentRequest {
   _id: string;
-  lease: Lease;
-  farmer: Farmer;
+  lease: Lease | null;
+  farmer: Farmer | null;
   amount: number;
   status: string;
   requestedAt: string;
@@ -155,7 +155,7 @@ const PaymentHistory: React.FC = () => {
   const exportToCSV = () => {
     const headers = ["Lease ID", "Amount", "Status", "Requested At", "Payout Method"];
     const csvData = filteredRequests.map(req => [
-      req.lease._id.slice(-8),
+      req.lease?._id?.slice(-8) || 'N/A',
       `₹${req.amount}`,
       req.status,
       new Date(req.requestedAt).toLocaleDateString(),
@@ -282,8 +282,8 @@ const PaymentHistory: React.FC = () => {
                       >
                         <td className="py-4 px-6">
                           <div>
-                            <p className="font-semibold text-gray-900">Lease #{req.lease._id.slice(-8)}</p>
-                            <p className="text-gray-600 text-sm">Farmer: {req.farmer.name || req.farmer.email}</p>
+                            <p className="font-semibold text-gray-900">Lease #{req.lease?._id?.slice(-8) || 'N/A'}</p>
+                            <p className="text-gray-600 text-sm">Farmer: {req.farmer?.name || req.farmer?.email || 'Unknown'}</p>
                           </div>
                         </td>
                         <td className="py-4 px-6">
@@ -383,8 +383,8 @@ const PaymentHistory: React.FC = () => {
               >
                 <div className="flex items-center justify-between mb-4">
                   <div>
-                    <p className="text-white font-semibold">Lease #{req.lease._id.slice(-8)}</p>
-                    <p className="text-gray-400 text-sm">{req.farmer.name || req.farmer.email}</p>
+                    <p className="text-white font-semibold">Lease #{req.lease?._id?.slice(-8) || 'N/A'}</p>
+                    <p className="text-gray-400 text-sm">{req.farmer?.name || req.farmer?.email || 'Unknown'}</p>
                   </div>
                   <span className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold border ${getStatusColor(req.status)}`}>
                     {getStatusIcon(req.status)}

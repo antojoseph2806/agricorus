@@ -8,6 +8,8 @@ interface KycStatusResponse {
   documentImage: string;
   extractedNumber: string;
   createdAt: string;
+  rejectionReason?: string;
+  verifiedAt?: string;
 }
 
 const KycStatus: React.FC = () => {
@@ -72,9 +74,9 @@ const KycStatus: React.FC = () => {
                 {status && (
                   <div
                     className={`px-6 py-2 rounded-full font-semibold text-sm ${
-                      status.status === 'approved'
+                      status.status === 'approved' || status.status === 'Verified'
                         ? 'bg-green-100 text-green-700 border border-green-200'
-                        : status.status === 'rejected'
+                        : status.status === 'rejected' || status.status === 'Rejected'
                         ? 'bg-red-100 text-red-700 border border-red-200'
                         : 'bg-yellow-100 text-yellow-700 border border-yellow-200'
                     }`}
@@ -146,18 +148,34 @@ const KycStatus: React.FC = () => {
                         <div className="flex-1 bg-gray-200 rounded-full h-2">
                           <div
                             className={`h-2 rounded-full transition-all duration-500 ${
-                              status.status === 'approved'
+                              status.status === 'approved' || status.status === 'Verified'
                                 ? 'bg-green-500 w-full'
-                                : status.status === 'rejected'
+                                : status.status === 'rejected' || status.status === 'Rejected'
                                 ? 'bg-red-500 w-full'
                                 : 'bg-yellow-500 w-2/3'
                             }`}
                           ></div>
                         </div>
                         <span className="text-gray-900 text-sm font-semibold">
-                          {status.status === 'pending' ? 'In Review' : status.status}
+                          {status.status === 'pending' || status.status === 'Pending' ? 'In Review' : status.status}
                         </span>
                       </div>
+                      
+                      {/* Show rejection reason if rejected */}
+                      {(status.status === 'rejected' || status.status === 'Rejected') && status.rejectionReason && (
+                        <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+                          <h4 className="text-red-700 font-semibold text-sm mb-2">Rejection Reason:</h4>
+                          <p className="text-red-600 text-sm">{status.rejectionReason}</p>
+                        </div>
+                      )}
+                      
+                      {/* Show verified date if approved */}
+                      {(status.status === 'approved' || status.status === 'Verified') && status.verifiedAt && (
+                        <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-lg">
+                          <h4 className="text-green-700 font-semibold text-sm mb-2">Verified On:</h4>
+                          <p className="text-green-600 text-sm">{new Date(status.verifiedAt).toLocaleString()}</p>
+                        </div>
+                      )}
                     </div>
                   </div>
 

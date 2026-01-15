@@ -1,4 +1,5 @@
 const VendorProfile = require('../models/VendorProfile');
+const Vendor = require('../models/Vendor');
 const mongoose = require('mongoose');
 const path = require('path');
 const fs = require('fs');
@@ -194,6 +195,9 @@ exports.createVendorProfile = async (req, res) => {
       submittedAt: new Date()
     });
 
+    // Also update the Vendor model's kycStatus for consistency
+    await Vendor.findByIdAndUpdate(vendorId, { kycStatus: 'Pending' });
+
     sendResponse(res, true, 'Profile created and KYC submitted successfully', profile, 201);
   } catch (error) {
     console.error('Create vendor profile error:', error);
@@ -319,6 +323,10 @@ exports.updateVendorProfile = async (req, res) => {
     }
 
     const updatedProfile = await profile.save();
+    
+    // Also update the Vendor model's kycStatus for consistency
+    await Vendor.findByIdAndUpdate(vendorId, { kycStatus: 'Pending' });
+    
     sendResponse(res, true, 'Profile updated successfully', updatedProfile);
   } catch (error) {
     console.error('Update vendor profile error:', error);

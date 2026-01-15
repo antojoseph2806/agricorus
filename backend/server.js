@@ -29,6 +29,7 @@ const projectPaymentsRoutes = require("./routes/projectPayments");
 const kycRoutes = require('./routes/kycRoute');
 const adminKycRoutes = require('./routes/adminKycRoutes');
 const adminUserKycRoutes = require('./routes/adminUserKycRoutes');
+const adminProjectRoutes = require('./routes/adminProjectRoutes');
 const adminLeasePaymentRoutes = require("./routes/adminLeasePaymentRoutes");
 const adminInvestmentRoutes = require("./routes/adminInvestmentRoutes");
 const landownerDisputeRoutes = require("./routes/landownerDispute");
@@ -42,6 +43,7 @@ const orderRoutes = require("./routes/orderRoutes");
 const reviewRoutes = require("./routes/reviewRoutes");
 const vendorReviewRoutes = require("./routes/vendorReviewRoutes");
 const addressRoutes = require("./routes/addressRoutes");
+const salesAnalyticsRoutes = require("./routes/salesAnalyticsRoutes");
 
 
 // ------------------------
@@ -135,6 +137,7 @@ app.use("/api/project-payments", projectPaymentsRoutes);
 app.use('/api/kyc', kycRoutes);
 app.use('/api/admin/kyc', adminKycRoutes);
 app.use('/api/admin/user-kyc', adminUserKycRoutes);
+app.use('/api/admin', adminProjectRoutes);
 app.use("/api/admin/leases", adminLeasePaymentRoutes);
 app.use("/api/admin/investments", adminInvestmentRoutes);
 app.use("/api/landowner/disputes", landownerDisputeRoutes);
@@ -154,6 +157,8 @@ app.use("/api/vendor/notifications", require("./routes/notificationRoutes"));
 app.use("/api/vendor/payments", require("./routes/vendorPaymentRoutes"));
 app.use("/api/vendor/notifications", require("./routes/notificationRoutes"));
 app.use("/api/addresses", addressRoutes);
+app.use("/api/admin/sales-analytics", salesAnalyticsRoutes);
+app.use("/api/vendor/analytics", require("./routes/vendorAnalyticsRoutes"));
 // ------------------------
 // Test protected route
 // ------------------------

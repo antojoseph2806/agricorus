@@ -1,13 +1,6 @@
-const Payment = require('../models/Payment');
 const Order = require('../models/Order');
-const Razorpay = require('razorpay');
-const NotificationService = require('../utils/notificationService');
-
-// Initialize Razorpay instance
-const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID,
-  key_secret: process.env.RAZORPAY_KEY_SECRET,
-});
+const Payment = require('../models/Payment');
+const mongoose = require('mongoose');
 
 /**
  * @desc    Get vendor payments with filtering and pagination
@@ -16,91 +9,132 @@ const razorpay = new Razorpay({
  */
 exports.getVendorPayments = async (req, res) => {
   try {
-    const vendorId = (req.vendorId || req.vendor?._id || req.user?._id).toString();
-    const { 
-      page = 1, 
-      limit = 20, 
-      status, 
-      paymentMethod, 
-      startDate, 
+    const vendorId = req.vendor._id;
+    const {
+      page = 1,
+      limit = 20,
+      status,
+      paymentMethod,
+      startDate,
       endDate,
-      search 
+      search,
     } = req.query;
 
-    // Build query
-    const query = { vendorId };
+    // Build query for orders containing this vendor's items
+    const query = { 'items.vendorId': vendorId };
 
-    if (status) {
+    if (status && status !== 'ALL') {
       query.paymentStatus = status.toUpperCase();
     }
 
-    if (paymentMethod) {
+    if (paymentMethod && paymentMethod !== 'ALL') {
       query.paymentMethod = paymentMethod;
     }
 
     if (startDate || endDate) {
       query.createdAt = {};
       if (startDate) query.createdAt.$gte = new Date(startDate);
-      if (endDate) query.createdAt.$lte = new Date(endDate);
+      if (endDate) {
+        const end = new Date(endDate);
+        end.setHours(23, 59, 59, 999);
+        query.createdAt.$lte = end;
+      }
     }
 
     if (search) {
       query.$or = [
         { orderNumber: { $regex: search, $options: 'i' } },
-        { razorpayPaymentId: { $regex: search, $options: 'i' } }
+        { razorpayPaymentId: { $regex: search, $options: 'i' } },
       ];
     }
 
     const skip = (parseInt(page) - 1) * parseInt(limit);
 
-    // Get payments with populated data
-    const payments = await Payment.find(query)
-      .populate('orderId', 'orderNumber orderStatus deliveryAddress items')
+    // Get orders with vendor's items
+    const orders = await Order.find(query)
       .populate('buyerId', 'name email phone')
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(parseInt(limit));
 
-    const totalPayments = await Payment.countDocuments(query);
+    const totalOrders = await Order.countDocuments(query);
 
-    // Calculate summary statistics
-    const summaryPipeline = [
-      { $match: { vendorId: require('mongoose').Types.ObjectId(vendorId) } },
-      {
-        $group: {
-          _id: null,
-          totalEarnings: { $sum: '$vendorAmount' },
-          totalRefunds: { $sum: '$refundAmount' },
-          netEarnings: { $sum: { $subtract: ['$vendorAmount', '$refundAmount'] } },
-          pendingAmount: {
-            $sum: {
-              $cond: [
-                { $eq: ['$paymentStatus', 'PENDING'] },
-                '$vendorAmount',
-                0
-              ]
-            }
-          },
-          settledAmount: {
-            $sum: {
-              $cond: [
-                { $eq: ['$settlementStatus', 'SETTLED'] },
-                '$vendorAmount',
-                0
-              ]
-            }
-          }
+    // Transform orders to payment format
+    const payments = orders.map((order) => {
+      // Calculate vendor's portion of the order
+      let vendorAmount = 0;
+      let itemCount = 0;
+
+      order.items.forEach((item) => {
+        if (item.vendorId && item.vendorId.toString() === vendorId.toString()) {
+          vendorAmount += item.subtotal || item.price * item.quantity;
+          itemCount++;
         }
-      }
-    ];
+      });
 
-    const summaryResult = await Payment.aggregate(summaryPipeline);
-    const summary = summaryResult[0] || {
-      totalEarnings: 0,
-      totalRefunds: 0,
-      netEarnings: 0,
-      pendingAmount: 0,
-      settledAmount: 0
+      const platformFee = Math.round(vendorAmount * 0.05); // 5% platform fee
+      const netAmount = vendorAmount - platformFee;
+
+      return {
+        _id: order._id,
+        orderNumber: order.orderNumber,
+        orderId: {
+          _id: order._id,
+          orderNumber: order.orderNumber,
+          orderStatus: order.orderStatus,
+          deliveryAddress: order.deliveryAddress,
+          items: order.items.filter(
+            (item) => item.vendorId && item.vendorId.toString() === vendorId.toString()
+          ),
+        },
+        buyerId: order.buyerId || { name: 'Guest', email: 'N/A' },
+        paymentMethod: order.paymentMethod || 'COD',
+        vendorAmount,
+        platformFee,
+        totalAmount: order.totalAmount,
+        paymentStatus: order.paymentStatus,
+        refundAmount: 0,
+        refundStatus: 'NONE',
+        settlementStatus: order.paymentStatus === 'PAID' ? 'SETTLED' : 'PENDING',
+        paidAt: order.paymentStatus === 'PAID' ? order.updatedAt : null,
+        createdAt: order.createdAt,
+        netAmount,
+      };
+    });
+
+    // Calculate summary statistics from all vendor orders
+    const allVendorOrders = await Order.find({ 'items.vendorId': vendorId });
+
+    let totalEarnings = 0;
+    let totalRefunds = 0;
+    let pendingAmount = 0;
+    let settledAmount = 0;
+
+    allVendorOrders.forEach((order) => {
+      let orderVendorAmount = 0;
+      order.items.forEach((item) => {
+        if (item.vendorId && item.vendorId.toString() === vendorId.toString()) {
+          orderVendorAmount += item.subtotal || item.price * item.quantity;
+        }
+      });
+
+      totalEarnings += orderVendorAmount;
+
+      if (order.paymentStatus === 'PAID') {
+        settledAmount += orderVendorAmount;
+      } else if (order.paymentStatus === 'PENDING') {
+        pendingAmount += orderVendorAmount;
+      } else if (order.paymentStatus === 'REFUNDED') {
+        totalRefunds += orderVendorAmount;
+      }
+    });
+
+    const summary = {
+      totalEarnings,
+      totalRefunds,
+      netEarnings: totalEarnings - totalRefunds,
+      pendingAmount,
+      settledAmount,
     };
 
     res.json({
@@ -109,22 +143,23 @@ exports.getVendorPayments = async (req, res) => {
         payments,
         pagination: {
           currentPage: parseInt(page),
-          totalPages: Math.ceil(totalPayments / parseInt(limit)),
-          totalPayments,
-          paymentsPerPage: parseInt(limit)
+          totalPages: Math.ceil(totalOrders / parseInt(limit)),
+          totalPayments: totalOrders,
+          paymentsPerPage: parseInt(limit),
         },
-        summary
-      }
+        summary,
+      },
     });
   } catch (error) {
     console.error('Get vendor payments error:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to fetch payments',
-      error: error.message
+      error: error.message,
     });
   }
 };
+
 
 /**
  * @desc    Get single payment details
@@ -133,30 +168,72 @@ exports.getVendorPayments = async (req, res) => {
  */
 exports.getPaymentDetails = async (req, res) => {
   try {
-    const vendorId = (req.vendorId || req.vendor?._id || req.user?._id).toString();
+    const vendorId = req.vendor._id;
     const { id } = req.params;
 
-    const payment = await Payment.findOne({ _id: id, vendorId })
-      .populate('orderId', 'orderNumber orderStatus deliveryAddress items notes')
-      .populate('buyerId', 'name email phone');
+    const order = await Order.findOne({
+      _id: id,
+      'items.vendorId': vendorId,
+    })
+      .populate('buyerId', 'name email phone')
+      .populate('items.productId', 'name images');
 
-    if (!payment) {
+    if (!order) {
       return res.status(404).json({
         success: false,
-        message: 'Payment not found'
+        message: 'Payment not found',
       });
     }
 
+    // Calculate vendor's portion
+    let vendorAmount = 0;
+    const vendorItems = [];
+
+    order.items.forEach((item) => {
+      if (item.vendorId && item.vendorId.toString() === vendorId.toString()) {
+        vendorAmount += item.subtotal || item.price * item.quantity;
+        vendorItems.push(item);
+      }
+    });
+
+    const platformFee = Math.round(vendorAmount * 0.05);
+    const netAmount = vendorAmount - platformFee;
+
+    const payment = {
+      _id: order._id,
+      orderNumber: order.orderNumber,
+      orderId: {
+        _id: order._id,
+        orderNumber: order.orderNumber,
+        orderStatus: order.orderStatus,
+        deliveryAddress: order.deliveryAddress,
+        items: vendorItems,
+        notes: order.notes,
+      },
+      buyerId: order.buyerId || { name: 'Guest', email: 'N/A' },
+      paymentMethod: order.paymentMethod || 'COD',
+      vendorAmount,
+      platformFee,
+      totalAmount: order.totalAmount,
+      paymentStatus: order.paymentStatus,
+      refundAmount: 0,
+      refundStatus: 'NONE',
+      settlementStatus: order.paymentStatus === 'PAID' ? 'SETTLED' : 'PENDING',
+      paidAt: order.paymentStatus === 'PAID' ? order.updatedAt : null,
+      createdAt: order.createdAt,
+      netAmount,
+    };
+
     res.json({
       success: true,
-      data: payment
+      data: payment,
     });
   } catch (error) {
     console.error('Get payment details error:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to fetch payment details',
-      error: error.message
+      error: error.message,
     });
   }
 };
@@ -168,172 +245,80 @@ exports.getPaymentDetails = async (req, res) => {
  */
 exports.processRefund = async (req, res) => {
   try {
-    const vendorId = (req.vendorId || req.vendor?._id || req.user?._id).toString();
+    const vendorId = req.vendor._id;
     const { id } = req.params;
     const { refundAmount, refundReason } = req.body;
 
-    // Validate input
     if (!refundAmount || refundAmount <= 0) {
       return res.status(400).json({
         success: false,
-        message: 'Valid refund amount is required'
+        message: 'Valid refund amount is required',
       });
     }
 
     if (!refundReason || refundReason.trim().length < 10) {
       return res.status(400).json({
         success: false,
-        message: 'Refund reason must be at least 10 characters'
+        message: 'Refund reason must be at least 10 characters',
       });
     }
 
-    const payment = await Payment.findOne({ _id: id, vendorId })
-      .populate('orderId');
+    const order = await Order.findOne({
+      _id: id,
+      'items.vendorId': vendorId,
+    });
 
-    if (!payment) {
+    if (!order) {
       return res.status(404).json({
         success: false,
-        message: 'Payment not found'
+        message: 'Order not found',
       });
     }
 
-    // Validate refund amount
-    const maxRefundAmount = payment.vendorAmount - payment.refundAmount;
-    if (refundAmount > maxRefundAmount) {
+    if (order.paymentStatus !== 'PAID') {
       return res.status(400).json({
         success: false,
-        message: `Maximum refund amount is ₹${maxRefundAmount.toFixed(2)}`
+        message: 'Only paid orders can be refunded',
       });
     }
 
-    // Check if payment can be refunded
-    if (payment.paymentStatus !== 'PAID') {
-      return res.status(400).json({
-        success: false,
-        message: 'Only paid orders can be refunded'
-      });
-    }
-
-    if (payment.refundStatus === 'PROCESSING') {
-      return res.status(400).json({
-        success: false,
-        message: 'Refund is already being processed'
-      });
-    }
-
-    // Update payment with refund request
-    payment.refundStatus = 'REQUESTED';
-    payment.refundAmount = (payment.refundAmount || 0) + refundAmount;
-    payment.refundReason = refundReason.trim();
-    payment.refundRequestedBy = 'VENDOR';
-    payment.refundRequestedAt = new Date();
-    payment.notes = payment.notes 
-      ? `${payment.notes}\n\nRefund requested by vendor: ${refundReason}` 
-      : `Refund requested by vendor: ${refundReason}`;
-
-    await payment.save();
-
-    // Process refund through Razorpay if it's an online payment
-    if (payment.paymentMethod === 'razorpay' && payment.razorpayPaymentId) {
-      try {
-        payment.refundStatus = 'PROCESSING';
-        await payment.save();
-
-        const refund = await razorpay.payments.refund(payment.razorpayPaymentId, {
-          amount: Math.round(refundAmount * 100), // Convert to paise
-          notes: {
-            reason: refundReason,
-            orderId: payment.orderId._id.toString(),
-            vendorId: vendorId
-          }
-        });
-
-        // Update payment with refund details
-        payment.razorpayRefundId = refund.id;
-        payment.refundStatus = 'COMPLETED';
-        payment.refundedAt = new Date();
-        payment.paymentGatewayResponse = refund;
-
-        // Update order payment status if fully refunded
-        if (payment.refundAmount >= payment.vendorAmount) {
-          payment.paymentStatus = 'REFUNDED';
-          await Order.findByIdAndUpdate(payment.orderId._id, {
-            paymentStatus: 'REFUNDED'
-          });
-        } else {
-          payment.paymentStatus = 'PARTIALLY_REFUNDED';
-        }
-
-        await payment.save();
-
-        // Send notification to buyer
-        try {
-          await NotificationService.createNotification({
-            vendorId: payment.buyerId,
-            type: 'REFUND_PROCESSED',
-            title: 'Refund Processed',
-            message: `Your refund of ₹${refundAmount.toFixed(2)} for order ${payment.orderNumber} has been processed`,
-            data: {
-              orderId: payment.orderId._id,
-              orderNumber: payment.orderNumber,
-              refundAmount
-            },
-            priority: 'MEDIUM'
-          });
-        } catch (notificationError) {
-          console.error('Failed to send refund notification:', notificationError);
-        }
-
-        res.json({
-          success: true,
-          message: 'Refund processed successfully',
-          data: {
-            refundId: refund.id,
-            refundAmount,
-            status: 'COMPLETED'
-          }
-        });
-      } catch (refundError) {
-        console.error('Razorpay refund error:', refundError);
-        
-        // Update payment status to failed
-        payment.refundStatus = 'FAILED';
-        payment.notes = payment.notes 
-          ? `${payment.notes}\n\nRefund failed: ${refundError.message}` 
-          : `Refund failed: ${refundError.message}`;
-        await payment.save();
-
-        res.status(500).json({
-          success: false,
-          message: 'Failed to process refund through payment gateway',
-          error: refundError.message
-        });
+    // Calculate vendor's portion
+    let vendorAmount = 0;
+    order.items.forEach((item) => {
+      if (item.vendorId && item.vendorId.toString() === vendorId.toString()) {
+        vendorAmount += item.subtotal || item.price * item.quantity;
       }
-    } else {
-      // For COD orders, mark as completed (manual process)
-      payment.refundStatus = 'COMPLETED';
-      payment.refundedAt = new Date();
-      payment.paymentStatus = payment.refundAmount >= payment.vendorAmount 
-        ? 'REFUNDED' 
-        : 'PARTIALLY_REFUNDED';
-      
-      await payment.save();
+    });
 
-      res.json({
-        success: true,
-        message: 'Refund request submitted successfully. COD refunds will be processed manually.',
-        data: {
-          refundAmount,
-          status: 'COMPLETED'
-        }
+    if (refundAmount > vendorAmount) {
+      return res.status(400).json({
+        success: false,
+        message: `Maximum refund amount is ₹${vendorAmount.toFixed(2)}`,
       });
     }
+
+    // Update order payment status
+    order.paymentStatus = refundAmount >= vendorAmount ? 'REFUNDED' : 'PAID';
+    order.notes = order.notes
+      ? `${order.notes}\n\nRefund processed: ₹${refundAmount} - ${refundReason}`
+      : `Refund processed: ₹${refundAmount} - ${refundReason}`;
+
+    await order.save();
+
+    res.json({
+      success: true,
+      message: 'Refund processed successfully',
+      data: {
+        refundAmount,
+        status: 'COMPLETED',
+      },
+    });
   } catch (error) {
     console.error('Process refund error:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to process refund',
-      error: error.message
+      error: error.message,
     });
   }
 };
@@ -345,100 +330,86 @@ exports.processRefund = async (req, res) => {
  */
 exports.getPaymentAnalytics = async (req, res) => {
   try {
-    const vendorId = (req.vendorId || req.vendor?._id || req.user?._id).toString();
-    const { period = '30' } = req.query; // days
+    const vendorId = req.vendor._id;
+    const { period = '30' } = req.query;
 
     const startDate = new Date();
     startDate.setDate(startDate.getDate() - parseInt(period));
 
-    // Monthly earnings trend
-    const monthlyTrend = await Payment.aggregate([
-      {
-        $match: {
-          vendorId: require('mongoose').Types.ObjectId(vendorId),
-          createdAt: { $gte: startDate }
-        }
-      },
-      {
-        $group: {
-          _id: {
-            year: { $year: '$createdAt' },
-            month: { $month: '$createdAt' },
-            day: { $dayOfMonth: '$createdAt' }
-          },
-          earnings: { $sum: '$vendorAmount' },
-          refunds: { $sum: '$refundAmount' },
-          orders: { $sum: 1 }
-        }
-      },
-      { $sort: { '_id.year': 1, '_id.month': 1, '_id.day': 1 } }
-    ]);
+    // Get orders in period
+    const orders = await Order.find({
+      'items.vendorId': vendorId,
+      createdAt: { $gte: startDate },
+    });
 
-    // Payment method breakdown
-    const paymentMethods = await Payment.aggregate([
-      {
-        $match: {
-          vendorId: require('mongoose').Types.ObjectId(vendorId),
-          paymentStatus: 'PAID'
-        }
-      },
-      {
-        $group: {
-          _id: '$paymentMethod',
-          count: { $sum: 1 },
-          amount: { $sum: '$vendorAmount' }
-        }
-      }
-    ]);
+    // Daily earnings trend
+    const dailyData = {};
+    let totalEarnings = 0;
+    let totalOrders = 0;
+    const paymentMethods = { COD: { count: 0, amount: 0 }, razorpay: { count: 0, amount: 0 } };
 
-    // Top performing periods
-    const performanceStats = await Payment.aggregate([
-      {
-        $match: {
-          vendorId: require('mongoose').Types.ObjectId(vendorId),
-          createdAt: { $gte: startDate }
-        }
-      },
-      {
-        $group: {
-          _id: null,
-          totalOrders: { $sum: 1 },
-          totalEarnings: { $sum: '$vendorAmount' },
-          totalRefunds: { $sum: '$refundAmount' },
-          avgOrderValue: { $avg: '$vendorAmount' },
-          refundRate: {
-            $avg: {
-              $cond: [
-                { $gt: ['$refundAmount', 0] },
-                1,
-                0
-              ]
-            }
-          }
-        }
+    orders.forEach((order) => {
+      const dateKey = order.createdAt.toISOString().split('T')[0];
+      if (!dailyData[dateKey]) {
+        dailyData[dateKey] = { earnings: 0, refunds: 0, orders: 0 };
       }
-    ]);
+
+      let orderVendorAmount = 0;
+      order.items.forEach((item) => {
+        if (item.vendorId && item.vendorId.toString() === vendorId.toString()) {
+          orderVendorAmount += item.subtotal || item.price * item.quantity;
+        }
+      });
+
+      dailyData[dateKey].earnings += orderVendorAmount;
+      dailyData[dateKey].orders++;
+      totalEarnings += orderVendorAmount;
+      totalOrders++;
+
+      const method = order.paymentMethod || 'COD';
+      if (paymentMethods[method]) {
+        paymentMethods[method].count++;
+        paymentMethods[method].amount += orderVendorAmount;
+      }
+    });
+
+    const monthlyTrend = Object.entries(dailyData)
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([date, data]) => ({
+        _id: {
+          year: new Date(date).getFullYear(),
+          month: new Date(date).getMonth() + 1,
+          day: new Date(date).getDate(),
+        },
+        ...data,
+      }));
+
+    const paymentMethodsArray = Object.entries(paymentMethods).map(([method, data]) => ({
+      _id: method,
+      count: data.count,
+      amount: data.amount,
+    }));
 
     res.json({
       success: true,
       data: {
         monthlyTrend,
-        paymentMethods,
-        performanceStats: performanceStats[0] || {
-          totalOrders: 0,
-          totalEarnings: 0,
+        paymentMethods: paymentMethodsArray,
+        performanceStats: {
+          totalOrders,
+          totalEarnings,
           totalRefunds: 0,
-          avgOrderValue: 0,
-          refundRate: 0
-        }
-      }
+          avgOrderValue: totalOrders > 0 ? Math.round(totalEarnings / totalOrders) : 0,
+          refundRate: 0,
+        },
+      },
     });
   } catch (error) {
     console.error('Get payment analytics error:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to fetch payment analytics',
-      error: error.message
+      error: error.message,
     });
   }
 };

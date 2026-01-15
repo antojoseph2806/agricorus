@@ -92,8 +92,8 @@ const ProductDetails: React.FC = () => {
 
       const data = await response.json();
       if (data.success) {
-        alert('Item added to cart successfully!');
-        setQuantity(1); // Reset quantity
+        // Navigate to cart page after successful add
+        navigate('/cart');
       } else {
         alert(data.message || 'Failed to add item to cart');
       }

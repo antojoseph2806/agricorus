@@ -80,6 +80,13 @@ import VendorInventory from "./pages/vendor/VendorInventory";
 import VendorNotifications from "./pages/vendor/VendorNotifications";
 import VendorPayments from "./pages/vendor/VendorPayments";
 
+// Vendor Analytics Pages
+import VendorSalesAnalyticsDashboard from "./pages/vendor/analytics/SalesAnalyticsDashboard";
+import VendorMonthlyReports from "./pages/vendor/analytics/MonthlyReports";
+import VendorProductPerformance from "./pages/vendor/analytics/ProductPerformance";
+import VendorCustomReports from "./pages/vendor/analytics/CustomReports";
+import VendorDownloadCenter from "./pages/vendor/analytics/DownloadCenter";
+
 
 // Admin Pages
 import AdminDashboard from "./pages/admin/AdminDashboard";
@@ -95,7 +102,16 @@ import AdminDisputeDashboard from "./pages/admin/AdminDisputeDashboard";
 import ReturnRequestsAdmin from "./pages/admin/ReturnRequests";
 import AdminPaymentRequests from "./pages/admin/AdminPaymentRequests";
 import VendorKycManagement from "./pages/admin/VendorKycManagement";
+import UserKycManagement from "./pages/admin/UserKycManagement";
 import VerifiedVendors from "./pages/admin/VerifiedVendors";
+import AdminDisputeManager from "./pages/admin/AdminDisputeManager";
+
+// Sales Analytics Pages
+import SalesOverview from "./pages/admin/SalesAnalytics/SalesOverview";
+import MonthlyReports from "./pages/admin/SalesAnalytics/MonthlyReports";
+import ProductPerformance from "./pages/admin/SalesAnalytics/ProductPerformance";
+import RevenueTrends from "./pages/admin/SalesAnalytics/RevenueTrends";
+import DownloadReports from "./pages/admin/SalesAnalytics/DownloadReports";
 
 // Profile Pages
 import ProfileView from "./pages/landowner/ProfileView";
@@ -105,7 +121,6 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import ForbiddenPage from "./pages/ForbiddenPage";
 import FarmerKYCStatus from "./pages/farmer/FarmerKYCStatus";
 import FarmerKYCVerify from "./pages/farmer/FarmerKYCVerify";
-import AdminDisputeManager from "./pages/admin/AdminDisputeManager";
 
 function App() {
   return (
@@ -239,7 +254,12 @@ function App() {
           />
           <Route
             path="/landowner/disputes"
-            element={<LandownerDisputeHistory />}
+            element={
+              <ProtectedRoute
+                element={<LandownerDisputeHistory />}
+                allowedRoles={["landowner"]}
+              />
+            }
           />
           <Route
             path="/leaserequests/active"
@@ -413,6 +433,52 @@ function App() {
               />
             }
           />
+          {/* Vendor Analytics Routes */}
+          <Route
+            path="/vendor/analytics/dashboard"
+            element={
+              <ProtectedRoute
+                element={<VendorSalesAnalyticsDashboard />}
+                allowedRoles={["vendor"]}
+              />
+            }
+          />
+          <Route
+            path="/vendor/analytics/monthly"
+            element={
+              <ProtectedRoute
+                element={<VendorMonthlyReports />}
+                allowedRoles={["vendor"]}
+              />
+            }
+          />
+          <Route
+            path="/vendor/analytics/products"
+            element={
+              <ProtectedRoute
+                element={<VendorProductPerformance />}
+                allowedRoles={["vendor"]}
+              />
+            }
+          />
+          <Route
+            path="/vendor/analytics/reports"
+            element={
+              <ProtectedRoute
+                element={<VendorCustomReports />}
+                allowedRoles={["vendor"]}
+              />
+            }
+          />
+          <Route
+            path="/vendor/analytics/downloads"
+            element={
+              <ProtectedRoute
+                element={<VendorDownloadCenter />}
+                allowedRoles={["vendor"]}
+              />
+            }
+          />
           {/* ----------------- Admin Routes ----------------- */}
           <Route
             path="/admindashboard"
@@ -472,6 +538,22 @@ function App() {
             element={<ProtectedRoute element={<VerifiedVendors />} allowedRoles={["admin"]} />}
           />
           <Route
+            path="/admin/user-kyc/all"
+            element={<ProtectedRoute element={<UserKycManagement />} allowedRoles={["admin"]} />}
+          />
+          <Route
+            path="/admin/user-kyc/farmers"
+            element={<ProtectedRoute element={<UserKycManagement />} allowedRoles={["admin"]} />}
+          />
+          <Route
+            path="/admin/user-kyc/landowners"
+            element={<ProtectedRoute element={<UserKycManagement />} allowedRoles={["admin"]} />}
+          />
+          <Route
+            path="/admin/user-kyc/investors"
+            element={<ProtectedRoute element={<UserKycManagement />} allowedRoles={["admin"]} />}
+          />
+          <Route
             path="/admin/leases"
             element={<AdminLeasesPage />}
           />
@@ -484,6 +566,29 @@ function App() {
           <Route path="/admin/projects/edit/:id" element={<EditProjectadmin />} />
           <Route path="/admin/landowner/disputes" element={<AdminDisputeDashboard />} />
           <Route path="/admin/farmer/disputes" element={<AdminDisputeManager />} />
+          
+          {/* Sales Analytics Routes */}
+          <Route
+            path="/admin/sales-analytics/overview"
+            element={<ProtectedRoute element={<SalesOverview />} allowedRoles={["admin"]} />}
+          />
+          <Route
+            path="/admin/sales-analytics/monthly"
+            element={<ProtectedRoute element={<MonthlyReports />} allowedRoles={["admin"]} />}
+          />
+          <Route
+            path="/admin/sales-analytics/products"
+            element={<ProtectedRoute element={<ProductPerformance />} allowedRoles={["admin"]} />}
+          />
+          <Route
+            path="/admin/sales-analytics/revenue"
+            element={<ProtectedRoute element={<RevenueTrends />} allowedRoles={["admin"]} />}
+          />
+          <Route
+            path="/admin/sales-analytics/download"
+            element={<ProtectedRoute element={<DownloadReports />} allowedRoles={["admin"]} />}
+          />
+          
           <Route
             path="/admin/payment-requests"
             element={

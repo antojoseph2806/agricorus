@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import { TrendingUp } from "lucide-react";
+import { TrendingUp, Leaf, Search, Clock, CheckCircle, Zap, Users, Shield, ArrowRight, Loader2 } from "lucide-react";
 import { InvestorLayout } from "./InvestorLayout";
-
 
 interface Project {
   _id: string;
@@ -20,115 +19,171 @@ interface Project {
 
 export default function InvestorProjects() {
   const [projects, setProjects] = useState<Project[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterStatus, setFilterStatus] = useState("all");
 
   useEffect(() => {
     const fetchProjects = async () => {
       try {
+        setLoading(true);
         const res = await axios.get("http://localhost:5000/api/projects/investor", {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         });
         setProjects(res.data);
       } catch (err) {
         console.error(err);
+      } finally {
+        setLoading(false);
       }
     };
     fetchProjects();
   }, []);
 
   const formatCurrency = (value: number) =>
-    new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR" }).format(value);
+    new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 0 }).format(value);
+
+  const filteredProjects = projects.filter(project => {
+    const matchesSearch = project.title.toLowerCase().includes(searchTerm.toLowerCase()) || project.cropType.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesFilter = filterStatus === "all" || project.status === filterStatus;
+    return matchesSearch && matchesFilter;
+  });
+
+  const totalOpportunity = projects.reduce((sum, p) => sum + (p.fundingGoal - p.currentFunding), 0);
+  const openProjects = projects.filter(p => p.status === "open").length;
+
+  const getDaysRemaining = (endDate: string) => {
+    const diff = Math.ceil((new Date(endDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
+    return diff > 0 ? diff : 0;
+  };
+
+  if (loading) {
+    return <InvestorLayout><div className="flex items-center justify-center min-h-[60vh]"><Loader2 className="w-10 h-10 text-emerald-500 animate-spin" /></div></InvestorLayout>;
+  }
 
   return (
     <InvestorLayout>
-    <div className="p-8 bg-gray-50 min-h-screen">
-      <h1 className="text-3xl font-bold mb-6 flex items-center gap-2">
-        <TrendingUp className="w-6 h-6 text-green-600" /> Browse Investment Projects
-      </h1>
-
-      {projects.length === 0 ? (
-        <p className="text-gray-500">No projects available at the moment.</p>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {projects.map((project) => {
-            const progress =
-              project.fundingGoal > 0
-                ? (project.currentFunding / project.fundingGoal) * 100
-                : 0;
-
-            return (
-              <div
-                key={project._id}
-                className="bg-white border rounded-2xl shadow-md hover:shadow-lg transition p-6 flex flex-col"
-              >
-                {/* Header */}
-                <div className="mb-3">
-                  <h2 className="text-xl font-semibold">{project.title}</h2>
-                  <span
-                    className={`inline-block mt-1 px-3 py-1 text-sm rounded-full capitalize ${
-                      project.status === "open"
-                        ? "bg-green-100 text-green-700"
-                        : "bg-gray-200 text-gray-700"
-                    }`}
-                  >
-                    {project.status}
-                  </span>
-                </div>
-
-                {/* Content */}
-                <div className="flex-1">
-                  <p className="text-gray-600 mb-3">
-                    {project.description.length > 100
-                      ? project.description.slice(0, 100) + "..."
-                      : project.description}
-                  </p>
-
-                  <p className="text-sm text-gray-700 mb-2">
-                    <span className="font-medium">Crop:</span> {project.cropType}
-                  </p>
-
-                  {/* Funding Progress */}
-                  <div className="w-full bg-gray-200 rounded-full h-2.5 mb-2">
-                    <div
-                      className="bg-green-600 h-2.5 rounded-full"
-                      style={{ width: `${progress}%` }}
-                    ></div>
-                  </div>
-                  <p className="text-sm text-gray-600 mb-3">
-                    {formatCurrency(project.currentFunding)} raised of{" "}
-                    {formatCurrency(project.fundingGoal)}
-                  </p>
-
-                  {/* Dates */}
-                  <p className="text-xs text-gray-500">
-                    Start: {new Date(project.startDate).toLocaleDateString()} | End:{" "}
-                    {new Date(project.endDate).toLocaleDateString()}
-                  </p>
-
-                  {/* Farmer Info */}
-                  {project.farmerId && (
-                    <p className="text-sm text-gray-500 mt-2">
-                      By:{" "}
-                      <span className="font-medium">
-                        {project.farmerId.name || "Unknown Farmer"}
-                      </span>
-                    </p>
-                  )}
-                </div>
-
-                {/* Footer */}
-                <div className="mt-4">
-                  <Link to={`/projects/${project._id}`} className="w-full block">
-                    <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition">
-                      View Details
-                    </button>
-                  </Link>
-                </div>
-              </div>
-            );
-          })}
+      <div className="min-h-screen">
+        {/* Header */}
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
+              <TrendingUp className="w-6 h-6 text-emerald-500" /> Investment Projects
+            </h1>
+            <p className="text-gray-500 text-sm mt-1">Discover agricultural investment opportunities</p>
+          </div>
+          <div className="flex gap-3">
+            <div className="bg-emerald-50 px-4 py-2 rounded-xl">
+              <p className="text-xs text-emerald-600">Open</p>
+              <p className="text-lg font-bold text-emerald-700">{openProjects}</p>
+            </div>
+            <div className="bg-blue-50 px-4 py-2 rounded-xl">
+              <p className="text-xs text-blue-600">Available</p>
+              <p className="text-lg font-bold text-blue-700">{formatCurrency(totalOpportunity)}</p>
+            </div>
+          </div>
         </div>
-      )}
-    </div>
+
+        {/* Search & Filter */}
+        <div className="flex flex-col sm:flex-row gap-3 mb-6">
+          <div className="flex-1 relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <input type="text" placeholder="Search projects..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-10 pr-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-emerald-500 text-sm" />
+          </div>
+          <div className="flex gap-2">
+            {["all", "open", "funded"].map((s) => (
+              <button key={s} onClick={() => setFilterStatus(s)}
+                className={`px-4 py-2.5 rounded-xl text-sm font-medium capitalize ${filterStatus === s ? "bg-emerald-500 text-white" : "bg-white border border-gray-200 text-gray-600 hover:border-emerald-300"}`}>
+                {s === "all" ? "All" : s}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Projects Grid */}
+        {filteredProjects.length === 0 ? (
+          <div className="text-center py-12 bg-white rounded-2xl border"><Leaf className="w-12 h-12 text-gray-300 mx-auto mb-3" /><p className="text-gray-500">No projects found</p></div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+            {filteredProjects.map((project) => {
+              const progress = project.fundingGoal > 0 ? (project.currentFunding / project.fundingGoal) * 100 : 0;
+              const daysLeft = getDaysRemaining(project.endDate);
+              const isOpen = project.status === "open";
+
+              return (
+                <Link key={project._id} to={`/projects/${project._id}`}
+                  className="group bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-xl hover:border-emerald-200 transition-all">
+                  {/* Header */}
+                  <div className={`px-5 py-4 ${isOpen ? "bg-gradient-to-r from-emerald-500 to-teal-500" : "bg-gray-400"}`}>
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1 min-w-0">
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium mb-2 bg-white/20 text-white">
+                          {isOpen ? <Zap className="w-3 h-3" /> : <CheckCircle className="w-3 h-3" />} {project.status}
+                        </span>
+                        <h3 className="text-white font-semibold truncate">{project.title}</h3>
+                      </div>
+                      <span className="text-2xl ml-2">🌿</span>
+                    </div>
+                  </div>
+
+                  {/* Body */}
+                  <div className="p-5">
+                    <div className="flex items-center gap-2 mb-4">
+                      <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-emerald-50 text-emerald-700 rounded-lg text-xs font-medium">
+                        <Leaf className="w-3 h-3" /> {project.cropType}
+                      </span>
+                      {isOpen && daysLeft > 0 && (
+                        <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-amber-50 text-amber-700 rounded-lg text-xs font-medium">
+                          <Clock className="w-3 h-3" /> {daysLeft}d left
+                        </span>
+                      )}
+                    </div>
+
+                    <div className="mb-4">
+                      <div className="flex justify-between text-sm mb-1.5">
+                        <span className="font-semibold text-gray-800">{formatCurrency(project.currentFunding)}</span>
+                        <span className="text-gray-400">of {formatCurrency(project.fundingGoal)}</span>
+                      </div>
+                      <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                        <div className="h-full bg-gradient-to-r from-emerald-400 to-teal-500 rounded-full" style={{ width: `${Math.min(progress, 100)}%` }} />
+                      </div>
+                      <p className="text-right text-xs text-gray-400 mt-1">{progress.toFixed(0)}% funded</p>
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                      {project.farmerId && (
+                        <div className="flex items-center gap-2">
+                          <div className="w-7 h-7 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-full flex items-center justify-center text-white text-xs font-bold">
+                            {project.farmerId.name?.charAt(0) || "F"}
+                          </div>
+                          <div>
+                            <p className="text-xs font-medium text-gray-700 truncate max-w-[100px]">{project.farmerId.name || "Farmer"}</p>
+                            <p className="text-[10px] text-emerald-600 flex items-center gap-0.5"><CheckCircle className="w-2.5 h-2.5" /> Verified</p>
+                          </div>
+                        </div>
+                      )}
+                      <span className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold ${isOpen ? "bg-emerald-500 text-white group-hover:bg-emerald-600" : "bg-gray-100 text-gray-600"}`}>
+                        {isOpen ? "Invest" : "View"} <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+                      </span>
+                    </div>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        )}
+
+        {/* Trust Bar */}
+        <div className="mt-8 bg-white rounded-2xl border p-5">
+          <div className="flex flex-wrap items-center justify-center gap-8">
+            <div className="flex items-center gap-2 text-sm text-gray-600"><Shield className="w-5 h-5 text-emerald-500" /> Secure Payments</div>
+            <div className="flex items-center gap-2 text-sm text-gray-600"><Users className="w-5 h-5 text-blue-500" /> Verified Farmers</div>
+            <div className="flex items-center gap-2 text-sm text-gray-600"><TrendingUp className="w-5 h-5 text-amber-500" /> 12-18% Returns</div>
+            <div className="flex items-center gap-2 text-sm text-gray-600"><Leaf className="w-5 h-5 text-purple-500" /> Sustainable</div>
+          </div>
+        </div>
+      </div>
     </InvestorLayout>
   );
 }

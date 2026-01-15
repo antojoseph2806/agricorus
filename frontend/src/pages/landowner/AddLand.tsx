@@ -411,17 +411,17 @@ const AddLand: React.FC = () => {
 
 
                 {/* Right Column - Location Section (ENHANCED) */}
-                <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10 hover:border-white/20 transition-all duration-300">
+                <div className="bg-white rounded-xl p-6 border border-gray-200 hover:border-emerald-300 transition-all duration-300">
                   <div className="flex items-center mb-6">
-                    <MapPin className="w-6 h-6 text-[#ff3b3b] mr-3" />
-                    <h3 className="text-xl font-bold text-white uppercase tracking-wider font-['Poppins']">Location Details</h3>
+                    <MapPin className="w-6 h-6 text-emerald-600 mr-3" />
+                    <h3 className="text-xl font-bold text-gray-900 uppercase tracking-wider">Location Details</h3>
                   </div>
 
                   <div className="space-y-6">
                     {/* Full Address Input */}
                     <div>
-                      <label htmlFor="location.address" className="block text-sm font-medium text-gray-300 uppercase tracking-wider mb-3">
-                        Full Address <span className="text-red-400">*</span>
+                      <label htmlFor="location.address" className="block text-sm font-medium text-gray-700 uppercase tracking-wider mb-3">
+                        Full Address <span className="text-red-600">*</span>
                       </label>
                       <div className="relative">
                         <input
@@ -431,13 +431,13 @@ const AddLand: React.FC = () => {
                           value={landData.location.address}
                           onChange={handleChange}
                           required
-                          className="w-full px-4 py-3 pr-12 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-[#ff3b3b] transition-colors duration-300"
+                          className="w-full px-4 py-3 pr-12 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/25 transition-colors duration-300"
                           placeholder="Enter complete land address"
                           disabled={isSearching || isLocating}
                         />
                         <MapPin className="absolute right-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
                       </div>
-                      <p className="text-xs text-gray-400 mt-2">
+                      <p className="text-xs text-gray-500 mt-2">
                         Enter the address and click the search button, or use your current location.
                       </p>
                     </div>
@@ -448,7 +448,7 @@ const AddLand: React.FC = () => {
                           type="button"
                           onClick={handleAddressSearch}
                           disabled={isSearching || isLocating}
-                          className="flex-1 flex items-center justify-center p-3 bg-[#ff3b3b] rounded-lg text-white font-semibold hover:bg-[#ff6b6b] transition-colors duration-300 disabled:opacity-50"
+                          className="flex-1 flex items-center justify-center p-3 bg-emerald-600 rounded-lg text-white font-semibold hover:bg-emerald-700 transition-colors duration-300 disabled:opacity-50"
                           title="Search and Autofill Coordinates"
                         >
                           {isSearching ? (
@@ -462,7 +462,7 @@ const AddLand: React.FC = () => {
                           type="button"
                           onClick={handleCurrentLocationFetch}
                           disabled={isSearching || isLocating}
-                          className="flex-1 flex items-center justify-center p-3 bg-[#4285F4] rounded-lg text-white font-semibold hover:bg-[#34A853] transition-colors duration-300 disabled:opacity-50"
+                          className="flex-1 flex items-center justify-center p-3 bg-blue-600 rounded-lg text-white font-semibold hover:bg-blue-700 transition-colors duration-300 disabled:opacity-50"
                           title="Use Current Location"
                         >
                           {isLocating ? (
@@ -477,8 +477,8 @@ const AddLand: React.FC = () => {
                     {/* Lat/Long Inputs */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
-                        <label htmlFor="location.latitude" className="block text-sm font-medium text-gray-300 uppercase tracking-wider mb-3">
-                          Latitude <span className="text-red-400">*</span>
+                        <label htmlFor="location.latitude" className="block text-sm font-medium text-gray-700 uppercase tracking-wider mb-3">
+                          Latitude <span className="text-red-600">*</span>
                         </label>
                         <div className="relative">
                           <input
@@ -488,8 +488,8 @@ const AddLand: React.FC = () => {
                             value={landData.location.latitude}
                             onChange={handleChange}
                             required
-                            className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-[#ff3b3b] transition-colors duration-300 pl-12"
-                            placeholder="Auto-filled or Manual Entry"
+                            className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/25 transition-colors duration-300 pl-12"
+                            placeholder="Auto-filled or Manual"
                             step="any"
                             disabled={isSearching || isLocating}
                           />
@@ -497,8 +497,8 @@ const AddLand: React.FC = () => {
                         </div>
                       </div>
                       <div>
-                        <label htmlFor="location.longitude" className="block text-sm font-medium text-gray-300 uppercase tracking-wider mb-3">
-                          Longitude <span className="text-red-400">*</span>
+                        <label htmlFor="location.longitude" className="block text-sm font-medium text-gray-700 uppercase tracking-wider mb-3">
+                          Longitude <span className="text-red-600">*</span>
                         </label>
                         <div className="relative">
                           <input
@@ -508,8 +508,8 @@ const AddLand: React.FC = () => {
                             value={landData.location.longitude}
                             onChange={handleChange}
                             required
-                            className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-[#ff3b3b] transition-colors duration-300 pl-12"
-                            placeholder="Auto-filled or Manual Entry"
+                            className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/25 transition-colors duration-300 pl-12"
+                            placeholder="Auto-filled or Manual"
                             step="any"
                             disabled={isSearching || isLocating}
                           />
@@ -526,10 +526,10 @@ const AddLand: React.FC = () => {
               {/* Specifications Grid */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {/* Size (acres) */}
-                <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10 hover:border-white/20 transition-all duration-300 hover:scale-[1.02]">
-                  <label htmlFor="sizeInAcres" className="block text-sm font-medium text-gray-300 uppercase tracking-wider mb-3">
+                <div className="bg-white rounded-xl p-6 border border-gray-200 hover:border-emerald-300 transition-all duration-300">
+                  <label htmlFor="sizeInAcres" className="block text-sm font-medium text-gray-700 uppercase tracking-wider mb-3">
                     <Text className="w-5 h-5 inline mr-2" />
-                    Size (acres) <span className="text-red-400">*</span>
+                    Size (acres) <span className="text-red-600">*</span>
                   </label>
                   <input
                     type="number"
@@ -540,16 +540,16 @@ const AddLand: React.FC = () => {
                     required
                     min="0.1"
                     step="any"
-                    className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-[#ff3b3b] transition-colors duration-300"
+                    className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/25 transition-colors duration-300"
                     placeholder="e.g., 5"
                   />
                 </div>
 
                 {/* Monthly Price */}
-                <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10 hover:border-white/20 transition-all duration-300 hover:scale-[1.02]">
-                  <label htmlFor="leasePricePerMonth" className="block text-sm font-medium text-gray-300 uppercase tracking-wider mb-3">
+                <div className="bg-white rounded-xl p-6 border border-gray-200 hover:border-emerald-300 transition-all duration-300">
+                  <label htmlFor="leasePricePerMonth" className="block text-sm font-medium text-gray-700 uppercase tracking-wider mb-3">
                     <DollarSign className="w-5 h-5 inline mr-2" />
-                    Monthly Price <span className="text-red-400">*</span>
+                    Monthly Price <span className="text-red-600">*</span>
                   </label>
                   <input
                     type="number"
@@ -560,16 +560,16 @@ const AddLand: React.FC = () => {
                     required
                     min="1"
                     step="any"
-                    className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-[#ff3b3b] transition-colors duration-300"
+                    className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/25 transition-colors duration-300"
                     placeholder="e.g., 10000"
                   />
                 </div>
 
                 {/* Duration (months) */}
-                <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10 hover:border-white/20 transition-all duration-300 hover:scale-[1.02]">
-                  <label htmlFor="leaseDurationMonths" className="block text-sm font-medium text-gray-300 uppercase tracking-wider mb-3">
+                <div className="bg-white rounded-xl p-6 border border-gray-200 hover:border-emerald-300 transition-all duration-300">
+                  <label htmlFor="leaseDurationMonths" className="block text-sm font-medium text-gray-700 uppercase tracking-wider mb-3">
                     <Calendar className="w-5 h-5 inline mr-2" />
-                    Duration (months) <span className="text-red-400">*</span>
+                    Duration (months) <span className="text-red-600">*</span>
                   </label>
                   <input
                     type="number"
@@ -580,7 +580,7 @@ const AddLand: React.FC = () => {
                     required
                     min="1"
                     step="1"
-                    className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-[#ff3b3b] transition-colors duration-300"
+                    className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/25 transition-colors duration-300"
                     placeholder="e.g., 12"
                   />
                 </div>
@@ -589,30 +589,30 @@ const AddLand: React.FC = () => {
               {/* File Upload Sections */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 {/* Photos Upload */}
-                <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10 hover:border-white/20 transition-all duration-300">
-                  <label className="block text-sm font-medium text-gray-300 uppercase tracking-wider mb-4">
+                <div className="bg-white rounded-xl p-6 border border-gray-200 hover:border-emerald-300 transition-all duration-300">
+                  <label className="block text-sm font-medium text-gray-700 uppercase tracking-wider mb-4">
                     <Image className="w-5 h-5 inline mr-2" />
-                    Land Photos <span className="text-gray-400 text-xs">(Max 5 files)</span>
+                    Land Photos <span className="text-gray-500 text-xs">(Max 5 files)</span>
                   </label>
-                  <div className="mt-2 flex justify-center px-6 pt-8 pb-8 border-2 border-dashed border-white/20 rounded-lg bg-white/5 hover:bg-white/10 transition-all duration-300 group">
+                  <div className="mt-2 flex justify-center px-6 pt-8 pb-8 border-2 border-dashed border-gray-300 rounded-lg bg-gray-50 hover:bg-gray-100 transition-all duration-300 group">
                     <div className="space-y-3 text-center">
-                      <Upload className="mx-auto h-12 w-12 text-gray-400 group-hover:text-[#ff3b3b] transition-colors" />
-                      <div className="flex text-sm text-gray-300">
-                        <label htmlFor="photo-upload-input" className="relative cursor-pointer rounded-md font-medium text-[#ff3b3b] hover:text-[#ff6b6b] transition-colors">
+                      <Upload className="mx-auto h-12 w-12 text-gray-400 group-hover:text-emerald-600 transition-colors" />
+                      <div className="flex text-sm text-gray-600">
+                        <label htmlFor="photo-upload-input" className="relative cursor-pointer rounded-md font-medium text-emerald-600 hover:text-emerald-700 transition-colors">
                           <span>Upload photos</span>
                           <input id="photo-upload-input" name="landPhotos" type="file" multiple accept=".png, .jpg, .jpeg" className="sr-only" onChange={handlePhotoChange} />
                         </label>
                         <p className="pl-1">or drag and drop</p>
                       </div>
-                      <p className="text-xs text-gray-400">PNG, JPG up to 5MB each</p>
+                      <p className="text-xs text-gray-500">PNG, JPG up to 5MB each</p>
                     </div>
                   </div>
                   {landData.landPhotos && (
                     <div className="mt-4">
-                      <p className="text-sm text-gray-300 mb-2">Selected files ({landData.landPhotos.length}):</p>
+                      <p className="text-sm text-gray-700 mb-2">Selected files ({landData.landPhotos.length}):</p>
                       <ul className="space-y-1">
                         {Array.from(landData.landPhotos).map((file, index) => (
-                          <li key={index} className="text-xs text-gray-400 bg-white/5 rounded px-3 py-1 truncate">
+                          <li key={index} className="text-xs text-gray-600 bg-gray-100 rounded px-3 py-1 truncate">
                             📷 {file.name}
                           </li>
                         ))}
@@ -622,30 +622,30 @@ const AddLand: React.FC = () => {
                 </div>
 
                 {/* Documents Upload */}
-                <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10 hover:border-white/20 transition-all duration-300">
-                  <label className="block text-sm font-medium text-gray-300 uppercase tracking-wider mb-4">
+                <div className="bg-white rounded-xl p-6 border border-gray-200 hover:border-emerald-300 transition-all duration-300">
+                  <label className="block text-sm font-medium text-gray-700 uppercase tracking-wider mb-4">
                     <FileText className="w-5 h-5 inline mr-2" />
-                    Land Documents <span className="text-gray-400 text-xs">(Max 5 files)</span>
+                    Land Documents <span className="text-gray-500 text-xs">(Max 5 files)</span>
                   </label>
-                  <div className="mt-2 flex justify-center px-6 pt-8 pb-8 border-2 border-dashed border-white/20 rounded-lg bg-white/5 hover:bg-white/10 transition-all duration-300 group">
+                  <div className="mt-2 flex justify-center px-6 pt-8 pb-8 border-2 border-dashed border-gray-300 rounded-lg bg-gray-50 hover:bg-gray-100 transition-all duration-300 group">
                     <div className="space-y-3 text-center">
-                      <Cloud className="mx-auto h-12 w-12 text-gray-400 group-hover:text-[#ff3b3b] transition-colors" />
-                      <div className="flex text-sm text-gray-300">
-                        <label htmlFor="document-upload-input" className="relative cursor-pointer rounded-md font-medium text-[#ff3b3b] hover:text-[#ff6b6b] transition-colors">
+                      <Cloud className="mx-auto h-12 w-12 text-gray-400 group-hover:text-emerald-600 transition-colors" />
+                      <div className="flex text-sm text-gray-600">
+                        <label htmlFor="document-upload-input" className="relative cursor-pointer rounded-md font-medium text-emerald-600 hover:text-emerald-700 transition-colors">
                           <span>Upload documents</span>
                           <input id="document-upload-input" name="landDocuments" type="file" multiple accept=".pdf" className="sr-only" onChange={handleDocumentChange} />
                         </label>
                         <p className="pl-1">or drag and drop</p>
                       </div>
-                      <p className="text-xs text-gray-400">PDFs up to 5MB each</p>
+                      <p className="text-xs text-gray-500">PDFs up to 5MB each</p>
                     </div>
                   </div>
                   {landData.landDocuments && (
                     <div className="mt-4">
-                      <p className="text-sm text-gray-300 mb-2">Selected files ({landData.landDocuments.length}):</p>
+                      <p className="text-sm text-gray-700 mb-2">Selected files ({landData.landDocuments.length}):</p>
                       <ul className="space-y-1">
                         {Array.from(landData.landDocuments).map((file, index) => (
-                          <li key={index} className="text-xs text-gray-400 bg-white/5 rounded px-3 py-1 truncate">
+                          <li key={index} className="text-xs text-gray-600 bg-gray-100 rounded px-3 py-1 truncate">
                             📄 {file.name}
                           </li>
                         ))}
@@ -661,7 +661,7 @@ const AddLand: React.FC = () => {
                 <button
                   type="submit"
                   disabled={isSubmitting || isSearching || isLocating}
-                  className="w-full py-4 px-6 bg-gradient-to-r from-[#ff3b3b] to-[#ff6b6b] text-white rounded-xl font-bold uppercase tracking-wider hover:from-[#ff6b6b] hover:to-[#ff3b3b] transition-all duration-300 ease-in-out shadow-2xl hover:shadow-3xl hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 text-lg"
+                  className="w-full py-4 px-6 bg-emerald-600 text-white rounded-xl font-bold uppercase tracking-wider hover:bg-emerald-700 transition-all duration-300 ease-in-out shadow-sm disabled:opacity-50 disabled:cursor-not-allowed text-lg"
                 >
                   {isSubmitting ? (
                     <span className="flex items-center justify-center">

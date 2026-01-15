@@ -116,6 +116,17 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, onToggleSidebar, isMob
         { label: 'Verified Vendors', icon: CheckCircle, href: '/admin/verified-vendors' },
       ],
     },
+    {
+      label: 'User KYC',
+      icon: Shield,
+      href: '/admin/user-kyc',
+      children: [
+        { label: 'Farmer KYC', icon: Users, href: '/admin/user-kyc/farmers' },
+        { label: 'Landowner KYC', icon: MapPin, href: '/admin/user-kyc/landowners' },
+        { label: 'Investor KYC', icon: DollarSign, href: '/admin/user-kyc/investors' },
+        { label: 'All KYC Requests', icon: FileText, href: '/admin/user-kyc/all' },
+      ],
+    },
   ];
 
   const handleLogout = async () => {

@@ -1,7 +1,23 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { Link } from "react-router-dom";
 import { InvestorLayout } from "./InvestorLayout";
-import { Wallet, TrendingUp, ShieldCheck, Lock } from "lucide-react";
+import { 
+  Wallet, 
+  TrendingUp, 
+  ShieldCheck, 
+  Lock, 
+  PiggyBank,
+  Calendar,
+  ExternalLink,
+  CheckCircle,
+  Clock,
+  Loader2,
+  Receipt,
+  ArrowUpRight,
+  Sparkles,
+  BarChart3
+} from "lucide-react";
 
 interface Project {
   _id: string;
@@ -27,7 +43,7 @@ export default function InvestmentHistory() {
   useEffect(() => {
     const fetchInvestments = async () => {
       try {
-        const token = localStorage.getItem("token"); // assuming JWT stored
+        const token = localStorage.getItem("token");
         const res = await axios.get("http://localhost:5000/api/project-payments/investments/history", {
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -38,96 +54,222 @@ export default function InvestmentHistory() {
         setLoading(false);
       }
     };
-
     fetchInvestments();
   }, []);
 
-  if (loading) return <div>Loading...</div>;
+  const formatCurrency = (val: number) => new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 0 }).format(val);
 
-  // 📊 Calculate totals
+  if (loading) {
+    return (
+      <InvestorLayout>
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <Loader2 className="w-10 h-10 text-emerald-500 animate-spin" />
+        </div>
+      </InvestorLayout>
+    );
+  }
+
   const totalInvested = investments.reduce((sum, inv) => sum + inv.amount, 0);
   const totalProfit = investments.reduce((sum, inv) => sum + inv.amount * 0.05, 0);
   const totalPayout = totalInvested + totalProfit;
 
+  const getStatusColor = (status: string) => {
+    switch (status.toLowerCase()) {
+      case "open": return "bg-emerald-100 text-emerald-700";
+      case "funded": return "bg-blue-100 text-blue-700";
+      case "closed": return "bg-gray-100 text-gray-700";
+      default: return "bg-gray-100 text-gray-700";
+    }
+  };
+
   return (
     <InvestorLayout>
-      <div className="p-6">
-        <h1 className="text-2xl font-bold mb-6">💼 Investment History</h1>
+      <div className="max-w-6xl mx-auto">
+        {/* Header */}
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
+              <Receipt className="w-6 h-6 text-emerald-500" /> Investment History
+            </h1>
+            <p className="text-gray-500 text-sm mt-1">Track all your agricultural investments</p>
+          </div>
+          <Link to="/projects" className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-500 text-white rounded-xl font-medium hover:bg-emerald-600 transition-all">
+            <Sparkles className="w-4 h-4" /> New Investment
+          </Link>
+        </div>
 
         {/* Summary Cards */}
         {investments.length > 0 && (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-            <div className="bg-white shadow-md rounded-lg p-4 border flex items-center gap-3">
-              <Wallet className="w-6 h-6 text-emerald-600" />
-              <div>
-                <p className="text-gray-500 text-sm">Total Invested</p>
-                <p className="text-lg font-bold text-gray-800">₹{totalInvested.toLocaleString()}</p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+            <div className="bg-white rounded-2xl border border-gray-100 p-5 hover:shadow-lg transition-all">
+              <div className="flex items-center justify-between mb-3">
+                <div className="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center">
+                  <Wallet className="w-6 h-6 text-emerald-600" />
+                </div>
+                <span className="text-xs bg-emerald-50 text-emerald-600 px-2 py-1 rounded-full font-medium">Principal</span>
               </div>
+              <p className="text-sm text-gray-500 mb-1">Total Invested</p>
+              <p className="text-2xl font-bold text-gray-800">{formatCurrency(totalInvested)}</p>
             </div>
-            <div className="bg-white shadow-md rounded-lg p-4 border flex items-center gap-3">
-              <TrendingUp className="w-6 h-6 text-green-500" />
-              <div>
-                <p className="text-gray-500 text-sm">Expected Profit (5%)</p>
-                <p className="text-lg font-bold text-green-600">₹{totalProfit.toFixed(2)}</p>
+
+            <div className="bg-white rounded-2xl border border-gray-100 p-5 hover:shadow-lg transition-all">
+              <div className="flex items-center justify-between mb-3">
+                <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
+                  <TrendingUp className="w-6 h-6 text-green-600" />
+                </div>
+                <span className="text-xs bg-green-50 text-green-600 px-2 py-1 rounded-full font-medium">5% Returns</span>
               </div>
+              <p className="text-sm text-gray-500 mb-1">Expected Profit</p>
+              <p className="text-2xl font-bold text-green-600">{formatCurrency(totalProfit)}</p>
             </div>
-            <div className="bg-white shadow-md rounded-lg p-4 border flex items-center gap-3">
-              <TrendingUp className="w-6 h-6 text-blue-500" />
-              <div>
-                <p className="text-gray-500 text-sm">Total Payout</p>
-                <p className="text-lg font-bold text-blue-600">₹{totalPayout.toFixed(2)}</p>
+
+            <div className="bg-gradient-to-br from-emerald-500 to-teal-500 rounded-2xl p-5 text-white hover:shadow-lg transition-all">
+              <div className="flex items-center justify-between mb-3">
+                <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
+                  <PiggyBank className="w-6 h-6 text-white" />
+                </div>
+                <span className="text-xs bg-white/20 px-2 py-1 rounded-full font-medium">Total</span>
               </div>
+              <p className="text-sm text-emerald-100 mb-1">Total Payout</p>
+              <p className="text-2xl font-bold">{formatCurrency(totalPayout)}</p>
             </div>
           </div>
         )}
 
+        {/* Investments List */}
         {investments.length === 0 ? (
-          <p>No investments yet.</p>
+          <div className="bg-white rounded-2xl border border-gray-100 p-12 text-center">
+            <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <BarChart3 className="w-10 h-10 text-gray-400" />
+            </div>
+            <h3 className="text-xl font-semibold text-gray-800 mb-2">No Investments Yet</h3>
+            <p className="text-gray-500 mb-6">Start investing in agricultural projects to see your history here</p>
+            <Link to="/projects" className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-500 text-white rounded-xl font-medium hover:bg-emerald-600 transition-all">
+              Browse Projects <ArrowUpRight className="w-4 h-4" />
+            </Link>
+          </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="min-w-full border rounded-lg shadow-sm bg-white">
-              <thead className="bg-gray-100 text-gray-700">
-                <tr>
-                  <th className="px-4 py-2 text-left">Project</th>
-                  <th className="px-4 py-2">Amount Invested</th>
-                  <th className="px-4 py-2">Expected Profit</th>
-                  <th className="px-4 py-2">Total Payout</th>
-                  <th className="px-4 py-2">Status</th>
-                  <th className="px-4 py-2">Payment ID</th>
-                  <th className="px-4 py-2">Date</th>
-                </tr>
-              </thead>
-              <tbody>
-                {investments.map((inv) => {
-                  const profit = inv.amount * 0.05;
-                  const payout = inv.amount + profit;
-                  return (
-                    <tr key={inv._id} className="border-t hover:bg-gray-50">
-                      <td className="px-4 py-2 font-medium">{inv.projectId.title}</td>
-                      <td className="px-4 py-2 font-semibold text-emerald-600">₹{inv.amount}</td>
-                      <td className="px-4 py-2 text-green-600">₹{profit.toFixed(2)}</td>
-                      <td className="px-4 py-2 text-blue-600 font-semibold">₹{payout.toFixed(2)}</td>
-                      <td className="px-4 py-2 capitalize">{inv.projectId.status}</td>
-                      <td className="px-4 py-2 text-sm text-gray-500">{inv.paymentId}</td>
-                      <td className="px-4 py-2">{new Date(inv.createdAt).toLocaleDateString()}</td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+          <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
+            {/* Desktop Table */}
+            <div className="hidden md:block overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="bg-gray-50 border-b border-gray-100">
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Project</th>
+                    <th className="px-6 py-4 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">Invested</th>
+                    <th className="px-6 py-4 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">Profit</th>
+                    <th className="px-6 py-4 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">Payout</th>
+                    <th className="px-6 py-4 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Date</th>
+                    <th className="px-6 py-4 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">Action</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-100">
+                  {investments.map((inv) => {
+                    const profit = inv.amount * 0.05;
+                    const payout = inv.amount + profit;
+                    return (
+                      <tr key={inv._id} className="hover:bg-gray-50 transition-colors">
+                        <td className="px-6 py-4">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-lg flex items-center justify-center text-white text-lg">
+                              🌿
+                            </div>
+                            <div>
+                              <p className="font-semibold text-gray-800">{inv.projectId.title}</p>
+                              <p className="text-xs text-gray-400 font-mono">{inv.paymentId.slice(0, 16)}...</p>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 text-right">
+                          <p className="font-semibold text-gray-800">{formatCurrency(inv.amount)}</p>
+                        </td>
+                        <td className="px-6 py-4 text-right">
+                          <p className="font-semibold text-green-600">+{formatCurrency(profit)}</p>
+                        </td>
+                        <td className="px-6 py-4 text-right">
+                          <p className="font-bold text-emerald-600">{formatCurrency(payout)}</p>
+                        </td>
+                        <td className="px-6 py-4 text-center">
+                          <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium capitalize ${getStatusColor(inv.projectId.status)}`}>
+                            {inv.projectId.status === "open" ? <Clock className="w-3 h-3" /> : <CheckCircle className="w-3 h-3" />}
+                            {inv.projectId.status}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="flex items-center gap-2 text-gray-600">
+                            <Calendar className="w-4 h-4 text-gray-400" />
+                            <span className="text-sm">{new Date(inv.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}</span>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 text-right">
+                          <Link to={`/projects/${inv.projectId._id}`} className="inline-flex items-center gap-1 text-emerald-600 hover:text-emerald-700 text-sm font-medium">
+                            View <ExternalLink className="w-3.5 h-3.5" />
+                          </Link>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Mobile Cards */}
+            <div className="md:hidden divide-y divide-gray-100">
+              {investments.map((inv) => {
+                const profit = inv.amount * 0.05;
+                const payout = inv.amount + profit;
+                return (
+                  <div key={inv._id} className="p-4">
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-lg flex items-center justify-center text-white">🌿</div>
+                        <div>
+                          <p className="font-semibold text-gray-800">{inv.projectId.title}</p>
+                          <p className="text-xs text-gray-400">{new Date(inv.createdAt).toLocaleDateString()}</p>
+                        </div>
+                      </div>
+                      <span className={`px-2 py-1 rounded-full text-xs font-medium capitalize ${getStatusColor(inv.projectId.status)}`}>
+                        {inv.projectId.status}
+                      </span>
+                    </div>
+                    <div className="grid grid-cols-3 gap-2 bg-gray-50 rounded-xl p-3">
+                      <div className="text-center">
+                        <p className="text-xs text-gray-500">Invested</p>
+                        <p className="font-semibold text-gray-800">{formatCurrency(inv.amount)}</p>
+                      </div>
+                      <div className="text-center">
+                        <p className="text-xs text-gray-500">Profit</p>
+                        <p className="font-semibold text-green-600">+{formatCurrency(profit)}</p>
+                      </div>
+                      <div className="text-center">
+                        <p className="text-xs text-gray-500">Payout</p>
+                        <p className="font-bold text-emerald-600">{formatCurrency(payout)}</p>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         )}
 
-        {/* Trust & Security Badges */}
+        {/* Trust Badges */}
         {investments.length > 0 && (
-          <div className="flex items-center gap-6 mt-6 text-sm text-gray-600">
-            <div className="flex items-center gap-2">
-              <ShieldCheck className="w-5 h-5 text-green-600" />
-              <span>All investments are secure</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Lock className="w-5 h-5 text-blue-600" />
-              <span>Payments protected by Razorpay</span>
+          <div className="mt-6 bg-white rounded-2xl border border-gray-100 p-4">
+            <div className="flex flex-wrap items-center justify-center gap-6">
+              <div className="flex items-center gap-2 text-sm text-gray-600">
+                <ShieldCheck className="w-5 h-5 text-emerald-500" />
+                <span>Secure Investments</span>
+              </div>
+              <div className="flex items-center gap-2 text-sm text-gray-600">
+                <Lock className="w-5 h-5 text-blue-500" />
+                <span>Razorpay Protected</span>
+              </div>
+              <div className="flex items-center gap-2 text-sm text-gray-600">
+                <CheckCircle className="w-5 h-5 text-green-500" />
+                <span>5% Guaranteed Returns</span>
+              </div>
             </div>
           </div>
         )}

@@ -1,6 +1,19 @@
 import React, { useState, useEffect, ChangeEvent } from "react";
 import axios from "axios";
 import { InvestorLayout } from "./InvestorLayout";
+import {
+  User,
+  Mail,
+  Phone,
+  Shield,
+  Camera,
+  Edit3,
+  Save,
+  X,
+  CheckCircle,
+  Loader2,
+  Sparkles,
+} from "lucide-react";
 
 interface UserProfile {
   _id: string;
@@ -18,11 +31,11 @@ const InvestorProfile: React.FC = () => {
   const [preview, setPreview] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [saveSuccess, setSaveSuccess] = useState(false);
 
   const token = localStorage.getItem("token");
   const DEFAULT_IMAGE_URL = "https://via.placeholder.com/150/EEEEEE?text=Profile";
 
-  // ============ Fetch profile ============
   useEffect(() => {
     const fetchProfile = async () => {
       if (!token) return;
@@ -49,7 +62,6 @@ const InvestorProfile: React.FC = () => {
     fetchProfile();
   }, [token]);
 
-  // ============ Handlers ============
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -66,11 +78,9 @@ const InvestorProfile: React.FC = () => {
     e.preventDefault();
     if (!token || !user) return;
 
-    // Check if any changes were made
     const isModified =
       formData.name !== user.name ||
       formData.phone !== (user.phone || "") ||
-      formData.role !== (user.role || "") ||
       profileImage !== null;
 
     if (!isModified) {
@@ -82,7 +92,6 @@ const InvestorProfile: React.FC = () => {
     const submitData = new FormData();
     submitData.append("name", formData.name);
     submitData.append("phone", formData.phone);
-    submitData.append("role", formData.role);
     if (profileImage) submitData.append("profileImage", profileImage);
 
     try {
@@ -95,16 +104,22 @@ const InvestorProfile: React.FC = () => {
       });
 
       setUser(data);
+      setFormData({
+        name: data.name || "",
+        phone: data.phone || "",
+        role: data.role || "",
+      });
       setProfileImage(null);
-      // Use the new profile image from response or keep current preview
       if (data.profileImage) {
         setPreview(data.profileImage);
       }
       setIsEditing(false);
-      alert("Profile updated successfully!");
-    } catch (err) {
+      setSaveSuccess(true);
+      setTimeout(() => setSaveSuccess(false), 3000);
+    } catch (err: any) {
       console.error("Error updating profile:", err);
-      alert("Update failed.");
+      const errorMsg = err.response?.data?.message || "Update failed. Please try again.";
+      alert(errorMsg);
     } finally {
       setLoading(false);
     }
@@ -123,156 +138,336 @@ const InvestorProfile: React.FC = () => {
     setIsEditing(false);
   };
 
-  // ============ Render ============
-  if (loading && !user) return <p className="text-center mt-10">Loading...</p>;
-  if (!user)
+  if (loading && !user) {
     return (
-      <p className="text-center mt-10 text-red-600">
-        No profile found. Please log in.
-      </p>
+      <InvestorLayout>
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="flex flex-col items-center gap-4">
+            <Loader2 className="w-12 h-12 text-emerald-500 animate-spin" />
+            <p className="text-gray-500 font-medium">Loading your profile...</p>
+          </div>
+        </div>
+      </InvestorLayout>
     );
+  }
+
+  if (!user) {
+    return (
+      <InvestorLayout>
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="text-center p-8 bg-red-50 rounded-2xl border border-red-100">
+            <Shield className="w-16 h-16 text-red-400 mx-auto mb-4" />
+            <p className="text-red-600 font-semibold text-lg">No profile found</p>
+            <p className="text-red-400 mt-2">Please log in to view your profile</p>
+          </div>
+        </div>
+      </InvestorLayout>
+    );
+  }
 
   return (
     <InvestorLayout>
-    <div className="max-w-md mx-auto mt-10 bg-white shadow-xl rounded-2xl p-8 border border-gray-100">
-      <h2 className="text-3xl font-bold text-center mb-6 text-gray-800">
-        Investor Profile 👤
-      </h2>
-
-      <div className="flex flex-col items-center mb-6">
-        <img
-          src={preview || user.profileImage || DEFAULT_IMAGE_URL}
-          alt="Profile"
-          className="w-32 h-32 object-cover rounded-full border-4 border-blue-200 mb-4 shadow-md"
-        />
-
-        {isEditing && (
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Update Profile Picture
-            </label>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleFileChange}
-              className="text-sm border p-1 rounded-lg w-full"
-            />
+      <div className="max-w-4xl mx-auto">
+        {/* Success Toast */}
+        {saveSuccess && (
+          <div className="fixed top-4 right-4 z-50 animate-slide-in">
+            <div className="flex items-center gap-3 bg-emerald-500 text-white px-6 py-4 rounded-xl shadow-lg">
+              <CheckCircle className="w-5 h-5" />
+              <span className="font-medium">Profile updated successfully!</span>
+            </div>
           </div>
         )}
-      </div>
 
-      {/* Use form only when editing to prevent accidental submissions */}
-      {isEditing ? (
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Name */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Name</label>
-            <input
-              type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              className="w-full border p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
+        {/* Header Section */}
+        <div className="relative mb-8">
+          {/* Background Gradient Banner */}
+          <div className="h-48 bg-gradient-to-br from-emerald-400 via-teal-500 to-cyan-500 rounded-3xl overflow-hidden relative">
+            <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Cg%20fill%3D%22%23ffffff%22%20fill-opacity%3D%220.1%22%3E%3Cpath%20d%3D%22M36%2034v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6%2034v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6%204V0H4v4H0v2h4v4h2V6h4V4H6z%22%2F%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E')] opacity-30"></div>
+            <Sparkles className="absolute top-6 right-8 w-8 h-8 text-white/40" />
+            <Sparkles className="absolute bottom-12 left-12 w-6 h-6 text-white/30" />
           </div>
 
-          {/* Email (read-only) */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Email</label>
-            <p className="p-3 bg-gray-100 rounded-lg text-gray-500 italic">
-              {user.email} (non-editable)
-            </p>
-          </div>
-
-          {/* Phone */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Phone</label>
-            <input
-              type="text"
-              name="phone"
-              value={formData.phone}
-              onChange={handleChange}
-              className="w-full border p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-
-          {/* Role */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Role</label>
-            <input
-              type="text"
-              name="role"
-              value={formData.role}
-              onChange={handleChange}
-              className="w-full border p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-
-          {/* Buttons */}
-          <div className="flex justify-between pt-4">
-            <button
-              type="submit"
-              className={`px-6 py-2 rounded-full text-white font-semibold ${
-                loading ? "bg-green-400 cursor-not-allowed" : "bg-green-600 hover:bg-green-700"
-              }`}
-              disabled={loading}
-            >
-              {loading ? "Saving..." : "Save Changes"}
-            </button>
-            <button
-              type="button"
-              onClick={handleCancelEdit}
-              className="px-6 py-2 rounded-full bg-gray-400 text-white font-semibold hover:bg-gray-500"
-            >
-              Cancel
-            </button>
-          </div>
-        </form>
-      ) : (
-        // Display mode - no form tag to prevent accidental submissions
-        <div className="space-y-4">
-          {/* Name */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Name</label>
-            <p className="p-3 bg-gray-50 rounded-lg">{user.name}</p>
-          </div>
-
-          {/* Email (read-only) */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Email</label>
-            <p className="p-3 bg-gray-100 rounded-lg text-gray-500 italic">
-              {user.email} (non-editable)
-            </p>
-          </div>
-
-          {/* Phone */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Phone</label>
-            <p className="p-3 bg-gray-50 rounded-lg">
-              {user.phone || "— Not provided"}
-            </p>
-          </div>
-
-          {/* Role */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Role</label>
-            <p className="p-3 bg-gray-50 rounded-lg">{user.role || "Investor"}</p>
-          </div>
-
-          {/* Edit Button */}
-          <div className="pt-4">
-            <button
-              type="button"
-              onClick={() => setIsEditing(true)}
-              className="w-full px-6 py-2 rounded-full bg-blue-600 text-white font-semibold hover:bg-blue-700"
-            >
-              ✏️ Edit Profile
-            </button>
+          {/* Profile Image */}
+          <div className="absolute -bottom-16 left-1/2 -translate-x-1/2">
+            <div className="relative group">
+              <div className="w-36 h-36 rounded-full bg-gradient-to-br from-emerald-400 to-cyan-500 p-1 shadow-xl">
+                <img
+                  src={preview || user.profileImage || DEFAULT_IMAGE_URL}
+                  alt="Profile"
+                  className="w-full h-full object-cover rounded-full bg-white"
+                />
+              </div>
+              {isEditing && (
+                <label className="absolute bottom-2 right-2 w-10 h-10 bg-emerald-500 rounded-full flex items-center justify-center cursor-pointer shadow-lg hover:bg-emerald-600 transition-all hover:scale-110">
+                  <Camera className="w-5 h-5 text-white" />
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleFileChange}
+                    className="hidden"
+                  />
+                </label>
+              )}
+              {!isEditing && (
+                <div className="absolute -bottom-1 -right-1 w-8 h-8 bg-emerald-500 rounded-full flex items-center justify-center border-4 border-white">
+                  <CheckCircle className="w-4 h-4 text-white" />
+                </div>
+              )}
+            </div>
           </div>
         </div>
-      )}
-    </div>
+
+        {/* Name & Role Badge */}
+        <div className="text-center mt-20 mb-8">
+          <h1 className="text-3xl font-bold text-gray-800">{user.name || "Investor"}</h1>
+          <div className="inline-flex items-center gap-2 mt-3 px-4 py-2 bg-gradient-to-r from-emerald-50 to-teal-50 rounded-full border border-emerald-100">
+            <Shield className="w-4 h-4 text-emerald-600" />
+            <span className="text-emerald-700 font-medium capitalize">{user.role || "Investor"}</span>
+          </div>
+        </div>
+
+        {/* Profile Card */}
+        <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden">
+          {/* Card Header */}
+          <div className="px-8 py-6 bg-gradient-to-r from-gray-50 to-white border-b border-gray-100 flex items-center justify-between">
+            <div>
+              <h2 className="text-xl font-bold text-gray-800">Profile Information</h2>
+              <p className="text-gray-500 text-sm mt-1">Manage your personal details</p>
+            </div>
+            {!isEditing && (
+              <button
+                onClick={() => setIsEditing(true)}
+                className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-xl font-medium hover:from-emerald-600 hover:to-teal-600 transition-all shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/40 hover:-translate-y-0.5"
+              >
+                <Edit3 className="w-4 h-4" />
+                Edit Profile
+              </button>
+            )}
+          </div>
+
+          {/* Card Body */}
+          <div className="p-8">
+            {isEditing ? (
+              <form onSubmit={handleSubmit} className="space-y-6">
+                {/* Name Field */}
+                <div className="group">
+                  <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
+                    <User className="w-4 h-4 text-emerald-500" />
+                    Full Name
+                  </label>
+                  <input
+                    type="text"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    className="w-full px-5 py-4 bg-gray-50 border-2 border-gray-100 rounded-xl focus:outline-none focus:border-emerald-500 focus:bg-white transition-all text-gray-800 font-medium"
+                    placeholder="Enter your full name"
+                    required
+                  />
+                </div>
+
+                {/* Email Field (Read-only) */}
+                <div>
+                  <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
+                    <Mail className="w-4 h-4 text-emerald-500" />
+                    Email Address
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="email"
+                      value={user.email}
+                      disabled
+                      className="w-full px-5 py-4 bg-gray-100 border-2 border-gray-100 rounded-xl text-gray-500 cursor-not-allowed"
+                    />
+                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs bg-gray-200 text-gray-500 px-2 py-1 rounded-md">
+                      Locked
+                    </span>
+                  </div>
+                </div>
+
+                {/* Phone Field */}
+                <div>
+                  <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
+                    <Phone className="w-4 h-4 text-emerald-500" />
+                    Phone Number
+                  </label>
+                  <input
+                    type="tel"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleChange}
+                    className="w-full px-5 py-4 bg-gray-50 border-2 border-gray-100 rounded-xl focus:outline-none focus:border-emerald-500 focus:bg-white transition-all text-gray-800 font-medium"
+                    placeholder="Enter your phone number"
+                  />
+                </div>
+
+                {/* Role Field (Read-only) */}
+                <div>
+                  <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
+                    <Shield className="w-4 h-4 text-emerald-500" />
+                    Role
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="text"
+                      value={user.role || "Investor"}
+                      disabled
+                      className="w-full px-5 py-4 bg-gray-100 border-2 border-gray-100 rounded-xl text-gray-500 cursor-not-allowed capitalize"
+                    />
+                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs bg-gray-200 text-gray-500 px-2 py-1 rounded-md">
+                      Locked
+                    </span>
+                  </div>
+                </div>
+
+                {/* Action Buttons */}
+                <div className="flex gap-4 pt-4">
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="flex-1 flex items-center justify-center gap-2 px-6 py-4 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-xl font-semibold hover:from-emerald-600 hover:to-teal-600 transition-all shadow-lg shadow-emerald-500/25 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {loading ? (
+                      <>
+                        <Loader2 className="w-5 h-5 animate-spin" />
+                        Saving...
+                      </>
+                    ) : (
+                      <>
+                        <Save className="w-5 h-5" />
+                        Save Changes
+                      </>
+                    )}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleCancelEdit}
+                    className="flex items-center justify-center gap-2 px-6 py-4 bg-gray-100 text-gray-700 rounded-xl font-semibold hover:bg-gray-200 transition-all"
+                  >
+                    <X className="w-5 h-5" />
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            ) : (
+              <div className="grid gap-6">
+                {/* Name Display */}
+                <div className="flex items-center gap-4 p-5 bg-gradient-to-r from-gray-50 to-white rounded-2xl border border-gray-100 hover:border-emerald-200 hover:shadow-md transition-all group">
+                  <div className="w-12 h-12 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-xl flex items-center justify-center shadow-lg shadow-emerald-500/20 group-hover:scale-110 transition-transform">
+                    <User className="w-6 h-6 text-white" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm text-gray-500 font-medium">Full Name</p>
+                    <p className="text-lg font-semibold text-gray-800">{user.name || "—"}</p>
+                  </div>
+                </div>
+
+                {/* Email Display */}
+                <div className="flex items-center gap-4 p-5 bg-gradient-to-r from-gray-50 to-white rounded-2xl border border-gray-100 hover:border-emerald-200 hover:shadow-md transition-all group">
+                  <div className="w-12 h-12 bg-gradient-to-br from-blue-400 to-indigo-500 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20 group-hover:scale-110 transition-transform">
+                    <Mail className="w-6 h-6 text-white" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm text-gray-500 font-medium">Email Address</p>
+                    <p className="text-lg font-semibold text-gray-800">{user.email}</p>
+                  </div>
+                  <span className="text-xs bg-gray-100 text-gray-500 px-3 py-1.5 rounded-full font-medium">
+                    Verified
+                  </span>
+                </div>
+
+                {/* Phone Display */}
+                <div className="flex items-center gap-4 p-5 bg-gradient-to-r from-gray-50 to-white rounded-2xl border border-gray-100 hover:border-emerald-200 hover:shadow-md transition-all group">
+                  <div className="w-12 h-12 bg-gradient-to-br from-amber-400 to-orange-500 rounded-xl flex items-center justify-center shadow-lg shadow-amber-500/20 group-hover:scale-110 transition-transform">
+                    <Phone className="w-6 h-6 text-white" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm text-gray-500 font-medium">Phone Number</p>
+                    <p className="text-lg font-semibold text-gray-800">
+                      {user.phone || "Not provided"}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Role Display */}
+                <div className="flex items-center gap-4 p-5 bg-gradient-to-r from-gray-50 to-white rounded-2xl border border-gray-100 hover:border-emerald-200 hover:shadow-md transition-all group">
+                  <div className="w-12 h-12 bg-gradient-to-br from-purple-400 to-pink-500 rounded-xl flex items-center justify-center shadow-lg shadow-purple-500/20 group-hover:scale-110 transition-transform">
+                    <Shield className="w-6 h-6 text-white" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm text-gray-500 font-medium">Account Role</p>
+                    <p className="text-lg font-semibold text-gray-800 capitalize">
+                      {user.role || "Investor"}
+                    </p>
+                  </div>
+                  <span className="text-xs bg-emerald-100 text-emerald-700 px-3 py-1.5 rounded-full font-medium">
+                    Active
+                  </span>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Quick Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+          <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm hover:shadow-lg transition-all">
+            <div className="flex items-center justify-between mb-4">
+              <div className="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center">
+                <CheckCircle className="w-6 h-6 text-emerald-600" />
+              </div>
+              <span className="text-xs bg-emerald-50 text-emerald-600 px-2 py-1 rounded-full font-medium">
+                Verified
+              </span>
+            </div>
+            <p className="text-2xl font-bold text-gray-800">Active</p>
+            <p className="text-sm text-gray-500 mt-1">Account Status</p>
+          </div>
+
+          <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm hover:shadow-lg transition-all">
+            <div className="flex items-center justify-between mb-4">
+              <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
+                <Shield className="w-6 h-6 text-blue-600" />
+              </div>
+              <span className="text-xs bg-blue-50 text-blue-600 px-2 py-1 rounded-full font-medium">
+                Secure
+              </span>
+            </div>
+            <p className="text-2xl font-bold text-gray-800">Protected</p>
+            <p className="text-sm text-gray-500 mt-1">Security Level</p>
+          </div>
+
+          <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm hover:shadow-lg transition-all">
+            <div className="flex items-center justify-between mb-4">
+              <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
+                <Sparkles className="w-6 h-6 text-purple-600" />
+              </div>
+              <span className="text-xs bg-purple-50 text-purple-600 px-2 py-1 rounded-full font-medium">
+                Premium
+              </span>
+            </div>
+            <p className="text-2xl font-bold text-gray-800">Investor</p>
+            <p className="text-sm text-gray-500 mt-1">Member Type</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Custom Animation Styles */}
+      <style>{`
+        @keyframes slide-in {
+          from {
+            transform: translateX(100%);
+            opacity: 0;
+          }
+          to {
+            transform: translateX(0);
+            opacity: 1;
+          }
+        }
+        .animate-slide-in {
+          animation: slide-in 0.3s ease-out;
+        }
+      `}</style>
     </InvestorLayout>
   );
 };

@@ -1,8 +1,22 @@
-import React, { useState, ChangeEvent, FormEvent } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Layout } from './LandownerDashboard';
+import { 
+  Loader2, 
+  CheckCircle, 
+  AlertCircle, 
+  Upload, 
+  FileCheck, 
+  Shield, 
+  CreditCard,
+  Sparkles,
+  Eye,
+  X,
+  FileText,
+  Lock
+} from 'lucide-react';
 
-interface ApiResponse {
+interface KYCResponse {
   message: string;
   documentType?: string;
   extractedNumber?: string;
@@ -11,48 +25,92 @@ interface ApiResponse {
 }
 
 const KycVerify: React.FC = () => {
-  const [documentType, setDocumentType] = useState<string>('');
-  const [file, setFile] = useState<File | null>(null);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [message, setMessage] = useState<string>('');
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [documentType, setDocumentType] = useState<'Aadhaar' | 'PAN'>('Aadhaar');
+  const [loading, setLoading] = useState(false);
+  const [response, setResponse] = useState<KYCResponse | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
 
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+  useEffect(() => {
+    if (!selectedFile) {
+      setPreviewUrl(null);
+      return;
+    }
+    const reader = new FileReader();
+    reader.onloadend = () => setPreviewUrl(reader.result as string);
+    reader.readAsDataURL(selectedFile);
+  }, [selectedFile]);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
-      setFile(e.target.files[0]);
+      setSelectedFile(e.target.files[0]);
+      setError(null);
+      setResponse(null);
     }
   };
 
-  const handleSubmit = async (e: FormEvent) => {
+  const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
+    setIsDragging(true);
+  };
 
-    if (!file || !documentType) {
-      setMessage('Please select document type and file');
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      setSelectedFile(e.dataTransfer.files[0]);
+      setError(null);
+      setResponse(null);
+    }
+  };
+
+  const clearFile = () => {
+    setSelectedFile(null);
+    setPreviewUrl(null);
+    setResponse(null);
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedFile) {
+      setError('Please select a document image.');
       return;
     }
 
+    setLoading(true);
+    setError(null);
+    setResponse(null);
+
     const formData = new FormData();
-    formData.append('document', file);
+    formData.append('document', selectedFile);
     formData.append('documentType', documentType);
 
     try {
-      setLoading(true);
-      setMessage('');
       const token = localStorage.getItem('token');
+      if (!token) throw new Error('User not logged in. Please login first.');
 
-      const { data } = await axios.post<ApiResponse>(
-        'http://localhost:5000/api/kyc/verify',
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'multipart/form-data',
-          },
-        }
-      );
+      const res = await axios.post('http://localhost:5000/api/kyc/verify', formData, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data',
+        },
+      });
 
-      setMessage(data.message);
-    } catch (error: any) {
-      setMessage(error.response?.data?.message || 'KYC submission failed');
+      setResponse(res.data);
+    } catch (err: any) {
+      console.error(err.response || err.message);
+      if (err.response && err.response.data && err.response.data.message) {
+        setError(err.response.data.message);
+      } else {
+        setError(err.message || 'Something went wrong while submitting KYC.');
+      }
     } finally {
       setLoading(false);
     }
@@ -60,139 +118,281 @@ const KycVerify: React.FC = () => {
 
   return (
     <Layout>
-      <div className="min-h-screen bg-gray-50 py-8 px-4">
-        <div className="max-w-md mx-auto">
-          {/* Header Section */}
-          <div className="text-center mb-8">
-            <div className="w-20 h-20 mx-auto mb-4 bg-emerald-500 rounded-full flex items-center justify-center shadow-lg">
-              <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-              </svg>
+      <div className="max-w-4xl mx-auto">
+        {/* Header Section */}
+        <div className="mb-8">
+          <div className="flex items-center gap-3 mb-2">
+            <div className="w-12 h-12 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-xl flex items-center justify-center shadow-lg shadow-emerald-500/20">
+              <Shield className="w-6 h-6 text-white" />
             </div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
-              Identity Verification
-            </h1>
-            <p className="text-gray-600 text-sm">
-              Secure KYC process with advanced encryption
-            </p>
+            <div>
+              <h1 className="text-3xl font-bold text-gray-800">Verify Your Identity</h1>
+              <p className="text-gray-500">Complete KYC verification to unlock all features</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="grid lg:grid-cols-3 gap-8">
+          {/* Main Form Section */}
+          <div className="lg:col-span-2">
+            <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden">
+              <div className="px-8 py-6 bg-gradient-to-r from-gray-50 to-white border-b border-gray-100">
+                <div className="flex items-center gap-3">
+                  <FileCheck className="w-5 h-5 text-emerald-600" />
+                  <h2 className="text-lg font-semibold text-gray-800">Document Verification</h2>
+                </div>
+                <p className="text-sm text-gray-500 mt-1">Upload a clear image of your identity document</p>
+              </div>
+
+              <form onSubmit={handleSubmit} className="p-8 space-y-6">
+                {/* Document Type Selection */}
+                <div>
+                  <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-3">
+                    <CreditCard className="w-4 h-4 text-emerald-500" />
+                    Select Document Type
+                  </label>
+                  <div className="grid grid-cols-2 gap-4">
+                    <button
+                      type="button"
+                      onClick={() => setDocumentType('Aadhaar')}
+                      className={`relative p-4 rounded-xl border-2 transition-all ${
+                        documentType === 'Aadhaar'
+                          ? 'border-emerald-500 bg-emerald-50'
+                          : 'border-gray-200 hover:border-gray-300 bg-white'
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
+                          documentType === 'Aadhaar' ? 'bg-emerald-500' : 'bg-gray-100'
+                        }`}>
+                          <CreditCard className={`w-5 h-5 ${
+                            documentType === 'Aadhaar' ? 'text-white' : 'text-gray-500'
+                          }`} />
+                        </div>
+                        <div className="text-left">
+                          <p className={`font-semibold ${
+                            documentType === 'Aadhaar' ? 'text-emerald-700' : 'text-gray-700'
+                          }`}>Aadhaar Card</p>
+                          <p className="text-xs text-gray-500">12-digit UID</p>
+                        </div>
+                      </div>
+                      {documentType === 'Aadhaar' && (
+                        <div className="absolute top-2 right-2">
+                          <CheckCircle className="w-5 h-5 text-emerald-500" />
+                        </div>
+                      )}
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setDocumentType('PAN')}
+                      className={`relative p-4 rounded-xl border-2 transition-all ${
+                        documentType === 'PAN'
+                          ? 'border-emerald-500 bg-emerald-50'
+                          : 'border-gray-200 hover:border-gray-300 bg-white'
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
+                          documentType === 'PAN' ? 'bg-emerald-500' : 'bg-gray-100'
+                        }`}>
+                          <FileText className={`w-5 h-5 ${
+                            documentType === 'PAN' ? 'text-white' : 'text-gray-500'
+                          }`} />
+                        </div>
+                        <div className="text-left">
+                          <p className={`font-semibold ${
+                            documentType === 'PAN' ? 'text-emerald-700' : 'text-gray-700'
+                          }`}>PAN Card</p>
+                          <p className="text-xs text-gray-500">10-char alphanumeric</p>
+                        </div>
+                      </div>
+                      {documentType === 'PAN' && (
+                        <div className="absolute top-2 right-2">
+                          <CheckCircle className="w-5 h-5 text-emerald-500" />
+                        </div>
+                      )}
+                    </button>
+                  </div>
+                </div>
+
+                {/* File Upload Area */}
+                <div>
+                  <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-3">
+                    <Upload className="w-4 h-4 text-emerald-500" />
+                    Upload Document
+                  </label>
+                  
+                  {!previewUrl ? (
+                    <div
+                      onDragOver={handleDragOver}
+                      onDragLeave={handleDragLeave}
+                      onDrop={handleDrop}
+                      className={`relative border-2 border-dashed rounded-2xl p-8 text-center transition-all ${
+                        isDragging
+                          ? 'border-emerald-500 bg-emerald-50'
+                          : 'border-gray-200 hover:border-emerald-300 bg-gray-50'
+                      }`}
+                    >
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleFileChange}
+                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                      />
+                      <div className="flex flex-col items-center">
+                        <div className={`w-16 h-16 rounded-full flex items-center justify-center mb-4 ${
+                          isDragging ? 'bg-emerald-100' : 'bg-gray-100'
+                        }`}>
+                          <Upload className={`w-8 h-8 ${
+                            isDragging ? 'text-emerald-500' : 'text-gray-400'
+                          }`} />
+                        </div>
+                        <p className="text-gray-700 font-medium mb-1">
+                          {isDragging ? 'Drop your file here' : 'Drag & drop your document'}
+                        </p>
+                        <p className="text-sm text-gray-500 mb-4">or click to browse</p>
+                        <span className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm text-gray-600">
+                          <Eye className="w-4 h-4" />
+                          Supports JPG, PNG, PDF
+                        </span>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="relative rounded-2xl overflow-hidden border-2 border-emerald-200 bg-emerald-50">
+                      <img
+                        src={previewUrl}
+                        alt="Document Preview"
+                        className="w-full h-64 object-contain bg-white"
+                      />
+                      <button
+                        type="button"
+                        onClick={clearFile}
+                        className="absolute top-3 right-3 w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 transition-colors shadow-lg"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4">
+                        <div className="flex items-center gap-2 text-white">
+                          <CheckCircle className="w-4 h-4 text-emerald-400" />
+                          <span className="text-sm font-medium">{selectedFile?.name}</span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Submit Button */}
+                <button
+                  type="submit"
+                  disabled={loading || !selectedFile}
+                  className="w-full flex items-center justify-center gap-3 px-6 py-4 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-xl font-semibold hover:from-emerald-600 hover:to-teal-600 transition-all shadow-lg shadow-emerald-500/25 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none"
+                >
+                  {loading ? (
+                    <>
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                      Verifying Document...
+                    </>
+                  ) : (
+                    <>
+                      <Shield className="w-5 h-5" />
+                      Submit for Verification
+                    </>
+                  )}
+                </button>
+
+                {/* Success Message */}
+                {response && (
+                  <div className="flex items-start gap-3 p-4 bg-emerald-50 border border-emerald-200 rounded-xl animate-fade-in">
+                    <div className="w-10 h-10 bg-emerald-100 rounded-full flex items-center justify-center flex-shrink-0">
+                      <CheckCircle className="w-5 h-5 text-emerald-600" />
+                    </div>
+                    <div>
+                      <p className="font-semibold text-emerald-800">{response.message}</p>
+                      {response.extractedNumber && (
+                        <p className="text-sm text-emerald-600 mt-1">
+                          Extracted {response.documentType}: <span className="font-mono">{response.extractedNumber}</span>
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* Error Message */}
+                {error && (
+                  <div className="flex items-start gap-3 p-4 bg-red-50 border border-red-200 rounded-xl animate-fade-in">
+                    <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0">
+                      <AlertCircle className="w-5 h-5 text-red-600" />
+                    </div>
+                    <div>
+                      <p className="font-semibold text-red-800">Verification Failed</p>
+                      <p className="text-sm text-red-600 mt-1">{error}</p>
+                    </div>
+                  </div>
+                )}
+              </form>
+            </div>
           </div>
 
-          {/* Verification Card */}
-          <div className="bg-white rounded-xl p-8 shadow-sm border hover:shadow-lg transition-all duration-300">
-            <div className="text-center mb-6">
-              <h2 className="text-xl font-bold text-gray-900 mb-2">
-                Verify Your Identity
-              </h2>
-              <p className="text-gray-600 text-sm">
-                Upload your government-issued document for verification
+          {/* Sidebar Info */}
+          <div className="space-y-6">
+            <div className="bg-gradient-to-br from-emerald-500 to-teal-600 rounded-3xl p-6 text-white shadow-xl">
+              <div className="flex items-center gap-3 mb-4">
+                <Sparkles className="w-6 h-6" />
+                <h3 className="font-bold text-lg">Why KYC?</h3>
+              </div>
+              <ul className="space-y-3">
+                <li className="flex items-start gap-2">
+                  <CheckCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
+                  <span className="text-sm text-emerald-50">List your land properties</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
+                  <span className="text-sm text-emerald-50">Secure lease transactions</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
+                  <span className="text-sm text-emerald-50">Comply with regulations</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
+                  <span className="text-sm text-emerald-50">Enable faster payouts</span>
+                </li>
+              </ul>
+            </div>
+
+            <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
+                  <Lock className="w-5 h-5 text-blue-600" />
+                </div>
+                <h3 className="font-semibold text-gray-800">Your Data is Safe</h3>
+              </div>
+              <p className="text-sm text-gray-600 leading-relaxed">
+                Your documents are encrypted and stored securely. We follow strict data protection guidelines and never share your information with third parties.
               </p>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Document Type Selection */}
-              <div className="space-y-2">
-                <label htmlFor="documentType" className="block text-gray-700 text-sm font-medium">
-                  Document Type
-                </label>
-                <select
-                  id="documentType"
-                  className="w-full bg-white border border-gray-300 rounded-lg px-4 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-300"
-                  value={documentType}
-                  onChange={(e) => setDocumentType(e.target.value)}
-                >
-                  <option value="">Select Document Type</option>
-                  <option value="Aadhaar">Aadhaar Card</option>
-                  <option value="PAN">PAN Card</option>
-                </select>
-              </div>
-
-              {/* File Upload */}
-              <div className="space-y-2">
-                <label htmlFor="document" className="block text-gray-700 text-sm font-medium">
-                  Upload Document
-                </label>
-                <div className="relative">
-                  <input
-                    type="file"
-                    id="document"
-                    className="w-full bg-white border border-gray-300 rounded-lg px-4 py-3 text-gray-900 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-emerald-600 file:text-white hover:file:bg-emerald-700 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                    accept="image/*,.pdf"
-                    onChange={handleFileChange}
-                  />
-                </div>
-                <p className="text-gray-500 text-xs">
-                  Supported formats: JPG, PNG, PDF (Max 5MB)
-                </p>
-              </div>
-
-              {/* Security Badge */}
-              <div className="bg-green-50 border border-green-200 rounded-lg p-4 flex items-center space-x-3">
-                <svg className="w-5 h-5 text-green-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                </svg>
-                <span className="text-green-700 text-sm font-medium">
-                  Your documents are encrypted and securely stored
-                </span>
-              </div>
-
-              {/* Submit Button */}
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {loading ? (
-                  <div className="flex items-center justify-center space-x-2">
-                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                    <span>Processing Verification...</span>
-                  </div>
-                ) : (
-                  'Verify Identity'
-                )}
-              </button>
-            </form>
-
-            {/* Status Message */}
-            {message && (
-              <div className={`mt-6 p-4 rounded-lg text-center ${
-                message.includes('failed') || message.includes('Please select') 
-                  ? 'bg-red-50 border border-red-200 text-red-700' 
-                  : 'bg-green-50 border border-green-200 text-green-700'
-              }`}>
-                {message}
-              </div>
-            )}
-          </div>
-
-          {/* Features Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8">
-            <div className="bg-white rounded-lg shadow-sm border p-4 text-center hover:scale-105 transition-transform duration-300">
-              <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-2">
-                <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z" />
-                </svg>
-              </div>
-              <h3 className="text-gray-900 text-sm font-semibold">256-bit Encryption</h3>
-            </div>
-            <div className="bg-white rounded-lg shadow-sm border p-4 text-center hover:scale-105 transition-transform duration-300">
-              <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-2">
-                <svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-              <h3 className="text-gray-900 text-sm font-semibold">Instant Processing</h3>
-            </div>
-            <div className="bg-white rounded-lg shadow-sm border p-4 text-center hover:scale-105 transition-transform duration-300">
-              <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center mx-auto mb-2">
-                <svg className="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                </svg>
-              </div>
-              <h3 className="text-gray-900 text-sm font-semibold">Secure Storage</h3>
+            <div className="bg-amber-50 rounded-2xl p-6 border border-amber-100">
+              <h3 className="font-semibold text-amber-800 mb-3">📸 Tips for Upload</h3>
+              <ul className="space-y-2 text-sm text-amber-700">
+                <li>• Ensure all corners are visible</li>
+                <li>• Avoid glare and shadows</li>
+                <li>• Use good lighting</li>
+                <li>• Keep the document flat</li>
+              </ul>
             </div>
           </div>
         </div>
       </div>
+
+      <style>{`
+        @keyframes fade-in {
+          from { opacity: 0; transform: translateY(-10px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in { animation: fade-in 0.3s ease-out; }
+      `}</style>
     </Layout>
   );
 };

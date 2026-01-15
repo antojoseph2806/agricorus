@@ -81,7 +81,7 @@ exports.getCart = async (req, res) => {
           vendorBusinessName: product.vendorId?.businessName || 'Unknown',
           subtotal: item.priceAtAddTime * item.quantity,
           isAvailable: product.isActive && product.stock > 0,
-          maxQuantity: Math.min(item.quantity, product.stock) // Current stock limit
+          maxQuantity: Math.min(20, product.stock) // Max 20 items or available stock
         };
       })
     );
@@ -133,6 +133,11 @@ exports.addToCart = async (req, res) => {
       return sendResponse(res, false, 'Quantity must be a positive integer', null, 400);
     }
 
+    // Check max quantity limit (20 items per product)
+    if (quantity > 20) {
+      return sendResponse(res, false, 'Maximum 20 items allowed per product', null, 400);
+    }
+
     // Find product
     const product = await Product.findById(productId);
     if (!product) {
@@ -169,6 +174,11 @@ exports.addToCart = async (req, res) => {
     if (existingItemIndex !== -1) {
       // Update existing item
       const newQuantity = cart.items[existingItemIndex].quantity + quantity;
+      
+      // Check max quantity limit (20 items per product)
+      if (newQuantity > 20) {
+        return sendResponse(res, false, 'Maximum 20 items allowed per product', null, 400);
+      }
       
       if (product.stock < newQuantity) {
         return sendResponse(res, false, `Only ${product.stock} units available in stock`, null, 400);
@@ -245,6 +255,11 @@ exports.updateCartItem = async (req, res) => {
       cart.items.splice(itemIndex, 1);
       await cart.save();
       return sendResponse(res, true, 'Item removed from cart', { cart });
+    }
+
+    // Check max quantity limit (20 items per product)
+    if (quantity > 20) {
+      return sendResponse(res, false, 'Maximum 20 items allowed per product', null, 400);
     }
 
     // Find product to check stock

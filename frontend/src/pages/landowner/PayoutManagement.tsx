@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import { Layout } from "./LandownerDashboard";
 import {
@@ -8,11 +8,8 @@ import {
   Trash2,
   Shield,
   CheckCircle,
-  AlertCircle,
   Banknote,
   QrCode,
-  Database,
-  Zap,
 } from "lucide-react";
 
 interface PayoutMethod {
@@ -204,7 +201,7 @@ export const PayoutManagement = ({ type }: { type: "upi" | "bank" }) => {
                   ) : (
                     <>
                       <div>
-                        <label className="block text-sm font-semibold text-white mb-2">
+                        <label className="block text-sm font-semibold text-gray-700 mb-2">
                           Account Holder
                         </label>
                         <input
@@ -217,11 +214,11 @@ export const PayoutManagement = ({ type }: { type: "upi" | "bank" }) => {
                               accountHolderName: e.target.value,
                             })
                           }
-                          className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-gray-400"
+                          className="w-full bg-white border border-gray-300 rounded-xl px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-semibold text-white mb-2">
+                        <label className="block text-sm font-semibold text-gray-700 mb-2">
                           Account Number
                         </label>
                         <input
@@ -234,11 +231,11 @@ export const PayoutManagement = ({ type }: { type: "upi" | "bank" }) => {
                               accountNumber: e.target.value,
                             })
                           }
-                          className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-gray-400"
+                          className="w-full bg-white border border-gray-300 rounded-xl px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-semibold text-white mb-2">
+                        <label className="block text-sm font-semibold text-gray-700 mb-2">
                           IFSC Code
                         </label>
                         <input
@@ -251,11 +248,11 @@ export const PayoutManagement = ({ type }: { type: "upi" | "bank" }) => {
                               ifscCode: e.target.value,
                             })
                           }
-                          className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-gray-400"
+                          className="w-full bg-white border border-gray-300 rounded-xl px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-semibold text-white mb-2">
+                        <label className="block text-sm font-semibold text-gray-700 mb-2">
                           Bank Name
                         </label>
                         <input
@@ -265,7 +262,7 @@ export const PayoutManagement = ({ type }: { type: "upi" | "bank" }) => {
                           onChange={(e) =>
                             setFormData({ ...formData, bankName: e.target.value })
                           }
-                          className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-gray-400"
+                          className="w-full bg-white border border-gray-300 rounded-xl px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
                         />
                       </div>
                     </>
@@ -367,39 +364,54 @@ export const PayoutManagement = ({ type }: { type: "upi" | "bank" }) => {
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="border-b border-white/10 text-gray-400">
-                      <th className="py-3 px-8 text-left">
+                    <tr className="border-b border-gray-200 text-gray-500">
+                      <th className="py-3 px-8 text-left font-semibold">
                         {type === "upi" ? "Name" : "Account Holder"}
                       </th>
-                      <th className="py-3 px-8 text-left">
+                      <th className="py-3 px-8 text-left font-semibold">
                         {type === "upi" ? "UPI ID" : "Account Number"}
                       </th>
-                      <th className="py-3 px-8 text-left">Details</th>
-                      <th className="py-3 px-8 text-left">Status</th>
-                      <th className="py-3 px-8 text-left">Actions</th>
+                      <th className="py-3 px-8 text-left font-semibold">
+                        {type === "upi" ? "Provider" : "Bank Details"}
+                      </th>
+                      <th className="py-3 px-8 text-left font-semibold">Status</th>
+                      <th className="py-3 px-8 text-left font-semibold">Actions</th>
                     </tr>
                   </thead>
                   <tbody>
                     {payouts.map((p) => (
                       <tr
                         key={p._id}
-                        className="border-b border-white/5 hover:bg-white/5 transition"
+                        className="border-b border-gray-100 hover:bg-gray-50 transition"
                       >
-                        <td className="py-4 px-8 text-white">
-                          {p.name || p.accountHolderName}
+                        <td className="py-4 px-8 text-gray-900 font-medium">
+                          {p.name || p.accountHolderName || "—"}
                         </td>
-                        <td className="py-4 px-8 text-gray-300">
-                          {p.upiId || p.accountNumber}
+                        <td className="py-4 px-8 text-gray-700">
+                          {p.upiId || p.accountNumber || "—"}
                         </td>
-                        <td className="py-4 px-8 text-gray-400">
-                          {p.bankName || "N/A"} {p.ifscCode && `(${p.ifscCode})`}
+                        <td className="py-4 px-8 text-gray-600">
+                          {type === "bank" ? (
+                            <>
+                              {p.bankName || "N/A"} {p.ifscCode && `(${p.ifscCode})`}
+                            </>
+                          ) : (
+                            // Extract UPI provider from UPI ID (e.g., "name@paytm" -> "Paytm")
+                            p.upiId ? (
+                              <span className="capitalize">
+                                {p.upiId.split("@")[1] || "UPI"}
+                              </span>
+                            ) : (
+                              "—"
+                            )
+                          )}
                         </td>
                         <td className="py-4 px-8">
                           <span
-                            className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border ${
+                            className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${
                               p.isDefault
-                                ? "bg-green-500/20 text-green-400 border-green-500/30"
-                                : "bg-gray-500/20 text-gray-400 border-gray-500/30"
+                                ? "bg-emerald-100 text-emerald-700 border border-emerald-200"
+                                : "bg-blue-100 text-blue-700 border border-blue-200"
                             }`}
                           >
                             {p.isDefault ? (
@@ -408,7 +420,7 @@ export const PayoutManagement = ({ type }: { type: "upi" | "bank" }) => {
                               </>
                             ) : (
                               <>
-                                <AlertCircle className="w-3 h-3 mr-1" /> Inactive
+                                <CheckCircle className="w-3 h-3 mr-1" /> Active
                               </>
                             )}
                           </span>
@@ -417,13 +429,13 @@ export const PayoutManagement = ({ type }: { type: "upi" | "bank" }) => {
                           <div className="flex items-center gap-2">
                             <button
                               onClick={() => handleEdit(p)}
-                              className="p-2 rounded-lg bg-blue-500/20 text-blue-400 hover:bg-blue-500/30 transition"
+                              className="p-2 rounded-lg bg-blue-100 text-blue-600 hover:bg-blue-200 transition"
                             >
                               <Edit3 className="w-4 h-4" />
                             </button>
                             <button
                               onClick={() => handleDelete(p._id)}
-                              className="p-2 rounded-lg bg-red-500/20 text-red-400 hover:bg-red-500/30 transition"
+                              className="p-2 rounded-lg bg-red-100 text-red-600 hover:bg-red-200 transition"
                             >
                               <Trash2 className="w-4 h-4" />
                             </button>

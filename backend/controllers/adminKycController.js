@@ -112,6 +112,9 @@ exports.approveKyc = async (req, res) => {
     
     await kycRequest.save();
     
+    // Also update the Vendor model's kycStatus for consistency
+    await Vendor.findByIdAndUpdate(kycRequest.vendorId, { kycStatus: 'Approved' });
+    
     // Populate vendor details for response
     await kycRequest.populate('vendorId', 'name email phone');
     
@@ -151,6 +154,9 @@ exports.rejectKyc = async (req, res) => {
     kycRequest.verifiedAt = undefined;
     
     await kycRequest.save();
+    
+    // Also update the Vendor model's kycStatus for consistency
+    await Vendor.findByIdAndUpdate(kycRequest.vendorId, { kycStatus: 'Rejected' });
     
     // Populate vendor details for response
     await kycRequest.populate('vendorId', 'name email phone');

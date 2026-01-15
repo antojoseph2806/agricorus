@@ -1,19 +1,14 @@
-import { useState, useEffect } from "react";
+// src/pages/admin/UserKycManagement.tsx
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { 
-  CheckCircle, 
-  XCircle, 
-  Clock, 
-  Eye, 
-  Search,
-  Filter,
-  RefreshCw,
-  User,
-  FileText,
-  AlertCircle
+  Shield, User, MapPin, DollarSign, Eye, Clock, AlertCircle, Search,
+  FileText, Phone, Mail, Calendar, CheckCircle2, XCircle, RefreshCw, Users, X
 } from "lucide-react";
+import { Layout } from "./Layout";
+import { useLocation } from "react-router-dom";
 
-interface KycRequest {
+interface UserKyc {
   _id: string;
   userId: {
     _id: string;
@@ -22,465 +17,408 @@ interface KycRequest {
     phone?: string;
     role: string;
     createdAt: string;
-  };
+  } | null;
   documentType: string;
   documentImage: string;
+  extractedNumber: string;
   extractedText?: string;
-  extractedNumber?: string;
-  status: string;
+  status: 'Pending' | 'Verified' | 'Rejected';
   rejectionReason?: string;
   verifiedAt?: string;
-  verifiedBy?: {
-    name: string;
-    email: string;
-  };
+  verifiedBy?: { name: string; email: string } | null;
   createdAt: string;
-  updatedAt: string;
 }
 
-const UserKycManagement = () => {
-  const [requests, setRequests] = useState<KycRequest[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [selectedStatus, setSelectedStatus] = useState("ALL");
-  const [selectedRole, setSelectedRole] = useState("ALL");
+interface Stats {
+  byStatus: { Pending: number; Verified: number; Rejected: number };
+  byRole: { landowner: number; farmer: number; investor: number };
+  total: number;
+}
+
+const UserKycManagement: React.FC = () => {
+  const [kycRequests, setKycRequests] = useState<UserKyc[]>([]);
+  const [stats, setStats] = useState<Stats | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedRequest, setSelectedRequest] = useState<KycRequest | null>(null);
+  const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [roleFilter, setRoleFilter] = useState<string>("all");
+  const [selectedKyc, setSelectedKyc] = useState<UserKyc | null>(null);
   const [showModal, setShowModal] = useState(false);
-  const [rejectionReason, setRejectionReason] = useState("");
-  const [processing, setProcessing] = useState(false);
-  const [stats, setStats] = useState<any>(null);
+  const [actionLoading, setActionLoading] = useState<string | null>(null);
+  const location = useLocation();
 
-  useEffect(() => {
-    fetchRequests();
-    fetchStats();
-  }, [selectedStatus, selectedRole]);
+  const token = localStorage.getItem("token");
 
-  const fetchRequests = async () => {
+  const getAxios = () => {
+    if (!token) throw new Error("No authentication token found");
+    return axios.create({
+      baseURL: "http://localhost:5000",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+  };
+
+  const fetchKycRequests = async () => {
+    setLoading(true);
+    setError(null);
     try {
-      setLoading(true);
-      const token = localStorage.getItem("token");
-      const params = new URLSearchParams();
-      
-      if (selectedStatus !== "ALL") params.append("status", selectedStatus);
-      if (selectedRole !== "ALL") params.append("role", selectedRole);
-      if (searchTerm) params.append("search", searchTerm);
-
-      const response = await axios.get(
-        `${(import.meta as any).env.VITE_BACKEND_URL}/api/admin/user-kyc/requests?${params}`,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-
-      if (response.data.success) {
-        setRequests(response.data.data.requests);
-      }
-    } catch (error: any) {
-      console.error("Error fetching KYC requests:", error);
-      alert(error.response?.data?.message || "Failed to fetch KYC requests");
-    } finally {
-      setLoading(false);
+      const params: any = { status: statusFilter, role: roleFilter, search: searchTerm };
+      const { data } = await getAxios().get("/api/admin/user-kyc/all", { params });
+      setKycRequests(data.data || []);
+    } catch (err: any) {
+      setError(err.response?.data?.error || "Failed to fetch KYC requests");
     }
+    setLoading(false);
   };
 
   const fetchStats = async () => {
     try {
-      const token = localStorage.getItem("token");
-      const response = await axios.get(
-        `${(import.meta as any).env.VITE_BACKEND_URL}/api/admin/user-kyc/stats`,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-
-      if (response.data.success) {
-        setStats(response.data.data);
-      }
-    } catch (error) {
-      console.error("Error fetching stats:", error);
+      const { data } = await getAxios().get("/api/admin/user-kyc/stats");
+      setStats(data.data);
+    } catch (err) {
+      console.error("Failed to fetch stats:", err);
     }
   };
 
-  const handleApprove = async (id: string) => {
-    if (!confirm("Are you sure you want to approve this KYC request?")) return;
+  useEffect(() => {
+    // Set role filter based on URL path
+    if (location.pathname.includes('farmers')) setRoleFilter('farmer');
+    else if (location.pathname.includes('landowners')) setRoleFilter('landowner');
+    else if (location.pathname.includes('investors')) setRoleFilter('investor');
+    else setRoleFilter('all');
+  }, [location.pathname]);
 
+  useEffect(() => {
+    fetchKycRequests();
+    fetchStats();
+  }, [statusFilter, roleFilter]);
+
+  const handleApprove = async (kycId: string) => {
+    if (!window.confirm("Approve this KYC request?")) return;
+    setActionLoading(kycId);
     try {
-      setProcessing(true);
-      const token = localStorage.getItem("token");
-      const response = await axios.put(
-        `${(import.meta as any).env.VITE_BACKEND_URL}/api/admin/user-kyc/approve/${id}`,
-        {},
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      await getAxios().patch(`/api/admin/user-kyc/${kycId}/approve`);
+      await fetchKycRequests();
+      await fetchStats();
+      alert("KYC approved successfully!");
+    } catch (err: any) {
+      alert("Failed to approve: " + (err.response?.data?.error || err.message));
+    }
+    setActionLoading(null);
+  };
 
-      if (response.data.success) {
-        alert("KYC approved successfully!");
-        fetchRequests();
-        fetchStats();
-        setShowModal(false);
-      }
-    } catch (error: any) {
-      alert(error.response?.data?.message || "Failed to approve KYC");
-    } finally {
-      setProcessing(false);
+  const handleReject = async (kycId: string) => {
+    const reason = prompt("Enter rejection reason:");
+    if (!reason) return;
+    setActionLoading(kycId);
+    try {
+      await getAxios().patch(`/api/admin/user-kyc/${kycId}/reject`, { reason });
+      await fetchKycRequests();
+      await fetchStats();
+      alert("KYC rejected successfully!");
+    } catch (err: any) {
+      alert("Failed to reject: " + (err.response?.data?.error || err.message));
+    }
+    setActionLoading(null);
+  };
+
+  const getRoleIcon = (role: string) => {
+    switch (role) {
+      case 'farmer': return Users;
+      case 'landowner': return MapPin;
+      case 'investor': return DollarSign;
+      default: return User;
     }
   };
 
-  const handleReject = async (id: string) => {
-    if (!rejectionReason.trim()) {
-      alert("Please provide a rejection reason");
-      return;
-    }
-
-    try {
-      setProcessing(true);
-      const token = localStorage.getItem("token");
-      const response = await axios.put(
-        `${(import.meta as any).env.VITE_BACKEND_URL}/api/admin/user-kyc/reject/${id}`,
-        { rejectionReason },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-
-      if (response.data.success) {
-        alert("KYC rejected successfully!");
-        fetchRequests();
-        fetchStats();
-        setShowModal(false);
-        setRejectionReason("");
-      }
-    } catch (error: any) {
-      alert(error.response?.data?.message || "Failed to reject KYC");
-    } finally {
-      setProcessing(false);
+  const getRoleColor = (role: string) => {
+    switch (role) {
+      case 'farmer': return 'bg-green-500';
+      case 'landowner': return 'bg-blue-500';
+      case 'investor': return 'bg-purple-500';
+      default: return 'bg-gray-500';
     }
   };
 
   const getStatusBadge = (status: string) => {
     switch (status) {
-      case "Verified":
-        return (
-          <span className="px-3 py-1 bg-emerald-100 text-emerald-800 rounded-full text-xs font-semibold flex items-center">
-            <CheckCircle className="w-3 h-3 mr-1" />
-            Verified
-          </span>
-        );
-      case "Rejected":
-        return (
-          <span className="px-3 py-1 bg-red-100 text-red-800 rounded-full text-xs font-semibold flex items-center">
-            <XCircle className="w-3 h-3 mr-1" />
-            Rejected
-          </span>
-        );
-      default:
-        return (
-          <span className="px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-xs font-semibold flex items-center">
-            <Clock className="w-3 h-3 mr-1" />
-            Pending
-          </span>
-        );
+      case 'Pending': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+      case 'Verified': return 'bg-green-100 text-green-800 border-green-200';
+      case 'Rejected': return 'bg-red-100 text-red-800 border-red-200';
+      default: return 'bg-gray-100 text-gray-800 border-gray-200';
     }
   };
 
-  const getRoleBadge = (role: string) => {
-    const colors = {
-      farmer: "bg-blue-100 text-blue-800",
-      landowner: "bg-purple-100 text-purple-800",
-      investor: "bg-green-100 text-green-800"
-    };
-    return (
-      <span className={`px-2 py-1 rounded text-xs font-medium ${colors[role as keyof typeof colors] || "bg-gray-100 text-gray-800"}`}>
-        {role.charAt(0).toUpperCase() + role.slice(1)}
-      </span>
-    );
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('en-IN', {
+      year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+    });
   };
 
-  return (
-    <div className="p-6 max-w-7xl mx-auto">
-      {/* Header */}
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold text-gray-800 mb-2">User KYC Management</h1>
-        <p className="text-gray-600">Manage KYC verification for farmers, landowners, and investors</p>
-      </div>
+  const getPageTitle = () => {
+    if (location.pathname.includes('farmers')) return 'Farmer KYC Management';
+    if (location.pathname.includes('landowners')) return 'Landowner KYC Management';
+    if (location.pathname.includes('investors')) return 'Investor KYC Management';
+    return 'User KYC Management';
+  };
 
-      {/* Stats Cards */}
-      {stats && (
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-          <div className="bg-white rounded-lg shadow-sm border p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">Total KYC</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.TOTAL}</p>
-              </div>
-              <FileText className="w-8 h-8 text-gray-400" />
-            </div>
-          </div>
-          <div className="bg-white rounded-lg shadow-sm border p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">Pending</p>
-                <p className="text-2xl font-bold text-yellow-600">{stats.Pending.total}</p>
-              </div>
-              <Clock className="w-8 h-8 text-yellow-400" />
-            </div>
-          </div>
-          <div className="bg-white rounded-lg shadow-sm border p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">Verified</p>
-                <p className="text-2xl font-bold text-emerald-600">{stats.Verified.total}</p>
-              </div>
-              <CheckCircle className="w-8 h-8 text-emerald-400" />
-            </div>
-          </div>
-          <div className="bg-white rounded-lg shadow-sm border p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">Rejected</p>
-                <p className="text-2xl font-bold text-red-600">{stats.Rejected.total}</p>
-              </div>
-              <XCircle className="w-8 h-8 text-red-400" />
-            </div>
+  if (!token) {
+    return (
+      <Layout>
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
+          <div className="bg-white rounded-2xl shadow-lg p-12 max-w-md w-full text-center border">
+            <Shield className="w-16 h-16 text-red-500 mx-auto mb-6" />
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">Access Restricted</h2>
+            <p className="text-gray-600">Admin authentication required.</p>
           </div>
         </div>
-      )}
+      </Layout>
+    );
+  }
 
-      {/* Filters */}
-      <div className="bg-white rounded-lg shadow-sm border p-4 mb-6">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Status</label>
-            <select
-              value={selectedStatus}
-              onChange={(e) => setSelectedStatus(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500"
-            >
-              <option value="ALL">All Status</option>
+  return (
+    <Layout>
+      <div className="min-h-screen bg-gray-50 p-6">
+        {/* Header */}
+        <div className="bg-white rounded-2xl shadow-sm border p-8 mb-8">
+          <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
+            <div className="flex items-center gap-6">
+              <div className="w-16 h-16 bg-emerald-600 rounded-2xl flex items-center justify-center shadow-lg">
+                <Shield className="w-8 h-8 text-white" />
+              </div>
+              <div>
+                <h1 className="text-3xl font-bold text-gray-900 mb-1">{getPageTitle()}</h1>
+                <p className="text-gray-600">Review and manage user KYC verification requests</p>
+              </div>
+            </div>
+            <button onClick={() => { fetchKycRequests(); fetchStats(); }} disabled={loading}
+              className="flex items-center gap-2 px-5 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl border transition-all">
+              <RefreshCw className={`w-5 h-5 ${loading ? 'animate-spin' : ''}`} />
+              Refresh
+            </button>
+          </div>
+        </div>
+
+        {/* Statistics */}
+        {stats && (
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4 mb-8">
+            {[
+              { label: 'Total', value: stats.total, color: 'bg-blue-500', icon: FileText },
+              { label: 'Pending', value: stats.byStatus.Pending, color: 'bg-yellow-500', icon: Clock },
+              { label: 'Verified', value: stats.byStatus.Verified, color: 'bg-green-500', icon: CheckCircle2 },
+              { label: 'Rejected', value: stats.byStatus.Rejected, color: 'bg-red-500', icon: XCircle },
+              { label: 'Farmers', value: stats.byRole.farmer, color: 'bg-emerald-600', icon: Users },
+              { label: 'Landowners', value: stats.byRole.landowner, color: 'bg-blue-600', icon: MapPin },
+              { label: 'Investors', value: stats.byRole.investor, color: 'bg-purple-600', icon: DollarSign },
+            ].map((stat, i) => (
+              <div key={i} className="bg-white rounded-xl p-5 border shadow-sm hover:shadow-md transition-all">
+                <div className="flex items-center justify-between mb-3">
+                  <div className={`w-10 h-10 ${stat.color} rounded-lg flex items-center justify-center`}>
+                    <stat.icon className="w-5 h-5 text-white" />
+                  </div>
+                </div>
+                <div className="text-2xl font-bold text-gray-900">{stat.value}</div>
+                <div className="text-gray-600 text-sm">{stat.label}</div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Filters */}
+        <div className="bg-white rounded-xl p-6 mb-8 border shadow-sm">
+          <div className="flex flex-col md:flex-row gap-4">
+            <div className="relative flex-1">
+              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+              <input type="text" placeholder="Search by name, email, document number..."
+                value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && fetchKycRequests()}
+                className="w-full pl-12 pr-4 py-3 bg-gray-50 border rounded-xl text-gray-900 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20" />
+            </div>
+            <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}
+              className="px-4 py-3 bg-gray-50 border rounded-xl text-gray-900 focus:border-emerald-500">
+              <option value="all">All Status</option>
               <option value="Pending">Pending</option>
               <option value="Verified">Verified</option>
               <option value="Rejected">Rejected</option>
             </select>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Role</label>
-            <select
-              value={selectedRole}
-              onChange={(e) => setSelectedRole(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500"
-            >
-              <option value="ALL">All Roles</option>
-              <option value="farmer">Farmer</option>
-              <option value="landowner">Landowner</option>
-              <option value="investor">Investor</option>
-            </select>
-          </div>
-          <div className="md:col-span-2">
-            <label className="block text-sm font-medium text-gray-700 mb-2">Search</label>
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-              <input
-                type="text"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="Search by name or email..."
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500"
-              />
-            </div>
+            {!location.pathname.includes('farmers') && !location.pathname.includes('landowners') && !location.pathname.includes('investors') && (
+              <select value={roleFilter} onChange={(e) => setRoleFilter(e.target.value)}
+                className="px-4 py-3 bg-gray-50 border rounded-xl text-gray-900 focus:border-emerald-500">
+                <option value="all">All Roles</option>
+                <option value="farmer">Farmers</option>
+                <option value="landowner">Landowners</option>
+                <option value="investor">Investors</option>
+              </select>
+            )}
           </div>
         </div>
-        <div className="mt-4 flex gap-2">
-          <button
-            onClick={fetchRequests}
-            className="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 flex items-center"
-          >
-            <Search className="w-4 h-4 mr-2" />
-            Search
-          </button>
-          <button
-            onClick={() => {
-              setSearchTerm("");
-              setSelectedStatus("ALL");
-              setSelectedRole("ALL");
-              fetchRequests();
-            }}
-            className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 flex items-center"
-          >
-            <RefreshCw className="w-4 h-4 mr-2" />
-            Reset
-          </button>
-        </div>
-      </div>
 
-      {/* Requests Table */}
-      {loading ? (
-        <div className="flex items-center justify-center h-64">
-          <RefreshCw className="w-8 h-8 animate-spin text-emerald-600" />
-        </div>
-      ) : requests.length === 0 ? (
-        <div className="bg-white rounded-lg shadow-sm border p-12 text-center">
-          <FileText className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-          <h3 className="text-xl font-semibold text-gray-900 mb-2">No KYC Requests Found</h3>
-          <p className="text-gray-600">No KYC requests match your current filters.</p>
-        </div>
-      ) : (
-        <div className="bg-white rounded-lg shadow-sm border overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-gray-50 border-b">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">User</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Role</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Document</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Submitted</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200">
-                {requests.map((request) => (
-                  <tr key={request._id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4">
-                      <div className="flex items-center">
-                        <User className="w-8 h-8 text-gray-400 mr-3" />
-                        <div>
-                          <div className="font-medium text-gray-900">{request.userId.name}</div>
-                          <div className="text-sm text-gray-500">{request.userId.email}</div>
+        {/* KYC List */}
+        {loading ? (
+          <div className="bg-white rounded-2xl shadow-sm border p-16 text-center">
+            <div className="w-16 h-16 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin mx-auto mb-6"></div>
+            <h3 className="text-xl font-bold text-gray-900 mb-2">Loading KYC Requests</h3>
+            <p className="text-gray-600">Fetching verification data...</p>
+          </div>
+        ) : error ? (
+          <div className="bg-red-50 rounded-2xl border border-red-200 p-16 text-center">
+            <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-6" />
+            <h3 className="text-xl font-bold text-red-600 mb-2">Error Loading Data</h3>
+            <p className="text-gray-700 mb-6">{error}</p>
+            <button onClick={fetchKycRequests} className="bg-red-500 text-white px-6 py-3 rounded-xl font-semibold hover:bg-red-600">
+              Try Again
+            </button>
+          </div>
+        ) : kycRequests.length === 0 ? (
+          <div className="bg-white rounded-2xl shadow-sm border p-16 text-center">
+            <FileText className="w-16 h-16 text-gray-400 mx-auto mb-6" />
+            <h3 className="text-xl font-bold text-gray-900 mb-2">No KYC Requests Found</h3>
+            <p className="text-gray-600">No KYC requests match your current filters.</p>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {kycRequests.map((kyc) => {
+              const RoleIcon = getRoleIcon(kyc.userId?.role || '');
+              const isActionLoading = actionLoading === kyc._id;
+              
+              return (
+                <div key={kyc._id} className="bg-white rounded-xl border shadow-sm hover:shadow-md transition-all p-6">
+                  <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+                    <div className="flex items-center gap-5">
+                      <div className={`w-14 h-14 ${getRoleColor(kyc.userId?.role || '')} rounded-xl flex items-center justify-center shadow`}>
+                        <RoleIcon className="w-7 h-7 text-white" />
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-3 mb-1">
+                          <h3 className="text-lg font-bold text-gray-900">{kyc.userId?.name || 'Unknown User'}</h3>
+                          <span className={`px-3 py-1 rounded-full text-xs font-bold border ${getStatusBadge(kyc.status)}`}>
+                            {kyc.status}
+                          </span>
+                          <span className="px-3 py-1 rounded-full text-xs font-bold bg-gray-100 text-gray-700 uppercase">
+                            {kyc.userId?.role || 'N/A'}
+                          </span>
+                        </div>
+                        <div className="flex flex-wrap gap-4 text-sm text-gray-600">
+                          <span className="flex items-center gap-1"><Mail className="w-4 h-4 text-blue-500" /> {kyc.userId?.email || 'N/A'}</span>
+                          <span className="flex items-center gap-1"><Phone className="w-4 h-4 text-green-500" /> {kyc.userId?.phone || 'N/A'}</span>
+                          <span className="flex items-center gap-1"><FileText className="w-4 h-4 text-purple-500" /> {kyc.documentType}: {kyc.extractedNumber}</span>
+                          <span className="flex items-center gap-1"><Calendar className="w-4 h-4 text-orange-500" /> {formatDate(kyc.createdAt)}</span>
                         </div>
                       </div>
-                    </td>
-                    <td className="px-6 py-4">{getRoleBadge(request.userId.role)}</td>
-                    <td className="px-6 py-4">
-                      <div className="text-sm text-gray-900">{request.documentType}</div>
-                      {request.extractedNumber && (
-                        <div className="text-xs text-gray-500">{request.extractedNumber}</div>
-                      )}
-                    </td>
-                    <td className="px-6 py-4">{getStatusBadge(request.status)}</td>
-                    <td className="px-6 py-4 text-sm text-gray-500">
-                      {new Date(request.createdAt).toLocaleDateString()}
-                    </td>
-                    <td className="px-6 py-4">
-                      <button
-                        onClick={() => {
-                          setSelectedRequest(request);
-                          setShowModal(true);
-                        }}
-                        className="text-emerald-600 hover:text-emerald-700 flex items-center"
-                      >
-                        <Eye className="w-4 h-4 mr-1" />
-                        View
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <button onClick={() => { setSelectedKyc(kyc); setShowModal(true); }}
+                        className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-800 rounded-lg transition-all">
+                        <Eye className="w-4 h-4" /> View
                       </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      )}
-
-      {/* Modal */}
-      {showModal && selectedRequest && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="p-6">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold text-gray-900">KYC Request Details</h2>
-                <button
-                  onClick={() => {
-                    setShowModal(false);
-                    setRejectionReason("");
-                  }}
-                  className="text-gray-400 hover:text-gray-600"
-                >
-                  <XCircle className="w-6 h-6" />
-                </button>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                <div>
-                  <h3 className="font-semibold text-gray-900 mb-3">User Information</h3>
-                  <div className="space-y-2 text-sm">
-                    <div><span className="text-gray-600">Name:</span> <span className="font-medium">{selectedRequest.userId.name}</span></div>
-                    <div><span className="text-gray-600">Email:</span> <span className="font-medium">{selectedRequest.userId.email}</span></div>
-                    <div><span className="text-gray-600">Phone:</span> <span className="font-medium">{selectedRequest.userId.phone || "N/A"}</span></div>
-                    <div><span className="text-gray-600">Role:</span> {getRoleBadge(selectedRequest.userId.role)}</div>
-                    <div><span className="text-gray-600">Joined:</span> <span className="font-medium">{new Date(selectedRequest.userId.createdAt).toLocaleDateString()}</span></div>
-                  </div>
-                </div>
-
-                <div>
-                  <h3 className="font-semibold text-gray-900 mb-3">KYC Information</h3>
-                  <div className="space-y-2 text-sm">
-                    <div><span className="text-gray-600">Document Type:</span> <span className="font-medium">{selectedRequest.documentType}</span></div>
-                    <div><span className="text-gray-600">Document Number:</span> <span className="font-medium">{selectedRequest.extractedNumber || "N/A"}</span></div>
-                    <div><span className="text-gray-600">Status:</span> {getStatusBadge(selectedRequest.status)}</div>
-                    <div><span className="text-gray-600">Submitted:</span> <span className="font-medium">{new Date(selectedRequest.createdAt).toLocaleDateString()}</span></div>
-                    {selectedRequest.verifiedAt && (
-                      <div><span className="text-gray-600">Verified:</span> <span className="font-medium">{new Date(selectedRequest.verifiedAt).toLocaleDateString()}</span></div>
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              {/* Document Image */}
-              <div className="mb-6">
-                <h3 className="font-semibold text-gray-900 mb-3">Document Image</h3>
-                <img
-                  src={selectedRequest.documentImage}
-                  alt="KYC Document"
-                  className="w-full max-h-96 object-contain border rounded-lg"
-                />
-              </div>
-
-              {/* Rejection Reason */}
-              {selectedRequest.status === "Rejected" && selectedRequest.rejectionReason && (
-                <div className="mb-6 bg-red-50 border border-red-200 rounded-lg p-4">
-                  <div className="flex items-start">
-                    <AlertCircle className="w-5 h-5 text-red-600 mr-2 flex-shrink-0 mt-0.5" />
-                    <div>
-                      <h4 className="font-semibold text-red-900 mb-1">Rejection Reason</h4>
-                      <p className="text-sm text-red-700">{selectedRequest.rejectionReason}</p>
+                      {kyc.status === 'Pending' && (
+                        <>
+                          <button onClick={() => handleApprove(kyc._id)} disabled={isActionLoading}
+                            className="flex items-center gap-2 px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition-all disabled:opacity-50">
+                            <CheckCircle2 className="w-4 h-4" /> {isActionLoading ? '...' : 'Approve'}
+                          </button>
+                          <button onClick={() => handleReject(kyc._id)} disabled={isActionLoading}
+                            className="flex items-center gap-2 px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-all disabled:opacity-50">
+                            <XCircle className="w-4 h-4" /> Reject
+                          </button>
+                        </>
+                      )}
                     </div>
                   </div>
                 </div>
-              )}
+              );
+            })}
+          </div>
+        )}
 
-              {/* Actions */}
-              {selectedRequest.status === "Pending" && (
-                <div className="space-y-4">
+        {/* KYC Details Modal */}
+        {showModal && selectedKyc && (
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden">
+              <div className="bg-emerald-600 p-6 flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <Shield className="w-8 h-8 text-white" />
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Rejection Reason (if rejecting)
-                    </label>
-                    <textarea
-                      value={rejectionReason}
-                      onChange={(e) => setRejectionReason(e.target.value)}
-                      rows={3}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500"
-                      placeholder="Enter reason for rejection..."
-                    />
-                  </div>
-                  <div className="flex gap-3">
-                    <button
-                      onClick={() => handleApprove(selectedRequest._id)}
-                      disabled={processing}
-                      className="flex-1 px-6 py-3 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 disabled:bg-gray-400 flex items-center justify-center"
-                    >
-                      <CheckCircle className="w-5 h-5 mr-2" />
-                      {processing ? "Processing..." : "Approve KYC"}
-                    </button>
-                    <button
-                      onClick={() => handleReject(selectedRequest._id)}
-                      disabled={processing}
-                      className="flex-1 px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:bg-gray-400 flex items-center justify-center"
-                    >
-                      <XCircle className="w-5 h-5 mr-2" />
-                      {processing ? "Processing..." : "Reject KYC"}
-                    </button>
+                    <h2 className="text-2xl font-bold text-white">{selectedKyc.userId?.name || 'Unknown User'}</h2>
+                    <p className="text-emerald-100">KYC Verification Details</p>
                   </div>
                 </div>
-              )}
+                <button onClick={() => { setShowModal(false); setSelectedKyc(null); }}
+                  className="text-white/80 hover:text-white p-2 hover:bg-white/10 rounded-lg transition-all">
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
+              
+              <div className="overflow-y-auto max-h-[calc(90vh-100px)] p-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  {/* User Info */}
+                  <div className="bg-blue-50 rounded-xl p-6 border border-blue-100">
+                    <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                      <User className="w-5 h-5 text-blue-600" /> User Information
+                    </h3>
+                    <div className="space-y-3">
+                      <div><span className="text-sm text-blue-600 font-semibold">Name</span><p className="text-gray-900 font-medium">{selectedKyc.userId?.name || 'N/A'}</p></div>
+                      <div><span className="text-sm text-blue-600 font-semibold">Email</span><p className="text-gray-900 font-medium">{selectedKyc.userId?.email || 'N/A'}</p></div>
+                      <div><span className="text-sm text-blue-600 font-semibold">Phone</span><p className="text-gray-900 font-medium">{selectedKyc.userId?.phone || 'N/A'}</p></div>
+                      <div><span className="text-sm text-blue-600 font-semibold">Role</span><p className="text-gray-900 font-medium capitalize">{selectedKyc.userId?.role || 'N/A'}</p></div>
+                      <div><span className="text-sm text-blue-600 font-semibold">Registered</span><p className="text-gray-900 font-medium">{selectedKyc.userId?.createdAt ? formatDate(selectedKyc.userId.createdAt) : 'N/A'}</p></div>
+                    </div>
+                  </div>
+
+                  {/* Document Info */}
+                  <div className="bg-green-50 rounded-xl p-6 border border-green-100">
+                    <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                      <FileText className="w-5 h-5 text-green-600" /> Document Information
+                    </h3>
+                    <div className="space-y-3">
+                      <div><span className="text-sm text-green-600 font-semibold">Document Type</span><p className="text-gray-900 font-medium">{selectedKyc.documentType}</p></div>
+                      <div><span className="text-sm text-green-600 font-semibold">Document Number</span><p className="text-gray-900 font-medium font-mono">{selectedKyc.extractedNumber}</p></div>
+                      <div><span className="text-sm text-green-600 font-semibold">Submitted At</span><p className="text-gray-900 font-medium">{formatDate(selectedKyc.createdAt)}</p></div>
+                      <div><span className="text-sm text-green-600 font-semibold">Status</span>
+                        <span className={`inline-block px-3 py-1 rounded-full text-sm font-bold border ${getStatusBadge(selectedKyc.status)}`}>{selectedKyc.status}</span>
+                      </div>
+                      {selectedKyc.verifiedAt && (
+                        <div><span className="text-sm text-green-600 font-semibold">Verified At</span><p className="text-gray-900 font-medium">{formatDate(selectedKyc.verifiedAt)}</p></div>
+                      )}
+                      {selectedKyc.rejectionReason && (
+                        <div><span className="text-sm text-red-600 font-semibold">Rejection Reason</span><p className="text-red-700 font-medium">{selectedKyc.rejectionReason}</p></div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Document Preview */}
+                  <div className="lg:col-span-2 bg-gray-50 rounded-xl p-6 border">
+                    <h3 className="text-lg font-bold text-gray-900 mb-4">Document Preview</h3>
+                    <div className="relative group">
+                      <img src={selectedKyc.documentImage} alt="KYC Document"
+                        className="w-full max-h-96 object-contain rounded-lg border-2 border-gray-200 bg-white" />
+                      <a href={selectedKyc.documentImage} target="_blank" rel="noopener noreferrer"
+                        className="absolute bottom-4 right-4 bg-emerald-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-emerald-700 transition-all">
+                        View Full Size
+                      </a>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Action Buttons */}
+                {selectedKyc.status === 'Pending' && (
+                  <div className="flex justify-end gap-4 mt-6 pt-6 border-t">
+                    <button onClick={() => { handleReject(selectedKyc._id); setShowModal(false); }}
+                      className="flex items-center gap-2 px-6 py-3 bg-red-500 hover:bg-red-600 text-white rounded-xl font-semibold transition-all">
+                      <XCircle className="w-5 h-5" /> Reject KYC
+                    </button>
+                    <button onClick={() => { handleApprove(selectedKyc._id); setShowModal(false); }}
+                      className="flex items-center gap-2 px-6 py-3 bg-green-500 hover:bg-green-600 text-white rounded-xl font-semibold transition-all">
+                      <CheckCircle2 className="w-5 h-5" /> Approve KYC
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
-        </div>
-      )}
-    </div>
+        )}
+      </div>
+    </Layout>
   );
 };
 

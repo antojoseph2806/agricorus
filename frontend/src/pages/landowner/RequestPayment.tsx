@@ -222,58 +222,53 @@ const RequestPayment: React.FC = () => {
 
             {/* Right Column - Lease Information */}
             <div className="xl:col-span-1">
-              <div 
-                className="bg-white/5 backdrop-blur-lg rounded-2xl border border-white/10 p-8 shadow-2xl hover:shadow-2xl transition-all duration-300 hover:transform hover:scale-[1.02]"
-                style={{
-                  background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%)',
-                }}
-              >
-                <h2 className="text-xl font-bold text-white uppercase tracking-wide mb-6" style={{ fontFamily: 'Poppins, sans-serif' }}>
+              <div className="bg-white rounded-2xl border border-gray-200 p-8 shadow-sm">
+                <h2 className="text-xl font-bold text-gray-900 uppercase tracking-wide mb-6">
                   Lease Details
                 </h2>
                 
                 {fetchLoading ? (
                   <div className="text-center py-8">
-                    <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-red-500 mb-4"></div>
-                    <p className="text-gray-300">Loading leases...</p>
+                    <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-500 mb-4"></div>
+                    <p className="text-gray-600">Loading leases...</p>
                   </div>
                 ) : selectedLease ? (
                   <>
                     {leases.filter(lease => lease._id === selectedLease).map(lease => (
                       <div key={lease._id} className="space-y-6">
                         <div>
-                          <h3 className="font-bold text-white text-lg mb-1">{lease.land.title}</h3>
-                          <p className="text-gray-300 text-sm">{lease.land.location.address}</p>
+                          <h3 className="font-bold text-gray-900 text-lg mb-1">{lease.land.title}</h3>
+                          <p className="text-gray-600 text-sm">{lease.land.location.address}</p>
                         </div>
                         
-                        <div className="border-t border-white/10 pt-4">
+                        <div className="border-t border-gray-200 pt-4">
                           <div className="flex justify-between text-sm mb-3">
-                            <span className="text-gray-300">Farmer:</span>
-                            <span className="font-semibold text-white">{lease.farmer.name || lease.farmer.email}</span>
+                            <span className="text-gray-600">Farmer:</span>
+                            <span className="font-semibold text-gray-900">{lease.farmer.name || lease.farmer.email}</span>
                           </div>
                           <div className="flex justify-between text-sm mb-3">
-                            <span className="text-gray-300">Monthly Rent:</span>
-                            <span className="font-semibold text-white">₹{lease.pricePerMonth.toLocaleString()}</span>
+                            <span className="text-gray-600">Monthly Rent:</span>
+                            <span className="font-semibold text-gray-900">₹{lease.pricePerMonth.toLocaleString()}</span>
                           </div>
                           <div className="flex justify-between text-sm mb-3">
-                            <span className="text-gray-300">Duration:</span>
-                            <span className="font-semibold text-white">{lease.durationMonths} months</span>
+                            <span className="text-gray-600">Duration:</span>
+                            <span className="font-semibold text-gray-900">{lease.durationMonths} months</span>
                           </div>
                         </div>
 
                         {/* Payment Progress Bar */}
                         <div className="pt-4">
                           <div className="flex justify-between text-sm mb-3">
-                            <span className="text-gray-300">Payment Progress</span>
-                            <span className="font-semibold text-white">{lease.paymentsMade}/{lease.totalPayments} paid</span>
+                            <span className="text-gray-600">Payment Progress</span>
+                            <span className="font-semibold text-gray-900">{lease.paymentsMade}/{lease.totalPayments} paid</span>
                           </div>
-                          <div className="w-full bg-white/10 rounded-full h-3">
+                          <div className="w-full bg-gray-200 rounded-full h-3">
                             <div 
-                              className="bg-gradient-to-r from-red-500 to-red-600 h-3 rounded-full transition-all duration-500 shadow-lg shadow-red-500/25"
+                              className="bg-gradient-to-r from-emerald-500 to-emerald-600 h-3 rounded-full transition-all duration-500"
                               style={{ width: `${getProgressPercentage(lease)}%` }}
                             ></div>
                           </div>
-                          <p className="text-xs text-gray-400 mt-2">
+                          <p className="text-xs text-gray-500 mt-2">
                             {lease.totalPayments - lease.paymentsMade} payments remaining
                           </p>
                         </div>
@@ -282,29 +277,27 @@ const RequestPayment: React.FC = () => {
                   </>
                 ) : (
                   <div className="text-center py-8">
-                    <div className="text-white/40 mb-4">
+                    <div className="text-gray-400 mb-4">
                       <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                       </svg>
                     </div>
-                    <p className="text-gray-300">Select a lease to view details</p>
+                    <p className="text-gray-500">Select a lease to view details</p>
                   </div>
                 )}
               </div>
 
               {/* Quick Stats Card */}
-              <div 
-                className="bg-gradient-to-br from-red-500/10 to-red-600/10 rounded-2xl border border-red-500/20 p-6 mt-6 backdrop-blur-lg shadow-2xl"
-              >
-                <h3 className="font-bold text-white uppercase tracking-wide mb-4" style={{ fontFamily: 'Poppins, sans-serif' }}>Payment Information</h3>
+              <div className="bg-emerald-50 rounded-2xl border border-emerald-200 p-6 mt-6 shadow-sm">
+                <h3 className="font-bold text-gray-900 uppercase tracking-wide mb-4">Payment Information</h3>
                 <div className="space-y-3 text-sm">
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-300">Total Leases:</span>
-                    <span className="font-bold text-white bg-white/10 px-3 py-1 rounded-full">{leases.length}</span>
+                    <span className="text-gray-600">Total Leases:</span>
+                    <span className="font-bold text-gray-900 bg-white px-3 py-1 rounded-full border border-gray-200">{leases.length}</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-300">Eligible for Payment:</span>
-                    <span className="font-bold text-white bg-red-500/20 px-3 py-1 rounded-full">
+                    <span className="text-gray-600">Eligible for Payment:</span>
+                    <span className="font-bold text-white bg-emerald-600 px-3 py-1 rounded-full">
                       {leases.filter(l => l.paymentsMade < l.totalPayments).length}
                     </span>
                   </div>
@@ -316,16 +309,10 @@ const RequestPayment: React.FC = () => {
       </div>
 
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap');
-        
         select option {
           background: #1f2937;
           color: white;
           padding: 12px;
-        }
-        
-        select:focus {
-          box-shadow: 0 0 0 2px rgba(255, 59, 59, 0.5);
         }
       `}</style>
     </Layout>

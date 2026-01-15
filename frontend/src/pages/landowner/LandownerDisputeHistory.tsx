@@ -27,24 +27,23 @@ import {
 // Define the structure for a Dispute object
 interface Dispute {
   _id: string;
-  lease: {
+  lease?: {
     _id: string;
-    // 🚨 Updated fields to be optional/handled for safety 🚨
-    title?: string; // May be missing in current backend response
-    location?: string; // May be missing in current backend response
-    status: string; // Lease status
-  };
-  against: {
+    title?: string;
+    location?: string;
+    status?: string;
+  } | null;
+  against?: {
     _id: string;
     name: string;
     email: string;
     role: string;
-  };
+  } | null;
   reason: string;
   category: string;
   details: string;
-  status: "open" | "under_review" | "resolved" | "rejected"; // Dispute status
-  amountInvolved: number;
+  status: "open" | "under_review" | "resolved" | "rejected";
+  amountInvolved?: number;
   createdAt: string;
   updatedAt: string;
 }
@@ -216,7 +215,7 @@ const LandownerDisputeHistory: React.FC = () => {
                                 <p className="flex items-center">
                                     <FileText className="w-4 h-4 mr-2 text-blue-600" />
                                     <span className="font-semibold text-gray-900 mr-1">Lease:</span>
-                                    {dispute.lease?.title || `Lease ID: ${dispute.lease._id.substring(0, 8)}...`}
+                                    {dispute.lease?.title || (dispute.lease?._id ? `Lease ID: ${dispute.lease._id.substring(0, 8)}...` : 'N/A')}
                                 </p>
                                 <p className="flex items-center">
                                     <UserCheck className="w-4 h-4 mr-2 text-emerald-600" />

@@ -1,8 +1,9 @@
-// src/pages/investor/ReturnRequestHistory.tsx
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { InvestorLayout } from "./InvestorLayout";
+import { Link } from "react-router-dom";
 import {
   Filter,
   Download,
@@ -14,37 +15,67 @@ import {
   CreditCard,
   Calendar,
   MessageSquare,
-  DollarSign,
   TrendingUp,
-  RefreshCw
+  RefreshCw,
+  Loader2,
+  Building2,
+  Smartphone,
+  Star,
+  ArrowDownToLine,
+  Banknote,
+  Eye,
+  Leaf,
+  Receipt,
+  ExternalLink,
+  IndianRupee,
+  History
 } from "lucide-react";
+
+interface Investment {
+  _id: string;
+  amount: number;
+  expectedProfit?: number;
+  status: string;
+  project: {
+    title: string;
+    status: string;
+    cropType?: string;
+  } | null;
+}
 
 interface PayoutMethod {
   _id: string;
-  methodName?: string;
+  type: "bank" | "upi";
+  name?: string;
+  upiId?: string;
+  accountHolderName?: string;
   accountNumber?: string;
-  details?: string;
+  ifscCode?: string;
+  bankName?: string;
+  isDefault?: boolean;
 }
 
 interface ReturnRequest {
   _id: string;
   investmentId: string;
+  investment: Investment | null;
   payoutMethodId: PayoutMethod | null;
-  status: string;
-  createdAt: string;
+  status: "pending" | "approved" | "rejected" | "completed" | "paid";
   adminComment?: string;
   paymentReceipt?: string;
-  transactionId?: string;
   paymentDate?: string;
+  transactionId?: string;
   amountPaid?: number;
+  createdAt: string;
   reviewedAt?: string;
 }
 
 const ReturnRequestHistory: React.FC = () => {
   const [requests, setRequests] = useState<ReturnRequest[]>([]);
   const [filteredRequests, setFilteredRequests] = useState<ReturnRequest[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [filterStatus, setFilterStatus] = useState<string>("all");
+  const [loading, setLoading] = useState(true);
+  const [filterStatus, setFilterStatus] = useState("all");
+  const [expandedId, setExpandedId] = useState<string | null>(null);
 
   const fetchRequests = async () => {
     try {
@@ -52,17 +83,13 @@ const ReturnRequestHistory: React.FC = () => {
       const token = localStorage.getItem("token");
       const res = await axios.get(
         "http://localhost:5000/api/investor/return-requests",
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
-      setRequests(res.data.returnRequests as ReturnRequest[]);
-      setFilteredRequests(res.data.returnRequests as ReturnRequest[]);
+      setRequests(res.data.returnRequests || []);
+      setFilteredRequests(res.data.returnRequests || []);
     } catch (err: any) {
       console.error(err);
-      toast.error(
-        err.response?.data?.message || "Failed to fetch return request history"
-      );
+      toast.error(err.response?.data?.message || "Failed to fetch return requests");
     } finally {
       setLoading(false);
     }
@@ -72,62 +99,51 @@ const ReturnRequestHistory: React.FC = () => {
     fetchRequests();
   }, []);
 
-  // Filter requests
   useEffect(() => {
     if (filterStatus === "all") {
       setFilteredRequests(requests);
     } else {
-      setFilteredRequests(requests.filter(req => req.status === filterStatus));
+      setFilteredRequests(requests.filter((req) => req.status === filterStatus));
     }
   }, [filterStatus, requests]);
 
-  // Get status icon
-  const getStatusIcon = (status: string) => {
+  const getStatusConfig = (status: string) => {
     switch (status) {
       case "completed":
       case "paid":
-        return <CheckCircle className="w-4 h-4 text-green-400" />;
+        return { icon: CheckCircle, color: "text-emerald-600", bg: "bg-emerald-100", border: "border-emerald-200", label: status === "paid" ? "Paid" : "Completed" };
       case "approved":
-        return <CheckCircle className="w-4 h-4 text-blue-400" />;
+        return { icon: CheckCircle, color: "text-blue-600", bg: "bg-blue-100", border: "border-blue-200", label: "Approved" };
       case "pending":
-        return <Clock className="w-4 h-4 text-yellow-400" />;
+        return { icon: Clock, color: "text-amber-600", bg: "bg-amber-100", border: "border-amber-200", label: "Pending" };
       case "rejected":
-        return <XCircle className="w-4 h-4 text-red-400" />;
+        return { icon: XCircle, color: "text-red-600", bg: "bg-red-100", border: "border-red-200", label: "Rejected" };
       default:
-        return <AlertCircle className="w-4 h-4 text-gray-400" />;
+        return { icon: AlertCircle, color: "text-gray-600", bg: "bg-gray-100", border: "border-gray-200", label: status };
     }
   };
 
-  // Get status color
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "completed":
-      case "paid":
-        return "bg-green-500/20 text-green-400 border-green-500/30";
-      case "approved":
-        return "bg-blue-500/20 text-blue-400 border-blue-500/30";
-      case "pending":
-        return "bg-yellow-500/20 text-yellow-400 border-yellow-500/30";
-      case "rejected":
-        return "bg-red-500/20 text-red-400 border-red-500/30";
-      default:
-        return "bg-gray-500/20 text-gray-400 border-gray-500/30";
-    }
-  };
-
-  // Export to CSV
   const exportToCSV = () => {
-    const headers = ["Investment ID", "Amount Paid", "Status", "Created At", "Transaction ID", "Payment Date"];
-    const csvData = filteredRequests.map(req => [
-      req.investmentId.slice(-12),
-      req.amountPaid ? `₹${req.amountPaid}` : "N/A",
-      req.status,
-      new Date(req.createdAt).toLocaleDateString(),
-      req.transactionId || "N/A",
-      req.paymentDate ? new Date(req.paymentDate).toLocaleDateString() : "N/A"
-    ]);
+    const headers = ["Project", "Investment Amount", "Expected Return (5%)", "Total Payout", "Status", "Payout Method", "Amount Paid", "Transaction ID", "Request Date", "Payment Date"];
+    const csvData = filteredRequests.map((req) => {
+      const investment = req.investment?.amount || 0;
+      const expectedReturn = investment * 0.05;
+      const totalPayout = investment * 1.05;
+      return [
+        req.investment?.project?.title || "N/A",
+        investment ? `₹${investment}` : "N/A",
+        expectedReturn ? `₹${expectedReturn}` : "N/A",
+        totalPayout ? `₹${totalPayout}` : "N/A",
+        req.status,
+        req.payoutMethodId?.type === "bank" ? `Bank - ${req.payoutMethodId.bankName || ""}` : `UPI - ${req.payoutMethodId?.upiId || ""}`,
+        req.amountPaid ? `₹${req.amountPaid}` : "",
+        req.transactionId || "",
+        new Date(req.createdAt).toLocaleDateString(),
+        req.paymentDate ? new Date(req.paymentDate).toLocaleDateString() : "",
+      ];
+    });
 
-    const csvContent = [headers, ...csvData].map(row => row.join(",")).join("\n");
+    const csvContent = [headers, ...csvData].map((row) => row.join(",")).join("\n");
     const blob = new Blob([csvContent], { type: "text/csv" });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -137,304 +153,371 @@ const ReturnRequestHistory: React.FC = () => {
     window.URL.revokeObjectURL(url);
   };
 
-  if (loading) {
-    return (
-      <InvestorLayout>
-        <div className="flex items-center justify-center min-h-screen">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-500"></div>
-        </div>
-      </InvestorLayout>
-    );
-  }
+  const stats = {
+    total: requests.length,
+    pending: requests.filter((r) => r.status === "pending").length,
+    approved: requests.filter((r) => r.status === "approved").length,
+    paid: requests.filter((r) => r.status === "paid" || r.status === "completed").length,
+    rejected: requests.filter((r) => r.status === "rejected").length,
+  };
 
   return (
     <InvestorLayout>
-      <div className="min-h-screen bg-gray-50 p-6">
-        <div className="max-w-7xl mx-auto">
-          {/* Header Section */}
-          <div className="bg-white rounded-2xl border border-gray-200 p-8 mb-8 shadow-sm">
-            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-6">
+        <ToastContainer position="top-right" autoClose={4000} theme="light" />
+
+        {/* Header */}
+        <div className="bg-gradient-to-r from-purple-600 to-indigo-600 rounded-2xl p-6 mb-6 text-white">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div className="flex items-center gap-4">
+              <div className="w-14 h-14 bg-white/20 rounded-xl flex items-center justify-center">
+                <History className="w-7 h-7" />
+              </div>
               <div>
-                <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                  Return Request History
-                </h1>
-                <p className="text-gray-600 text-lg">
-                  Track and view all your return payment requests
-                </p>
+                <h1 className="text-2xl font-bold">Return Request History</h1>
+                <p className="text-purple-100 mt-1">Track all your investment return requests</p>
               </div>
-              
-              <div className="mt-4 lg:mt-0 flex items-center gap-3">
-                <button
-                  onClick={exportToCSV}
-                  className="flex items-center gap-2 px-4 py-2.5 rounded-xl font-semibold text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 transition-all duration-300"
-                >
-                  <Download className="w-4 h-4" />
-                  Export CSV
-                </button>
-                <button
-                  onClick={fetchRequests}
-                  className="flex items-center gap-2 px-4 py-2.5 rounded-xl font-semibold text-white bg-emerald-600 hover:bg-emerald-700 transition-all duration-300 shadow-sm"
-                >
-                  <RefreshCw className="w-4 h-4" />
-                  Refresh
-                </button>
-              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={exportToCSV}
+                className="flex items-center gap-2 px-4 py-2.5 bg-white/10 hover:bg-white/20 rounded-xl font-medium transition"
+              >
+                <Download className="w-4 h-4" />
+                Export
+              </button>
+              <button
+                onClick={fetchRequests}
+                className="flex items-center gap-2 px-4 py-2.5 bg-white text-purple-600 rounded-xl font-semibold hover:bg-purple-50 transition"
+              >
+                <RefreshCw className="w-4 h-4" />
+                Refresh
+              </button>
             </div>
           </div>
+        </div>
 
-          {/* Filter and Stats Section */}
-          <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 mb-8">
-            {/* Filter Card */}
-            <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
-              <div className="flex items-center gap-3 mb-4">
-                <Filter className="w-5 h-5 text-emerald-600" />
-                <h3 className="text-lg font-bold text-gray-900">
-                  Filters
-                </h3>
+        {/* Stats Cards */}
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
+          {[
+            { label: "Total", value: stats.total, icon: FileText, color: "bg-blue-100 text-blue-600" },
+            { label: "Pending", value: stats.pending, icon: Clock, color: "bg-amber-100 text-amber-600" },
+            { label: "Approved", value: stats.approved, icon: CheckCircle, color: "bg-sky-100 text-sky-600" },
+            { label: "Paid", value: stats.paid, icon: IndianRupee, color: "bg-emerald-100 text-emerald-600" },
+            { label: "Rejected", value: stats.rejected, icon: XCircle, color: "bg-red-100 text-red-600" },
+          ].map((stat, i) => {
+            const Icon = stat.icon;
+            return (
+              <div key={i} className="bg-white rounded-xl border border-gray-100 p-4 hover:shadow-md transition">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-gray-500">{stat.label}</p>
+                    <p className="text-2xl font-bold text-gray-800">{stat.value}</p>
+                  </div>
+                  <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${stat.color}`}>
+                    <Icon className="w-5 h-5" />
+                  </div>
+                </div>
               </div>
-              
-              <select
-                value={filterStatus}
-                onChange={(e) => setFilterStatus(e.target.value)}
-                className="w-full bg-white border border-gray-300 rounded-xl px-4 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-300"
-              >
-                <option value="all">All Requests</option>
-                <option value="pending">Pending</option>
-                <option value="approved">Approved</option>
-                <option value="paid">Paid</option>
-                <option value="completed">Completed</option>
-                <option value="rejected">Rejected</option>
-              </select>
-            </div>
+            );
+          })}
+        </div>
 
-            {/* Stats Cards */}
-            {[
-              { status: "all", label: "Total Requests", count: requests.length, color: "bg-blue-100", icon: FileText },
-              { status: "pending", label: "Pending", count: requests.filter(r => r.status === "pending").length, color: "bg-yellow-100", icon: Clock },
-              { status: "paid", label: "Paid", count: requests.filter(r => r.status === "paid").length, color: "bg-green-100", icon: CheckCircle },
-              { status: "completed", label: "Completed", count: requests.filter(r => r.status === "completed").length, color: "bg-emerald-100", icon: TrendingUp },
-            ].map((stat, index) => {
-              const Icon = stat.icon;
+        {/* Filter */}
+        <div className="bg-white rounded-xl border border-gray-100 p-4 mb-6 flex items-center gap-4">
+          <Filter className="w-5 h-5 text-gray-400" />
+          <select
+            value={filterStatus}
+            onChange={(e) => setFilterStatus(e.target.value)}
+            className="flex-1 md:flex-none md:w-48 px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+          >
+            <option value="all">All Requests</option>
+            <option value="pending">Pending</option>
+            <option value="approved">Approved</option>
+            <option value="paid">Paid</option>
+            <option value="completed">Completed</option>
+            <option value="rejected">Rejected</option>
+          </select>
+          <span className="text-sm text-gray-500">
+            Showing {filteredRequests.length} of {requests.length} requests
+          </span>
+        </div>
+
+        {/* Content */}
+        {loading ? (
+          <div className="flex items-center justify-center py-20">
+            <Loader2 className="w-10 h-10 text-purple-500 animate-spin" />
+          </div>
+        ) : filteredRequests.length === 0 ? (
+          <div className="bg-white rounded-2xl border border-gray-100 p-12 text-center">
+            <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <FileText className="w-10 h-10 text-gray-400" />
+            </div>
+            <h3 className="text-xl font-semibold text-gray-800 mb-2">No Return Requests Found</h3>
+            <p className="text-gray-500 mb-6">
+              {filterStatus === "all"
+                ? "You haven't submitted any return requests yet."
+                : `No ${filterStatus} requests found.`}
+            </p>
+            <Link
+              to="/investor/return-request"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-purple-600 text-white rounded-xl font-medium hover:bg-purple-700 transition"
+            >
+              <ArrowDownToLine className="w-5 h-5" />
+              Request a Return
+            </Link>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {filteredRequests.map((req) => {
+              const statusConfig = getStatusConfig(req.status);
+              const StatusIcon = statusConfig.icon;
+              const isExpanded = expandedId === req._id;
+
               return (
                 <div
-                  key={index}
-                  className="bg-white rounded-2xl border border-gray-200 p-6 hover:shadow-md transition-all duration-300 shadow-sm"
+                  key={req._id}
+                  className="bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-md transition"
                 >
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-gray-500 text-sm uppercase tracking-wide mb-1">{stat.label}</p>
-                      <p className="text-3xl font-bold text-gray-900">{stat.count}</p>
-                    </div>
-                    <div className={`p-3 rounded-xl ${stat.color}`}>
-                      <Icon className="w-5 h-5 text-gray-700" />
+                  {/* Main Row */}
+                  <div
+                    className="p-5 cursor-pointer"
+                    onClick={() => setExpandedId(isExpanded ? null : req._id)}
+                  >
+                    <div className="flex flex-col md:flex-row md:items-center gap-4">
+                      {/* Project Info */}
+                      <div className="flex-1">
+                        <div className="flex items-center gap-3 mb-2">
+                          <div className="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center">
+                            <Leaf className="w-5 h-5 text-emerald-600" />
+                          </div>
+                          <div>
+                            <h3 className="font-semibold text-gray-800">
+                              {req.investment?.project?.title || "Unknown Project"}
+                            </h3>
+                            {req.investment?.project?.cropType && (
+                              <p className="text-sm text-gray-500">{req.investment.project.cropType}</p>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Investment Amount */}
+                      {req.investment?.amount && (
+                        <div className="text-center md:text-left">
+                          <p className="text-xs text-gray-500 uppercase">Investment</p>
+                          <p className="font-bold text-gray-800">
+                            ₹{req.investment.amount.toLocaleString()}
+                          </p>
+                        </div>
+                      )}
+
+                      {/* Expected Return (5% of investment) */}
+                      {req.investment?.amount && (
+                        <div className="text-center md:text-left">
+                          <p className="text-xs text-gray-500 uppercase">Expected Return</p>
+                          <p className="font-bold text-emerald-600">
+                            +₹{(req.investment.amount * 0.05).toLocaleString()}
+                            <span className="text-xs text-gray-400 ml-1">(5%)</span>
+                          </p>
+                        </div>
+                      )}
+
+                      {/* Total Payout */}
+                      {req.investment?.amount && (
+                        <div className="text-center md:text-left">
+                          <p className="text-xs text-gray-500 uppercase">Total Payout</p>
+                          <p className="font-bold text-purple-600">
+                            ₹{(req.investment.amount * 1.05).toLocaleString()}
+                          </p>
+                        </div>
+                      )}
+
+                      {/* Amount Paid - only show if paid */}
+                      {req.amountPaid && (
+                        <div className="text-center md:text-left">
+                          <p className="text-xs text-gray-500 uppercase">Amount Paid</p>
+                          <p className="font-bold text-green-600">
+                            ₹{req.amountPaid.toLocaleString()}
+                          </p>
+                        </div>
+                      )}
+
+                      {/* Status */}
+                      <div>
+                        <span
+                          className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium ${statusConfig.bg} ${statusConfig.color} border ${statusConfig.border}`}
+                        >
+                          <StatusIcon className="w-4 h-4" />
+                          {statusConfig.label}
+                        </span>
+                      </div>
+
+                      {/* Date */}
+                      <div className="text-center md:text-right">
+                        <p className="text-xs text-gray-500 uppercase">Requested</p>
+                        <p className="text-sm text-gray-700">
+                          {new Date(req.createdAt).toLocaleDateString()}
+                        </p>
+                      </div>
                     </div>
                   </div>
+
+                  {/* Expanded Details */}
+                  {isExpanded && (
+                    <div className="border-t border-gray-100 bg-gray-50 p-5">
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        {/* Payout Method */}
+                        {req.payoutMethodId && (
+                          <div className="bg-white rounded-xl p-4 border border-gray-100">
+                            <h4 className="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
+                              {req.payoutMethodId.type === "bank" ? (
+                                <Building2 className="w-4 h-4 text-blue-600" />
+                              ) : (
+                                <Smartphone className="w-4 h-4 text-emerald-600" />
+                              )}
+                              Payout Method
+                            </h4>
+                            <div className="space-y-1 text-sm">
+                              {req.payoutMethodId.type === "bank" ? (
+                                <>
+                                  {req.payoutMethodId.bankName && (
+                                    <p className="font-medium text-gray-800">{req.payoutMethodId.bankName}</p>
+                                  )}
+                                  {req.payoutMethodId.accountNumber && (
+                                    <p className="text-gray-600">A/C: ••••{req.payoutMethodId.accountNumber.slice(-4)}</p>
+                                  )}
+                                  {req.payoutMethodId.ifscCode && (
+                                    <p className="text-gray-600">IFSC: {req.payoutMethodId.ifscCode}</p>
+                                  )}
+                                  {req.payoutMethodId.accountHolderName && (
+                                    <p className="text-gray-500">{req.payoutMethodId.accountHolderName}</p>
+                                  )}
+                                </>
+                              ) : (
+                                <>
+                                  {req.payoutMethodId.name && (
+                                    <p className="font-medium text-gray-800">{req.payoutMethodId.name}</p>
+                                  )}
+                                  {req.payoutMethodId.upiId && (
+                                    <p className="text-gray-600">{req.payoutMethodId.upiId}</p>
+                                  )}
+                                </>
+                              )}
+                              {req.payoutMethodId.isDefault && (
+                                <span className="inline-flex items-center gap-1 text-xs text-amber-600">
+                                  <Star className="w-3 h-3 fill-current" /> Default
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Payment Info - only show if there's payment data */}
+                        {(req.transactionId || req.paymentDate || req.amountPaid || req.paymentReceipt) && (
+                          <div className="bg-white rounded-xl p-4 border border-gray-100">
+                            <h4 className="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
+                              <CreditCard className="w-4 h-4 text-purple-600" />
+                              Payment Details
+                            </h4>
+                            <div className="space-y-2 text-sm">
+                              {req.transactionId && (
+                                <div className="flex items-center justify-between">
+                                  <span className="text-gray-500">Transaction ID</span>
+                                  <span className="font-mono text-gray-800">{req.transactionId}</span>
+                                </div>
+                              )}
+                              {req.paymentDate && (
+                                <div className="flex items-center justify-between">
+                                  <span className="text-gray-500">Payment Date</span>
+                                  <span className="text-gray-800">{new Date(req.paymentDate).toLocaleDateString()}</span>
+                                </div>
+                              )}
+                              {req.amountPaid && (
+                                <div className="flex items-center justify-between">
+                                  <span className="text-gray-500">Amount Paid</span>
+                                  <span className="font-bold text-emerald-600">₹{req.amountPaid.toLocaleString()}</span>
+                                </div>
+                              )}
+                              {req.paymentReceipt && (
+                                <a
+                                  href={`http://localhost:5000${req.paymentReceipt}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="flex items-center gap-2 text-purple-600 hover:text-purple-700 font-medium mt-2"
+                                >
+                                  <Receipt className="w-4 h-4" />
+                                  View Receipt
+                                  <ExternalLink className="w-3 h-3" />
+                                </a>
+                              )}
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Admin Comment - only show if there's a comment */}
+                        {req.adminComment && (
+                          <div className="bg-white rounded-xl p-4 border border-gray-100">
+                            <h4 className="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
+                              <MessageSquare className="w-4 h-4 text-indigo-600" />
+                              Admin Response
+                            </h4>
+                            <div className="bg-indigo-50 rounded-lg p-3 text-sm text-indigo-800">
+                              "{req.adminComment}"
+                            </div>
+                            {req.reviewedAt && (
+                              <p className="text-xs text-gray-500 mt-3">
+                                Reviewed on {new Date(req.reviewedAt).toLocaleDateString()}
+                              </p>
+                            )}
+                          </div>
+                        )}
+
+                        {/* Investment Summary Card */}
+                        {req.investment?.amount && (
+                          <div className="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-xl p-4 border border-emerald-100">
+                            <h4 className="text-sm font-semibold text-emerald-800 mb-3 flex items-center gap-2">
+                              <TrendingUp className="w-4 h-4 text-emerald-600" />
+                              Return Summary
+                            </h4>
+                            <div className="space-y-2 text-sm">
+                              <div className="flex items-center justify-between">
+                                <span className="text-emerald-700">Principal</span>
+                                <span className="font-medium text-gray-800">₹{req.investment.amount.toLocaleString()}</span>
+                              </div>
+                              <div className="flex items-center justify-between">
+                                <span className="text-emerald-700">Return (5%)</span>
+                                <span className="font-medium text-emerald-600">+₹{(req.investment.amount * 0.05).toLocaleString()}</span>
+                              </div>
+                              <div className="border-t border-emerald-200 pt-2 flex items-center justify-between">
+                                <span className="font-semibold text-emerald-800">Total</span>
+                                <span className="font-bold text-emerald-700">₹{(req.investment.amount * 1.05).toLocaleString()}</span>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
                 </div>
               );
             })}
           </div>
+        )}
 
-          {/* Return Requests Table */}
-          <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm">
-            {filteredRequests.length === 0 ? (
-              <div className="text-center py-16">
-                <AlertCircle className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-xl font-bold text-gray-900 mb-2">No return requests found</h3>
-                <p className="text-gray-600">
-                  {filterStatus === "all" 
-                    ? "You haven't submitted any return requests yet." 
-                    : "No requests match your current filters."}
-                </p>
-              </div>
-            ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead>
-                    <tr className="border-b border-gray-200 bg-gray-50">
-                      <th className="text-left py-4 px-6 text-gray-700 font-semibold uppercase tracking-wide text-sm">Investment ID</th>
-                      <th className="text-left py-4 px-6 text-gray-700 font-semibold uppercase tracking-wide text-sm">Amount</th>
-                      <th className="text-left py-4 px-6 text-gray-700 font-semibold uppercase tracking-wide text-sm">Status</th>
-                      <th className="text-left py-4 px-6 text-gray-700 font-semibold uppercase tracking-wide text-sm">Created</th>
-                      <th className="text-left py-4 px-6 text-gray-700 font-semibold uppercase tracking-wide text-sm">Payout Method</th>
-                      <th className="text-left py-4 px-6 text-gray-700 font-semibold uppercase tracking-wide text-sm">Payment Info</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filteredRequests.map((req) => (
-                      <tr 
-                        key={req._id} 
-                        className="border-b border-gray-100 hover:bg-gray-50 transition-all duration-300"
-                      >
-                        <td className="py-4 px-6">
-                          <span className="font-mono text-sm text-gray-900">{req.investmentId.slice(-12)}</span>
-                        </td>
-                        <td className="py-4 px-6">
-                          {req.amountPaid ? (
-                            <div className="flex items-center gap-2">
-                              <DollarSign className="w-5 h-5 text-emerald-600" />
-                              <span className="text-xl font-bold text-gray-900">₹{req.amountPaid.toLocaleString()}</span>
-                            </div>
-                          ) : (
-                            <span className="text-sm text-gray-400">Not set</span>
-                          )}
-                        </td>
-                        <td className="py-4 px-6">
-                          <span className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold border ${getStatusColor(req.status)}`}>
-                            {getStatusIcon(req.status)}
-                            {req.status.charAt(0).toUpperCase() + req.status.slice(1)}
-                          </span>
-                        </td>
-                        <td className="py-4 px-6">
-                          <p className="text-gray-900">{new Date(req.createdAt).toLocaleDateString()}</p>
-                          <p className="text-gray-600 text-sm">{new Date(req.createdAt).toLocaleTimeString()}</p>
-                        </td>
-                        <td className="py-4 px-6">
-                          <div>
-                            {req.payoutMethodId ? (
-                              <>
-                                <p className="text-gray-900 font-medium">{req.payoutMethodId.methodName || "Unknown"}</p>
-                                <p className="text-gray-600 text-sm">
-                                  {req.payoutMethodId.accountNumber || req.payoutMethodId.details || "N/A"}
-                                </p>
-                              </>
-                            ) : (
-                              <p className="text-sm text-gray-400">No payout method</p>
-                            )}
-                          </div>
-                        </td>
-                        <td className="py-4 px-6">
-                          <div className="space-y-2">
-                            {req.transactionId && (
-                              <div className="flex items-center gap-2 text-sm">
-                                <CreditCard className="w-4 h-4 text-emerald-600" />
-                                <span className="text-gray-900 font-medium">{req.transactionId}</span>
-                              </div>
-                            )}
-                            {req.paymentDate && (
-                              <div className="flex items-center gap-2 text-sm">
-                                <Calendar className="w-4 h-4 text-blue-600" />
-                                <span className="text-gray-900">{new Date(req.paymentDate).toLocaleDateString()}</span>
-                              </div>
-                            )}
-                            {req.paymentReceipt && (
-                              <a
-                                href={`http://localhost:5000${req.paymentReceipt}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="flex items-center gap-2 text-sm text-emerald-600 hover:text-emerald-700 font-medium"
-                              >
-                                <FileText className="w-4 h-4" />
-                                View Receipt
-                              </a>
-                            )}
-                            {req.adminComment && (
-                              <div className="flex items-start gap-2 text-sm">
-                                <MessageSquare className="w-4 h-4 text-purple-600 mt-0.5" />
-                                <span className="text-gray-700 italic">{req.adminComment}</span>
-                              </div>
-                            )}
-                            {!req.transactionId && !req.paymentDate && !req.paymentReceipt && !req.adminComment && (
-                              <span className="text-sm text-gray-400">No payment info yet</span>
-                            )}
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
+        {/* Quick Action */}
+        <div className="mt-6 bg-gradient-to-r from-purple-50 to-indigo-50 border border-purple-100 rounded-xl p-4 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <ArrowDownToLine className="w-5 h-5 text-purple-600" />
+            <span className="text-purple-800">Need to request another return?</span>
           </div>
-
-          {/* Mobile Cards View */}
-          <div className="lg:hidden mt-6 space-y-4">
-            {filteredRequests.map((req) => (
-              <div
-                key={req._id}
-                className="bg-white rounded-2xl border border-gray-200 p-6 hover:shadow-md transition-all duration-300"
-              >
-                <div className="flex items-center justify-between mb-4">
-                  <span className="font-mono text-sm text-gray-900">{req.investmentId.slice(-12)}</span>
-                  <span className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold border ${getStatusColor(req.status)}`}>
-                    {getStatusIcon(req.status)}
-                    {req.status.charAt(0).toUpperCase() + req.status.slice(1)}
-                  </span>
-                </div>
-                
-                <div className="grid grid-cols-2 gap-4 mb-4">
-                  <div>
-                    <p className="text-gray-500 text-sm">Amount</p>
-                    {req.amountPaid ? (
-                      <p className="text-gray-900 font-semibold">₹{req.amountPaid.toLocaleString()}</p>
-                    ) : (
-                      <p className="text-gray-400 text-sm">Not set</p>
-                    )}
-                  </div>
-                  <div>
-                    <p className="text-gray-500 text-sm">Created</p>
-                    <p className="text-gray-900 font-semibold">{new Date(req.createdAt).toLocaleDateString()}</p>
-                  </div>
-                </div>
-                
-                {req.payoutMethodId && (
-                  <div className="mb-4">
-                    <p className="text-gray-500 text-sm">Payout Method</p>
-                    <p className="text-gray-900 font-medium">{req.payoutMethodId.methodName || "Unknown"}</p>
-                    <p className="text-gray-600 text-sm">
-                      {req.payoutMethodId.accountNumber || req.payoutMethodId.details || "N/A"}
-                    </p>
-                  </div>
-                )}
-
-                {/* Payment Info */}
-                {(req.transactionId || req.paymentDate || req.paymentReceipt || req.adminComment) && (
-                  <div className="space-y-2 border-t border-gray-200 pt-4">
-                    <p className="text-gray-500 text-sm font-semibold">Payment Information</p>
-                    {req.transactionId && (
-                      <div className="flex items-center gap-2 text-sm">
-                        <CreditCard className="w-4 h-4 text-emerald-600" />
-                        <span className="text-gray-900">{req.transactionId}</span>
-                      </div>
-                    )}
-                    {req.paymentDate && (
-                      <div className="flex items-center gap-2 text-sm">
-                        <Calendar className="w-4 h-4 text-blue-600" />
-                        <span className="text-gray-900">{new Date(req.paymentDate).toLocaleDateString()}</span>
-                      </div>
-                    )}
-                    {req.paymentReceipt && (
-                      <a
-                        href={`http://localhost:5000${req.paymentReceipt}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center gap-2 text-sm text-emerald-600 hover:text-emerald-700"
-                      >
-                        <FileText className="w-4 h-4" />
-                        View Receipt
-                      </a>
-                    )}
-                    {req.adminComment && (
-                      <div className="flex items-start gap-2 text-sm">
-                        <MessageSquare className="w-4 h-4 text-purple-600 mt-0.5" />
-                        <span className="text-gray-700 italic">{req.adminComment}</span>
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
+          <Link
+            to="/investor/return-request"
+            className="px-4 py-2 bg-purple-600 text-white rounded-lg font-medium hover:bg-purple-700 transition"
+          >
+            New Request
+          </Link>
         </div>
-
-        <style>{`
-          @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap');
-          
-          select option {
-            background: #1f2937;
-            color: white;
-            padding: 12px;
-          }
-        `}</style>
       </div>
     </InvestorLayout>
   );

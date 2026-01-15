@@ -84,18 +84,38 @@ router.post("/", auth, authorizeRoles("investor"), async (req, res) => {
 // ============================================================
 router.get("/", auth, authorizeRoles("investor"), async (req, res) => {
   try {
+    const Investment = require("../models/Investment");
+    
     const requests = await ReturnRequest.find({ investor: req.user.id })
-      .populate("payoutMethodId", "methodName accountNumber details"); 
+      .populate("payoutMethodId", "type name upiId accountHolderName accountNumber ifscCode bankName isDefault")
+      .sort({ createdAt: -1 });
 
-    if (!requests || requests.length === 0) {
-      return res
-        .status(200)
-        .json({ message: "No return requests found.", returnRequests: [] });
-    }
+    // Populate investment details for each request
+    const populatedRequests = await Promise.all(
+      requests.map(async (request) => {
+        const investment = await Investment.findById(request.investmentId)
+          .populate("projectId", "title status cropType");
+        
+        return {
+          ...request.toObject(),
+          investment: investment ? {
+            _id: investment._id,
+            amount: investment.amount,
+            expectedProfit: investment.expectedProfit,
+            status: investment.status,
+            project: investment.projectId ? {
+              title: investment.projectId.title,
+              status: investment.projectId.status,
+              cropType: investment.projectId.cropType
+            } : null
+          } : null
+        };
+      })
+    );
 
     res.status(200).json({
       message: "Return requests retrieved successfully.",
-      returnRequests: requests,
+      returnRequests: populatedRequests,
     });
   } catch (err) {
     console.error(err);

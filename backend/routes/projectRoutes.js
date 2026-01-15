@@ -1,4 +1,5 @@
 // routes/projectRoutes.js
+console.log('🔧 Loading projectRoutes.js...');
 const express = require("express");
 const mongoose = require("mongoose");
 const Project = require("../models/Project");
@@ -8,6 +9,19 @@ const authorizeRoles = require("../middleware/authorizeRoles");
 const { createVerifiedProject, getVerificationStatus } = require("../controllers/verifiedProjectController");
 
 const router = express.Router();
+
+// Add logging middleware to see all requests
+router.use((req, res, next) => {
+  if (req.path.includes('approve') || req.path.includes('reject')) {
+    console.log('🔍 PROJECT ROUTE REQUEST:', {
+      method: req.method,
+      path: req.path,
+      url: req.url,
+      params: req.params
+    });
+  }
+  next();
+});
 
 /* -----------------------------
    CREATE PROJECT  (Farmer)
@@ -39,12 +53,20 @@ router.get("/projects/:id/verification-status", auth, authorizeRoles("farmer"), 
 ------------------------------ */
 router.get("/admin/projects", auth, authorizeRoles("admin"), async (req, res) => {
   try {
+    console.log('🔍 ADMIN PROJECTS REQUEST from user:', req.user?.role, req.user?.id);
+    
     const projects = await Project.find()
       .populate("farmerId", "_id name email")
       .sort({ createdAt: -1 }); // latest first
 
+    console.log(`📊 Sending ${projects.length} projects to admin`);
+    projects.forEach(project => {
+      console.log(`  - ${project.title} (ID: ${project._id}, Approved: ${project.isApproved})`);
+    });
+
     res.json(projects);
   } catch (err) {
+    console.error('❌ Admin projects fetch error:', err);
     res.status(500).json({ error: err.message });
   }
 });
@@ -124,6 +146,134 @@ router.get("/projects/funded", auth, async (req, res) => {
 
 
 /* -----------------------------
+   ADMIN PROJECT MANAGEMENT ROUTES
+   👉 IMPORTANT: Keep these ABOVE generic /projects/:id route
+------------------------------ */
+
+/* APPROVE PROJECT (Admin) */
+console.log('🔧 Registering APPROVE route: /projects/:id/approve');
+router.patch(
+  "/projects/:id/approve",
+  (req, res, next) => {
+    console.log('🔍 APPROVE MIDDLEWARE: Route matched!', req.params.id);
+    next();
+  },
+  auth,
+  authorizeRoles("admin"),
+  async (req, res) => {
+    try {
+      console.log('🔍 APPROVE REQUEST:', {
+        projectId: req.params.id,
+        isValidObjectId: mongoose.Types.ObjectId.isValid(req.params.id),
+        userRole: req.user?.role,
+        userId: req.user?.id
+      });
+
+      if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+        console.log('❌ Invalid project ID:', req.params.id);
+        return res.status(400).json({ error: "Invalid project ID" });
+      }
+      
+      const project = await Project.findById(req.params.id);
+      console.log('🔍 Project found:', project ? `${project.title} (${project._id})` : 'null');
+      
+      if (!project) {
+        console.log('❌ Project not found in database for ID:', req.params.id);
+        return res.status(404).json({ error: "Project not found" });
+      }
+
+      project.isApproved = true;
+      project.status = "open"; // Make it available for funding
+      await project.save();
+      
+      console.log('✅ Project approved successfully:', project.title);
+      res.json({ message: "Project approved successfully", project });
+    } catch (err) {
+      console.error('❌ Approve error:', err);
+      res.status(500).json({ error: err.message });
+    }
+  }
+);
+
+/* REJECT PROJECT (Admin) */
+router.patch(
+  "/projects/:id/reject",
+  auth,
+  authorizeRoles("admin"),
+  async (req, res) => {
+    try {
+      if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+        return res.status(400).json({ error: "Invalid project ID" });
+      }
+      const { reason } = req.body;
+      if (!reason) {
+        return res.status(400).json({ error: "Rejection reason is required" });
+      }
+
+      const project = await Project.findById(req.params.id);
+      if (!project) return res.status(404).json({ error: "Project not found" });
+
+      project.isApproved = false;
+      project.status = "closed";
+      project.rejectionReason = reason;
+      await project.save();
+      
+      res.json({ message: "Project rejected successfully", project });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  }
+);
+
+/* CLOSE PROJECT (Admin) */
+router.patch("/projects/:id/close", auth, authorizeRoles("admin"), async (req, res) => {
+  try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({ error: "Invalid project ID" });
+    }
+
+    const project = await Project.findById(req.params.id);
+    if (!project) return res.status(404).json({ error: "Project not found" });
+
+    project.status = "closed";
+    await project.save();
+
+    res.json({ message: "Project closed successfully", project });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+/* MARK PROJECT AS FUNDED (Admin) */
+router.patch(
+  "/projects/:id/mark-funded",
+  auth,
+  authorizeRoles("admin"),
+  async (req, res) => {
+    try {
+      if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+        return res.status(400).json({ error: "Invalid project ID" });
+      }
+
+      const project = await Project.findById(req.params.id);
+      if (!project) return res.status(404).json({ error: "Project not found" });
+
+      if (project.status === "funded") {
+        return res.status(400).json({ error: "Project is already funded" });
+      }
+
+      project.status = "funded";
+      project.currentFunding = project.fundingGoal;
+      await project.save();
+
+      res.json({ message: "Project marked as funded by admin", project });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  }
+);
+
+/* -----------------------------
    GET ALL PROJECTS (public)
 ------------------------------ */
 router.get("/projects", async (req, res) => {
@@ -134,6 +284,110 @@ router.get("/projects", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
+/* -----------------------------
+   INVEST IN PROJECT (Investor)
+------------------------------ */
+router.post(
+  "/projects/:id/invest",
+  auth,
+  authorizeRoles("investor"),
+  async (req, res) => {
+    try {
+      if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+        return res.status(400).json({ error: "Invalid project ID" });
+      }
+
+      const { amount } = req.body;
+      if (!amount || amount <= 0) {
+        return res
+          .status(400)
+          .json({ error: "Investment amount must be greater than zero" });
+      }
+
+      const project = await Project.findById(req.params.id);
+      if (!project) return res.status(404).json({ error: "Project not found" });
+      if (project.status !== "open") {
+        return res.status(400).json({ error: "Project is not open for funding" });
+      }
+
+      const investment = new Investment({
+        projectId: req.params.id,
+        investorId: req.user.id,
+        amount,
+      });
+      await investment.save();
+
+      project.currentFunding += amount;
+      if (project.currentFunding >= project.fundingGoal) {
+        project.status = "funded";
+      }
+      await project.save();
+
+      res.status(201).json(investment);
+    } catch (err) {
+      res.status(400).json({ error: err.message });
+    }
+  }
+);
+
+/* -----------------------------
+   INVESTOR FUND PROJECT
+------------------------------ */
+router.patch(
+  "/projects/:id/fund",
+  auth,
+  authorizeRoles("investor"),
+  async (req, res) => {
+    try {
+      if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+        return res.status(400).json({ error: "Invalid project ID" });
+      }
+
+      const { amount } = req.body;
+      if (!amount || amount <= 0) {
+        return res.status(400).json({ error: "Funding amount must be greater than 0" });
+      }
+
+      const project = await Project.findById(req.params.id);
+      if (!project) return res.status(404).json({ error: "Project not found" });
+      if (project.status !== "open") {
+        return res.status(400).json({ error: "Project is not open for funding" });
+      }
+
+      project.currentFunding += amount;
+
+      // Auto-mark funded if goal reached
+      if (project.currentFunding >= project.fundingGoal) {
+        project.status = "funded";
+      }
+
+      await project.save();
+
+      res.json({ message: "Funding successful", project });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  }
+);
+
+/* -----------------------------
+   GET INVESTMENTS FOR PROJECT
+------------------------------ */
+router.get("/projects/:id/investments", async (req, res) => {
+  try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({ error: "Invalid project ID" });
+    }
+    const investments = await Investment.find({
+      projectId: req.params.id,
+    }).populate("investorId", "_id name email");
+    res.json(investments);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 /* -----------------------------
    GET PROJECT BY ID (public)
 ------------------------------ */
@@ -361,153 +615,21 @@ router.get("/users/:id/investments", async (req, res) => {
 });
 
 /* -----------------------------
-   APPROVE PROJECT (Admin)
+   GET ALL INVESTMENTS BY USER
 ------------------------------ */
-router.patch(
-  "/projects/:id/approve",
-  auth,
-  authorizeRoles("admin"),
-  async (req, res) => {
-    try {
-      if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
-        return res.status(400).json({ error: "Invalid project ID" });
-      }
-      const project = await Project.findById(req.params.id);
-      if (!project) return res.status(404).json({ error: "Project not found" });
-
-      project.isApproved = true;
-      project.status = "open"; // Make it available for funding
-      await project.save();
-      res.json({ message: "Project approved successfully", project });
-    } catch (err) {
-      res.status(500).json({ error: err.message });
-    }
-  }
-);
-
-/* -----------------------------
-   REJECT PROJECT (Admin)
------------------------------- */
-router.patch(
-  "/projects/:id/reject",
-  auth,
-  authorizeRoles("admin"),
-  async (req, res) => {
-    try {
-      if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
-        return res.status(400).json({ error: "Invalid project ID" });
-      }
-      const { reason } = req.body;
-      if (!reason) {
-        return res.status(400).json({ error: "Rejection reason is required" });
-      }
-
-      const project = await Project.findById(req.params.id);
-      if (!project) return res.status(404).json({ error: "Project not found" });
-
-      project.isApproved = false;
-      project.status = "closed";
-      project.rejectionReason = reason;
-      await project.save();
-      
-      res.json({ message: "Project rejected successfully", project });
-    } catch (err) {
-      res.status(500).json({ error: err.message });
-    }
-  }
-);
-
-/* -----------------------------
-   CLOSE PROJECT (Admin)
------------------------------- */
-// PATCH /projects/:id/close
-router.patch("/projects/:id/close", auth, authorizeRoles("admin"), async (req, res) => {
+router.get("/users/:id/investments", async (req, res) => {
   try {
     if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
-      return res.status(400).json({ error: "Invalid project ID" });
+      return res.status(400).json({ error: "Invalid user ID" });
     }
-
-    const project = await Project.findById(req.params.id);
-    if (!project) return res.status(404).json({ error: "Project not found" });
-
-    project.status = "closed"; // 👈 Important
-    await project.save();
-
-    res.json({ message: "Project closed successfully", project });
+    const investments = await Investment.find({
+      investorId: req.params.id,
+    }).populate("projectId", "_id title slug");
+    res.json(investments);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
-
-/* -----------------------------
-   INVESTOR FUND PROJECT
------------------------------- */
-router.patch(
-  "/projects/:id/fund",
-  auth,
-  authorizeRoles("investor"),
-  async (req, res) => {
-    try {
-      if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
-        return res.status(400).json({ error: "Invalid project ID" });
-      }
-
-      const { amount } = req.body;
-      if (!amount || amount <= 0) {
-        return res.status(400).json({ error: "Funding amount must be greater than 0" });
-      }
-
-      const project = await Project.findById(req.params.id);
-      if (!project) return res.status(404).json({ error: "Project not found" });
-      if (project.status !== "open") {
-        return res.status(400).json({ error: "Project is not open for funding" });
-      }
-
-      project.currentFunding += amount;
-
-      // Auto-mark funded if goal reached
-      if (project.currentFunding >= project.fundingGoal) {
-        project.status = "funded";
-      }
-
-      await project.save();
-
-      res.json({ message: "Funding successful", project });
-    } catch (err) {
-      res.status(500).json({ error: err.message });
-    }
-  }
-);
-/* -----------------------------
-   MARK PROJECT AS FUNDED (Admin)
------------------------------- */
-router.patch(
-  "/projects/:id/mark-funded",
-  auth,
-  authorizeRoles("admin"),
-  async (req, res) => {
-    try {
-      if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
-        return res.status(400).json({ error: "Invalid project ID" });
-      }
-
-      const project = await Project.findById(req.params.id);
-      if (!project) return res.status(404).json({ error: "Project not found" });
-
-      if (project.status === "funded") {
-        return res.status(400).json({ error: "Project is already funded" });
-      }
-
-      project.status = "funded";
-      project.currentFunding = project.fundingGoal; // optional: force match goal
-      await project.save();
-
-      res.json({ message: "Project marked as funded by admin", project });
-    } catch (err) {
-      res.status(500).json({ error: err.message });
-    }
-  }
-);
 
 /**
  * Get Total Funding across all projects

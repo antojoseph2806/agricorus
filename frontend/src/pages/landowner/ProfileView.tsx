@@ -1,375 +1,205 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect, ChangeEvent } from "react";
 import axios from "axios";
-
-// ✅ Correct imports for layouts
-import { Layout as LandownerLayout } from "./LandownerDashboard";
-import FarmerLayout from "../../components/FarmerLayout";
-import { Layout as DefaultLayout } from "../admin/Layout";
+import { Layout } from "./LandownerDashboard";
+import {
+  User,
+  Mail,
+  Phone,
+  Shield,
+  Camera,
+  Edit3,
+  Save,
+  X,
+  CheckCircle,
+  Loader2,
+  Sparkles,
+  Calendar,
+} from "lucide-react";
 
 interface UserProfile {
   _id: string;
-  name: string | null;
+  name: string;
   email: string;
-  phone: string | null;
-  role: string | null;
-  profileImage: string | null;
+  phone?: string;
+  role?: string;
+  profileImage?: string;
   joined?: string;
-  updatedAt?: string;
+  createdAt?: string;
 }
 
 const ProfileView: React.FC = () => {
-  const [profile, setProfile] = useState<UserProfile | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [user, setUser] = useState<UserProfile | null>(null);
+  const [formData, setFormData] = useState({ name: "", phone: "" });
+  const [profileImage, setProfileImage] = useState<File | null>(null);
+  const [preview, setPreview] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState(false);
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-  });
-  const [profilePicFile, setProfilePicFile] = useState<File | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [successMsg, setSuccessMsg] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [saveSuccess, setSaveSuccess] = useState(false);
+
+  const token = localStorage.getItem("token");
+  const BASE_URL = "http://localhost:5000";
 
   useEffect(() => {
     const fetchProfile = async () => {
+      if (!token) return;
       try {
-        const token = localStorage.getItem("token");
-        if (!token) {
-          setError("Authentication token missing. Please log in.");
-          setLoading(false);
-          return;
-        }
-
-        const res = await axios.get("http://localhost:5000/api/profile", {
+        setLoading(true);
+        const { data } = await axios.get<UserProfile>(`${BASE_URL}/api/profile`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-
-        setProfile(res.data);
-        setFormData({
-          name: res.data.name || "",
-          email: res.data.email,
-          phone: res.data.phone || "",
-        });
-      } catch (err: any) {
+        setUser(data);
+        setFormData({ name: data.name || "", phone: data.phone || "" });
+        if (data.profileImage) setPreview(`${BASE_URL}${data.profileImage}`);
+      } catch (err) {
         console.error("Error fetching profile:", err);
-        setError(
-          err.response?.data?.message ||
-            "Failed to load profile. Please try again later."
-        );
       } finally {
         setLoading(false);
       }
     };
-
     fetchProfile();
-  }, []);
+  }, [token]);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      setProfilePicFile(e.target.files[0]);
-    } else {
-      setProfilePicFile(null);
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files?.[0]) {
+      setProfileImage(e.target.files[0]);
+      setPreview(URL.createObjectURL(e.target.files[0]));
     }
   };
 
-  const handleEditSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitting(true);
-    setSuccessMsg(null);
-    setError(null);
+    if (!token || !user) return;
+    const isModified = formData.name !== user.name || formData.phone !== (user.phone || "") || profileImage !== null;
+    if (!isModified) { alert("No changes to save."); setIsEditing(false); return; }
+
+    const submitData = new FormData();
+    submitData.append("name", formData.name);
+    submitData.append("phone", formData.phone);
+    if (profileImage) submitData.append("profileImage", profileImage);
 
     try {
-      const token = localStorage.getItem("token");
-      if (!token) throw new Error("Authentication token missing.");
-
-      const data = new FormData();
-      data.append("name", formData.name);
-      data.append("email", formData.email);
-      data.append("phone", formData.phone);
-      if (profilePicFile) data.append("profileImage", profilePicFile);
-
-      const res = await axios.put("http://localhost:5000/api/profile", data, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data",
-        },
+      setLoading(true);
+      const { data } = await axios.put<UserProfile>(`${BASE_URL}/api/profile`, submitData, {
+        headers: { Authorization: `Bearer ${token}`, "Content-Type": "multipart/form-data" },
       });
-
-      setProfile(res.data);
+      setUser(data);
+      setFormData({ name: data.name || "", phone: data.phone || "" });
+      setProfileImage(null);
+      if (data.profileImage) setPreview(`${BASE_URL}${data.profileImage}`);
       setIsEditing(false);
-      setProfilePicFile(null);
-      setSuccessMsg("Profile updated successfully! ✅");
+      setSaveSuccess(true);
+      setTimeout(() => setSaveSuccess(false), 3000);
     } catch (err: any) {
-      console.error("Error updating profile:", err);
-      setError(err.response?.data?.message || "Failed to update profile.");
+      alert(err.response?.data?.message || "Update failed.");
     } finally {
-      setIsSubmitting(false);
+      setLoading(false);
     }
   };
 
-  // ✅ Choose Layout based on role
-  const getLayout = () => {
-    switch (profile?.role) {
-      case "landowner":
-        return LandownerLayout;
-      case "farmer":
-        return FarmerLayout;
-      default:
-        return DefaultLayout;
+  const handleCancelEdit = () => {
+    if (user) {
+      setFormData({ name: user.name, phone: user.phone || "" });
+      setPreview(user.profileImage ? `${BASE_URL}${user.profileImage}` : null);
+      setProfileImage(null);
     }
+    setIsEditing(false);
   };
-  const Layout = getLayout();
 
-  if (loading) {
-    return (
-      <Layout>
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl shadow-sm border p-8">
-            <div className="flex flex-col items-center">
-              <div className="w-20 h-20 bg-emerald-500 rounded-full mb-6 animate-pulse"></div>
-              <div className="h-6 bg-gray-200 rounded w-48 mb-4 animate-pulse"></div>
-              <div className="h-4 bg-gray-200 rounded w-32 animate-pulse"></div>
-            </div>
-          </div>
-        </div>
-      </Layout>
-    );
-  }
+  const formatDate = (d?: string) => d ? new Date(d).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" }) : "N/A";
 
-  if (!profile) {
-    return (
-      <Layout>
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl shadow-sm border p-8 text-center">
-            <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
-              </svg>
-            </div>
-            <h3 className="text-gray-900 font-bold text-xl mb-2">No Profile Data</h3>
-            <p className="text-gray-600">Unable to load profile information.</p>
-          </div>
-        </div>
-      </Layout>
-    );
-  }
+  if (loading && !user) return <Layout><div className="flex items-center justify-center min-h-[60vh]"><Loader2 className="w-12 h-12 text-emerald-500 animate-spin" /></div></Layout>;
+  if (!user) return <Layout><div className="flex items-center justify-center min-h-[60vh]"><div className="text-center p-8 bg-red-50 rounded-2xl"><Shield className="w-16 h-16 text-red-400 mx-auto mb-4" /><p className="text-red-600 font-semibold">No profile found</p></div></div></Layout>;
 
   return (
     <Layout>
-      <div className="min-h-screen bg-gray-50 py-8 px-4">
-        <div className="max-w-2xl mx-auto">
-          {/* Header Section */}
-          <div className="text-center mb-8">
-            <h1 className="text-4xl font-bold text-gray-900 mb-4">
-              User Profile
-            </h1>
-            <p className="text-gray-600 text-lg">
-              Manage your account settings and personal information
-            </p>
+      <div className="max-w-4xl mx-auto">
+        {saveSuccess && <div className="fixed top-4 right-4 z-50 animate-slide-in"><div className="flex items-center gap-3 bg-emerald-500 text-white px-6 py-4 rounded-xl shadow-lg"><CheckCircle className="w-5 h-5" /><span className="font-medium">Profile updated!</span></div></div>}
+        
+        <div className="relative mb-8">
+          <div className="h-48 bg-gradient-to-br from-emerald-400 via-teal-500 to-cyan-500 rounded-3xl overflow-hidden relative">
+            <div className="absolute inset-0 opacity-30" style={{backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")"}}></div>
+            <Sparkles className="absolute top-6 right-8 w-8 h-8 text-white/40" />
           </div>
-
-          {/* Main Profile Card */}
-          <div className="bg-white rounded-xl shadow-sm border overflow-hidden transition-all duration-300 hover:shadow-lg">
-            <div className="p-8">
-              {/* Success/Error Messages */}
-              {successMsg && (
-                <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg text-green-700 font-medium">
-                  {successMsg}
-                </div>
-              )}
-              {error && (
-                <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 font-medium">
-                  {error}
-                </div>
-              )}
-
-              {/* Profile Image Section */}
-              <div className="flex flex-col items-center mb-8">
-                <div className="relative group">
-                  {profile.profileImage ? (
-                    <img
-                      src={`http://localhost:5000${profile.profileImage}`}
-                      alt="Profile"
-                      className="w-32 h-32 rounded-full object-cover border-4 border-emerald-200 shadow-lg transition-all duration-300 ease-in-out group-hover:scale-110 group-hover:border-emerald-400"
-                    />
-                  ) : (
-                    <div className="w-32 h-32 rounded-full bg-emerald-500 flex items-center justify-center text-white text-4xl font-bold border-4 border-emerald-200 shadow-lg transition-all duration-300 ease-in-out group-hover:scale-110 group-hover:border-emerald-400">
-                      {profile.name ? profile.name.charAt(0).toUpperCase() : "U"}
-                    </div>
-                  )}
-                </div>
+          <div className="absolute -bottom-16 left-1/2 -translate-x-1/2">
+            <div className="relative">
+              <div className="w-36 h-36 rounded-full bg-gradient-to-br from-emerald-400 to-cyan-500 p-1 shadow-xl">
+                <img src={preview || `https://via.placeholder.com/150/10B981/FFFFFF?text=${user.name?.charAt(0) || "L"}`} alt="Profile" className="w-full h-full object-cover rounded-full bg-white" />
               </div>
-
-              {/* Profile Details */}
-              <div className="space-y-6">
-                {isEditing ? (
-                  <form onSubmit={handleEditSubmit} className="space-y-6">
-                    <ProfileEditField
-                      label="Name"
-                      name="name"
-                      value={formData.name}
-                      onChange={handleInputChange}
-                    />
-                    <ProfileEditField
-                      label="Email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleInputChange}
-                      disabled={true}
-                    />
-                    <ProfileEditField
-                      label="Phone"
-                      name="phone"
-                      value={formData.phone}
-                      onChange={handleInputChange}
-                    />
-                    
-                    <div className="space-y-4">
-                      <label className="block text-sm font-medium text-gray-700">
-                        Profile Image
-                      </label>
-                      <input
-                        type="file"
-                        name="profileImage"
-                        onChange={handleFileChange}
-                        className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/25 transition-colors duration-300"
-                      />
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4 pt-4">
-                      <ProfileDetail
-                        label="Role"
-                        value={profile.role || "Not assigned"}
-                      />
-                      <ProfileDetail
-                        label="Joined"
-                        value={
-                          profile.joined
-                            ? new Date(profile.joined).toLocaleDateString("en-IN", {
-                                year: "numeric",
-                                month: "long",
-                                day: "numeric",
-                              })
-                            : "Not available"
-                        }
-                      />
-                    </div>
-
-                    <div className="flex gap-4 pt-6">
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setIsEditing(false);
-                          setFormData({
-                            name: profile.name || "",
-                            email: profile.email,
-                            phone: profile.phone || "",
-                          });
-                          setProfilePicFile(null);
-                        }}
-                        className="flex-1 py-3 px-6 bg-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-gray-300 transition-all duration-300"
-                      >
-                        Cancel
-                      </button>
-                      <button
-                        type="submit"
-                        disabled={isSubmitting}
-                        className="flex-1 py-3 px-6 bg-emerald-600 text-white rounded-lg font-semibold hover:bg-emerald-700 transition-all duration-300 disabled:opacity-50"
-                      >
-                        {isSubmitting ? "Saving..." : "Save Changes"}
-                      </button>
-                    </div>
-                  </form>
-                ) : (
-                  <>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <ProfileDetail
-                        label="Name"
-                        value={profile.name || "Not set"}
-                      />
-                      <ProfileDetail label="Email" value={profile.email} />
-                      <ProfileDetail
-                        label="Phone"
-                        value={profile.phone || "Not set"}
-                      />
-                      <ProfileDetail
-                        label="Role"
-                        value={profile.role || "Not assigned"}
-                      />
-                      <ProfileDetail
-                        label="Joined"
-                        value={
-                          profile.joined
-                            ? new Date(profile.joined).toLocaleDateString("en-IN", {
-                                year: "numeric",
-                                month: "long",
-                                day: "numeric",
-                              })
-                            : "Not available"
-                        }
-                      />
-                    </div>
-                    
-                    <div className="pt-6">
-                      <button
-                        onClick={() => setIsEditing(true)}
-                        className="w-full py-3 px-6 bg-emerald-600 text-white rounded-lg font-semibold hover:bg-emerald-700 transition-all duration-300"
-                      >
-                        Edit Profile
-                      </button>
-                    </div>
-                  </>
-                )}
-              </div>
+              {isEditing && <label className="absolute bottom-2 right-2 w-10 h-10 bg-emerald-500 rounded-full flex items-center justify-center cursor-pointer shadow-lg hover:bg-emerald-600"><Camera className="w-5 h-5 text-white" /><input type="file" accept="image/*" onChange={handleFileChange} className="hidden" /></label>}
+              {!isEditing && <div className="absolute -bottom-1 -right-1 w-8 h-8 bg-emerald-500 rounded-full flex items-center justify-center border-4 border-white"><CheckCircle className="w-4 h-4 text-white" /></div>}
             </div>
           </div>
         </div>
+
+        <div className="text-center mt-20 mb-8">
+          <h1 className="text-3xl font-bold text-gray-800">{user.name || "Landowner"}</h1>
+          <div className="inline-flex items-center gap-2 mt-3 px-4 py-2 bg-gradient-to-r from-emerald-50 to-teal-50 rounded-full border border-emerald-100">
+            <Shield className="w-4 h-4 text-emerald-600" /><span className="text-emerald-700 font-medium capitalize">{user.role || "Landowner"}</span>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden">
+          <div className="px-8 py-6 bg-gradient-to-r from-gray-50 to-white border-b border-gray-100 flex items-center justify-between">
+            <div><h2 className="text-xl font-bold text-gray-800">Profile Information</h2><p className="text-gray-500 text-sm mt-1">Manage your personal details</p></div>
+            {!isEditing && <button onClick={() => setIsEditing(true)} className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-xl font-medium hover:from-emerald-600 hover:to-teal-600 shadow-lg"><Edit3 className="w-4 h-4" />Edit Profile</button>}
+          </div>
+
+          <div className="p-8">
+            {isEditing ? (
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div><label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2"><User className="w-4 h-4 text-emerald-500" />Full Name</label><input type="text" name="name" value={formData.name} onChange={handleChange} className="w-full px-5 py-4 bg-gray-50 border-2 border-gray-100 rounded-xl focus:outline-none focus:border-emerald-500 focus:bg-white" required /></div>
+                <div><label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2"><Mail className="w-4 h-4 text-emerald-500" />Email</label><div className="relative"><input type="email" value={user.email} disabled className="w-full px-5 py-4 bg-gray-100 border-2 border-gray-100 rounded-xl text-gray-500 cursor-not-allowed" /><span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs bg-gray-200 text-gray-500 px-2 py-1 rounded-md">Locked</span></div></div>
+                <div><label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2"><Phone className="w-4 h-4 text-emerald-500" />Phone</label><input type="tel" name="phone" value={formData.phone} onChange={handleChange} className="w-full px-5 py-4 bg-gray-50 border-2 border-gray-100 rounded-xl focus:outline-none focus:border-emerald-500 focus:bg-white" /></div>
+                <div><label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2"><Shield className="w-4 h-4 text-emerald-500" />Role</label><div className="relative"><input type="text" value={user.role || "Landowner"} disabled className="w-full px-5 py-4 bg-gray-100 border-2 border-gray-100 rounded-xl text-gray-500 cursor-not-allowed capitalize" /><span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs bg-gray-200 text-gray-500 px-2 py-1 rounded-md">Locked</span></div></div>
+                <div className="flex gap-4 pt-4">
+                  <button type="submit" disabled={loading} className="flex-1 flex items-center justify-center gap-2 px-6 py-4 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-xl font-semibold disabled:opacity-50">{loading ? <><Loader2 className="w-5 h-5 animate-spin" />Saving...</> : <><Save className="w-5 h-5" />Save Changes</>}</button>
+                  <button type="button" onClick={handleCancelEdit} className="flex items-center justify-center gap-2 px-6 py-4 bg-gray-100 text-gray-700 rounded-xl font-semibold hover:bg-gray-200"><X className="w-5 h-5" />Cancel</button>
+                </div>
+              </form>
+            ) : (
+              <div className="grid gap-6">
+                {[
+                  { icon: User, color: "emerald", label: "Full Name", value: user.name || "—" },
+                  { icon: Mail, color: "blue", label: "Email Address", value: user.email, badge: "Verified" },
+                  { icon: Phone, color: "amber", label: "Phone Number", value: user.phone || "Not provided" },
+                  { icon: Shield, color: "purple", label: "Account Role", value: user.role || "Landowner", badge: "Active" },
+                  { icon: Calendar, color: "cyan", label: "Member Since", value: formatDate(user.joined || user.createdAt) },
+                ].map((item, i) => (
+                  <div key={i} className="flex items-center gap-4 p-5 bg-gradient-to-r from-gray-50 to-white rounded-2xl border border-gray-100 hover:border-emerald-200 hover:shadow-md transition-all group">
+                    <div className={`w-12 h-12 bg-gradient-to-br from-${item.color}-400 to-${item.color}-500 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform`}><item.icon className="w-6 h-6 text-white" /></div>
+                    <div className="flex-1"><p className="text-sm text-gray-500 font-medium">{item.label}</p><p className="text-lg font-semibold text-gray-800 capitalize">{item.value}</p></div>
+                    {item.badge && <span className={`text-xs px-3 py-1.5 rounded-full font-medium ${item.badge === "Active" ? "bg-emerald-100 text-emerald-700" : "bg-gray-100 text-gray-500"}`}>{item.badge}</span>}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+          {[
+            { icon: CheckCircle, color: "emerald", title: "Active", subtitle: "Account Status", badge: "Verified" },
+            { icon: Shield, color: "blue", title: "Protected", subtitle: "Security Level", badge: "Secure" },
+            { icon: Sparkles, color: "purple", title: "Landowner", subtitle: "Member Type", badge: "Premium" },
+          ].map((card, i) => (
+            <div key={i} className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm hover:shadow-lg transition-all">
+              <div className="flex items-center justify-between mb-4">
+                <div className={`w-12 h-12 bg-${card.color}-100 rounded-xl flex items-center justify-center`}><card.icon className={`w-6 h-6 text-${card.color}-600`} /></div>
+                <span className={`text-xs bg-${card.color}-50 text-${card.color}-600 px-2 py-1 rounded-full font-medium`}>{card.badge}</span>
+              </div>
+              <p className="text-2xl font-bold text-gray-800">{card.title}</p>
+              <p className="text-sm text-gray-500 mt-1">{card.subtitle}</p>
+            </div>
+          ))}
+        </div>
       </div>
+      <style>{`@keyframes slide-in { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } } .animate-slide-in { animation: slide-in 0.3s ease-out; }`}</style>
     </Layout>
   );
 };
-
-const ProfileDetail: React.FC<{ label: string; value: string }> = ({
-  label,
-  value,
-}) => (
-  <div className="bg-gray-50 rounded-lg p-4 border hover:border-gray-300 transition-all duration-300">
-    <div className="flex justify-between items-center">
-      <span className="text-gray-500 font-medium text-sm">{label}:</span>
-      <span className="text-gray-900 font-semibold text-right">{value}</span>
-    </div>
-  </div>
-);
-
-const ProfileEditField: React.FC<{
-  label: string;
-  name: string;
-  value: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  disabled?: boolean;
-}> = ({ label, name, value, onChange, disabled = false }) => (
-  <div className="space-y-2">
-    <label className="block text-sm font-medium text-gray-700">
-      {label}
-    </label>
-    <input
-      type="text"
-      name={name}
-      value={value}
-      onChange={onChange}
-      disabled={disabled}
-      className={`w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/25 transition-all duration-300 ${
-        disabled ? "opacity-50 cursor-not-allowed bg-gray-100" : ""
-      }`}
-      placeholder={`Enter ${label.toLowerCase()}...`}
-    />
-  </div>
-);
 
 export default ProfileView;
