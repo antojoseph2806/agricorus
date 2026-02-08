@@ -261,76 +261,80 @@ const Marketplace: React.FC = () => {
 
   return (
     <MarketplaceLayout>
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-emerald-50/30">
-        {/* Hero Header */}
-        <div className="bg-gradient-to-r from-emerald-600 via-emerald-500 to-teal-500 px-3 sm:px-6 py-6 sm:py-8">
-          <div className="max-w-7xl mx-auto">
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 sm:gap-4">
-              <div>
-                <h1 className="text-2xl sm:text-3xl font-bold text-white flex items-center gap-2 sm:gap-3">
-                  <Leaf className="w-6 h-6 sm:w-8 sm:h-8" />
-                  AgriMarket
-                </h1>
-                <p className="text-sm sm:text-base text-emerald-100 mt-1">Quality agricultural products from verified vendors</p>
-              </div>
-              <div className="flex items-center gap-2 sm:gap-3">
-                <Link
-                  to="/orders"
-                  className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 bg-white/10 hover:bg-white/20 text-white rounded-lg sm:rounded-xl text-sm font-medium transition"
-                >
-                  <Package className="w-4 h-4" />
-                  <span className="hidden sm:inline">Orders</span>
-                </Link>
-                <Link
-                  to="/cart"
-                  className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-5 py-2 sm:py-2.5 bg-white text-emerald-600 rounded-lg sm:rounded-xl text-sm font-semibold hover:bg-emerald-50 transition shadow-lg"
-                >
-                  <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5" />
-                  Cart
-                </Link>
-              </div>
+      <div className="min-h-screen bg-gray-50">
+        {/* Gradient Header Banner - Matching ViewLands */}
+        <div className="relative mb-6 sm:mb-8">
+          <div className="h-40 sm:h-48 bg-gradient-to-br from-emerald-400 via-teal-500 to-cyan-500 rounded-none sm:rounded-3xl overflow-hidden relative">
+            <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Cg%20fill%3D%22%23ffffff%22%20fill-opacity%3D%220.1%22%3E%3Cpath%20d%3D%22M36%2034v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6%2034v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6%204V0H4v4H0v2h4v4h2V6h4V4H6z%22%2F%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E')] opacity-30"></div>
+            <div className="absolute inset-0 flex flex-col items-center justify-center px-4 text-center">
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-2 flex items-center gap-2 sm:gap-3">
+                <Leaf className="w-6 h-6 sm:w-8 sm:h-8" />
+                AgriMarket
+              </h1>
+              <p className="text-sm sm:text-base text-emerald-100">Quality agricultural products from verified vendors</p>
             </div>
+            <div className="absolute top-4 right-4 sm:top-6 sm:right-8 flex items-center gap-2">
+              <Link to="/orders" className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 bg-white/10 hover:bg-white/20 text-white rounded-lg sm:rounded-xl text-xs sm:text-sm font-medium transition backdrop-blur-sm">
+                <Package className="w-3 h-3 sm:w-4 sm:h-4" />
+                <span className="hidden sm:inline">Orders</span>
+              </Link>
+              <Link to="/cart" className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-5 py-2 sm:py-2.5 bg-white text-emerald-600 rounded-lg sm:rounded-xl text-xs sm:text-sm font-semibold hover:bg-emerald-50 transition shadow-lg">
+                <ShoppingCart className="w-3 h-3 sm:w-4 sm:h-4 sm:w-5 sm:h-5" />
+                <span>Cart</span>
+              </Link>
+            </div>
+          </div>
 
-            {/* Search Bar */}
-            <div className="mt-4 sm:mt-6 max-w-2xl">
-              <div className="relative">
-                <Search className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-gray-400" />
-                <input
-                  type="text"
-                  placeholder="Search products..."
-                  value={filters.search}
-                  onChange={(e) => handleFilterChange('search', e.target.value)}
-                  className="w-full pl-10 sm:pl-12 pr-3 sm:pr-4 py-2.5 sm:py-3.5 bg-white rounded-lg sm:rounded-xl border-0 shadow-lg focus:ring-2 focus:ring-emerald-300 text-sm sm:text-base text-gray-800 placeholder-gray-400"
-                />
+          {/* Icon Badge */}
+          <div className="absolute -bottom-10 sm:-bottom-12 left-1/2 -translate-x-1/2">
+            <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-br from-emerald-400 to-cyan-500 p-1 shadow-xl">
+              <div className="w-full h-full rounded-full bg-white flex items-center justify-center">
+                <ShoppingCart className="w-10 h-10 sm:w-12 sm:h-12 text-emerald-600" />
               </div>
             </div>
           </div>
         </div>
 
-        {/* Trust Badges */}
-        <div className="bg-white border-b border-gray-100 px-3 sm:px-6 py-2 sm:py-3">
-          <div className="max-w-7xl mx-auto flex items-center justify-center gap-4 sm:gap-8 text-xs sm:text-sm">
-            <div className="flex items-center gap-1.5 sm:gap-2 text-gray-600">
-              <Shield className="w-3 h-3 sm:w-4 sm:h-4 text-emerald-600" />
-              <span className="hidden sm:inline">Verified Vendors</span>
-              <span className="sm:hidden">Verified</span>
-            </div>
-            <div className="flex items-center gap-1.5 sm:gap-2 text-gray-600">
-              <Sparkles className="w-3 h-3 sm:w-4 sm:h-4 text-emerald-600" />
-              <span className="hidden sm:inline">Quality Assured</span>
-              <span className="sm:hidden">Quality</span>
-            </div>
-            <div className="flex items-center gap-1.5 sm:gap-2 text-gray-600">
-              <TrendingUp className="w-3 h-3 sm:w-4 sm:h-4 text-emerald-600" />
-              <span className="hidden sm:inline">Best Prices</span>
-              <span className="sm:hidden">Best Price</span>
-            </div>
-          </div>
+        {/* Title Section */}
+        <div className="text-center mt-12 sm:mt-16 mb-6 sm:mb-8 px-4">
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-800">Browse Products</h2>
+          <p className="text-gray-500 mt-2 text-sm sm:text-base">Discover quality agricultural supplies</p>
         </div>
 
         <div className="max-w-7xl mx-auto px-3 sm:px-6 py-4 sm:py-6">
+          {/* Search Bar */}
+          <div className="mb-4 sm:mb-6 max-w-2xl mx-auto">
+            <div className="relative">
+              <Search className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search products..."
+                value={filters.search}
+                onChange={(e) => handleFilterChange('search', e.target.value)}
+                className="w-full pl-10 sm:pl-12 pr-3 sm:pr-4 py-2.5 sm:py-3.5 bg-white rounded-lg sm:rounded-xl border border-gray-200 shadow-sm focus:ring-2 focus:ring-emerald-300 text-sm sm:text-base text-gray-800 placeholder-gray-400"
+              />
+            </div>
+          </div>
+
+          {/* Trust Badges */}
+          <div className="bg-white border border-gray-100 rounded-xl sm:rounded-2xl px-3 sm:px-6 py-2 sm:py-3 mb-4 sm:mb-6 shadow-sm">
+            <div className="flex items-center justify-center gap-4 sm:gap-8 text-xs sm:text-sm flex-wrap">
+              <div className="flex items-center gap-1.5 sm:gap-2 text-gray-600">
+                <Shield className="w-3 h-3 sm:w-4 sm:h-4 text-emerald-600" />
+                <span>Verified</span>
+              </div>
+              <div className="flex items-center gap-1.5 sm:gap-2 text-gray-600">
+                <Sparkles className="w-3 h-3 sm:w-4 sm:h-4 text-emerald-600" />
+                <span>Quality</span>
+              </div>
+              <div className="flex items-center gap-1.5 sm:gap-2 text-gray-600">
+                <TrendingUp className="w-3 h-3 sm:w-4 sm:h-4 text-emerald-600" />
+                <span>Best Price</span>
+              </div>
+            </div>
+          </div>
           {/* Category Pills */}
-          <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6 overflow-x-auto pb-2 scrollbar-hide">
+          <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6 overflow-x-auto pb-2 scrollbar-hide px-1">
             {categories.map(cat => (
               <button
                 key={cat.value}
@@ -342,22 +346,20 @@ const Marketplace: React.FC = () => {
                 }`}
               >
                 <span className="text-sm sm:text-base">{cat.icon}</span>
-                <span className="hidden sm:inline">{cat.label}</span>
-                <span className="sm:hidden">{cat.label.split(' ')[0]}</span>
+                <span>{cat.label.split(' ')[0]}</span>
               </button>
             ))}
           </div>
 
-          {/* Filters Bar */}
+          {/* Filters Bar - Matching ViewLands style */}
           <div className="bg-white rounded-xl sm:rounded-2xl border border-gray-100 p-3 sm:p-4 mb-4 sm:mb-6 shadow-sm">
-            <div className="flex flex-wrap items-center gap-2 sm:gap-4">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
               {/* Sort */}
-              <div className="flex items-center gap-2 flex-1 min-w-[200px]">
-                <span className="text-xs sm:text-sm text-gray-500 hidden sm:inline">Sort:</span>
+              <div className="flex-1 min-w-0">
                 <select
                   value={`${filters.sortBy}-${filters.sortOrder}`}
                   onChange={(e) => handleSortChange(e.target.value)}
-                  className="flex-1 px-2 sm:px-3 py-1.5 sm:py-2 bg-gray-50 border border-gray-200 rounded-lg text-xs sm:text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                  className="w-full px-3 sm:px-4 py-2 sm:py-2.5 bg-white border border-gray-200 rounded-lg sm:rounded-xl text-xs sm:text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
                 >
                   {sortOptions.map(opt => (
                     <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -368,17 +370,16 @@ const Marketplace: React.FC = () => {
               {/* Price Filter Toggle */}
               <button
                 onClick={() => setShowFilters(!showFilters)}
-                className={`flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-medium transition ${
+                className={`flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg sm:rounded-xl text-xs sm:text-sm font-medium transition ${
                   showFilters ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-50 text-gray-700 hover:bg-gray-100'
                 }`}
               >
                 <SlidersHorizontal className="w-3 h-3 sm:w-4 sm:h-4" />
-                <span className="hidden sm:inline">Price Filter</span>
-                <span className="sm:hidden">Filter</span>
+                <span>Filter</span>
               </button>
 
               {/* View Toggle - Hidden on mobile */}
-              <div className="hidden sm:flex items-center bg-gray-100 rounded-lg p-1 ml-auto">
+              <div className="hidden sm:flex items-center bg-gray-100 rounded-lg p-1">
                 <button
                   onClick={() => setViewMode('grid')}
                   className={`p-2 rounded-md transition ${viewMode === 'grid' ? 'bg-white shadow text-emerald-600' : 'text-gray-500'}`}
@@ -397,10 +398,10 @@ const Marketplace: React.FC = () => {
               {hasActiveFilters && (
                 <button
                   onClick={clearFilters}
-                  className="flex items-center gap-1 px-2.5 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm text-red-600 hover:bg-red-50 rounded-lg transition"
+                  className="flex items-center justify-center gap-1 px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm text-red-600 hover:bg-red-50 rounded-lg sm:rounded-xl transition"
                 >
                   <X className="w-3 h-3 sm:w-4 sm:h-4" />
-                  <span className="hidden sm:inline">Clear</span>
+                  <span>Clear</span>
                 </button>
               )}
             </div>
