@@ -74,69 +74,69 @@ const MyDisputes: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4">
+    <div className="min-h-screen bg-gray-50 p-3 sm:p-4 lg:p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="bg-white rounded-lg shadow-sm border p-6 mb-6">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center">
-              <div className="w-12 h-12 bg-orange-600 rounded-lg flex items-center justify-center mr-4">
-                <AlertTriangle className="h-6 w-6 text-white" />
+        <div className="bg-white rounded-lg sm:rounded-xl shadow-sm border p-4 sm:p-6 mb-4 sm:mb-6">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 mb-3 sm:mb-4">
+            <div className="flex items-center w-full sm:w-auto">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-orange-600 rounded-lg flex items-center justify-center mr-3 sm:mr-4 flex-shrink-0">
+                <AlertTriangle className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
               </div>
-              <div>
-                <h1 className="text-3xl font-bold text-gray-900">Dispute Management</h1>
-                <p className="text-gray-600 mt-1">Track and manage your dispute cases</p>
+              <div className="flex-1 min-w-0">
+                <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 truncate">Dispute Management</h1>
+                <p className="text-xs sm:text-sm text-gray-600 mt-0.5 sm:mt-1">Track and manage your dispute cases</p>
               </div>
             </div>
             {disputes.length > 0 && (
-              <div className="bg-gray-100 px-4 py-2 rounded-lg">
-                <span className="text-sm font-medium text-gray-600">Total Cases: </span>
-                <span className="text-lg font-bold text-gray-900">{disputes.length}</span>
+              <div className="bg-gray-100 px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg flex-shrink-0">
+                <span className="text-xs sm:text-sm font-medium text-gray-600">Total Cases: </span>
+                <span className="text-base sm:text-lg font-bold text-gray-900">{disputes.length}</span>
               </div>
             )}
           </div>
         </div>
 
         {disputes.length === 0 ? (
-          <div className="bg-white rounded-lg shadow-sm border p-12 text-center">
-            <Package className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">No Active Disputes</h3>
-            <p className="text-gray-600 mb-4">
+          <div className="bg-white rounded-lg sm:rounded-xl shadow-sm border p-8 sm:p-12 text-center">
+            <Package className="w-12 h-12 sm:w-16 sm:h-16 text-gray-400 mx-auto mb-3 sm:mb-4" />
+            <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-2">No Active Disputes</h3>
+            <p className="text-sm sm:text-base text-gray-600 mb-3 sm:mb-4">
               You haven't raised any dispute cases yet. All your case files will appear here once submitted.
             </p>
-            <div className="inline-flex items-center bg-emerald-50 rounded-lg px-4 py-2 border border-emerald-200">
-              <span className="text-emerald-800 text-sm font-medium">
+            <div className="inline-flex items-center bg-emerald-50 rounded-lg px-3 sm:px-4 py-2 border border-emerald-200">
+              <span className="text-emerald-800 text-xs sm:text-sm font-medium">
                 System Ready for Case Submission
               </span>
             </div>
           </div>
         ) : (
-          <div className="space-y-6">
+          <div className="space-y-4 sm:space-y-6">
             {/* Cases Grid */}
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
               {disputes.map((d) => (
                 <div
                   key={d._id}
-                  className="bg-white rounded-lg shadow-sm border hover:shadow-md transition-all duration-300"
+                  className="bg-white rounded-lg sm:rounded-xl shadow-sm border hover:shadow-md transition-all duration-300"
                 >
-                  <div className="p-6">
+                  <div className="p-4 sm:p-6">
                     {/* Status and Date */}
-                    <div className="flex justify-between items-center mb-4">
-                      <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${getStatusColors(d.status)}`}>
+                    <div className="flex justify-between items-center mb-3 sm:mb-4 gap-2">
+                      <span className={`inline-flex items-center px-2 sm:px-3 py-1 rounded-full text-[10px] sm:text-xs font-semibold ${getStatusColors(d.status)}`}>
                         {getStatusIcon(d.status)}
                         <span className="ml-1">{d.status.toUpperCase()}</span>
                       </span>
-                      <span className="text-xs text-gray-600 bg-gray-100 px-2.5 py-1 rounded-full">
+                      <span className="text-[10px] sm:text-xs text-gray-600 bg-gray-100 px-2 sm:px-2.5 py-1 rounded-full whitespace-nowrap">
                         {new Date(d.createdAt).toLocaleDateString('en-IN')}
                       </span>
                     </div>
 
                     {/* Reason */}
-                    <h3 className="text-lg font-bold text-gray-900 mb-3 line-clamp-2">
+                    <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-2 sm:mb-3 line-clamp-2">
                       {d.reason}
                     </h3>
                     
-                    <p className="text-gray-600 text-sm mb-6">
+                    <p className="text-gray-600 text-xs sm:text-sm mb-4 sm:mb-6">
                       This case file is currently under review. Monitor for real-time updates and resolution progress.
                     </p>
 
@@ -146,17 +146,17 @@ const MyDisputes: React.FC = () => {
                         href={d.lease.agreementUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center text-emerald-600 hover:text-emerald-700 font-medium text-sm transition-colors"
+                        className="inline-flex items-center text-emerald-600 hover:text-emerald-700 font-medium text-xs sm:text-sm transition-colors"
                       >
-                        <FileText className="h-4 w-4 mr-2" />
+                        <FileText className="h-3 w-3 sm:h-4 sm:w-4 mr-1.5 sm:mr-2" />
                         View Contract Document
                       </a>
                     )}
                   </div>
                   
                   {/* Footer */}
-                  <div className="bg-gray-50 px-6 py-3 border-t border-gray-200">
-                    <div className="text-xs text-gray-600 font-mono">
+                  <div className="bg-gray-50 px-4 sm:px-6 py-2 sm:py-3 border-t border-gray-200">
+                    <div className="text-[10px] sm:text-xs text-gray-600 font-mono">
                       Case ID: {d._id.slice(-8).toUpperCase()}
                     </div>
                   </div>
@@ -166,9 +166,9 @@ const MyDisputes: React.FC = () => {
 
             {/* System Status Footer */}
             <div className="text-center">
-              <div className="inline-flex items-center bg-white rounded-lg px-6 py-3 border shadow-sm">
-                <AlertTriangle className="h-5 w-5 text-orange-600 mr-2" />
-                <span className="text-gray-600 text-sm font-medium">
+              <div className="inline-flex items-center bg-white rounded-lg px-4 sm:px-6 py-2 sm:py-3 border shadow-sm">
+                <AlertTriangle className="h-4 w-4 sm:h-5 sm:w-5 text-orange-600 mr-2" />
+                <span className="text-gray-600 text-xs sm:text-sm font-medium">
                   Monitoring <span className="text-gray-900 font-semibold">{disputes.length}</span> active case{disputes.length !== 1 ? 's' : ''}
                 </span>
               </div>

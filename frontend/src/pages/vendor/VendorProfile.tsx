@@ -319,21 +319,21 @@ const VendorProfile = () => {
 
   return (
     <VendorLayout>
-      <div className="min-h-screen bg-gray-50 p-6">
+      <div className="min-h-screen bg-gray-50 p-3 sm:p-4 lg:p-6">
         <div className="max-w-4xl mx-auto">
           {/* Header */}
-          <div className="mb-6">
-            <h1 className="text-3xl font-bold text-gray-800">Vendor Profile & KYC</h1>
+          <div className="mb-4 sm:mb-6">
+            <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-800">Vendor Profile & KYC</h1>
             {statusBadge && (
-              <div className="mt-2 flex items-center gap-2">
+              <div className="mt-2 flex flex-col sm:flex-row items-start sm:items-center gap-2">
                 <span
-                  className={`flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium ${statusBadge.color}`}
+                  className={`flex items-center gap-2 px-3 py-1 rounded-full text-xs sm:text-sm font-medium ${statusBadge.color}`}
                 >
-                  <statusBadge.icon className="w-4 h-4" />
+                  <statusBadge.icon className="w-3 h-3 sm:w-4 sm:h-4" />
                   {statusBadge.label}
                 </span>
                 {profile?.rejectionReason && (
-                  <div className="text-sm text-red-600">
+                  <div className="text-xs sm:text-sm text-red-600">
                     Reason: {profile.rejectionReason}
                   </div>
                 )}
@@ -342,23 +342,23 @@ const VendorProfile = () => {
           </div>
 
           {!isVerified && (
-            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 sm:p-4 mb-4 sm:mb-6">
               <div className="flex items-center gap-2 text-yellow-800">
-                <AlertCircle className="w-5 h-5" />
-                <p className="font-medium">
+                <AlertCircle className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
+                <p className="text-xs sm:text-sm font-medium">
                   Complete KYC to activate products & receive orders
                 </p>
               </div>
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow p-6">
+          <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow p-3 sm:p-4 lg:p-6">
             {/* Step 1: Business Information */}
             {currentStep === 1 && (
-              <div className="space-y-6">
-                <h2 className="text-2xl font-semibold mb-4">Business Information</h2>
+              <div className="space-y-4 sm:space-y-6">
+                <h2 className="text-lg sm:text-xl lg:text-2xl font-semibold mb-3 sm:mb-4">Business Information</h2>
                 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Business Name <span className="text-red-500">*</span>
@@ -474,7 +474,7 @@ const VendorProfile = () => {
                   />
                 </div>
 
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       District <span className="text-red-500">*</span>
@@ -527,11 +527,11 @@ const VendorProfile = () => {
 
             {/* Step 2: KYC & Bank Details */}
             {currentStep === 2 && (
-              <div className="space-y-6">
-                <h2 className="text-2xl font-semibold mb-4">KYC & Bank Details</h2>
+              <div className="space-y-4 sm:space-y-6">
+                <h2 className="text-lg sm:text-xl lg:text-2xl font-semibold mb-3 sm:mb-4">KYC & Bank Details</h2>
                 
-                <h3 className="text-xl font-semibold">KYC Information</h3>
-                <div className="grid grid-cols-2 gap-4">
+                <h3 className="text-base sm:text-lg lg:text-xl font-semibold">KYC Information</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       PAN Number <span className="text-red-500">*</span>
@@ -581,7 +581,7 @@ const VendorProfile = () => {
                   />
                 </div>
 
-                <h3 className="text-xl font-semibold mt-6">Bank Details</h3>
+                <h3 className="text-base sm:text-lg lg:text-xl font-semibold mt-4 sm:mt-6">Bank Details</h3>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Account Holder Name <span className="text-red-500">*</span>
@@ -651,10 +651,10 @@ const VendorProfile = () => {
 
             {/* Step 3: Document Upload */}
             {currentStep === 3 && (
-              <div className="space-y-6">
-                <h2 className="text-2xl font-semibold mb-4">Document Upload</h2>
+              <div className="space-y-4 sm:space-y-6">
+                <h2 className="text-lg sm:text-xl lg:text-2xl font-semibold mb-3 sm:mb-4">Document Upload</h2>
                 
-                <div className="grid grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                   {/* PAN Card */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -894,14 +894,14 @@ const VendorProfile = () => {
             )}
 
             {/* Navigation Buttons */}
-            <div className="flex justify-between mt-8">
+            <div className="flex flex-col sm:flex-row justify-between gap-3 sm:gap-0 mt-6 sm:mt-8">
               <button
                 type="button"
                 onClick={() => setCurrentStep(currentStep - 1)}
                 disabled={currentStep === 1}
-                className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex items-center justify-center gap-2 px-3 sm:px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
               >
-                <ArrowLeft className="w-4 h-4" />
+                <ArrowLeft className="w-3 h-3 sm:w-4 sm:h-4" />
                 Previous
               </button>
 
@@ -915,16 +915,16 @@ const VendorProfile = () => {
                       alert("Please complete all required fields");
                     }
                   }}
-                  className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+                  className="flex items-center justify-center gap-2 px-3 sm:px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm sm:text-base"
                 >
                   Next
-                  <ArrowRight className="w-4 h-4" />
+                  <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4" />
                 </button>
               ) : (
                 <button
                   type="submit"
                   disabled={submitting || isReadOnly || !validateStep(3)}
-                  className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-4 sm:px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
                 >
                   {submitting
                     ? "Submitting..."
@@ -936,7 +936,7 @@ const VendorProfile = () => {
             </div>
 
             {/* Step Indicator */}
-            <div className="flex justify-center gap-2 mt-6">
+            <div className="flex justify-center gap-2 mt-4 sm:mt-6">
               {[1, 2, 3].map((step) => (
                 <div
                   key={step}

@@ -542,87 +542,87 @@ const LandownerDashboard: React.FC = () => {
   return (
     <Layout>
       {/* Hero Header */}
-      <div className="bg-gradient-to-r from-emerald-500 to-blue-600 rounded-2xl p-8 text-white mb-8 shadow-lg">
-        <h1 className="text-3xl font-bold mb-2">
+      <div className="bg-gradient-to-r from-emerald-500 to-blue-600 rounded-xl sm:rounded-2xl p-4 sm:p-6 lg:p-8 text-white mb-6 sm:mb-8 shadow-lg">
+        <h1 className="text-2xl sm:text-3xl font-bold mb-2">
           Landowner Dashboard
         </h1>
-        <p className="text-emerald-100 text-lg max-w-2xl mb-4">
+        <p className="text-emerald-100 text-sm sm:text-base lg:text-lg max-w-2xl mb-3 sm:mb-4">
           Manage your agricultural leases, crowdfunding campaigns, and all operations in one powerful, enterprise-grade platform.
         </p>
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2 text-emerald-100 bg-white/20 px-3 py-1 rounded-full text-sm">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4">
+          <div className="flex items-center gap-2 text-emerald-100 bg-white/20 px-3 py-1 rounded-full text-xs sm:text-sm">
             <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
             <span className="font-medium">System Operational</span>
           </div>
           <div className="flex items-center gap-2 text-emerald-100">
-            <Zap className="w-4 h-4" />
-            <span className="text-sm">Last updated: Just now</span>
+            <Zap className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+            <span className="text-xs sm:text-sm">Last updated: Just now</span>
           </div>
         </div>
       </div>
 
       {/* Welcome Section */}
-      <div className="bg-white rounded-xl p-6 shadow-md border border-gray-100 mb-8">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-bold text-gray-800">
+      <div className="bg-white rounded-xl p-4 sm:p-6 shadow-md border border-gray-100 mb-6 sm:mb-8">
+        <div className="flex items-center justify-between mb-4 sm:mb-6">
+          <h2 className="text-lg sm:text-xl font-bold text-gray-800">
             Welcome to Your Dashboard
           </h2>
-          <BarChart3 className="w-5 h-5 text-emerald-500" />
+          <BarChart3 className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-500" />
         </div>
-        <p className="text-gray-600 mb-4">
+        <p className="text-sm sm:text-base text-gray-600 mb-3 sm:mb-4">
           Get started by managing your lands, viewing lease requests, or checking your payment history.
         </p>
         
         {/* Quick Actions Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           <Link
             to="/lands/add"
-            className="group bg-gray-50 hover:bg-emerald-50 border border-transparent hover:border-emerald-200 rounded-xl p-4 transition-all duration-300"
+            className="group bg-gray-50 hover:bg-emerald-50 border border-transparent hover:border-emerald-200 rounded-lg sm:rounded-xl p-3 sm:p-4 transition-all duration-300"
           >
-            <div className="p-2 rounded-lg bg-white shadow-sm mb-3 w-fit">
-              <MapPin className="w-5 h-5 text-gray-700 group-hover:text-emerald-600" />
+            <div className="p-1.5 sm:p-2 rounded-lg bg-white shadow-sm mb-2 sm:mb-3 w-fit">
+              <MapPin className="w-4 h-4 sm:w-5 sm:h-5 text-gray-700 group-hover:text-emerald-600" />
             </div>
-            <span className="text-gray-700 font-medium text-sm group-hover:text-emerald-700">Add New Land</span>
+            <span className="text-gray-700 font-medium text-xs sm:text-sm group-hover:text-emerald-700">Add New Land</span>
           </Link>
           
           <Link
             to="/lands/view"
-            className="group bg-gray-50 hover:bg-emerald-50 border border-transparent hover:border-emerald-200 rounded-xl p-4 transition-all duration-300"
+            className="group bg-gray-50 hover:bg-emerald-50 border border-transparent hover:border-emerald-200 rounded-lg sm:rounded-xl p-3 sm:p-4 transition-all duration-300"
           >
-            <div className="p-2 rounded-lg bg-white shadow-sm mb-3 w-fit">
-              <FileText className="w-5 h-5 text-gray-700 group-hover:text-emerald-600" />
+            <div className="p-1.5 sm:p-2 rounded-lg bg-white shadow-sm mb-2 sm:mb-3 w-fit">
+              <FileText className="w-4 h-4 sm:w-5 sm:h-5 text-gray-700 group-hover:text-emerald-600" />
             </div>
-            <span className="text-gray-700 font-medium text-sm group-hover:text-emerald-700">View My Lands</span>
+            <span className="text-gray-700 font-medium text-xs sm:text-sm group-hover:text-emerald-700">View My Lands</span>
           </Link>
           
           <Link
             to="/leaserequests/all"
-            className="group bg-gray-50 hover:bg-emerald-50 border border-transparent hover:border-emerald-200 rounded-xl p-4 transition-all duration-300"
+            className="group bg-gray-50 hover:bg-emerald-50 border border-transparent hover:border-emerald-200 rounded-lg sm:rounded-xl p-3 sm:p-4 transition-all duration-300"
           >
-            <div className="p-2 rounded-lg bg-white shadow-sm mb-3 w-fit">
-              <Users className="w-5 h-5 text-gray-700 group-hover:text-emerald-600" />
+            <div className="p-1.5 sm:p-2 rounded-lg bg-white shadow-sm mb-2 sm:mb-3 w-fit">
+              <Users className="w-4 h-4 sm:w-5 sm:h-5 text-gray-700 group-hover:text-emerald-600" />
             </div>
-            <span className="text-gray-700 font-medium text-sm group-hover:text-emerald-700">Lease Requests</span>
+            <span className="text-gray-700 font-medium text-xs sm:text-sm group-hover:text-emerald-700">Lease Requests</span>
           </Link>
           
           <Link
             to="/payment-history"
-            className="group bg-gray-50 hover:bg-emerald-50 border border-transparent hover:border-emerald-200 rounded-xl p-4 transition-all duration-300"
+            className="group bg-gray-50 hover:bg-emerald-50 border border-transparent hover:border-emerald-200 rounded-lg sm:rounded-xl p-3 sm:p-4 transition-all duration-300"
           >
-            <div className="p-2 rounded-lg bg-white shadow-sm mb-3 w-fit">
-              <CreditCard className="w-5 h-5 text-gray-700 group-hover:text-emerald-600" />
+            <div className="p-1.5 sm:p-2 rounded-lg bg-white shadow-sm mb-2 sm:mb-3 w-fit">
+              <CreditCard className="w-4 h-4 sm:w-5 sm:h-5 text-gray-700 group-hover:text-emerald-600" />
             </div>
-            <span className="text-gray-700 font-medium text-sm group-hover:text-emerald-700">Payment History</span>
+            <span className="text-gray-700 font-medium text-xs sm:text-sm group-hover:text-emerald-700">Payment History</span>
           </Link>
         </div>
       </div>
 
       {/* Status Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <div className="bg-white rounded-xl p-6 shadow-md border border-gray-100 hover:shadow-lg transition-all duration-300 hover:scale-[1.02] group">
-          <div className="flex items-center justify-between mb-4">
-            <div className="p-3 rounded-xl bg-gray-50 group-hover:bg-emerald-50 transition-colors">
-              <MapPin className="w-6 h-6 text-gray-600 group-hover:text-emerald-600 transition-colors" />
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+        <div className="bg-white rounded-xl p-4 sm:p-6 shadow-md border border-gray-100 hover:shadow-lg transition-all duration-300 hover:scale-[1.02] group">
+          <div className="flex items-center justify-between mb-3 sm:mb-4">
+            <div className="p-2 sm:p-3 rounded-xl bg-gray-50 group-hover:bg-emerald-50 transition-colors">
+              <MapPin className="w-5 h-5 sm:w-6 sm:h-6 text-gray-600 group-hover:text-emerald-600 transition-colors" />
             </div>
             <div className="flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-700">
               <TrendingUp className="w-3 h-3" />
@@ -630,10 +630,10 @@ const LandownerDashboard: React.FC = () => {
             </div>
           </div>
           <div>
-            <p className="text-gray-500 text-sm font-medium mb-1">
+            <p className="text-gray-500 text-xs sm:text-sm font-medium mb-1">
               Total Lands
             </p>
-            <p className="text-2xl font-bold text-gray-900">
+            <p className="text-xl sm:text-2xl font-bold text-gray-900">
               {stats.loading ? (
                 <span className="inline-block w-12 h-8 bg-gray-200 animate-pulse rounded"></span>
               ) : (
@@ -643,10 +643,10 @@ const LandownerDashboard: React.FC = () => {
           </div>
         </div>
 
-        <div className="bg-white rounded-xl p-6 shadow-md border border-gray-100 hover:shadow-lg transition-all duration-300 hover:scale-[1.02] group">
-          <div className="flex items-center justify-between mb-4">
-            <div className="p-3 rounded-xl bg-gray-50 group-hover:bg-emerald-50 transition-colors">
-              <FileText className="w-6 h-6 text-gray-600 group-hover:text-emerald-600 transition-colors" />
+        <div className="bg-white rounded-xl p-4 sm:p-6 shadow-md border border-gray-100 hover:shadow-lg transition-all duration-300 hover:scale-[1.02] group">
+          <div className="flex items-center justify-between mb-3 sm:mb-4">
+            <div className="p-2 sm:p-3 rounded-xl bg-gray-50 group-hover:bg-emerald-50 transition-colors">
+              <FileText className="w-5 h-5 sm:w-6 sm:h-6 text-gray-600 group-hover:text-emerald-600 transition-colors" />
             </div>
             <div className="flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">
               <TrendingUp className="w-3 h-3" />
@@ -654,10 +654,10 @@ const LandownerDashboard: React.FC = () => {
             </div>
           </div>
           <div>
-            <p className="text-gray-500 text-sm font-medium mb-1">
+            <p className="text-gray-500 text-xs sm:text-sm font-medium mb-1">
               Active Leases
             </p>
-            <p className="text-2xl font-bold text-gray-900">
+            <p className="text-xl sm:text-2xl font-bold text-gray-900">
               {stats.loading ? (
                 <span className="inline-block w-12 h-8 bg-gray-200 animate-pulse rounded"></span>
               ) : (
@@ -667,10 +667,10 @@ const LandownerDashboard: React.FC = () => {
           </div>
         </div>
 
-        <div className="bg-white rounded-xl p-6 shadow-md border border-gray-100 hover:shadow-lg transition-all duration-300 hover:scale-[1.02] group">
-          <div className="flex items-center justify-between mb-4">
-            <div className="p-3 rounded-xl bg-gray-50 group-hover:bg-emerald-50 transition-colors">
-              <CreditCard className="w-6 h-6 text-gray-600 group-hover:text-emerald-600 transition-colors" />
+        <div className="bg-white rounded-xl p-4 sm:p-6 shadow-md border border-gray-100 hover:shadow-lg transition-all duration-300 hover:scale-[1.02] group sm:col-span-2 lg:col-span-1">
+          <div className="flex items-center justify-between mb-3 sm:mb-4">
+            <div className="p-2 sm:p-3 rounded-xl bg-gray-50 group-hover:bg-emerald-50 transition-colors">
+              <CreditCard className="w-5 h-5 sm:w-6 sm:h-6 text-gray-600 group-hover:text-emerald-600 transition-colors" />
             </div>
             <div className="flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-700">
               <TrendingUp className="w-3 h-3" />
@@ -678,10 +678,10 @@ const LandownerDashboard: React.FC = () => {
             </div>
           </div>
           <div>
-            <p className="text-gray-500 text-sm font-medium mb-1">
+            <p className="text-gray-500 text-xs sm:text-sm font-medium mb-1">
               Total Earnings
             </p>
-            <p className="text-2xl font-bold text-gray-900">
+            <p className="text-xl sm:text-2xl font-bold text-gray-900">
               {stats.loading ? (
                 <span className="inline-block w-16 h-8 bg-gray-200 animate-pulse rounded"></span>
               ) : (

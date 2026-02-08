@@ -15,8 +15,9 @@ import {
   ShoppingBag,
   User,
   Settings,
+  MapPin,
 } from "lucide-react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 
 // Type definition for navigation items
 interface NavItem {
@@ -41,6 +42,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 }) => {
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const navigationItems: NavItem[] = [
     { label: "Home", icon: Home, href: "/investordashboard" },
@@ -49,7 +51,7 @@ const Sidebar: React.FC<SidebarProps> = ({
       icon: UserCircle,
       href: "#",
       children: [
-        { label: "Verify Identity", icon: UserCircle, href: "/investor/verify-identity" },
+        { label: "Verify Identity", icon: Shield, href: "/investor/verify-identity" },
         { label: "View Profile", icon: UserCircle, href: "/investor/profile" },
         { label: "KYC Status", icon: UserCircle, href: "/investor/kyc-status" },
       ],
@@ -57,22 +59,21 @@ const Sidebar: React.FC<SidebarProps> = ({
     { label: "View Projects", icon: TrendingUp, href: "/projects" },
     { label: "Investment History", icon: DollarSign, href: "/investments/history" },
     {
-  label: "UPI/Bank Management",
-  icon: CreditCard,
-  href: "#",
-  children: [
-    { label: "Manage UPI", icon: UserCircle, href: "/investor/upi/manage" },
-    { label: "Manage Bank Card", icon: UserCircle, href: "/investor/bank/manage" },
-  ],
-},
-
-    {
-      label: "Investment Payouts",
-      icon: UserCircle,
+      label: "UPI/Bank Management",
+      icon: CreditCard,
       href: "#",
       children: [
-        { label: "Request For Investment Return", icon: UserCircle, href: "/investor/return-request" },
-        { label: "Payment History", icon: UserCircle, href: "/investor/return-requests-history" },
+        { label: "Manage UPI", icon: CreditCard, href: "/investor/upi/manage" },
+        { label: "Manage Bank Card", icon: CreditCard, href: "/investor/bank/manage" },
+      ],
+    },
+    {
+      label: "Investment Payouts",
+      icon: DollarSign,
+      href: "#",
+      children: [
+        { label: "Request For Investment Return", icon: FileText, href: "/investor/return-request" },
+        { label: "Payment History", icon: FileText, href: "/investor/return-requests-history" },
       ],
     },
     {
@@ -83,10 +84,48 @@ const Sidebar: React.FC<SidebarProps> = ({
         { label: 'Browse Products', icon: ShoppingBag, href: '/marketplace' },
         { label: 'My Cart', icon: ShoppingBag, href: '/cart' },
         { label: 'Order History', icon: FileText, href: '/orders' },
-        { label: 'Manage Addresses', icon: UserCircle, href: '/addresses' },
+        { label: 'Manage Addresses', icon: MapPin, href: '/addresses' },
       ],
     },
   ];
+
+  const handleLogout = async () => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      try {
+        await fetch("https://agricorus.onrender.com/api/auth/logout", {
+          method: "POST",
+          headers: { Authorization: `Bearer ${token}` },
+        });
+      } catch (e) {
+        console.warn("Backend logout failed.");
+      }
+    }
+    localStorage.removeItem("token");
+    localStorage.removeItem("role");
+    navigate("/login");
+  };
+
+  const toggleDropdown = (label: string) => {
+    setOpenDropdown(openDropdown === label ? null : label);
+  };
+
+  const handleNavClick = () => {
+    // Close mobile sidebar when navigation item is clicked
+    if (isMobile) {
+      onToggleSidebar();
+    }
+  };
+
+  const isActive = (href: string) => {
+    if (href === '#') return false;
+    return location.pathname === href || location.pathname.startsWith(href + '/');
+  };
+
+  const isChildActive = (children?: NavItem[]) => {
+    if (!children) return false;
+    return children.some(child => location.pathname === child.href || location.pathname.startsWith(child.href + '/'));
+  };
 
   const handleLogout = async () => {
     const token = localStorage.getItem("token");
@@ -139,55 +178,78 @@ const Sidebar: React.FC<SidebarProps> = ({
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 px-2 py-4 space-y-2 overflow-y-auto">
-        {navigationItems.map((item, index) => (
-          <div key={index}>
-            {item.children ? (
-              <>
-                <button
-                  onClick={() =>
-                    setOpenDropdown(openDropdown === item.label ? null : item.label)
-                  }
-                  className="w-full flex items-center justify-between px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg transition"
-                >
-                  <div className="flex items-center gap-2">
-                    <item.icon className="w-4 h-4" />
-                    {(isSidebarOpen || isMobile) && item.label}
-                  </div>
-                  {(isSidebarOpen || isMobile) && (
-                    <ChevronDown
-                      className={`w-4 h-4 transition-transform ${
-                        openDropdown === item.label ? "rotate-180" : ""
-                      }`}
-                    />
+      <nav className="flex-1 px-2 py-4 space-y-1 overflow-y-auto">
+        {navigationItems.map((item, index) => {
+          const active = isActive(item.href) || isChildActive(item.children);
+          
+          return (
+            <div key={index}>
+              {item.children ? (
+                <>
+                  <button
+                    onClick={() => toggleDropdown(item.label)}
+                    className={`w-full flex items-center justify-between px-3 py-2 text-sm rounded-lg transition-all duration-200 group ${
+                      active
+                        ? 'bg-emerald-50 text-emerald-700 font-medium'
+                        : 'text-gray-700 hover:bg-gray-100'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2">
+                       <item.icon className={`w-5 h-5 ${active ? 'text-emerald-600' : 'text-gray-500 group-hover:text-gray-700'} transition-colors`} />
+                      {(isSidebarOpen || isMobile) && (
+                        <span>{item.label}</span>
+                      )}
+                    </div>
+                    {(isSidebarOpen || isMobile) && (
+                      <ChevronDown
+                        className={`w-4 h-4 transition-transform duration-200 ${
+                          openDropdown === item.label ? 'rotate-180' : ''
+                        } ${active ? 'text-emerald-600' : 'text-gray-400'}`}
+                      />
+                    )}
+                  </button>
+                  {(isSidebarOpen || isMobile) && openDropdown === item.label && (
+                    <div className="ml-4 mt-1 space-y-1">
+                      {item.children.map((child, idx) => {
+                        const childActive = location.pathname === child.href || location.pathname.startsWith(child.href + '/');
+                        return (
+                          <Link
+                            key={idx}
+                            to={child.href}
+                            onClick={handleNavClick}
+                            className={`flex items-center gap-2 px-3 py-2 text-sm rounded-lg transition-all duration-200 ${
+                              childActive
+                                ? 'bg-emerald-50 text-emerald-700 font-medium'
+                                : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                            }`}
+                          >
+                            <child.icon className={`w-4 h-4 ${childActive ? 'text-emerald-600' : 'text-gray-400'}`} />
+                            <span>{child.label}</span>
+                          </Link>
+                        );
+                      })}
+                    </div>
                   )}
-                </button>
-                {(isSidebarOpen || isMobile) && openDropdown === item.label && (
-                  <div className="ml-4 mt-1 space-y-1">
-                    {item.children.map((child, idx) => (
-                      <Link
-                        key={idx}
-                        to={child.href}
-                        className="flex items-center px-3 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-lg transition"
-                      >
-                        <child.icon className="w-4 h-4 mr-2" />
-                        {child.label}
-                      </Link>
-                    ))}
-                  </div>
-                )}
-              </>
-            ) : (
-              <Link
-                to={item.href}
-                className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg transition"
-              >
-                <item.icon className="w-4 h-4" />
-                {(isSidebarOpen || isMobile) && item.label}
-              </Link>
-            )}
-          </div>
-        ))}
+                </>
+              ) : (
+                <Link
+                  to={item.href}
+                  onClick={handleNavClick}
+                  className={`flex items-center gap-2 px-3 py-2 text-sm rounded-lg transition-all duration-200 group ${
+                    active
+                      ? 'bg-emerald-50 text-emerald-700 font-medium'
+                      : 'text-gray-700 hover:bg-gray-100'
+                  }`}
+                >
+                  <item.icon className={`w-5 h-5 ${active ? 'text-emerald-600' : 'text-gray-500 group-hover:text-gray-700'} transition-colors`} />
+                  {(isSidebarOpen || isMobile) && (
+                    <span>{item.label}</span>
+                  )}
+                </Link>
+              )}
+            </div>
+          );
+        })}
       </nav>
 
       {/* Logout */}
@@ -316,7 +378,27 @@ const UserProfileDropdown: React.FC = () => {
 export const InvestorLayout: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false); // Start closed for mobile
+
+  // Open sidebar by default on desktop
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 1024) { // lg breakpoint
+        setIsSidebarOpen(true);
+      } else {
+        setIsSidebarOpen(false);
+      }
+    };
+
+    // Set initial state
+    handleResize();
+
+    // Add event listener
+    window.addEventListener('resize', handleResize);
+
+    // Cleanup
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
 
@@ -389,7 +471,7 @@ export const InvestorLayout: React.FC<{ children: React.ReactNode }> = ({
         </div>
 
         {/* Content Area with Top Margin for Headers */}
-        <main className="p-4 lg:p-8 mt-16">{children}</main>
+        <main className="p-4 lg:p-8 mt-16 min-h-screen">{children}</main>
       </div>
     </div>
   );

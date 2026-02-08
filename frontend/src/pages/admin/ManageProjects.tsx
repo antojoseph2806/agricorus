@@ -184,38 +184,40 @@ const ManageProjects: React.FC = () => {
 
   return (
     <Layout>
-      <div className="p-6 bg-gray-50 min-h-screen">
+      <div className="p-3 sm:p-4 lg:p-6 bg-gray-50 min-h-screen">
         {/* Compact Header */}
-        <div className="bg-white rounded-lg shadow p-6 mb-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center">
-                <Layers className="w-6 h-6 text-white" />
+        <div className="bg-white rounded-lg shadow p-4 sm:p-6 mb-4 sm:mb-6">
+          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+            <div className="flex items-center gap-3 sm:gap-4 w-full lg:w-auto">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                <Layers className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
               </div>
-              <div>
-                <h1 className="text-2xl font-bold text-gray-900">Project Management Hub</h1>
-                <p className="text-gray-600 text-sm">Comprehensive oversight and control center for farming investment projects</p>
+              <div className="min-w-0 flex-1">
+                <h1 className="text-xl sm:text-2xl font-bold text-gray-900 truncate">Project Management Hub</h1>
+                <p className="text-gray-600 text-xs sm:text-sm truncate">Comprehensive oversight and control center for farming investment projects</p>
               </div>
             </div>
-            <div className="flex gap-3">
+            <div className="flex gap-2 sm:gap-3 w-full lg:w-auto">
               <button
                 onClick={fetchProjects}
                 disabled={loading}
-                className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition"
+                className="flex-1 lg:flex-initial flex items-center justify-center gap-2 px-3 sm:px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition text-sm sm:text-base"
               >
                 <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
-                Refresh Data
+                <span className="hidden sm:inline">Refresh Data</span>
+                <span className="sm:hidden">Refresh</span>
               </button>
-              <button className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition">
+              <button className="flex-1 lg:flex-initial flex items-center justify-center gap-2 px-3 sm:px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition text-sm sm:text-base">
                 <Plus className="w-4 h-4" />
-                New Project
+                <span className="hidden sm:inline">New Project</span>
+                <span className="sm:hidden">New</span>
               </button>
             </div>
           </div>
         </div>
 
         {/* Compact Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4 mb-6">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-8 gap-3 sm:gap-4 mb-4 sm:mb-6">
           {[
             { label: 'Total Projects', value: stats.total, color: 'bg-blue-500', icon: Target },
             { label: 'Submitted', value: stats.submitted, color: 'bg-yellow-500', icon: Clock },
@@ -226,19 +228,19 @@ const ManageProjects: React.FC = () => {
             { label: 'Total Funding', value: formatCurrency(stats.totalFunding), color: 'bg-indigo-500', icon: DollarSign },
             { label: 'Avg Funding', value: formatCurrency(stats.avgFunding), color: 'bg-teal-500', icon: DollarSign },
           ].map((stat, i) => (
-            <div key={i} className="bg-white rounded-lg shadow p-4">
-              <div className={`w-10 h-10 ${stat.color} rounded-lg flex items-center justify-center mb-3`}>
-                <stat.icon className="w-5 h-5 text-white" />
+            <div key={i} className="bg-white rounded-lg shadow p-3 sm:p-4">
+              <div className={`w-8 h-8 sm:w-10 sm:h-10 ${stat.color} rounded-lg flex items-center justify-center mb-2 sm:mb-3`}>
+                <stat.icon className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
               </div>
-              <div className="text-2xl font-bold text-gray-900 mb-1">{stat.value}</div>
-              <div className="text-gray-600 text-xs">{stat.label}</div>
+              <div className="text-lg sm:text-2xl font-bold text-gray-900 mb-1 truncate">{stat.value}</div>
+              <div className="text-gray-600 text-xs truncate">{stat.label}</div>
             </div>
           ))}
         </div>
 
         {/* Compact Controls */}
-        <div className="bg-white rounded-lg shadow p-4 mb-6">
-          <div className="flex flex-wrap gap-4 items-center">
+        <div className="bg-white rounded-lg shadow p-3 sm:p-4 mb-4 sm:mb-6">
+          <div className="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4 items-stretch sm:items-center">
             <div className="relative flex-1 min-w-[200px]">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
               <input
@@ -246,13 +248,13 @@ const ManageProjects: React.FC = () => {
                 placeholder="Search projects..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
               />
             </div>
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value as any)}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              className="px-3 sm:px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
             >
               <option value="all">All Status</option>
               <option value="submitted">Submitted</option>
@@ -263,7 +265,7 @@ const ManageProjects: React.FC = () => {
             <select
               value={approvalFilter}
               onChange={(e) => setApprovalFilter(e.target.value as any)}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              className="px-3 sm:px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
             >
               <option value="all">All Approval</option>
               <option value="approved">Approved</option>
@@ -314,13 +316,13 @@ const ManageProjects: React.FC = () => {
             </button>
           </div>
         ) : (
-          <div className={viewMode === "grid" ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4" : "space-y-3"}>
+          <div className={viewMode === "grid" ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4" : "space-y-3"}>
             {filteredProjects.map((project) => {
               const isActionLoading = actionLoading === project._id;
               const fundingPercent = Math.min((project.currentFunding / project.fundingGoal) * 100, 100);
               
               return (
-                <div key={project._id} className="bg-white rounded-lg shadow hover:shadow-md transition p-4">
+                <div key={project._id} className="bg-white rounded-lg shadow hover:shadow-md transition p-3 sm:p-4">
                   {viewMode === "grid" ? (
                     <>
                       <div className="flex items-center justify-between mb-3">

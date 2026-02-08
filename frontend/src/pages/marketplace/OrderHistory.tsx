@@ -184,70 +184,81 @@ const OrderHistory: React.FC = () => {
 
   return (
     <MarketplaceLayout>
-      <div className="space-y-6">
-        {/* Header */}
-        <div className="bg-white rounded-lg shadow-sm border p-4 sm:p-6">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
-              <Link
-                to="/marketplace"
-                className="flex items-center gap-2 text-gray-600 hover:text-emerald-600 transition"
-              >
-                <ArrowLeft className="w-4 h-4" />
-                <span className="text-sm sm:text-base">Back to Marketplace</span>
+      <div className="min-h-screen bg-gray-50">
+        {/* Gradient Header Banner - Matching ViewLands */}
+        <div className="relative mb-6 sm:mb-8 overflow-hidden">
+          <div className="h-40 sm:h-48 bg-gradient-to-br from-emerald-400 via-teal-500 to-cyan-500 rounded-none sm:rounded-3xl overflow-hidden relative">
+            <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Cg%20fill%3D%22%23ffffff%22%20fill-opacity%3D%220.1%22%3E%3Cpath%20d%3D%22M36%2034v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6%2034v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6%204V0H4v4H0v2h4v4h2V6h4V4H6z%22%2F%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E')] opacity-30"></div>
+            <div className="absolute inset-0 flex flex-col items-center justify-center px-4 text-center">
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-2 flex items-center gap-2 sm:gap-3 flex-wrap justify-center">
+                <Package className="w-6 h-6 sm:w-8 sm:h-8" />
+                <span>Order History</span>
+              </h1>
+              <p className="text-sm sm:text-base text-emerald-100">Track and manage your orders</p>
+            </div>
+            <div className="absolute top-4 right-4 sm:top-6 sm:right-8 flex items-center gap-2">
+              <Link to="/marketplace" className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 bg-white/10 hover:bg-white/20 text-white rounded-lg sm:rounded-xl text-xs sm:text-sm font-medium transition backdrop-blur-sm">
+                <ArrowLeft className="w-3 h-3 sm:w-4 sm:h-4" />
+                <span className="hidden sm:inline">Marketplace</span>
               </Link>
-              <div className="hidden sm:block text-gray-300">|</div>
-              <div className="flex items-center gap-2">
-                <Package className="w-5 h-5 text-emerald-600" />
-                <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Order History</h1>
+              <Link to="/cart" className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-5 py-2 sm:py-2.5 bg-white text-emerald-600 rounded-lg sm:rounded-xl text-xs sm:text-sm font-semibold hover:bg-emerald-50 transition shadow-lg">
+                <ShoppingCart className="w-3 h-3 sm:w-4 sm:h-4" />
+                <span>Cart</span>
+              </Link>
+            </div>
+          </div>
+
+          {/* Icon Badge */}
+          <div className="absolute -bottom-10 sm:-bottom-12 left-1/2 -translate-x-1/2">
+            <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-br from-emerald-400 to-cyan-500 p-1 shadow-xl">
+              <div className="w-full h-full rounded-full bg-white flex items-center justify-center">
+                <Package className="w-10 h-10 sm:w-12 sm:h-12 text-emerald-600" />
               </div>
             </div>
-            <div className="flex items-center gap-3">
-              <Link
-                to="/cart"
-                className="flex items-center gap-2 px-3 sm:px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition text-sm"
-              >
-                <ShoppingCart className="w-4 h-4" />
-                <span className="hidden sm:inline">Cart</span>
+          </div>
+        </div>
+
+        {/* Title Section */}
+        <div className="text-center mt-12 sm:mt-16 mb-6 sm:mb-8 px-4">
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-800">Your Orders</h2>
+          <p className="text-gray-500 mt-2 text-sm sm:text-base">View and manage your order history</p>
+        </div>
+
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6">
+        {orders.length === 0 ? (
+          <div className="max-w-2xl mx-auto px-4 text-center">
+            <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-8 sm:p-12">
+              <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
+                <Package className="w-10 h-10 text-gray-400" />
+              </div>
+              <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-3">No orders yet</h2>
+              <p className="text-gray-500 mb-8 text-sm sm:text-base">Start shopping to see your orders here</p>
+              <Link to="/marketplace" className="inline-flex items-center gap-2 px-6 sm:px-8 py-3 sm:py-3.5 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-xl font-semibold hover:from-emerald-600 hover:to-teal-600 transition-all shadow-lg shadow-emerald-500/25">
+                <ShoppingCart className="w-5 h-5" />
+                Start Shopping
               </Link>
+            </div>
+          </div>
+        ) : (
+          <div className="space-y-4 sm:space-y-6">
+            <div className="flex items-center justify-between px-1">
+              <h2 className="text-base sm:text-lg font-semibold text-gray-900">
+                Your Orders ({orders.length})
+              </h2>
               <button
                 onClick={fetchOrders}
-                className="flex items-center gap-2 px-3 sm:px-4 py-2 text-gray-600 hover:text-emerald-600 transition text-sm"
+                className="flex items-center gap-2 px-3 py-2 text-gray-600 hover:text-emerald-600 transition text-sm"
               >
                 <RefreshCw className="w-4 h-4" />
                 <span className="hidden sm:inline">Refresh</span>
               </button>
             </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-6 sm:py-8">
-        {orders.length === 0 ? (
-          <div className="text-center py-12 sm:py-16">
-            <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Package className="w-8 h-8 sm:w-10 sm:h-10 text-gray-400" />
-            </div>
-            <h2 className="text-lg sm:text-xl font-semibold text-gray-900 mb-2">No orders yet</h2>
-            <p className="text-sm sm:text-base text-gray-600 mb-6">Start shopping to see your orders here</p>
-            <Link to="/marketplace" className="inline-flex items-center gap-2 px-4 sm:px-6 py-2.5 sm:py-3 bg-emerald-600 text-white rounded-lg sm:rounded-xl hover:bg-emerald-700 transition text-sm sm:text-base font-medium">
-              <ShoppingCart className="w-4 h-4" />
-              Start Shopping
-            </Link>
-          </div>
-        ) : (
-          <div className="space-y-6">
-            <div className="flex items-center justify-between">
-              <h2 className="text-base sm:text-lg font-semibold text-gray-900">
-                Your Orders ({orders.length})
-              </h2>
-            </div>
 
             <div className="space-y-3 sm:space-y-4">
               {orders.map((order) => (
-                <div key={order._id} className="bg-white rounded-lg sm:rounded-xl border border-gray-100 overflow-hidden shadow-sm hover:shadow-md transition">
+                <div key={order._id} className="bg-white rounded-xl sm:rounded-2xl border border-gray-100 overflow-hidden shadow-sm hover:shadow-xl hover:border-emerald-200 transition-all">
                   {/* Order Header */}
-                  <div className="p-3 sm:p-4 lg:p-6 border-b border-gray-200">
+                  <div className="p-3 sm:p-4 lg:p-6 bg-gradient-to-r from-gray-50 to-emerald-50/30 border-b border-gray-200">
                     <div className="flex flex-col gap-3 sm:gap-4">
                       <div>
                         <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-2">

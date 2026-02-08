@@ -279,40 +279,41 @@ const ReturnRequestsAdmin: React.FC = () => {
 
   return (
     <Layout>
-      <div className="p-6 bg-gray-50 min-h-screen">
+      <div className="p-3 sm:p-4 lg:p-6 bg-gray-50 min-h-screen">
         {/* Header */}
-        <div className="bg-white rounded-2xl border border-gray-200 p-6 mb-6 shadow-sm">
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+        <div className="bg-white rounded-2xl border border-gray-200 p-3 sm:p-4 lg:p-6 mb-4 sm:mb-6 shadow-sm">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3 sm:gap-4">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">
+              <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-1 sm:mb-2">
                 Investor Return Requests
               </h1>
-              <p className="text-gray-600">
+              <p className="text-sm sm:text-base text-gray-600">
                 Manage and process investor return payment requests
               </p>
             </div>
             
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 sm:gap-3">
               <button
                 onClick={exportToCSV}
-                className="flex items-center gap-2 px-4 py-2.5 rounded-xl font-semibold text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 transition-all duration-300"
+                className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-semibold text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 transition-all duration-300"
               >
-                <Download className="w-4 h-4" />
-                Export CSV
+                <Download className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                <span className="hidden sm:inline">Export CSV</span>
+                <span className="sm:hidden">Export</span>
               </button>
               <button
                 onClick={fetchRequests}
-                className="flex items-center gap-2 px-4 py-2.5 rounded-xl font-semibold text-white bg-emerald-600 hover:bg-emerald-700 transition-all duration-300 shadow-sm"
+                className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-semibold text-white bg-emerald-600 hover:bg-emerald-700 transition-all duration-300 shadow-sm"
               >
-                <RefreshCw className="w-4 h-4" />
-                Refresh
+                <RefreshCw className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                <span className="hidden sm:inline">Refresh</span>
               </button>
             </div>
           </div>
         </div>
 
         {/* Stats and Filter */}
-        <div className="grid grid-cols-1 lg:grid-cols-6 gap-6 mb-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3 sm:gap-4 lg:gap-6 mb-4 sm:mb-6">
           {/* Filter */}
           <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
             <div className="flex items-center gap-2 mb-4">

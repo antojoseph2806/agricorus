@@ -125,71 +125,71 @@ const AdminDisputeDashboard: React.FC = () => {
 
   return (
     <Layout>
-      <div className="p-6 bg-gray-50 min-h-screen">
+      <div className="p-3 sm:p-4 lg:p-6 bg-gray-50 min-h-screen">
         {/* Header */}
-        <div className="bg-white rounded-lg shadow p-6 mb-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-red-600 rounded-lg flex items-center justify-center">
-                <AlertTriangle className="w-6 h-6 text-white" />
+        <div className="bg-white rounded-lg shadow p-4 sm:p-6 mb-4 sm:mb-6">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="flex items-center gap-3 sm:gap-4">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-red-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                <AlertTriangle className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">Dispute Management</h1>
-                <p className="text-gray-600 text-sm">Monitor and resolve platform disputes</p>
+                <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Dispute Management</h1>
+                <p className="text-gray-600 text-xs sm:text-sm">Monitor and resolve platform disputes</p>
               </div>
             </div>
             <button
               onClick={fetchDisputes}
               disabled={loading}
-              className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition"
+              className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition text-sm"
             >
               <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
-              Refresh
+              <span className="hidden sm:inline">Refresh</span>
             </button>
           </div>
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
-          <div className="bg-white rounded-lg shadow p-4">
-            <div className="text-sm text-gray-600 mb-1">Total Disputes</div>
-            <div className="text-2xl font-bold text-gray-900">{stats.total}</div>
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 mb-4 sm:mb-6">
+          <div className="bg-white rounded-lg shadow p-3 sm:p-4">
+            <div className="text-xs sm:text-sm text-gray-600 mb-1">Total Disputes</div>
+            <div className="text-xl sm:text-2xl font-bold text-gray-900">{stats.total}</div>
           </div>
-          <div className="bg-white rounded-lg shadow p-4">
-            <div className="text-sm text-gray-600 mb-1">Open</div>
-            <div className="text-2xl font-bold text-yellow-600">{stats.open}</div>
+          <div className="bg-white rounded-lg shadow p-3 sm:p-4">
+            <div className="text-xs sm:text-sm text-gray-600 mb-1">Open</div>
+            <div className="text-xl sm:text-2xl font-bold text-yellow-600">{stats.open}</div>
           </div>
-          <div className="bg-white rounded-lg shadow p-4">
-            <div className="text-sm text-gray-600 mb-1">In Review</div>
-            <div className="text-2xl font-bold text-blue-600">{stats.inReview}</div>
+          <div className="bg-white rounded-lg shadow p-3 sm:p-4">
+            <div className="text-xs sm:text-sm text-gray-600 mb-1">In Review</div>
+            <div className="text-xl sm:text-2xl font-bold text-blue-600">{stats.inReview}</div>
           </div>
-          <div className="bg-white rounded-lg shadow p-4">
-            <div className="text-sm text-gray-600 mb-1">Resolved</div>
-            <div className="text-2xl font-bold text-green-600">{stats.resolved}</div>
+          <div className="bg-white rounded-lg shadow p-3 sm:p-4">
+            <div className="text-xs sm:text-sm text-gray-600 mb-1">Resolved</div>
+            <div className="text-xl sm:text-2xl font-bold text-green-600">{stats.resolved}</div>
           </div>
-          <div className="bg-white rounded-lg shadow p-4">
-            <div className="text-sm text-gray-600 mb-1">Rejected</div>
-            <div className="text-2xl font-bold text-red-600">{stats.rejected}</div>
+          <div className="bg-white rounded-lg shadow p-3 sm:p-4">
+            <div className="text-xs sm:text-sm text-gray-600 mb-1">Rejected</div>
+            <div className="text-xl sm:text-2xl font-bold text-red-600">{stats.rejected}</div>
           </div>
         </div>
 
         {/* Filters */}
-        <div className="bg-white rounded-lg shadow p-4 mb-6">
-          <div className="flex flex-wrap gap-4">
-            <div className="relative flex-1 min-w-[200px]">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+        <div className="bg-white rounded-lg shadow p-3 sm:p-4 mb-4 sm:mb-6">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+            <div className="relative flex-1 min-w-0">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-gray-400" />
               <input
                 type="text"
                 placeholder="Search disputes..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full pl-9 sm:pl-10 pr-3 sm:pr-4 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
             <select
               value={selectedStatus}
               onChange={(e) => setSelectedStatus(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              className="px-3 sm:px-4 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 flex-shrink-0"
             >
               <option value="">All Statuses</option>
               <option value="open">Open</option>
@@ -202,21 +202,67 @@ const AdminDisputeDashboard: React.FC = () => {
 
         {/* Disputes List */}
         {loading ? (
-          <div className="bg-white rounded-lg shadow p-12 text-center">
-            <div className="w-12 h-12 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto mb-4"></div>
-            <p className="text-gray-600">Loading disputes...</p>
+          <div className="bg-white rounded-lg shadow p-8 sm:p-12 text-center">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto mb-4"></div>
+            <p className="text-gray-600 text-sm sm:text-base">Loading disputes...</p>
           </div>
         ) : filteredDisputes.length === 0 ? (
-          <div className="bg-white rounded-lg shadow p-12 text-center">
-            <AlertTriangle className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">No Disputes Found</h3>
-            <p className="text-gray-600">
+          <div className="bg-white rounded-lg shadow p-8 sm:p-12 text-center">
+            <AlertTriangle className="w-10 h-10 sm:w-12 sm:h-12 text-gray-400 mx-auto mb-4" />
+            <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-2">No Disputes Found</h3>
+            <p className="text-gray-600 text-sm sm:text-base">
               {searchTerm ? "No disputes match your search criteria" : "No disputes have been raised yet"}
             </p>
           </div>
         ) : (
           <div className="bg-white rounded-lg shadow overflow-hidden">
-            <div className="overflow-x-auto">
+            {/* Mobile Card View */}
+            <div className="block lg:hidden">
+              {filteredDisputes.map((dispute) => (
+                <div key={dispute._id} className="border-b border-gray-100 p-4 hover:bg-gray-50">
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="flex-1 min-w-0">
+                      <div className="font-medium text-gray-900 truncate">{dispute.raisedBy.name}</div>
+                      <div className="text-sm text-gray-600 truncate">{dispute.raisedBy.email}</div>
+                    </div>
+                    <span className={`ml-2 px-2 py-1 rounded-full text-xs font-medium flex-shrink-0 ${getStatusColor(dispute.status)}`}>
+                      {dispute.status.replace('_', ' ')}
+                    </span>
+                  </div>
+                  <div className="space-y-2 text-sm">
+                    <div>
+                      <span className="text-gray-600">Against: </span>
+                      <span className="font-medium text-gray-900">{dispute.against.name}</span>
+                    </div>
+                    <div>
+                      <span className="text-gray-600">Reason: </span>
+                      <span className="text-gray-900 line-clamp-2">{dispute.reason}</span>
+                    </div>
+                    <div>
+                      <span className="text-gray-600">Category: </span>
+                      <span className="px-2 py-0.5 bg-gray-100 text-gray-700 rounded text-xs">{dispute.category}</span>
+                    </div>
+                    <div>
+                      <span className="text-gray-600">Amount: </span>
+                      <span className="font-semibold text-gray-900">{formatCurrency(dispute.amountInvolved)}</span>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => {
+                      setSelectedDispute(dispute);
+                      setShowDetailsModal(true);
+                    }}
+                    className="mt-3 w-full inline-flex items-center justify-center gap-1 px-3 py-2 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-lg text-sm font-medium transition"
+                  >
+                    <Eye className="w-4 h-4" />
+                    View Details
+                  </button>
+                </div>
+              ))}
+            </div>
+
+            {/* Desktop Table View */}
+            <div className="hidden lg:block overflow-x-auto">
               <table className="w-full">
                 <thead>
                   <tr className="bg-gray-50 border-b border-gray-200">
@@ -278,16 +324,16 @@ const AdminDisputeDashboard: React.FC = () => {
 
         {/* Dispute Details Modal */}
         {showDetailsModal && selectedDispute && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-3 sm:p-4">
             <div className="bg-white rounded-lg shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden">
-              <div className="bg-gradient-to-r from-red-600 to-orange-600 p-6 flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center">
-                    <AlertTriangle className="w-5 h-5 text-white" />
+              <div className="bg-gradient-to-r from-red-600 to-orange-600 p-4 sm:p-6 flex items-center justify-between">
+                <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 bg-white/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <AlertTriangle className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                   </div>
-                  <div>
-                    <h2 className="text-xl font-bold text-white">Dispute Details</h2>
-                    <p className="text-red-100 text-sm">Complete dispute information</p>
+                  <div className="min-w-0">
+                    <h2 className="text-lg sm:text-xl font-bold text-white truncate">Dispute Details</h2>
+                    <p className="text-red-100 text-xs sm:text-sm hidden sm:block">Complete dispute information</p>
                   </div>
                 </div>
                 <button
@@ -295,14 +341,14 @@ const AdminDisputeDashboard: React.FC = () => {
                     setShowDetailsModal(false);
                     setSelectedDispute(null);
                   }}
-                  className="text-white/80 hover:text-white transition p-2 hover:bg-white/10 rounded-lg"
+                  className="text-white/80 hover:text-white transition p-1.5 sm:p-2 hover:bg-white/10 rounded-lg flex-shrink-0"
                 >
-                  <XCircle className="w-6 h-6" />
+                  <XCircle className="w-5 h-5 sm:w-6 sm:h-6" />
                 </button>
               </div>
 
-              <div className="p-6 overflow-y-auto max-h-[calc(90vh-180px)]">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="p-4 sm:p-6 overflow-y-auto max-h-[calc(90vh-180px)]">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
                   {/* Status and Amount */}
                   <div className="lg:col-span-2 grid grid-cols-2 gap-4">
                     <div className="bg-gray-50 rounded-lg p-4">
@@ -433,20 +479,21 @@ const AdminDisputeDashboard: React.FC = () => {
               </div>
 
               {/* Action Buttons */}
-              <div className="border-t border-gray-200 p-6 bg-gray-50">
-                <div className="flex justify-end gap-3">
+              <div className="border-t border-gray-200 p-4 sm:p-6 bg-gray-50">
+                <div className="flex flex-col sm:flex-row justify-end gap-2 sm:gap-3">
                   <button
                     onClick={() => handleAction(selectedDispute._id, "in_review")}
                     disabled={actionLoading === selectedDispute._id}
-                    className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition disabled:opacity-50"
+                    className="flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition disabled:opacity-50 text-sm"
                   >
                     <Clock className="w-4 h-4" />
-                    Mark In Review
+                    <span className="hidden sm:inline">Mark In Review</span>
+                    <span className="sm:hidden">In Review</span>
                   </button>
                   <button
                     onClick={() => handleAction(selectedDispute._id, "resolved")}
                     disabled={actionLoading === selectedDispute._id}
-                    className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition disabled:opacity-50"
+                    className="flex items-center justify-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition disabled:opacity-50 text-sm"
                   >
                     <CheckCircle className="w-4 h-4" />
                     Resolve
@@ -454,7 +501,7 @@ const AdminDisputeDashboard: React.FC = () => {
                   <button
                     onClick={() => handleAction(selectedDispute._id, "rejected")}
                     disabled={actionLoading === selectedDispute._id}
-                    className="flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium transition disabled:opacity-50"
+                    className="flex items-center justify-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium transition disabled:opacity-50 text-sm"
                   >
                     <XCircle className="w-4 h-4" />
                     Reject

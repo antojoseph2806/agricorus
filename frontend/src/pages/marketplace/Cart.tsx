@@ -200,28 +200,45 @@ const Cart: React.FC = () => {
   if (!cart || cart.items.length === 0) {
     return (
       <MarketplaceLayout>
-        <div className="min-h-screen bg-gradient-to-br from-gray-50 to-emerald-50/30">
-          <div className="bg-gradient-to-r from-emerald-600 via-emerald-500 to-teal-500 px-6 py-6">
-            <div className="max-w-6xl mx-auto flex items-center gap-4">
-              <Link to="/marketplace" className="flex items-center gap-2 text-emerald-100 hover:text-white transition">
-                <ArrowLeft className="w-5 h-5" />
-              </Link>
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
-                  <ShoppingCart className="w-5 h-5 text-white" />
+        <div className="min-h-screen bg-gray-50">
+          {/* Gradient Header Banner */}
+          <div className="relative mb-6 sm:mb-8 overflow-hidden">
+            <div className="h-40 sm:h-48 bg-gradient-to-br from-emerald-400 via-teal-500 to-cyan-500 rounded-none sm:rounded-3xl overflow-hidden relative">
+              <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Cg%20fill%3D%22%23ffffff%22%20fill-opacity%3D%220.1%22%3E%3Cpath%20d%3D%22M36%2034v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6%2034v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6%204V0H4v4H0v2h4v4h2V6h4V4H6z%22%2F%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E')] opacity-30"></div>
+              <div className="absolute inset-0 flex flex-col items-center justify-center px-4 text-center">
+                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-2 flex items-center gap-2 sm:gap-3 flex-wrap justify-center">
+                  <ShoppingCart className="w-6 h-6 sm:w-8 sm:h-8" />
+                  <span>Shopping Cart</span>
+                </h1>
+                <p className="text-sm sm:text-base text-emerald-100">Your cart is empty</p>
+              </div>
+              <div className="absolute top-4 right-4 sm:top-6 sm:right-8">
+                <Link to="/marketplace" className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-5 py-2 sm:py-2.5 bg-white text-emerald-600 rounded-lg sm:rounded-xl text-xs sm:text-sm font-semibold hover:bg-emerald-50 transition shadow-lg">
+                  <ArrowLeft className="w-3 h-3 sm:w-4 sm:h-4" />
+                  <span>Back to Shop</span>
+                </Link>
+              </div>
+            </div>
+
+            {/* Icon Badge */}
+            <div className="absolute -bottom-10 sm:-bottom-12 left-1/2 -translate-x-1/2">
+              <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-br from-emerald-400 to-cyan-500 p-1 shadow-xl">
+                <div className="w-full h-full rounded-full bg-white flex items-center justify-center">
+                  <ShoppingCart className="w-10 h-10 sm:w-12 sm:h-12 text-emerald-600" />
                 </div>
-                <h1 className="text-xl font-bold text-white">Shopping Cart</h1>
               </div>
             </div>
           </div>
-          <div className="flex items-center justify-center py-20">
-            <div className="text-center">
-              <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                <ShoppingCart className="w-12 h-12 text-gray-300" />
+
+          {/* Empty State */}
+          <div className="max-w-2xl mx-auto px-4 py-12 sm:py-16 text-center mt-12 sm:mt-16">
+            <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-8 sm:p-12">
+              <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
+                <ShoppingCart className="w-10 h-10 text-gray-400" />
               </div>
-              <h2 className="text-2xl font-bold text-gray-800 mb-2">Your cart is empty</h2>
-              <p className="text-gray-500 mb-8">Looks like you haven't added any products yet</p>
-              <Link to="/marketplace" className="inline-flex items-center gap-2 px-8 py-3 bg-emerald-600 text-white rounded-xl font-semibold hover:bg-emerald-700 transition shadow-lg shadow-emerald-200">
+              <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-3">Your cart is empty</h2>
+              <p className="text-gray-500 mb-8 text-sm sm:text-base">Looks like you haven't added any products yet</p>
+              <Link to="/marketplace" className="inline-flex items-center gap-2 px-6 sm:px-8 py-3 sm:py-3.5 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-xl font-semibold hover:from-emerald-600 hover:to-teal-600 transition-all shadow-lg shadow-emerald-500/25">
                 <Sparkles className="w-5 h-5" /> Browse Products
               </Link>
             </div>
@@ -235,43 +252,44 @@ const Cart: React.FC = () => {
 
   return (
     <MarketplaceLayout>
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-emerald-50/30">
-        {/* Header */}
-        <div className="bg-gradient-to-r from-emerald-600 via-emerald-500 to-teal-500 px-3 sm:px-6 py-4 sm:py-6">
-          <div className="max-w-6xl mx-auto">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0">
-              <div className="flex items-center gap-2 sm:gap-4 w-full sm:w-auto">
-                <Link to="/marketplace" className="flex items-center gap-1.5 sm:gap-2 text-emerald-100 hover:text-white transition">
-                  <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
-                  <span className="hidden sm:inline text-sm">Continue Shopping</span>
-                </Link>
-                <div className="w-px h-5 sm:h-6 bg-emerald-400/50" />
-                <div className="flex items-center gap-2 sm:gap-3">
-                  <div className="w-8 h-8 sm:w-10 sm:h-10 bg-white/20 rounded-lg sm:rounded-xl flex items-center justify-center">
-                    <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
-                  </div>
-                  <div>
-                    <h1 className="text-lg sm:text-xl font-bold text-white">Shopping Cart</h1>
-                    <p className="text-emerald-100 text-xs sm:text-sm">{calculateTotalItems()} items</p>
-                  </div>
-                </div>
-              </div>
-              <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto">
-                <Link to="/orders" className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 bg-white/10 hover:bg-white/20 text-white rounded-lg sm:rounded-xl text-sm font-medium transition">
-                  <Package className="w-3 h-3 sm:w-4 sm:h-4" /> 
-                  <span className="hidden sm:inline">Orders</span>
-                </Link>
-              </div>
+      <div className="min-h-screen bg-gray-50">
+        {/* Gradient Header Banner - Matching ViewLands */}
+        <div className="relative mb-6 sm:mb-8 overflow-hidden">
+          <div className="h-40 sm:h-48 bg-gradient-to-br from-emerald-400 via-teal-500 to-cyan-500 rounded-none sm:rounded-3xl overflow-hidden relative">
+            <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Cg%20fill%3D%22%23ffffff%22%20fill-opacity%3D%220.1%22%3E%3Cpath%20d%3D%22M36%2034v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6%2034v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6%204V0H4v4H0v2h4v4h2V6h4V4H6z%22%2F%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E')] opacity-30"></div>
+            <div className="absolute inset-0 flex flex-col items-center justify-center px-4 text-center">
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-2 flex items-center gap-2 sm:gap-3 flex-wrap justify-center">
+                <ShoppingCart className="w-6 h-6 sm:w-8 sm:h-8" />
+                <span>Shopping Cart</span>
+              </h1>
+              <p className="text-sm sm:text-base text-emerald-100">{calculateTotalItems()} items in your cart</p>
             </div>
-            {/* Progress */}
-            <div className="mt-3 sm:mt-4 flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm overflow-x-auto pb-1">
-              <span className="flex items-center gap-1 text-white font-medium whitespace-nowrap"><ShoppingCart className="w-3 h-3 sm:w-4 sm:h-4" /> Cart</span>
-              <ChevronRight className="w-3 h-3 sm:w-4 sm:h-4 text-emerald-300" />
-              <span className="flex items-center gap-1 text-emerald-200 whitespace-nowrap"><CreditCard className="w-3 h-3 sm:w-4 sm:h-4" /> Checkout</span>
-              <ChevronRight className="w-3 h-3 sm:w-4 sm:h-4 text-emerald-300" />
-              <span className="flex items-center gap-1 text-emerald-200 whitespace-nowrap"><Package className="w-3 h-3 sm:w-4 sm:h-4" /> Done</span>
+            <div className="absolute top-4 right-4 sm:top-6 sm:right-8 flex items-center gap-2">
+              <Link to="/marketplace" className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 bg-white/10 hover:bg-white/20 text-white rounded-lg sm:rounded-xl text-xs sm:text-sm font-medium transition backdrop-blur-sm">
+                <ArrowLeft className="w-3 h-3 sm:w-4 sm:h-4" />
+                <span className="hidden sm:inline">Continue Shopping</span>
+              </Link>
+              <Link to="/orders" className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-5 py-2 sm:py-2.5 bg-white text-emerald-600 rounded-lg sm:rounded-xl text-xs sm:text-sm font-semibold hover:bg-emerald-50 transition shadow-lg">
+                <Package className="w-3 h-3 sm:w-4 sm:h-4" />
+                <span>Orders</span>
+              </Link>
             </div>
           </div>
+
+          {/* Icon Badge */}
+          <div className="absolute -bottom-10 sm:-bottom-12 left-1/2 -translate-x-1/2">
+            <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-br from-emerald-400 to-cyan-500 p-1 shadow-xl">
+              <div className="w-full h-full rounded-full bg-white flex items-center justify-center">
+                <ShoppingCart className="w-10 h-10 sm:w-12 sm:h-12 text-emerald-600" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Title Section */}
+        <div className="text-center mt-12 sm:mt-16 mb-6 sm:mb-8 px-4">
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-800">Review Your Cart</h2>
+          <p className="text-gray-500 mt-2 text-sm sm:text-base">Complete your purchase</p>
         </div>
 
         <div className="max-w-6xl mx-auto px-3 sm:px-6 py-4 sm:py-6">

@@ -185,20 +185,20 @@ const ProductList = () => {
 
   return (
     <VendorLayout>
-      <div className="min-h-screen bg-gray-50 p-6">
+      <div className="min-h-screen bg-gray-50 p-3 sm:p-4 lg:p-6">
         {/* KYC Status Banner */}
         {kycStatus !== "VERIFIED" && (
-          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
-            <div className="flex items-center justify-between">
+          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 sm:p-4 mb-4 sm:mb-6">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
               <div className="flex items-center gap-2 text-yellow-800">
-                <AlertTriangle className="w-5 h-5" />
-                <p className="font-medium">
+                <AlertTriangle className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
+                <p className="font-medium text-sm sm:text-base">
                   Complete KYC to activate products & receive orders
                 </p>
               </div>
               <button
                 onClick={() => navigate("/vendor/profile")}
-                className="px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700"
+                className="w-full sm:w-auto px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 text-sm sm:text-base whitespace-nowrap"
               >
                 Complete KYC
               </button>
@@ -207,27 +207,27 @@ const ProductList = () => {
         )}
 
         {/* Header */}
-        <div className="flex justify-between items-center mb-6">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4 sm:mb-6">
           <div>
-            <h1 className="text-3xl font-bold text-gray-800">Manage Products</h1>
-            <p className="text-gray-600 mt-1">
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">Manage Products</h1>
+            <p className="text-gray-600 mt-1 text-sm sm:text-base">
               Total Products: {products.length}
             </p>
           </div>
           <button
             onClick={() => navigate("/vendor/products/add")}
-            className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700"
+            className="w-full sm:w-auto flex items-center justify-center gap-2 bg-green-600 text-white px-4 py-2.5 sm:py-2 rounded-lg hover:bg-green-700 text-sm sm:text-base"
           >
-            <Plus className="w-5 h-5" />
+            <Plus className="w-4 h-4 sm:w-5 sm:h-5" />
             Add Product
           </button>
         </div>
 
         {/* Filters */}
-        <div className="flex gap-2 mb-6">
+        <div className="flex flex-wrap gap-2 mb-4 sm:mb-6">
           <button
             onClick={() => setFilter("all")}
-            className={`px-4 py-2 rounded-lg ${
+            className={`px-3 sm:px-4 py-2 rounded-lg text-sm sm:text-base whitespace-nowrap ${
               filter === "all"
                 ? "bg-green-600 text-white"
                 : "bg-white text-gray-700"
@@ -237,7 +237,7 @@ const ProductList = () => {
           </button>
           <button
             onClick={() => setFilter("active")}
-            className={`px-4 py-2 rounded-lg ${
+            className={`px-3 sm:px-4 py-2 rounded-lg text-sm sm:text-base whitespace-nowrap ${
               filter === "active"
                 ? "bg-green-600 text-white"
                 : "bg-white text-gray-700"
@@ -247,7 +247,7 @@ const ProductList = () => {
           </button>
           <button
             onClick={() => setFilter("inactive")}
-            className={`px-4 py-2 rounded-lg ${
+            className={`px-3 sm:px-4 py-2 rounded-lg text-sm sm:text-base whitespace-nowrap ${
               filter === "inactive"
                 ? "bg-green-600 text-white"
                 : "bg-white text-gray-700"
@@ -259,18 +259,18 @@ const ProductList = () => {
 
         {/* Products Grid */}
         {products.length === 0 ? (
-          <div className="bg-white rounded-lg shadow p-12 text-center">
-            <Package className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-            <p className="text-gray-600 text-lg">No products found</p>
+          <div className="bg-white rounded-lg shadow p-8 sm:p-12 text-center">
+            <Package className="w-12 h-12 sm:w-16 sm:h-16 text-gray-400 mx-auto mb-4" />
+            <p className="text-gray-600 text-base sm:text-lg">No products found</p>
             <button
               onClick={() => navigate("/vendor/products/add")}
-              className="mt-4 text-green-600 hover:underline"
+              className="mt-4 text-green-600 hover:underline text-sm sm:text-base"
             >
               Add your first product
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {products.map((product) => {
               const stockStatusBadge = getStockStatusBadge(product);
               const StatusIcon = stockStatusBadge.icon;
@@ -284,7 +284,7 @@ const ProductList = () => {
                   } ${!product.isActive ? "opacity-60" : ""}`}
                 >
                   {/* Product Image */}
-                  <div className="h-48 bg-gray-200 rounded-t-lg overflow-hidden relative">
+                  <div className="h-40 sm:h-48 bg-gray-200 rounded-t-lg overflow-hidden relative">
                     {product.images && product.images.length > 0 ? (
                       <img
                         src={`https://agricorus.onrender.com${product.images[0]}`}
@@ -308,13 +308,13 @@ const ProductList = () => {
                   </div>
 
                   {/* Product Info */}
-                  <div className="p-4">
-                    <div className="flex justify-between items-start mb-2">
-                      <h3 className="font-semibold text-lg text-gray-800">
+                  <div className="p-3 sm:p-4">
+                    <div className="flex justify-between items-start mb-2 gap-2">
+                      <h3 className="font-semibold text-base sm:text-lg text-gray-800 line-clamp-2 min-w-0 flex-1">
                         {product.name}
                       </h3>
                       <span
-                        className={`px-2 py-1 rounded text-xs ${getCategoryColor(
+                        className={`px-2 py-1 rounded text-xs flex-shrink-0 whitespace-nowrap ${getCategoryColor(
                           product.category
                         )}`}
                       >
@@ -322,16 +322,16 @@ const ProductList = () => {
                       </span>
                     </div>
 
-                    <p className="text-gray-600 text-sm mb-3 line-clamp-2">
+                    <p className="text-gray-600 text-xs sm:text-sm mb-3 line-clamp-2">
                       {product.description || "No description"}
                     </p>
 
-                    <div className="flex justify-between items-center mb-3">
-                      <div>
-                        <p className="text-2xl font-bold text-green-600">
+                    <div className="flex justify-between items-center mb-3 gap-2">
+                      <div className="min-w-0 flex-1">
+                        <p className="text-xl sm:text-2xl font-bold text-green-600">
                           ₹{product.price.toLocaleString()}
                         </p>
-                        <p className={`text-sm font-medium ${
+                        <p className={`text-xs sm:text-sm font-medium ${
                           product.stock === 0
                             ? "text-red-600"
                             : product.stock < 10
@@ -342,8 +342,8 @@ const ProductList = () => {
                         </p>
                       </div>
                       {product.warrantyPeriod && (
-                        <p className="text-xs text-blue-600">
-                          {product.warrantyPeriod} months warranty
+                        <p className="text-xs text-blue-600 flex-shrink-0">
+                          {product.warrantyPeriod}mo warranty
                         </p>
                       )}
                     </div>
@@ -352,23 +352,23 @@ const ProductList = () => {
                     <div className="space-y-2">
                       <button
                         onClick={() => handleUpdateInventory(product)}
-                        className="w-full flex items-center justify-center gap-2 bg-green-50 text-green-700 px-3 py-2 rounded hover:bg-green-100 font-medium"
+                        className="w-full flex items-center justify-center gap-2 bg-green-50 text-green-700 px-3 py-2 rounded hover:bg-green-100 font-medium text-sm"
                       >
-                        <Package className="w-4 h-4" />
-                        Update Inventory
+                        <Package className="w-3 h-3 sm:w-4 sm:h-4" />
+                        <span className="truncate">Update Inventory</span>
                       </button>
                       <div className="flex gap-2">
                         <button
                           onClick={() => navigate(`/vendor/products/edit/${product._id}`)}
-                          className="flex-1 flex items-center justify-center gap-2 bg-blue-50 text-blue-600 px-3 py-2 rounded hover:bg-blue-100"
+                          className="flex-1 flex items-center justify-center gap-1 sm:gap-2 bg-blue-50 text-blue-600 px-2 sm:px-3 py-2 rounded hover:bg-blue-100 text-sm"
                         >
-                          <Edit className="w-4 h-4" />
-                          Edit
+                          <Edit className="w-3 h-3 sm:w-4 sm:h-4" />
+                          <span className="hidden sm:inline">Edit</span>
                         </button>
                         <button
                           onClick={() => handleToggleActive(product)}
                           disabled={!product.isActive && kycStatus !== "VERIFIED"}
-                          className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded ${
+                          className={`flex-1 flex items-center justify-center gap-1 sm:gap-2 px-2 sm:px-3 py-2 rounded text-sm ${
                             product.isActive
                               ? "bg-yellow-50 text-yellow-600 hover:bg-yellow-100"
                               : kycStatus === "VERIFIED"
@@ -378,21 +378,21 @@ const ProductList = () => {
                         >
                           {product.isActive ? (
                             <>
-                              <X className="w-4 h-4" />
-                              Deactivate
+                              <X className="w-3 h-3 sm:w-4 sm:h-4" />
+                              <span className="hidden sm:inline">Deactivate</span>
                             </>
                           ) : (
                             <>
-                              <CheckCircle2 className="w-4 h-4" />
-                              Activate
+                              <CheckCircle2 className="w-3 h-3 sm:w-4 sm:h-4" />
+                              <span className="hidden sm:inline">Activate</span>
                             </>
                           )}
                         </button>
                         <button
                           onClick={() => handleDelete(product._id)}
-                          className="flex items-center justify-center gap-2 bg-red-50 text-red-600 px-3 py-2 rounded hover:bg-red-100"
+                          className="flex items-center justify-center gap-1 sm:gap-2 bg-red-50 text-red-600 px-2 sm:px-3 py-2 rounded hover:bg-red-100"
                         >
-                          <Trash2 className="w-4 h-4" />
+                          <Trash2 className="w-3 h-3 sm:w-4 sm:h-4" />
                         </button>
                       </div>
                     </div>

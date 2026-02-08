@@ -106,36 +106,36 @@ export default function InvestorProjects() {
     <InvestorLayout>
       <div className="min-h-screen">
         {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 mb-4 sm:mb-6">
           <div>
-            <h1 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
-              <TrendingUp className="w-6 h-6 text-emerald-500" /> Investment Projects
+            <h1 className="text-xl sm:text-2xl font-bold text-gray-800 flex items-center gap-2">
+              <TrendingUp className="w-5 h-5 sm:w-6 sm:h-6 text-emerald-500" /> Investment Projects
             </h1>
-            <p className="text-gray-500 text-sm mt-1">Discover agricultural investment opportunities</p>
+            <p className="text-gray-500 text-xs sm:text-sm mt-1">Discover agricultural investment opportunities</p>
           </div>
-          <div className="flex gap-3">
-            <div className="bg-emerald-50 px-4 py-2 rounded-xl">
+          <div className="flex gap-2 sm:gap-3">
+            <div className="bg-emerald-50 px-3 sm:px-4 py-2 rounded-lg sm:rounded-xl">
               <p className="text-xs text-emerald-600">Open</p>
-              <p className="text-lg font-bold text-emerald-700">{openProjects}</p>
+              <p className="text-base sm:text-lg font-bold text-emerald-700">{openProjects}</p>
             </div>
-            <div className="bg-blue-50 px-4 py-2 rounded-xl">
+            <div className="bg-blue-50 px-3 sm:px-4 py-2 rounded-lg sm:rounded-xl">
               <p className="text-xs text-blue-600">Available</p>
-              <p className="text-lg font-bold text-blue-700">{formatCurrency(totalOpportunity)}</p>
+              <p className="text-base sm:text-lg font-bold text-blue-700">{formatCurrency(totalOpportunity)}</p>
             </div>
           </div>
         </div>
 
         {/* Search & Filter */}
-        <div className="flex flex-col sm:flex-row gap-3 mb-6">
+        <div className="flex flex-col sm:flex-row gap-3 mb-4 sm:mb-6">
           <div className="flex-1 relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
             <input type="text" placeholder="Search projects..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full pl-10 pr-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-emerald-500 text-sm" />
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-2 overflow-x-auto pb-1">
             {["all", "open", "funded"].map((s) => (
               <button key={s} onClick={() => setFilterStatus(s)}
-                className={`px-4 py-2.5 rounded-xl text-sm font-medium capitalize ${filterStatus === s ? "bg-emerald-500 text-white" : "bg-white border border-gray-200 text-gray-600 hover:border-emerald-300"}`}>
+                className={`px-4 py-2.5 rounded-xl text-sm font-medium capitalize whitespace-nowrap ${filterStatus === s ? "bg-emerald-500 text-white" : "bg-white border border-gray-200 text-gray-600 hover:border-emerald-300"}`}>
                 {s === "all" ? "All" : s}
               </button>
             ))}
@@ -146,7 +146,7 @@ export default function InvestorProjects() {
         {filteredProjects.length === 0 ? (
           <div className="text-center py-12 bg-white rounded-2xl border"><Leaf className="w-12 h-12 text-gray-300 mx-auto mb-3" /><p className="text-gray-500">No projects found</p></div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-5">
             {filteredProjects.map((project) => {
               const progress = project.fundingGoal > 0 ? (project.currentFunding / project.fundingGoal) * 100 : 0;
               const daysLeft = getDaysRemaining(project.endDate);
@@ -216,12 +216,12 @@ export default function InvestorProjects() {
         )}
 
         {/* Trust Bar */}
-        <div className="mt-8 bg-white rounded-2xl border p-5">
-          <div className="flex flex-wrap items-center justify-center gap-8">
-            <div className="flex items-center gap-2 text-sm text-gray-600"><Shield className="w-5 h-5 text-emerald-500" /> Secure Payments</div>
-            <div className="flex items-center gap-2 text-sm text-gray-600"><Users className="w-5 h-5 text-blue-500" /> Verified Farmers</div>
-            <div className="flex items-center gap-2 text-sm text-gray-600"><TrendingUp className="w-5 h-5 text-amber-500" /> 12-18% Returns</div>
-            <div className="flex items-center gap-2 text-sm text-gray-600"><Leaf className="w-5 h-5 text-purple-500" /> Sustainable</div>
+        <div className="mt-6 sm:mt-8 bg-white rounded-2xl border p-4 sm:p-5">
+          <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 lg:gap-8">
+            <div className="flex items-center gap-2 text-xs sm:text-sm text-gray-600"><Shield className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-500" /> Secure Payments</div>
+            <div className="flex items-center gap-2 text-xs sm:text-sm text-gray-600"><Users className="w-4 h-4 sm:w-5 sm:h-5 text-blue-500" /> Verified Farmers</div>
+            <div className="flex items-center gap-2 text-xs sm:text-sm text-gray-600"><TrendingUp className="w-4 h-4 sm:w-5 sm:h-5 text-amber-500" /> 12-18% Returns</div>
+            <div className="flex items-center gap-2 text-xs sm:text-sm text-gray-600"><Leaf className="w-4 h-4 sm:w-5 sm:h-5 text-purple-500" /> Sustainable</div>
           </div>
         </div>
       </div>

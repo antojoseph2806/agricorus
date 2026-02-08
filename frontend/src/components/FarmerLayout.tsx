@@ -1,28 +1,261 @@
-// src/components/FarmerLayout.tsx
-import React, { useState, useRef, useEffect } from "react";
-import { Outlet, Link, useNavigate, useLocation } from "react-router-dom";
+import React, { useState, useRef, useEffect } from 'react';
 import {
+  Shield,
+  ChevronDown,
+  Menu,
+  X,
+  LogOut,
+  UserCircle,
   TrendingUp,
   MapPin,
   Home,
-  Shield,
   FileText,
   AlertTriangle,
-  Menu,
-  X,
-  UserCircle,
-  LogOut,
-  ChevronDown,
   ShoppingBag,
   User,
-  Settings
-} from "lucide-react";
+  Settings,
+  Package,
+  Activity,
+} from 'lucide-react';
+import { useNavigate, Link, useLocation, Outlet } from 'react-router-dom';
 
-interface FarmerLayoutProps {
-  children?: React.ReactNode;
+// Type definition for navigation items
+interface NavItem {
+  label: string;
+  icon: React.ElementType;
+  href: string;
+  children?: NavItem[];
 }
 
-// -------------------- USER PROFILE DROPDOWN --------------------
+// Props type for the Sidebar component
+interface SidebarProps {
+  isSidebarOpen: boolean;
+  onToggleSidebar: () => void;
+  isMobile: boolean;
+}
+
+// ----- Sidebar Component -----
+const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, onToggleSidebar, isMobile }) => {
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const navigationItems: NavItem[] = [
+    { label: 'Home', icon: Home, href: '/farmerdashboard' },
+    {
+      label: 'Manage Profile',
+      icon: UserCircle,
+      href: '#',
+      children: [
+        { label: 'Verify Identity', icon: Shield, href: '/farmer/kyc/verify' },
+        { label: 'View Profile', icon: UserCircle, href: '/farmer/profile' },
+        { label: 'View KYC Status', icon: Shield, href: '/farmer/kyc/status' },
+      ],
+    },
+    { label: 'View Lands', icon: MapPin, href: '/lands/farmer' },
+    {
+      label: 'Crowdfunding',
+      icon: TrendingUp,
+      href: '#',
+      children: [
+        { label: 'Add Projects', icon: Package, href: '/farmer/projects/add' },
+        { label: 'View Projects', icon: FileText, href: '/farmer/projects' },
+        { label: 'Approved Projects', icon: Activity, href: '/approved-projects' },
+      ],
+    },
+    {
+      label: 'Lease History',
+      icon: FileText,
+      href: '#',
+      children: [
+        { label: 'Accepted Leases', icon: FileText, href: '/farmer/leases/accepted' },
+        { label: 'Cancelled Leases', icon: FileText, href: '/farmer/leases/cancelled' },
+        { label: 'Active Leases', icon: Activity, href: '/farmer/leases/active' },
+      ],
+    },
+    {
+      label: 'Crowdfunding History',
+      icon: FileText,
+      href: '#',
+      children: [
+        { label: 'Completed Projects', icon: FileText, href: '/closed-projects' },
+        { label: 'Funded Projects', icon: Activity, href: '/ongoing-projects' },
+      ],
+    },
+    {
+      label: 'Disputes History',
+      icon: AlertTriangle,
+      href: '/disputes/my',
+    },
+    {
+      label: 'Marketplace',
+      icon: ShoppingBag,
+      href: '#',
+      children: [
+        { label: 'Browse Products', icon: Package, href: '/marketplace' },
+        { label: 'My Cart', icon: ShoppingBag, href: '/cart' },
+        { label: 'Order History', icon: FileText, href: '/orders' },
+        { label: 'Manage Addresses', icon: MapPin, href: '/addresses' },
+      ],
+    },
+  ];
+
+  const handleLogout = async () => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      try {
+        await fetch('https://agricorus.onrender.com/api/auth/logout', {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${token}` },
+        });
+      } catch (e) {
+        console.warn('Backend logout failed.');
+      }
+    }
+    localStorage.removeItem('token');
+    localStorage.removeItem('role');
+    navigate('/login');
+  };
+
+  const toggleDropdown = (label: string) => {
+    setOpenDropdown(openDropdown === label ? null : label);
+  };
+
+  const handleNavClick = () => {
+    if (isMobile) {
+      onToggleSidebar();
+    }
+  };
+
+  const isActive = (href: string) => {
+    if (href === '#') return false;
+    return location.pathname === href || location.pathname.startsWith(href + '/');
+  };
+
+  const isChildActive = (children?: NavItem[]) => {
+    if (!children) return false;
+    return children.some(child => location.pathname === child.href || location.pathname.startsWith(child.href + '/'));
+  };
+
+  return (
+    <div className={`flex flex-col h-full bg-white shadow-xl border-r transition-all duration-300 ${
+        isMobile ? "w-64" : isSidebarOpen ? "w-64" : "w-20"
+      }`}>
+      <div className="flex items-center h-16 border-b px-4 relative">
+        <div className={`flex items-center transition-opacity duration-300 ${
+            isSidebarOpen || isMobile ? "opacity-100" : "opacity-0"
+          }`}>
+          <div className="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center">
+            <Shield className="w-5 h-5 text-white" />
+          </div>
+          <span className="text-xl font-bold text-gray-900 ml-2">AgriCorus</span>
+        </div>
+        {!isMobile && (
+          <button
+            onClick={onToggleSidebar}
+            className={`absolute top-1/2 -translate-y-1/2 ${
+              isSidebarOpen ? "-right-4" : "right-4"
+            } p-1 rounded-full bg-gray-200 hover:bg-gray-300 transition z-50`}
+          >
+            {isSidebarOpen ? (
+              <ChevronDown className="w-4 h-4 rotate-90" />
+            ) : (
+              <ChevronDown className="w-4 h-4 -rotate-90" />
+            )}
+          </button>
+        )}
+      </div>
+      
+      <nav className="flex-1 px-2 py-4 space-y-1 overflow-y-auto">
+        {navigationItems.map((item, index) => {
+          const active = isActive(item.href) || isChildActive(item.children);
+          
+          return (
+            <div key={index}>
+              {item.children ? (
+                <>
+                  <button
+                    onClick={() => toggleDropdown(item.label)}
+                    className={`w-full flex items-center justify-between px-3 py-2 text-sm rounded-lg transition-all duration-200 group ${
+                      active
+                        ? 'bg-emerald-50 text-emerald-700 font-medium'
+                        : 'text-gray-700 hover:bg-gray-100'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2">
+                       <item.icon className={`w-5 h-5 ${active ? 'text-emerald-600' : 'text-gray-500 group-hover:text-gray-700'} transition-colors`} />
+                      {(isSidebarOpen || isMobile) && (
+                        <span>{item.label}</span>
+                      )}
+                    </div>
+                    {(isSidebarOpen || isMobile) && (
+                      <ChevronDown
+                        className={`w-4 h-4 transition-transform duration-200 ${
+                          openDropdown === item.label ? 'rotate-180' : ''
+                        } ${active ? 'text-emerald-600' : 'text-gray-400'}`}
+                      />
+                    )}
+                  </button>
+                  {(isSidebarOpen || isMobile) && openDropdown === item.label && (
+                    <div className="ml-4 mt-1 space-y-1">
+                      {item.children.map((child, idx) => {
+                        const childActive = location.pathname === child.href || location.pathname.startsWith(child.href + '/');
+                        return (
+                          <Link
+                            key={idx}
+                            to={child.href}
+                            onClick={handleNavClick}
+                            className={`flex items-center gap-2 px-3 py-2 text-sm rounded-lg transition-all duration-200 ${
+                              childActive
+                                ? 'bg-emerald-50 text-emerald-700 font-medium'
+                                : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                            }`}
+                          >
+                            <child.icon className={`w-4 h-4 ${childActive ? 'text-emerald-600' : 'text-gray-400'}`} />
+                            <span>{child.label}</span>
+                          </Link>
+                        );
+                      })}
+                    </div>
+                  )}
+                </>
+              ) : (
+                <Link
+                  to={item.href}
+                  onClick={handleNavClick}
+                  className={`flex items-center gap-2 px-3 py-2 text-sm rounded-lg transition-all duration-200 group ${
+                    active
+                      ? 'bg-emerald-50 text-emerald-700 font-medium'
+                      : 'text-gray-700 hover:bg-gray-100'
+                  }`}
+                >
+                  <item.icon className={`w-5 h-5 ${active ? 'text-emerald-600' : 'text-gray-500 group-hover:text-gray-700'} transition-colors`} />
+                  {(isSidebarOpen || isMobile) && (
+                    <span>{item.label}</span>
+                  )}
+                </Link>
+              )}
+            </div>
+          );
+        })}
+      </nav>
+      
+      <div className="px-4 py-4 border-t">
+        <button
+          onClick={handleLogout}
+          className="w-full flex items-center justify-center gap-2 px-4 py-2 text-sm text-red-600 bg-red-50 hover:bg-red-100 rounded-md transition"
+        >
+          <LogOut className="w-4 h-4" />
+          {(isSidebarOpen || isMobile) && (
+            <span>Logout</span>
+          )}
+        </button>
+      </div>
+    </div>
+  );
+};
+
+// ----- User Profile Dropdown Component -----
 const UserProfileDropdown: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [profileImage, setProfileImage] = useState<string | null>(null);
@@ -51,7 +284,6 @@ const UserProfileDropdown: React.FC = () => {
         });
         const data = await response.json();
         if (data.profileImage) {
-          // Add backend URL if the image path doesn't already include it
           const imageUrl = data.profileImage.startsWith('http') 
             ? data.profileImage 
             : `https://agricorus.onrender.com${data.profileImage}`;
@@ -65,7 +297,18 @@ const UserProfileDropdown: React.FC = () => {
     fetchProfileImage();
   }, []);
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      try {
+        await fetch("https://agricorus.onrender.com/api/auth/logout", {
+          method: "POST",
+          headers: { Authorization: `Bearer ${token}` },
+        });
+      } catch (e) {
+        console.warn("Backend logout failed.");
+      }
+    }
     localStorage.removeItem("token");
     navigate("/login");
   };
@@ -119,261 +362,86 @@ const UserProfileDropdown: React.FC = () => {
   );
 };
 
-const FarmerLayout: React.FC<FarmerLayoutProps> = ({ children }) => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true); // Desktop default: open
-  const [isMobileOpen, setIsMobileOpen] = useState(false); // Mobile overlay state
-  const [openMenus, setOpenMenus] = useState<Record<string, boolean>>({});
-  const navigate = useNavigate();
-  const location = useLocation();
+// ----- Reusable Layout Wrapper -----
+const FarmerLayout: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  // -------------------- NAVIGATION ITEMS --------------------
-  const navigationItems = [
-    { label: "Home", icon: Home, href: "/farmerdashboard" },
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 1024) {
+        setIsSidebarOpen(true);
+      } else {
+        setIsSidebarOpen(false);
+      }
+    };
 
-    {
-      label: "Manage Profile",
-      icon: UserCircle,
-      href: "#",
-      children: [
-        { label: "Verify Identity", icon: UserCircle, href: "/farmer/kyc/verify" },
-        { label: "View Profile", icon: UserCircle, href: "/farmer/profile" },
-        { label: "View KYC Status", icon: UserCircle, href: "/farmer/kyc/status" },
-      ],
-    },
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
-    { label: "View Lands", icon: MapPin, href: "/lands/farmer" },
+  const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
 
-    {
-      label: "Crowdfunding",
-      icon: TrendingUp,
-      href: "#",
-      children: [
-        { label: "Add Projects", icon: UserCircle, href: "/farmer/projects/add" },
-        { label: "View Projects", icon: UserCircle, href: "/farmer/projects" },
-        { label: "Approved Projects", icon: UserCircle, href: "/approved-projects" },
-      ],
-    },
-
-    {
-      label: "Lease History",
-      icon: FileText,
-      href: "#",
-      children: [
-        { label: "Accepted Leases", icon: UserCircle, href: "/farmer/leases/accepted" },
-        { label: "Cancelled Leases", icon: UserCircle, href: "/farmer/leases/cancelled" },
-        { label: "Active Leases", icon: UserCircle, href: "/farmer/leases/active" },
-      ],
-    },
-
-    {
-  label: "Crowdfunding History",
-  icon: FileText,
-  href: "#",
-  children: [
-    { label: "Completed Projects", icon: UserCircle, href: "/closed-projects" },
-    { label: "Funded Projects", icon: UserCircle, href: "/ongoing-projects" },
-  ],
-},
-    {
-  label: 'Disputes History',
-  icon: AlertTriangle,
-  href: '/disputes/my',
-},
-    {
-      label: 'Marketplace',
-      icon: ShoppingBag,
-      href: '#',
-      children: [
-        { label: 'Browse Products', icon: ShoppingBag, href: '/marketplace' },
-        { label: 'My Cart', icon: ShoppingBag, href: '/cart' },
-        { label: 'Order History', icon: FileText, href: '/orders' },
-        { label: 'Manage Addresses', icon: MapPin, href: '/addresses' },
-      ],
-    },
-  ];
-
-  // -------------------- HANDLERS --------------------
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    navigate("/login");
-  };
-
-  const toggleMenu = (label: string) => {
-    setOpenMenus((prev) => ({ ...prev, [label]: !prev[label] }));
-  };
-
-  const isActive = (href: string) => location.pathname.startsWith(href);
-
-  // -------------------- RENDER NAV ITEMS --------------------
-  const renderNavItems = (items: typeof navigationItems, isMobile = false) =>
-    items.map((item, idx) => {
-      const hasChildren = !!item.children;
-      const isOpen = openMenus[item.label];
-      const active = isActive(item.href);
-
-      // Only render when sidebar is open
-      if (!isSidebarOpen) return null;
-
-      return (
-        <div key={idx}>
-          {/* Parent Item */}
-          <div
-            className={`flex items-center justify-between px-4 py-2 rounded-md cursor-pointer transition ${
-              active
-                ? "bg-gray-200 text-green-700 font-semibold"
-                : "text-gray-700 hover:bg-gray-100"
-            }`}
-            onClick={() => {
-              if (hasChildren) {
-                toggleMenu(item.label);
-              } else if (isMobile) {
-                setIsMobileOpen(false);
-              }
-            }}
-          >
-            <Link
-              to={item.href}
-              className="flex items-center gap-3 flex-1 text-sm font-medium"
-              onClick={() => isMobile && !hasChildren && setIsMobileOpen(false)}
-            >
-              <item.icon className="w-5 h-5" />
-              <span>{item.label}</span>
-            </Link>
-
-            {hasChildren && (
-              <ChevronDown
-                className={`w-4 h-4 transition-transform duration-200 ${
-                  isOpen ? "rotate-180" : "rotate-0"
-                }`}
-              />
-            )}
-          </div>
-
-          {/* Children */}
-          {hasChildren && isOpen && (
-            <div className="ml-8 flex flex-col space-y-1">
-              {item.children.map((child, cidx) => {
-                const childActive = isActive(child.href);
-                return (
-                  <Link
-                    key={cidx}
-                    to={child.href}
-                    className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm transition ${
-                      childActive
-                        ? "bg-gray-200 text-green-700 font-medium"
-                        : "text-gray-600 hover:bg-gray-100"
-                    }`}
-                    onClick={() => isMobile && setIsMobileOpen(false)}
-                  >
-                    <child.icon className="w-4 h-4" />
-                    <span>{child.label}</span>
-                  </Link>
-                );
-              })}
-            </div>
-          )}
-        </div>
-      );
-    });
-
-  // -------------------- LAYOUT --------------------
   return (
-    <div className="flex min-h-screen bg-gray-50">
-      {/* Sidebar Desktop */}
-      <div
-        className={`hidden md:flex flex-col bg-white border-r transition-all duration-300 ${
-          isSidebarOpen ? "w-64" : "w-16"
-        } relative`}
+    <div className="flex min-h-screen bg-gray-50 relative">
+      <aside
+        className={`hidden lg:block fixed top-0 bottom-0 left-0 z-30 transition-all duration-300 ${
+          isSidebarOpen ? 'w-64' : 'w-20'
+        }`}
       >
-        <div className="flex items-center justify-between px-4 h-16 border-b">
-          <Shield className="w-6 h-6 text-green-700" />
-          {isSidebarOpen && <span className="text-xl font-bold">AgriCorus</span>}
-          <button
-            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-            className="p-2 rounded-md hover:bg-gray-100"
-          >
-            {isSidebarOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-          </button>
-        </div>
+        <Sidebar isSidebarOpen={isSidebarOpen} onToggleSidebar={toggleSidebar} isMobile={false} />
+      </aside>
 
-        {/* Nav Items */}
-        <nav className="mt-4 flex-1 flex flex-col space-y-1">
-          {renderNavItems(navigationItems)}
-        </nav>
-
-        {/* Logout at bottom */}
-        {isSidebarOpen && (
-          <div className="p-4 border-t">
-            <button
-              onClick={handleLogout}
-              className="flex items-center gap-3 px-4 py-2 w-full text-sm font-medium text-red-600 hover:bg-red-100 rounded-md transition"
-            >
-              <LogOut className="w-5 h-5" />
-              <span>Logout</span>
-            </button>
+      <div
+        className={`flex-1 transition-all duration-300 ${
+          isSidebarOpen ? 'lg:ml-64' : 'lg:ml-20'
+        }`}
+      >
+         <div className="lg:hidden fixed top-0 left-0 right-0 bg-white border-b shadow z-40 h-16 flex items-center px-4 justify-between">
+          <div className="flex items-center space-x-2">
+            <div className="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center">
+              <Shield className="w-5 h-5 text-white" />
+            </div>
+            <span className="text-xl font-bold text-gray-900">AgriCorus</span>
           </div>
-        )}
-      </div>
-
-      {/* Sidebar Mobile Overlay */}
-      <div
-        className={`fixed inset-y-0 left-0 z-50 bg-white border-r transition-transform duration-300 w-64 md:hidden
-        ${isMobileOpen ? "translate-x-0" : "-translate-x-full"}`}
-      >
-        <div className="flex items-center justify-between px-4 h-16 border-b">
-          <span className="text-xl font-bold">AgriCorus</span>
-          <button
-            onClick={() => setIsMobileOpen(false)}
-            className="p-2 rounded-md hover:bg-gray-100"
-          >
-            <X className="w-6 h-6" />
-          </button>
-        </div>
-
-        <div className="flex flex-col h-full">
-          <nav className="mt-4 flex-1 flex flex-col space-y-1 overflow-y-auto">
-            {renderNavItems(navigationItems, true)}
-          </nav>
-          <div className="p-4 border-t">
+          <div className="flex items-center gap-3">
+            <UserProfileDropdown />
             <button
-              onClick={handleLogout}
-              className="flex items-center gap-3 px-4 py-2 w-full text-sm font-medium text-red-600 hover:bg-red-100 rounded-md transition"
+              onClick={toggleSidebar}
+              className="p-2 rounded-md text-gray-700 hover:text-emerald-600"
             >
-              <LogOut className="w-5 h-5" />
-              <span>Logout</span>
+              <Menu className="w-6 h-6" />
             </button>
           </div>
         </div>
-      </div>
 
-      {/* Mobile backdrop */}
-      {isMobileOpen && (
+        <div className="hidden lg:block fixed top-0 right-0 left-0 bg-white border-b shadow-sm z-30 h-16" style={{ marginLeft: isSidebarOpen ? '256px' : '80px' }}>
+          <div className="h-full flex items-center justify-end px-6">
+            <UserProfileDropdown />
+          </div>
+        </div>
+
         <div
-          className="fixed inset-0 bg-black opacity-25 z-40 md:hidden"
-          onClick={() => setIsMobileOpen(false)}
-        />
-      )}
-
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col">
-        {/* Top Navbar Mobile */}
-        <div className="flex items-center justify-between px-4 h-16 bg-white border-b md:hidden">
-          <button
-            onClick={() => setIsMobileOpen(true)}
-            className="p-2 rounded-md hover:bg-gray-100"
-          >
-            <Menu className="w-6 h-6" />
-          </button>
-          <span className="text-lg font-bold">AgriCorus</span>
-          <UserProfileDropdown />
+          className={`lg:hidden fixed top-0 bottom-0 left-0 w-64 bg-white shadow-xl z-50 transition-transform duration-300 ease-in-out ${
+            isSidebarOpen ? "translate-x-0" : "-translate-x-full"
+          }`}
+        >
+          <div className="h-full relative">
+            <Sidebar
+              isSidebarOpen={true}
+              onToggleSidebar={toggleSidebar}
+              isMobile={true}
+            />
+            <button
+              onClick={toggleSidebar}
+              className="absolute top-4 right-4 text-gray-700"
+            >
+              <X className="w-6 h-6" />
+            </button>
+          </div>
         </div>
 
-        {/* Top Navbar Desktop */}
-        <div className="hidden md:flex items-center justify-end px-6 h-16 bg-white border-b">
-          <UserProfileDropdown />
-        </div>
-
-        <main className="flex-1 p-6 overflow-auto">
+        <main className="p-4 lg:p-8 mt-16 min-h-screen">
           {children || <Outlet />}
         </main>
       </div>

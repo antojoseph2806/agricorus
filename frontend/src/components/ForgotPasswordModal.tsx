@@ -65,6 +65,13 @@ const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({ onClose }) =>
       return;
     }
 
+    // Validate phone number format
+    const phoneRegex = /^[6-9]\d{9}$/;
+    if (!phoneRegex.test(phone)) {
+      setError("Please enter a valid 10-digit phone number starting with 6-9");
+      return;
+    }
+
     if (resendCountdown > 0) {
       setError(`Please wait ${formatTime(resendCountdown)} before requesting another OTP`);
       return;
@@ -218,12 +225,21 @@ const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({ onClose }) =>
               </label>
               <input
                 type="tel"
-                placeholder="Enter your phone number"
+                placeholder="Enter 10-digit phone number"
                 value={phone}
-                onChange={(e) => setPhone(e.target.value)}
+                onChange={(e) => {
+                  // Only allow numbers and limit to 10 digits
+                  const value = e.target.value.replace(/\D/g, "").slice(0, 10);
+                  setPhone(value);
+                }}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition"
                 disabled={loading}
+                maxLength={10}
+                pattern="[6-9][0-9]{9}"
               />
+              <p className="text-xs text-gray-500 mt-1">
+                Enter a 10-digit number starting with 6, 7, 8, or 9
+              </p>
             </div>
             <button
               onClick={sendOtp}

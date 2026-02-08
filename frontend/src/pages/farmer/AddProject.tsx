@@ -338,29 +338,31 @@ export default function AddProject() {
 
   // Render step indicator
   const renderStepIndicator = () => (
-    <div className="flex items-center justify-center mb-8">
-      {Array.from({ length: totalSteps }, (_, i) => i + 1).map((step) => (
-        <div key={step} className="flex items-center">
-          <div
-            className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold ${
-              step === currentStep
-                ? "bg-emerald-600 text-white"
-                : step < currentStep
-                ? "bg-emerald-100 text-emerald-600"
-                : "bg-gray-200 text-gray-500"
-            }`}
-          >
-            {step < currentStep ? <CheckCircle className="w-5 h-5" /> : step}
-          </div>
-          {step < totalSteps && (
+    <div className="flex items-center justify-center mb-6 sm:mb-8 overflow-x-auto pb-2">
+      <div className="flex items-center min-w-max px-2">
+        {Array.from({ length: totalSteps }, (_, i) => i + 1).map((step) => (
+          <div key={step} className="flex items-center">
             <div
-              className={`w-16 h-1 mx-2 ${
-                step < currentStep ? "bg-emerald-600" : "bg-gray-200"
+              className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-sm sm:text-base font-semibold flex-shrink-0 ${
+                step === currentStep
+                  ? "bg-emerald-600 text-white"
+                  : step < currentStep
+                  ? "bg-emerald-100 text-emerald-600"
+                  : "bg-gray-200 text-gray-500"
               }`}
-            />
-          )}
-        </div>
-      ))}
+            >
+              {step < currentStep ? <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5" /> : step}
+            </div>
+            {step < totalSteps && (
+              <div
+                className={`w-12 sm:w-16 h-1 mx-1 sm:mx-2 ${
+                  step < currentStep ? "bg-emerald-600" : "bg-gray-200"
+                }`}
+              />
+            )}
+          </div>
+        ))}
+      </div>
     </div>
   );
 
@@ -384,16 +386,16 @@ export default function AddProject() {
 
   // Step 1: Basic Project Information
   const renderBasicInfoStep = () => (
-    <div className="space-y-6">
-      <div className="text-center mb-6">
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">Project Information</h2>
-        <p className="text-gray-600">Tell us about your agricultural project</p>
+    <div className="space-y-4 sm:space-y-6">
+      <div className="text-center mb-4 sm:mb-6">
+        <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">Project Information</h2>
+        <p className="text-sm sm:text-base text-gray-600">Tell us about your agricultural project</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            <FileText className="inline h-4 w-4 mr-1" />
+          <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">
+            <FileText className="inline h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1" />
             Project Title *
           </label>
           <input
@@ -401,13 +403,13 @@ export default function AddProject() {
             placeholder="e.g., Organic Tomato Greenhouse"
             value={basicInfo.title}
             onChange={(e) => setBasicInfo({ ...basicInfo, title: e.target.value })}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+            className="w-full px-3 sm:px-4 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            <Sprout className="inline h-4 w-4 mr-1" />
+          <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">
+            <Sprout className="inline h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1" />
             Crop Type
           </label>
           <input
@@ -415,13 +417,13 @@ export default function AddProject() {
             placeholder="e.g., Tomatoes, Wheat, Corn"
             value={basicInfo.cropType}
             onChange={(e) => setBasicInfo({ ...basicInfo, cropType: e.target.value })}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+            className="w-full px-3 sm:px-4 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            <DollarSign className="inline h-4 w-4 mr-1" />
+          <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">
+            <DollarSign className="inline h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1" />
             Funding Goal (₹) *
           </label>
           <input
@@ -430,13 +432,13 @@ export default function AddProject() {
             value={basicInfo.fundingGoal}
             onChange={(e) => setBasicInfo({ ...basicInfo, fundingGoal: e.target.value })}
             min={100}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+            className="w-full px-3 sm:px-4 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            <Calendar className="inline h-4 w-4 mr-1" />
+          <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">
+            <Calendar className="inline h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1" />
             Campaign End Date *
           </label>
           <input
@@ -444,13 +446,13 @@ export default function AddProject() {
             value={basicInfo.endDate}
             onChange={(e) => setBasicInfo({ ...basicInfo, endDate: e.target.value })}
             min={new Date().toISOString().split("T")[0]}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+            className="w-full px-3 sm:px-4 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
           />
         </div>
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">
           Project Description *
         </label>
         <textarea
@@ -458,7 +460,7 @@ export default function AddProject() {
           value={basicInfo.description}
           onChange={(e) => setBasicInfo({ ...basicInfo, description: e.target.value })}
           rows={6}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 resize-none"
+          className="w-full px-3 sm:px-4 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 resize-none"
         />
       </div>
     </div>
@@ -466,27 +468,27 @@ export default function AddProject() {
 
   // Step 2: Farmer Identity Verification
   const renderFarmerVerificationStep = () => (
-    <div className="space-y-6">
-      <div className="text-center mb-6">
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">Identity Verification</h2>
-        <p className="text-gray-600">Verify your identity with government documents</p>
+    <div className="space-y-4 sm:space-y-6">
+      <div className="text-center mb-4 sm:mb-6">
+        <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">Identity Verification</h2>
+        <p className="text-sm sm:text-base text-gray-600">Verify your identity with government documents</p>
       </div>
 
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-        <div className="flex items-start">
-          <Shield className="w-5 h-5 text-blue-600 mr-2 mt-0.5" />
+      <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 sm:p-4 mb-4 sm:mb-6">
+        <div className="flex items-start gap-2">
+          <Shield className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600 flex-shrink-0 mt-0.5" />
           <div>
-            <h3 className="font-semibold text-blue-900 text-sm">Identity Verification Required</h3>
-            <p className="text-blue-800 text-sm mt-1">
+            <h3 className="font-semibold text-blue-900 text-xs sm:text-sm">Identity Verification Required</h3>
+            <p className="text-blue-800 text-xs sm:text-sm mt-1">
               All documents will be securely encrypted and used only for verification purposes.
             </p>
           </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">
             Aadhaar Number *
           </label>
           <input
@@ -495,12 +497,12 @@ export default function AddProject() {
             value={farmerVerification.aadhaarNumber}
             onChange={(e) => setFarmerVerification({ ...farmerVerification, aadhaarNumber: e.target.value })}
             maxLength={12}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+            className="w-full px-3 sm:px-4 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">
             Upload Aadhaar Document *
           </label>
           <input
@@ -510,23 +512,23 @@ export default function AddProject() {
               ...farmerVerification, 
               aadhaarDocument: e.target.files?.[0] || null 
             })}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+            className="w-full px-3 sm:px-4 py-2 text-xs sm:text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
           />
           {farmerVerification.aadhaarDocument && (
-            <p className="text-sm text-green-600 mt-1">
+            <p className="text-xs sm:text-sm text-green-600 mt-1 truncate">
               ✓ {farmerVerification.aadhaarDocument.name}
             </p>
           )}
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">
             Government ID Type *
           </label>
           <select
             value={farmerVerification.govtIdType}
             onChange={(e) => setFarmerVerification({ ...farmerVerification, govtIdType: e.target.value })}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+            className="w-full px-3 sm:px-4 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
           >
             <option value="">Select ID Type</option>
             <option value="AADHAAR">Aadhaar Card</option>
@@ -537,7 +539,7 @@ export default function AddProject() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">
             Government ID Number *
           </label>
           <input
@@ -545,12 +547,12 @@ export default function AddProject() {
             placeholder="Enter ID number"
             value={farmerVerification.govtIdNumber}
             onChange={(e) => setFarmerVerification({ ...farmerVerification, govtIdNumber: e.target.value })}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+            className="w-full px-3 sm:px-4 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
           />
         </div>
 
         <div className="md:col-span-2">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">
             Upload Government ID Document *
           </label>
           <input
@@ -560,10 +562,10 @@ export default function AddProject() {
               ...farmerVerification, 
               govtIdDocument: e.target.files?.[0] || null 
             })}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+            className="w-full px-3 sm:px-4 py-2 text-xs sm:text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
           />
           {farmerVerification.govtIdDocument && (
-            <p className="text-sm text-green-600 mt-1">
+            <p className="text-xs sm:text-sm text-green-600 mt-1 truncate">
               ✓ {farmerVerification.govtIdDocument.name}
             </p>
           )}
@@ -1098,17 +1100,17 @@ export default function AddProject() {
   );
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4">
+    <div className="min-h-screen bg-gray-50 p-3 sm:p-4 lg:p-6">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
-        <div className="bg-white rounded-lg shadow-sm border p-6 mb-6">
-          <div className="flex items-center mb-4">
-            <div className="w-12 h-12 bg-emerald-600 rounded-lg flex items-center justify-center mr-4">
-              <Rocket className="h-6 w-6 text-white" />
+        <div className="bg-white rounded-lg shadow-sm border p-4 sm:p-6 mb-4 sm:mb-6">
+          <div className="flex items-center gap-3 sm:gap-4">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-emerald-600 rounded-lg flex items-center justify-center flex-shrink-0">
+              <Rocket className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
             </div>
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900">Create Verified Project</h1>
-              <p className="text-gray-600 mt-1">Complete verification process for your agricultural project</p>
+            <div className="min-w-0 flex-1">
+              <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 truncate">Create Verified Project</h1>
+              <p className="text-xs sm:text-sm text-gray-600 mt-0.5 sm:mt-1 line-clamp-2">Complete verification process for your agricultural project</p>
             </div>
           </div>
           
@@ -1118,37 +1120,37 @@ export default function AddProject() {
 
         {/* Error Alert */}
         {error && (
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6 flex items-start">
-            <AlertCircle className="h-5 w-5 text-red-600 mr-3 flex-shrink-0 mt-0.5" />
+          <div className="bg-red-50 border border-red-200 rounded-lg p-3 sm:p-4 mb-4 sm:mb-6 flex items-start gap-2">
+            <AlertCircle className="h-4 w-4 sm:h-5 sm:w-5 text-red-600 flex-shrink-0 mt-0.5" />
             <div>
-              <p className="font-semibold text-red-900 text-sm">Error</p>
-              <p className="text-red-700 text-sm">{error}</p>
+              <p className="font-semibold text-red-900 text-xs sm:text-sm">Error</p>
+              <p className="text-red-700 text-xs sm:text-sm">{error}</p>
             </div>
           </div>
         )}
 
         {/* Form Content */}
-        <div className="bg-white rounded-lg shadow-sm border p-6 mb-6">
+        <div className="bg-white rounded-lg shadow-sm border p-4 sm:p-6 mb-4 sm:mb-6">
           {renderStepContent()}
         </div>
 
         {/* Navigation Buttons */}
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-0">
           <button
             type="button"
             onClick={prevStep}
             disabled={currentStep === 1}
-            className="flex items-center px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-semibold transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex items-center justify-center px-4 sm:px-6 py-2.5 sm:py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 text-sm sm:text-base font-semibold transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed order-2 sm:order-1"
           >
-            <ArrowLeft className="h-5 w-5 mr-2" />
+            <ArrowLeft className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
             Previous
           </button>
 
-          <div className="flex items-center space-x-4">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 order-1 sm:order-2">
             <button
               type="button"
               onClick={() => navigate("/farmer/projects")}
-              className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-semibold transition-colors duration-200"
+              className="px-4 sm:px-6 py-2.5 sm:py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 text-sm sm:text-base font-semibold transition-colors duration-200"
             >
               Cancel
             </button>
@@ -1158,26 +1160,26 @@ export default function AddProject() {
                 type="button"
                 onClick={nextStep}
                 disabled={!validateStep(currentStep)}
-                className="flex items-center px-6 py-3 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 font-semibold transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex items-center justify-center px-4 sm:px-6 py-2.5 sm:py-3 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 text-sm sm:text-base font-semibold transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Next
-                <ArrowLeft className="h-5 w-5 ml-2 rotate-180" />
+                <ArrowLeft className="h-4 w-4 sm:h-5 sm:w-5 ml-2 rotate-180" />
               </button>
             ) : (
               <button
                 type="button"
                 onClick={handleSubmit}
                 disabled={loading || !validateStep(currentStep)}
-                className="flex items-center px-6 py-3 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 font-semibold transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex items-center justify-center px-4 sm:px-6 py-2.5 sm:py-3 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 text-sm sm:text-base font-semibold transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? (
                   <>
-                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2"></div>
+                    <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2"></div>
                     Submitting...
                   </>
                 ) : (
                   <>
-                    <Rocket className="h-5 w-5 mr-2" />
+                    <Rocket className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
                     Submit Project
                   </>
                 )}
@@ -1187,18 +1189,18 @@ export default function AddProject() {
         </div>
 
         {/* Step Information */}
-        <div className="mt-6 bg-emerald-50 border border-emerald-200 rounded-lg p-4">
-          <div className="flex items-start">
+        <div className="mt-4 sm:mt-6 bg-emerald-50 border border-emerald-200 rounded-lg p-3 sm:p-4">
+          <div className="flex items-start gap-2 sm:gap-3">
             <div className="flex-shrink-0">
-              <div className="w-8 h-8 bg-emerald-600 rounded-lg flex items-center justify-center">
-                <Info className="h-4 w-4 text-white" />
+              <div className="w-7 h-7 sm:w-8 sm:h-8 bg-emerald-600 rounded-lg flex items-center justify-center">
+                <Info className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-white" />
               </div>
             </div>
-            <div className="ml-3">
-              <h3 className="text-sm font-semibold text-emerald-900 mb-1">
+            <div>
+              <h3 className="text-xs sm:text-sm font-semibold text-emerald-900 mb-1">
                 Step {currentStep} of {totalSteps}
               </h3>
-              <div className="text-sm text-emerald-800">
+              <div className="text-xs sm:text-sm text-emerald-800">
                 {currentStep === 1 && "Provide basic information about your agricultural project"}
                 {currentStep === 2 && "Upload government documents for identity verification"}
                 {currentStep === 3 && "Enter detailed land information including GPS coordinates"}

@@ -315,50 +315,50 @@ const AdminLandManagement: React.FC<AdminLandManagementProps> = ({ statusFilter 
 
   return (
     <Layout>
-      <div className="min-h-screen bg-gray-50 p-6">
+      <div className="min-h-screen bg-gray-50 p-3 sm:p-4 lg:p-6">
         {/* Header Card */}
-        <div className="bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl shadow-lg mb-6 p-6 text-white">
-          <div className="flex justify-between items-center mb-4">
-            <h1 className="text-2xl font-bold">{getTitle(statusFilter)}</h1>
-            <div className="flex space-x-3">
+        <div className="bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl shadow-lg mb-4 sm:mb-6 p-4 sm:p-6 text-white">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
+            <h1 className="text-xl sm:text-2xl font-bold">{getTitle(statusFilter)}</h1>
+            <div className="flex space-x-2 sm:space-x-3 w-full sm:w-auto">
             </div>
           </div>
           
           {/* Stats Bar */}
-          <div className="grid grid-cols-4 gap-4">
-            <div className="bg-white/10 rounded-lg p-4 text-center backdrop-blur-sm">
-              <div className="text-2xl font-bold">{stats.total}</div>
-              <div className="text-sm opacity-90">Total Listings</div>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+            <div className="bg-white/10 rounded-lg p-3 sm:p-4 text-center backdrop-blur-sm">
+              <div className="text-xl sm:text-2xl font-bold">{stats.total}</div>
+              <div className="text-xs sm:text-sm opacity-90">Total Listings</div>
             </div>
-            <div className="bg-white/10 rounded-lg p-4 text-center backdrop-blur-sm">
-              <div className="text-2xl font-bold">{stats.pending}</div>
-              <div className="text-sm opacity-90">Pending</div>
+            <div className="bg-white/10 rounded-lg p-3 sm:p-4 text-center backdrop-blur-sm">
+              <div className="text-xl sm:text-2xl font-bold">{stats.pending}</div>
+              <div className="text-xs sm:text-sm opacity-90">Pending</div>
             </div>
-            <div className="bg-white/10 rounded-lg p-4 text-center backdrop-blur-sm">
-              <div className="text-2xl font-bold">{stats.approved}</div>
-              <div className="text-sm opacity-90">Approved</div>
+            <div className="bg-white/10 rounded-lg p-3 sm:p-4 text-center backdrop-blur-sm">
+              <div className="text-xl sm:text-2xl font-bold">{stats.approved}</div>
+              <div className="text-xs sm:text-sm opacity-90">Approved</div>
             </div>
-            <div className="bg-white/10 rounded-lg p-4 text-center backdrop-blur-sm">
-              <div className="text-2xl font-bold">{stats.rejected}</div>
-              <div className="text-sm opacity-90">Rejected</div>
+            <div className="bg-white/10 rounded-lg p-3 sm:p-4 text-center backdrop-blur-sm">
+              <div className="text-xl sm:text-2xl font-bold">{stats.rejected}</div>
+              <div className="text-xs sm:text-sm opacity-90">Rejected</div>
             </div>
           </div>
         </div>
 
         {/* Search Bar */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 mb-6">
-          <div className="flex items-center space-x-4">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-3 sm:p-4 mb-4 sm:mb-6">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center space-y-3 sm:space-y-0 sm:space-x-4">
             <div className="flex-1 relative">
-              <Search className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+              <Search className="w-4 h-4 sm:w-5 sm:h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
               <input
                 type="text"
                 placeholder="Search by title, owner, or location..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
               />
             </div>
-            <span className="text-gray-600 bg-gray-100 px-3 py-2 rounded-lg">
+            <span className="text-gray-600 bg-gray-100 px-3 py-2 rounded-lg text-sm sm:text-base whitespace-nowrap text-center sm:text-left">
               {filteredLands.length} results
             </span>
           </div>

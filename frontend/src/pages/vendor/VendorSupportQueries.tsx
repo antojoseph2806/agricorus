@@ -128,19 +128,19 @@ export default function VendorSupportQueries() {
 
   return (
     <VendorLayout>
-      <div className="p-6">
-        <div className="mb-6">
-          <h1 className="text-2xl font-bold text-gray-800 mb-2">Customer Support Queries</h1>
-          <p className="text-gray-600">Manage and respond to customer inquiries</p>
+      <div className="p-3 sm:p-4 lg:p-6">
+        <div className="mb-4 sm:mb-6">
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-800 mb-2">Customer Support Queries</h1>
+          <p className="text-sm sm:text-base text-gray-600">Manage and respond to customer inquiries</p>
         </div>
 
         {/* Filter Tabs */}
-        <div className="flex gap-2 mb-6">
+        <div className="flex flex-wrap gap-2 mb-4 sm:mb-6">
           {['all', 'open', 'in_progress', 'resolved', 'closed'].map((status) => (
             <button
               key={status}
               onClick={() => setFilterStatus(status)}
-              className={`px-4 py-2 rounded-lg text-sm font-medium capitalize transition-colors ${
+              className={`px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium capitalize transition-colors ${
                 filterStatus === status
                   ? 'bg-green-600 text-white'
                   : 'bg-white border border-gray-200 text-gray-600 hover:border-green-300'
@@ -151,13 +151,13 @@ export default function VendorSupportQueries() {
           ))}
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
           {/* Queries List */}
           <div className="lg:col-span-1 bg-white rounded-xl border overflow-hidden">
-            <div className="p-4 border-b bg-gray-50">
-              <h2 className="font-semibold text-gray-800">Queries ({queries.length})</h2>
+            <div className="p-3 sm:p-4 border-b bg-gray-50">
+              <h2 className="text-sm sm:text-base font-semibold text-gray-800">Queries ({queries.length})</h2>
             </div>
-            <div className="overflow-y-auto max-h-[600px]">
+            <div className="overflow-y-auto max-h-[400px] sm:max-h-[600px]">
               {loading ? (
                 <div className="flex items-center justify-center py-12">
                   <Loader2 className="w-6 h-6 text-green-600 animate-spin" />
@@ -172,23 +172,23 @@ export default function VendorSupportQueries() {
                   <button
                     key={query._id}
                     onClick={() => setSelectedQuery(query)}
-                    className={`w-full p-4 border-b hover:bg-gray-50 transition-colors text-left ${
+                    className={`w-full p-3 sm:p-4 border-b hover:bg-gray-50 transition-colors text-left ${
                       selectedQuery?._id === query._id ? 'bg-green-50 border-l-4 border-l-green-600' : ''
                     }`}
                   >
-                    <div className="flex items-start justify-between mb-2">
-                      <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-green-600 rounded-full flex items-center justify-center text-white text-sm font-semibold">
+                    <div className="flex items-start justify-between mb-2 gap-2">
+                      <div className="flex items-center gap-2 min-w-0 flex-1">
+                        <div className="w-7 h-7 sm:w-8 sm:h-8 bg-gradient-to-br from-green-500 to-green-600 rounded-full flex items-center justify-center text-white text-xs sm:text-sm font-semibold flex-shrink-0">
                           {query.userId.name.charAt(0).toUpperCase()}
                         </div>
-                        <div>
-                          <p className="font-medium text-gray-900 text-sm">{query.userId.name}</p>
-                          <p className="text-xs text-gray-500 capitalize">{query.userRole}</p>
+                        <div className="min-w-0 flex-1">
+                          <p className="font-medium text-gray-900 text-xs sm:text-sm truncate">{query.userId.name}</p>
+                          <p className="text-xs text-gray-500 capitalize truncate">{query.userRole}</p>
                         </div>
                       </div>
-                      <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(query.status)}`}>
+                      <span className={`inline-flex items-center gap-1 px-1.5 sm:px-2 py-1 rounded-full text-xs font-medium flex-shrink-0 ${getStatusColor(query.status)}`}>
                         {getStatusIcon(query.status)}
-                        {query.status.replace('_', ' ')}
+                        <span className="hidden sm:inline">{query.status.replace('_', ' ')}</span>
                       </span>
                     </div>
                     
@@ -224,16 +224,16 @@ export default function VendorSupportQueries() {
             {selectedQuery ? (
               <>
                 {/* Header */}
-                <div className="p-4 border-b bg-gray-50">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h3 className="font-semibold text-gray-800">{selectedQuery.userId.name}</h3>
-                      <p className="text-sm text-gray-600">{selectedQuery.userId.email}</p>
+                <div className="p-3 sm:p-4 border-b bg-gray-50">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                    <div className="min-w-0 flex-1">
+                      <h3 className="font-semibold text-gray-800 text-sm sm:text-base truncate">{selectedQuery.userId.name}</h3>
+                      <p className="text-xs sm:text-sm text-gray-600 truncate">{selectedQuery.userId.email}</p>
                     </div>
                     <select
                       value={selectedQuery.status}
                       onChange={(e) => updateStatus(selectedQuery._id, e.target.value)}
-                      className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+                      className="w-full sm:w-auto px-2 sm:px-3 py-1.5 border border-gray-300 rounded-lg text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
                     >
                       <option value="open">Open</option>
                       <option value="in_progress">In Progress</option>
@@ -243,14 +243,14 @@ export default function VendorSupportQueries() {
                   </div>
                   
                   {selectedQuery.orderId && (
-                    <div className="mt-2 text-sm text-gray-600">
+                    <div className="mt-2 text-xs sm:text-sm text-gray-600 truncate">
                       Order: {selectedQuery.orderId.orderNumber}
                     </div>
                   )}
                 </div>
 
                 {/* Messages */}
-                <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-gray-50 max-h-[400px]">
+                <div className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-2 sm:space-y-3 bg-gray-50 max-h-[300px] sm:max-h-[400px]">
                   {selectedQuery.messages.map((msg, index) => (
                     <div
                       key={index}
@@ -277,25 +277,25 @@ export default function VendorSupportQueries() {
                 </div>
 
                 {/* Reply Input */}
-                <div className="p-4 border-t bg-white">
-                  <div className="flex gap-2">
+                <div className="p-3 sm:p-4 border-t bg-white">
+                  <div className="flex flex-col sm:flex-row gap-2">
                     <textarea
                       value={replyMessage}
                       onChange={(e) => setReplyMessage(e.target.value)}
                       placeholder="Type your reply..."
-                      className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 resize-none text-sm"
+                      className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 resize-none text-xs sm:text-sm"
                       rows={3}
                       disabled={sending || selectedQuery.status === 'closed'}
                     />
                     <button
                       onClick={sendReply}
                       disabled={!replyMessage.trim() || sending || selectedQuery.status === 'closed'}
-                      className="px-4 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                      className="px-3 sm:px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center text-sm sm:text-base"
                     >
                       {sending ? (
-                        <Loader2 className="w-5 h-5 animate-spin" />
+                        <Loader2 className="w-4 h-4 sm:w-5 sm:h-5 animate-spin" />
                       ) : (
-                        <Send className="w-5 h-5" />
+                        <Send className="w-4 h-4 sm:w-5 sm:h-5" />
                       )}
                     </button>
                   </div>
