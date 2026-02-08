@@ -263,44 +263,44 @@ const Marketplace: React.FC = () => {
     <MarketplaceLayout>
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-emerald-50/30">
         {/* Hero Header */}
-        <div className="bg-gradient-to-r from-emerald-600 via-emerald-500 to-teal-500 px-6 py-8">
+        <div className="bg-gradient-to-r from-emerald-600 via-emerald-500 to-teal-500 px-3 sm:px-6 py-6 sm:py-8">
           <div className="max-w-7xl mx-auto">
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 sm:gap-4">
               <div>
-                <h1 className="text-3xl font-bold text-white flex items-center gap-3">
-                  <Leaf className="w-8 h-8" />
+                <h1 className="text-2xl sm:text-3xl font-bold text-white flex items-center gap-2 sm:gap-3">
+                  <Leaf className="w-6 h-6 sm:w-8 sm:h-8" />
                   AgriMarket
                 </h1>
-                <p className="text-emerald-100 mt-1">Quality agricultural products from verified vendors</p>
+                <p className="text-sm sm:text-base text-emerald-100 mt-1">Quality agricultural products from verified vendors</p>
               </div>
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2 sm:gap-3">
                 <Link
                   to="/orders"
-                  className="flex items-center gap-2 px-4 py-2.5 bg-white/10 hover:bg-white/20 text-white rounded-xl font-medium transition"
+                  className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 bg-white/10 hover:bg-white/20 text-white rounded-lg sm:rounded-xl text-sm font-medium transition"
                 >
                   <Package className="w-4 h-4" />
-                  Orders
+                  <span className="hidden sm:inline">Orders</span>
                 </Link>
                 <Link
                   to="/cart"
-                  className="flex items-center gap-2 px-5 py-2.5 bg-white text-emerald-600 rounded-xl font-semibold hover:bg-emerald-50 transition shadow-lg"
+                  className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-5 py-2 sm:py-2.5 bg-white text-emerald-600 rounded-lg sm:rounded-xl text-sm font-semibold hover:bg-emerald-50 transition shadow-lg"
                 >
-                  <ShoppingCart className="w-5 h-5" />
+                  <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5" />
                   Cart
                 </Link>
               </div>
             </div>
 
             {/* Search Bar */}
-            <div className="mt-6 max-w-2xl">
+            <div className="mt-4 sm:mt-6 max-w-2xl">
               <div className="relative">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <Search className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-gray-400" />
                 <input
                   type="text"
-                  placeholder="Search for fertilizers, pesticides, equipment..."
+                  placeholder="Search products..."
                   value={filters.search}
                   onChange={(e) => handleFilterChange('search', e.target.value)}
-                  className="w-full pl-12 pr-4 py-3.5 bg-white rounded-xl border-0 shadow-lg focus:ring-2 focus:ring-emerald-300 text-gray-800 placeholder-gray-400"
+                  className="w-full pl-10 sm:pl-12 pr-3 sm:pr-4 py-2.5 sm:py-3.5 bg-white rounded-lg sm:rounded-xl border-0 shadow-lg focus:ring-2 focus:ring-emerald-300 text-sm sm:text-base text-gray-800 placeholder-gray-400"
                 />
               </div>
             </div>
@@ -308,52 +308,56 @@ const Marketplace: React.FC = () => {
         </div>
 
         {/* Trust Badges */}
-        <div className="bg-white border-b border-gray-100 px-6 py-3">
-          <div className="max-w-7xl mx-auto flex items-center justify-center gap-8 text-sm">
-            <div className="flex items-center gap-2 text-gray-600">
-              <Shield className="w-4 h-4 text-emerald-600" />
-              <span>Verified Vendors</span>
+        <div className="bg-white border-b border-gray-100 px-3 sm:px-6 py-2 sm:py-3">
+          <div className="max-w-7xl mx-auto flex items-center justify-center gap-4 sm:gap-8 text-xs sm:text-sm">
+            <div className="flex items-center gap-1.5 sm:gap-2 text-gray-600">
+              <Shield className="w-3 h-3 sm:w-4 sm:h-4 text-emerald-600" />
+              <span className="hidden sm:inline">Verified Vendors</span>
+              <span className="sm:hidden">Verified</span>
             </div>
-            <div className="flex items-center gap-2 text-gray-600">
-              <Sparkles className="w-4 h-4 text-emerald-600" />
-              <span>Quality Assured</span>
+            <div className="flex items-center gap-1.5 sm:gap-2 text-gray-600">
+              <Sparkles className="w-3 h-3 sm:w-4 sm:h-4 text-emerald-600" />
+              <span className="hidden sm:inline">Quality Assured</span>
+              <span className="sm:hidden">Quality</span>
             </div>
-            <div className="flex items-center gap-2 text-gray-600">
-              <TrendingUp className="w-4 h-4 text-emerald-600" />
-              <span>Best Prices</span>
+            <div className="flex items-center gap-1.5 sm:gap-2 text-gray-600">
+              <TrendingUp className="w-3 h-3 sm:w-4 sm:h-4 text-emerald-600" />
+              <span className="hidden sm:inline">Best Prices</span>
+              <span className="sm:hidden">Best Price</span>
             </div>
           </div>
         </div>
 
-        <div className="max-w-7xl mx-auto px-6 py-6">
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 py-4 sm:py-6">
           {/* Category Pills */}
-          <div className="flex items-center gap-3 mb-6 overflow-x-auto pb-2">
+          <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6 overflow-x-auto pb-2 scrollbar-hide">
             {categories.map(cat => (
               <button
                 key={cat.value}
                 onClick={() => handleFilterChange('category', cat.value)}
-                className={`flex items-center gap-2 px-4 py-2.5 rounded-full font-medium whitespace-nowrap transition-all ${
+                className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-medium whitespace-nowrap transition-all ${
                   filters.category === cat.value
                     ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-200'
                     : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200'
                 }`}
               >
-                <span>{cat.icon}</span>
-                {cat.label}
+                <span className="text-sm sm:text-base">{cat.icon}</span>
+                <span className="hidden sm:inline">{cat.label}</span>
+                <span className="sm:hidden">{cat.label.split(' ')[0]}</span>
               </button>
             ))}
           </div>
 
           {/* Filters Bar */}
-          <div className="bg-white rounded-2xl border border-gray-100 p-4 mb-6 shadow-sm">
-            <div className="flex flex-wrap items-center gap-4">
+          <div className="bg-white rounded-xl sm:rounded-2xl border border-gray-100 p-3 sm:p-4 mb-4 sm:mb-6 shadow-sm">
+            <div className="flex flex-wrap items-center gap-2 sm:gap-4">
               {/* Sort */}
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-gray-500">Sort:</span>
+              <div className="flex items-center gap-2 flex-1 min-w-[200px]">
+                <span className="text-xs sm:text-sm text-gray-500 hidden sm:inline">Sort:</span>
                 <select
                   value={`${filters.sortBy}-${filters.sortOrder}`}
                   onChange={(e) => handleSortChange(e.target.value)}
-                  className="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                  className="flex-1 px-2 sm:px-3 py-1.5 sm:py-2 bg-gray-50 border border-gray-200 rounded-lg text-xs sm:text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
                 >
                   {sortOptions.map(opt => (
                     <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -364,16 +368,17 @@ const Marketplace: React.FC = () => {
               {/* Price Filter Toggle */}
               <button
                 onClick={() => setShowFilters(!showFilters)}
-                className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition ${
+                className={`flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-medium transition ${
                   showFilters ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-50 text-gray-700 hover:bg-gray-100'
                 }`}
               >
-                <SlidersHorizontal className="w-4 h-4" />
-                Price Filter
+                <SlidersHorizontal className="w-3 h-3 sm:w-4 sm:h-4" />
+                <span className="hidden sm:inline">Price Filter</span>
+                <span className="sm:hidden">Filter</span>
               </button>
 
-              {/* View Toggle */}
-              <div className="flex items-center bg-gray-100 rounded-lg p-1 ml-auto">
+              {/* View Toggle - Hidden on mobile */}
+              <div className="hidden sm:flex items-center bg-gray-100 rounded-lg p-1 ml-auto">
                 <button
                   onClick={() => setViewMode('grid')}
                   className={`p-2 rounded-md transition ${viewMode === 'grid' ? 'bg-white shadow text-emerald-600' : 'text-gray-500'}`}
@@ -392,25 +397,25 @@ const Marketplace: React.FC = () => {
               {hasActiveFilters && (
                 <button
                   onClick={clearFilters}
-                  className="flex items-center gap-1 px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition"
+                  className="flex items-center gap-1 px-2.5 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm text-red-600 hover:bg-red-50 rounded-lg transition"
                 >
-                  <X className="w-4 h-4" />
-                  Clear
+                  <X className="w-3 h-3 sm:w-4 sm:h-4" />
+                  <span className="hidden sm:inline">Clear</span>
                 </button>
               )}
             </div>
 
             {/* Price Range */}
             {showFilters && (
-              <div className="mt-4 pt-4 border-t border-gray-100 flex items-center gap-4">
-                <span className="text-sm text-gray-500">Price Range:</span>
-                <div className="flex items-center gap-2">
+              <div className="mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-gray-100 flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4">
+                <span className="text-xs sm:text-sm text-gray-500">Price Range:</span>
+                <div className="flex items-center gap-2 w-full sm:w-auto">
                   <input
                     type="number"
                     placeholder="Min"
                     value={filters.minPrice}
                     onChange={(e) => handleFilterChange('minPrice', e.target.value)}
-                    className="w-24 px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500"
+                    className="flex-1 sm:w-24 px-2 sm:px-3 py-1.5 sm:py-2 border border-gray-200 rounded-lg text-xs sm:text-sm focus:ring-2 focus:ring-emerald-500"
                   />
                   <span className="text-gray-400">—</span>
                   <input
@@ -418,7 +423,7 @@ const Marketplace: React.FC = () => {
                     placeholder="Max"
                     value={filters.maxPrice}
                     onChange={(e) => handleFilterChange('maxPrice', e.target.value)}
-                    className="w-24 px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500"
+                    className="flex-1 sm:w-24 px-2 sm:px-3 py-1.5 sm:py-2 border border-gray-200 rounded-lg text-xs sm:text-sm focus:ring-2 focus:ring-emerald-500"
                   />
                 </div>
               </div>
@@ -426,8 +431,8 @@ const Marketplace: React.FC = () => {
           </div>
 
           {/* Results Count */}
-          <div className="flex items-center justify-between mb-4">
-            <p className="text-gray-600">
+          <div className="flex items-center justify-between mb-3 sm:mb-4">
+            <p className="text-xs sm:text-sm text-gray-600">
               Showing <span className="font-semibold text-gray-800">{products.length}</span> of{' '}
               <span className="font-semibold text-gray-800">{totalProducts}</span> products
             </p>
@@ -452,8 +457,8 @@ const Marketplace: React.FC = () => {
             </div>
           ) : (
             <div className={viewMode === 'grid' 
-              ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5" 
-              : "space-y-4"
+              ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-5" 
+              : "space-y-3 sm:space-y-4"
             }>
               {products.map((product) => {
                 const catStyle = getCategoryStyle(product.category);
@@ -584,13 +589,13 @@ const Marketplace: React.FC = () => {
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="mt-8 flex items-center justify-center gap-2">
+            <div className="mt-6 sm:mt-8 flex items-center justify-center gap-1.5 sm:gap-2">
               <button
                 onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
                 disabled={currentPage === 1}
-                className="w-10 h-10 flex items-center justify-center border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition"
+                className="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition"
               >
-                <ChevronLeft className="w-5 h-5" />
+                <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
               </button>
               
               {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
@@ -608,7 +613,7 @@ const Marketplace: React.FC = () => {
                   <button
                     key={page}
                     onClick={() => setCurrentPage(page)}
-                    className={`w-10 h-10 flex items-center justify-center rounded-lg font-medium transition ${
+                    className={`w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-lg text-sm sm:text-base font-medium transition ${
                       currentPage === page
                         ? 'bg-emerald-600 text-white'
                         : 'border border-gray-200 hover:bg-gray-50'
@@ -622,9 +627,9 @@ const Marketplace: React.FC = () => {
               <button
                 onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
                 disabled={currentPage === totalPages}
-                className="w-10 h-10 flex items-center justify-center border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition"
+                className="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition"
               >
-                <ChevronRight className="w-5 h-5" />
+                <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
               </button>
             </div>
           )}
@@ -633,13 +638,13 @@ const Marketplace: React.FC = () => {
 
       {/* Success Animation Modal */}
       {showSuccessAnimation && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
-          <div className="bg-white rounded-2xl p-8 max-w-sm mx-4 text-center animate-bounce">
-            <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <CheckCircle className="w-12 h-12 text-green-600" />
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-xl sm:rounded-2xl p-6 sm:p-8 max-w-sm w-full mx-4 text-center animate-bounce">
+            <div className="w-16 h-16 sm:w-20 sm:h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
+              <CheckCircle className="w-10 h-10 sm:w-12 sm:h-12 text-green-600" />
             </div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-2">Added to Cart!</h3>
-            <p className="text-gray-600">
+            <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">Added to Cart!</h3>
+            <p className="text-sm sm:text-base text-gray-600">
               {!localStorage.getItem('token') 
                 ? 'Redirecting to registration...' 
                 : 'Item added successfully!'}

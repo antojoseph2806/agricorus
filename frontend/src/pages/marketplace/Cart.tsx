@@ -237,46 +237,47 @@ const Cart: React.FC = () => {
     <MarketplaceLayout>
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-emerald-50/30">
         {/* Header */}
-        <div className="bg-gradient-to-r from-emerald-600 via-emerald-500 to-teal-500 px-6 py-6">
+        <div className="bg-gradient-to-r from-emerald-600 via-emerald-500 to-teal-500 px-3 sm:px-6 py-4 sm:py-6">
           <div className="max-w-6xl mx-auto">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <Link to="/marketplace" className="flex items-center gap-2 text-emerald-100 hover:text-white transition">
-                  <ArrowLeft className="w-5 h-5" />
-                  <span className="hidden sm:inline">Continue Shopping</span>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0">
+              <div className="flex items-center gap-2 sm:gap-4 w-full sm:w-auto">
+                <Link to="/marketplace" className="flex items-center gap-1.5 sm:gap-2 text-emerald-100 hover:text-white transition">
+                  <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
+                  <span className="hidden sm:inline text-sm">Continue Shopping</span>
                 </Link>
-                <div className="w-px h-6 bg-emerald-400/50" />
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
-                    <ShoppingCart className="w-5 h-5 text-white" />
+                <div className="w-px h-5 sm:h-6 bg-emerald-400/50" />
+                <div className="flex items-center gap-2 sm:gap-3">
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 bg-white/20 rounded-lg sm:rounded-xl flex items-center justify-center">
+                    <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                   </div>
                   <div>
-                    <h1 className="text-xl font-bold text-white">Shopping Cart</h1>
-                    <p className="text-emerald-100 text-sm">{calculateTotalItems()} items</p>
+                    <h1 className="text-lg sm:text-xl font-bold text-white">Shopping Cart</h1>
+                    <p className="text-emerald-100 text-xs sm:text-sm">{calculateTotalItems()} items</p>
                   </div>
                 </div>
               </div>
-              <div className="flex items-center gap-3">
-                <Link to="/orders" className="flex items-center gap-2 px-4 py-2.5 bg-white/10 hover:bg-white/20 text-white rounded-xl font-medium transition">
-                  <Package className="w-4 h-4" /> Orders
+              <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto">
+                <Link to="/orders" className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 bg-white/10 hover:bg-white/20 text-white rounded-lg sm:rounded-xl text-sm font-medium transition">
+                  <Package className="w-3 h-3 sm:w-4 sm:h-4" /> 
+                  <span className="hidden sm:inline">Orders</span>
                 </Link>
               </div>
             </div>
             {/* Progress */}
-            <div className="mt-4 flex items-center gap-2 text-sm">
-              <span className="flex items-center gap-1 text-white font-medium"><ShoppingCart className="w-4 h-4" /> Cart</span>
-              <ChevronRight className="w-4 h-4 text-emerald-300" />
-              <span className="flex items-center gap-1 text-emerald-200"><CreditCard className="w-4 h-4" /> Checkout</span>
-              <ChevronRight className="w-4 h-4 text-emerald-300" />
-              <span className="flex items-center gap-1 text-emerald-200"><Package className="w-4 h-4" /> Done</span>
+            <div className="mt-3 sm:mt-4 flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm overflow-x-auto pb-1">
+              <span className="flex items-center gap-1 text-white font-medium whitespace-nowrap"><ShoppingCart className="w-3 h-3 sm:w-4 sm:h-4" /> Cart</span>
+              <ChevronRight className="w-3 h-3 sm:w-4 sm:h-4 text-emerald-300" />
+              <span className="flex items-center gap-1 text-emerald-200 whitespace-nowrap"><CreditCard className="w-3 h-3 sm:w-4 sm:h-4" /> Checkout</span>
+              <ChevronRight className="w-3 h-3 sm:w-4 sm:h-4 text-emerald-300" />
+              <span className="flex items-center gap-1 text-emerald-200 whitespace-nowrap"><Package className="w-3 h-3 sm:w-4 sm:h-4" /> Done</span>
             </div>
           </div>
         </div>
 
-        <div className="max-w-6xl mx-auto px-6 py-6">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="max-w-6xl mx-auto px-3 sm:px-6 py-4 sm:py-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
             {/* Cart Items */}
-            <div className="lg:col-span-2 space-y-4">
+            <div className="lg:col-span-2 space-y-3 sm:space-y-4">
               {cart.items.map((item) => {
                 const catStyle = getCategoryStyle(item.category);
                 const qty = localQuantities[item.productId] || item.quantity;
@@ -284,12 +285,12 @@ const Cart: React.FC = () => {
 
                 return (
                   <div key={item.productId}
-                    className={`bg-white rounded-2xl border-2 p-4 transition-all ${
+                    className={`bg-white rounded-xl sm:rounded-2xl border-2 p-3 sm:p-4 transition-all ${
                       !item.isAvailable ? 'border-red-200 bg-red-50/50' : 'border-gray-100 hover:border-emerald-200 hover:shadow-lg'
                     }`}>
-                    <div className="flex gap-4">
+                    <div className="flex gap-3 sm:gap-4">
                       {/* Image */}
-                      <Link to={`/marketplace/product/${item.productId}`} className="w-24 h-24 flex-shrink-0 rounded-xl overflow-hidden bg-gray-100">
+                      <Link to={`/marketplace/product/${item.productId}`} className="w-20 h-20 sm:w-24 sm:h-24 flex-shrink-0 rounded-lg sm:rounded-xl overflow-hidden bg-gray-100">
                         <img src={item.image ? `${backendUrl}${item.image}` : '/placeholder-product.jpg'}
                           alt={item.productName} className="w-full h-full object-cover hover:scale-105 transition-transform" />
                       </Link>
@@ -297,58 +298,59 @@ const Cart: React.FC = () => {
                       {/* Info */}
                       <div className="flex-1 min-w-0">
                         <div className="flex items-start justify-between gap-2">
-                          <div>
-                            <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${catStyle.bg} ${catStyle.text}`}>
-                              {catStyle.icon} {item.category}
+                          <div className="flex-1 min-w-0">
+                            <span className={`inline-flex items-center gap-1 px-1.5 sm:px-2 py-0.5 rounded-full text-xs font-medium ${catStyle.bg} ${catStyle.text}`}>
+                              <span className="text-xs">{catStyle.icon}</span>
+                              <span className="hidden sm:inline">{item.category}</span>
                             </span>
                             <Link to={`/marketplace/product/${item.productId}`}>
-                              <h3 className="font-semibold text-gray-800 mt-1 hover:text-emerald-600 transition line-clamp-1">{item.productName}</h3>
+                              <h3 className="font-semibold text-sm sm:text-base text-gray-800 mt-1 hover:text-emerald-600 transition line-clamp-1">{item.productName}</h3>
                             </Link>
-                            <p className="text-sm text-gray-500">by {item.vendorBusinessName}</p>
+                            <p className="text-xs sm:text-sm text-gray-500 truncate">by {item.vendorBusinessName}</p>
                           </div>
                           <button onClick={() => removeItem(item.productId)} disabled={updating === item.productId}
-                            className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition">
-                            {updating === item.productId ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
+                            className="p-1.5 sm:p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition flex-shrink-0">
+                            {updating === item.productId ? <Loader2 className="w-3 h-3 sm:w-4 sm:h-4 animate-spin" /> : <Trash2 className="w-3 h-3 sm:w-4 sm:h-4" />}
                           </button>
                         </div>
 
                         {!item.isAvailable && (
-                          <div className="flex items-center gap-1.5 mt-2 text-red-600 text-sm">
-                            <AlertCircle className="w-4 h-4" /> Currently unavailable
+                          <div className="flex items-center gap-1.5 mt-2 text-red-600 text-xs sm:text-sm">
+                            <AlertCircle className="w-3 h-3 sm:w-4 sm:h-4" /> Currently unavailable
                           </div>
                         )}
 
                         {/* Quantity & Price Row */}
-                        <div className="flex items-center justify-between mt-3 pt-3 border-t border-gray-100">
+                        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-0 mt-2 sm:mt-3 pt-2 sm:pt-3 border-t border-gray-100">
                           <div className="flex items-center gap-2">
                             <div className="flex items-center bg-gray-100 rounded-lg">
                               <button onClick={() => handleQuantityButton(item.productId, -1, qty, item.maxQuantity)}
                                 disabled={updating === item.productId || qty <= 1}
-                                className="w-8 h-8 flex items-center justify-center text-gray-600 hover:text-emerald-600 disabled:opacity-40 disabled:cursor-not-allowed transition rounded-l-lg hover:bg-gray-200">
-                                <Minus className="w-4 h-4" />
+                                className="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center text-gray-600 hover:text-emerald-600 disabled:opacity-40 disabled:cursor-not-allowed transition rounded-l-lg hover:bg-gray-200">
+                                <Minus className="w-3 h-3 sm:w-4 sm:h-4" />
                               </button>
                               <div className="relative">
                                 <input type="number" min="1" max={item.maxQuantity} value={qty}
                                   onChange={(e) => handleQuantityInputChange(item.productId, e.target.value, item.maxQuantity)}
                                   onBlur={() => handleQuantityBlur(item.productId, item.maxQuantity)}
-                                  className="w-12 h-8 text-center bg-transparent font-medium text-gray-800 focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
+                                  className="w-10 h-7 sm:w-12 sm:h-8 text-center text-sm bg-transparent font-medium text-gray-800 focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
                                 {updating === item.productId && (
                                   <div className="absolute inset-0 flex items-center justify-center bg-gray-100/80">
-                                    <Loader2 className="w-4 h-4 animate-spin text-emerald-600" />
+                                    <Loader2 className="w-3 h-3 sm:w-4 sm:h-4 animate-spin text-emerald-600" />
                                   </div>
                                 )}
                               </div>
                               <button onClick={() => handleQuantityButton(item.productId, 1, qty, item.maxQuantity)}
                                 disabled={updating === item.productId || qty >= item.maxQuantity}
-                                className="w-8 h-8 flex items-center justify-center text-gray-600 hover:text-emerald-600 disabled:opacity-40 disabled:cursor-not-allowed transition rounded-r-lg hover:bg-gray-200">
-                                <Plus className="w-4 h-4" />
+                                className="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center text-gray-600 hover:text-emerald-600 disabled:opacity-40 disabled:cursor-not-allowed transition rounded-r-lg hover:bg-gray-200">
+                                <Plus className="w-3 h-3 sm:w-4 sm:h-4" />
                               </button>
                             </div>
                             <span className="text-xs text-gray-400">Max {item.maxQuantity}</span>
                           </div>
 
-                          <div className="text-right">
-                            <div className="text-lg font-bold text-emerald-600">₹{itemTotal.toLocaleString()}</div>
+                          <div className="text-left sm:text-right w-full sm:w-auto">
+                            <div className="text-base sm:text-lg font-bold text-emerald-600">₹{itemTotal.toLocaleString()}</div>
                             <div className="text-xs text-gray-500">₹{item.priceAtAddTime.toLocaleString()} each</div>
                           </div>
                         </div>
@@ -360,7 +362,7 @@ const Cart: React.FC = () => {
             </div>
 
             {/* Order Summary Sidebar */}
-            <div className="space-y-4">
+            <div className="space-y-3 sm:space-y-4">
               {/* Summary Card */}
               <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden sticky top-6">
                 <div className="px-5 py-4 bg-gray-50/80 border-b border-gray-100">
