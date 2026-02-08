@@ -458,49 +458,49 @@ const Marketplace: React.FC = () => {
             </div>
           ) : (
             <div className={viewMode === 'grid' 
-              ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-5" 
-              : "space-y-3 sm:space-y-4"
+              ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5" 
+              : "space-y-4"
             }>
               {products.map((product) => {
                 const catStyle = getCategoryStyle(product.category);
                 return viewMode === 'grid' ? (
-                  // Grid Card
+                  // Grid Card - Mobile Optimized
                   <div
                     key={product._id}
-                    className="bg-white rounded-xl border border-gray-100 overflow-hidden hover:shadow-lg hover:border-emerald-200 transition-all group"
+                    className="bg-white rounded-xl sm:rounded-2xl border border-gray-100 overflow-hidden hover:shadow-xl hover:border-emerald-200 transition-all group"
                   >
                     {/* Image */}
-                    <div className="relative h-48 bg-gray-50 overflow-hidden">
+                    <div className="relative h-48 sm:h-56 bg-gray-50 overflow-hidden">
                       <img
                         src={product.images[0] ? `https://agricorus.onrender.com${product.images[0]}` : '/placeholder-product.jpg'}
                         alt={product.name}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                       />
-                      <div className="absolute top-2 left-2">
+                      <div className="absolute top-2 sm:top-3 left-2 sm:left-3">
                         {getStockBadge(product.stockStatus, product.stock)}
                       </div>
                       <Link
                         to={`/marketplace/product/${product._id}`}
-                        className="absolute top-2 right-2 w-8 h-8 bg-white/90 backdrop-blur rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-lg hover:bg-white"
+                        className="absolute top-2 sm:top-3 right-2 sm:right-3 w-8 h-8 sm:w-10 sm:h-10 bg-white/90 backdrop-blur rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-lg hover:bg-white"
                       >
-                        <Eye className="w-4 h-4 text-gray-700" />
+                        <Eye className="w-4 h-4 sm:w-5 sm:h-5 text-gray-700" />
                       </Link>
                     </div>
 
                     {/* Info */}
-                    <div className="p-3">
-                      <div className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium mb-1.5 ${catStyle.color}`}>
-                        <span className="text-xs">{catStyle.icon}</span>
-                        {product.category}
+                    <div className="p-3 sm:p-4">
+                      <div className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium mb-2 ${catStyle.color}`}>
+                        <span className="text-xs sm:text-sm">{catStyle.icon}</span>
+                        <span className="text-xs">{product.category}</span>
                       </div>
                       
-                      <h3 className="font-semibold text-gray-800 text-sm mb-1 line-clamp-1 leading-snug">
+                      <h3 className="font-semibold text-gray-800 text-sm sm:text-base mb-1 line-clamp-2 leading-snug">
                         {product.name}
                       </h3>
-                      <p className="text-xs text-gray-500 mb-2">by {product.vendorBusinessName}</p>
+                      <p className="text-xs text-gray-500 mb-3 truncate">by {product.vendorBusinessName}</p>
 
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="text-lg font-bold text-emerald-600">
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="text-xl sm:text-2xl font-bold text-emerald-600">
                           ₹{product.price.toLocaleString()}
                         </div>
                       </div>
@@ -509,7 +509,7 @@ const Marketplace: React.FC = () => {
                         <button
                           onClick={() => buyNow(product._id)}
                           disabled={product.stockStatus === 'OUT_OF_STOCK' || addingToCart === product._id}
-                          className="flex-1 px-3 py-2 bg-emerald-600 text-white text-xs font-medium rounded-lg hover:bg-emerald-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition"
+                          className="flex-1 px-3 sm:px-4 py-2 sm:py-2.5 bg-emerald-600 text-white text-xs sm:text-sm font-medium rounded-lg sm:rounded-xl hover:bg-emerald-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition shadow-sm"
                         >
                           {addingToCart === product._id ? (
                             <Loader2 className="w-4 h-4 animate-spin mx-auto" />
@@ -520,20 +520,20 @@ const Marketplace: React.FC = () => {
                         <button
                           onClick={() => addToCart(product._id)}
                           disabled={product.stockStatus === 'OUT_OF_STOCK' || addingToCart === product._id}
-                          className="w-10 h-9 flex items-center justify-center border border-emerald-600 text-emerald-600 rounded-lg hover:bg-emerald-50 disabled:border-gray-300 disabled:text-gray-300 disabled:cursor-not-allowed transition"
+                          className="w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center border-2 border-emerald-600 text-emerald-600 rounded-lg sm:rounded-xl hover:bg-emerald-50 disabled:border-gray-300 disabled:text-gray-300 disabled:cursor-not-allowed transition"
                         >
-                          <ShoppingCart className="w-4 h-4" />
+                          <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5" />
                         </button>
                       </div>
                     </div>
                   </div>
                 ) : (
-                  // List Card
+                  // List Card - Mobile Optimized
                   <div
                     key={product._id}
-                    className="bg-white rounded-xl border border-gray-100 p-3 flex gap-3 hover:shadow-lg hover:border-emerald-200 transition-all"
+                    className="bg-white rounded-xl sm:rounded-2xl border border-gray-100 p-3 sm:p-4 flex gap-3 sm:gap-4 hover:shadow-xl hover:border-emerald-200 transition-all"
                   >
-                    <div className="w-24 h-24 flex-shrink-0 rounded-lg overflow-hidden bg-gray-50">
+                    <div className="w-24 h-24 sm:w-32 sm:h-32 flex-shrink-0 rounded-lg overflow-hidden bg-gray-50">
                       <img
                         src={product.images[0] ? `https://agricorus.onrender.com${product.images[0]}` : '/placeholder-product.jpg'}
                         alt={product.name}
@@ -541,33 +541,35 @@ const Marketplace: React.FC = () => {
                       />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-start justify-between gap-4">
-                        <div>
+                      <div className="flex items-start justify-between gap-2 mb-2">
+                        <div className="flex-1 min-w-0">
                           <div className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium mb-1 ${catStyle.color}`}>
                             <span className="text-xs">{catStyle.icon}</span>
-                            {product.category}
+                            <span className="text-xs">{product.category}</span>
                           </div>
-                          <h3 className="font-semibold text-gray-800 text-sm mb-0.5">{product.name}</h3>
-                          <p className="text-xs text-gray-500">by {product.vendorBusinessName}</p>
+                          <h3 className="font-semibold text-gray-800 text-sm sm:text-base mb-0.5 line-clamp-2">{product.name}</h3>
+                          <p className="text-xs text-gray-500 truncate">by {product.vendorBusinessName}</p>
                         </div>
-                        {getStockBadge(product.stockStatus, product.stock)}
+                        <div className="flex-shrink-0">
+                          {getStockBadge(product.stockStatus, product.stock)}
+                        </div>
                       </div>
-                      <div className="flex items-center justify-between mt-2">
-                        <div className="text-lg font-bold text-emerald-600">₹{product.price.toLocaleString()}</div>
-                        <div className="flex items-center gap-2">
+                      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-4 mt-2">
+                        <div className="text-lg sm:text-xl font-bold text-emerald-600">₹{product.price.toLocaleString()}</div>
+                        <div className="flex items-center gap-2 w-full sm:w-auto">
                           <Link
                             to={`/marketplace/product/${product._id}`}
-                            className="px-3 py-1.5 border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50 transition text-xs font-medium"
+                            className="flex-1 sm:flex-none px-3 py-2 border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50 transition text-xs font-medium text-center"
                           >
                             View
                           </Link>
                           <button
                             onClick={() => buyNow(product._id)}
                             disabled={product.stockStatus === 'OUT_OF_STOCK' || addingToCart === product._id}
-                            className="px-3 py-1.5 bg-emerald-600 text-white text-xs font-medium rounded-lg hover:bg-emerald-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition"
+                            className="flex-1 sm:flex-none px-3 py-2 bg-emerald-600 text-white text-xs font-medium rounded-lg hover:bg-emerald-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition"
                           >
                             {addingToCart === product._id ? (
-                              <Loader2 className="w-3 h-3 animate-spin" />
+                              <Loader2 className="w-3 h-3 animate-spin mx-auto" />
                             ) : (
                               'Buy Now'
                             )}
@@ -575,9 +577,9 @@ const Marketplace: React.FC = () => {
                           <button
                             onClick={() => addToCart(product._id)}
                             disabled={product.stockStatus === 'OUT_OF_STOCK' || addingToCart === product._id}
-                            className="w-8 h-8 flex items-center justify-center border border-emerald-600 text-emerald-600 rounded-lg hover:bg-emerald-50 disabled:border-gray-300 disabled:text-gray-300 disabled:cursor-not-allowed transition"
+                            className="w-10 h-10 flex items-center justify-center border-2 border-emerald-600 text-emerald-600 rounded-lg hover:bg-emerald-50 disabled:border-gray-300 disabled:text-gray-300 disabled:cursor-not-allowed transition flex-shrink-0"
                           >
-                            <ShoppingCart className="w-3 h-3" />
+                            <ShoppingCart className="w-4 h-4" />
                           </button>
                         </div>
                       </div>
