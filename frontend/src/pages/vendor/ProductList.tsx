@@ -37,7 +37,7 @@ const ProductList = () => {
   const fetchKYCStatus = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.get("http://localhost:5000/api/vendor/profile/status", {
+      const res = await axios.get("https://agricorus.onrender.com/api/vendor/profile/status", {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -54,8 +54,8 @@ const ProductList = () => {
       const token = localStorage.getItem("token");
       const url =
         filter === "all"
-          ? "http://localhost:5000/api/vendor/products"
-          : `http://localhost:5000/api/vendor/products?isActive=${filter === "active"}`;
+          ? "https://agricorus.onrender.com/api/vendor/products"
+          : `https://agricorus.onrender.com/api/vendor/products?isActive=${filter === "active"}`;
 
       const res = await axios.get(url, {
         headers: { Authorization: `Bearer ${token}` },
@@ -77,7 +77,7 @@ const ProductList = () => {
 
     try {
       const token = localStorage.getItem("token");
-      await axios.delete(`http://localhost:5000/api/vendor/products/${id}`, {
+      await axios.delete(`https://agricorus.onrender.com/api/vendor/products/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -157,7 +157,7 @@ const ProductList = () => {
     try {
       const token = localStorage.getItem("token");
       const res = await axios.patch(
-        `http://localhost:5000/api/vendor/products/${product._id}/inventory`,
+        `https://agricorus.onrender.com/api/vendor/products/${product._id}/inventory`,
         { isActive: !product.isActive },
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -287,7 +287,7 @@ const ProductList = () => {
                   <div className="h-48 bg-gray-200 rounded-t-lg overflow-hidden relative">
                     {product.images && product.images.length > 0 ? (
                       <img
-                        src={`http://localhost:5000${product.images[0]}`}
+                        src={`https://agricorus.onrender.com${product.images[0]}`}
                         alt={product.name}
                         className="w-full h-full object-cover"
                       />
@@ -422,7 +422,7 @@ const ProductList = () => {
               try {
                 const token = localStorage.getItem("token");
                 const res = await axios.patch(
-                  `http://localhost:5000/api/vendor/products/${selectedProduct._id}/inventory`,
+                  `https://agricorus.onrender.com/api/vendor/products/${selectedProduct._id}/inventory`,
                   data,
                   {
                     headers: { Authorization: `Bearer ${token}` },

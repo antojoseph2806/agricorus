@@ -29,7 +29,7 @@ export default function ApprovedProjects() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:5000/api/projects/approved")
+      .get("https://agricorus.onrender.com/api/projects/approved")
       .then((res) => setProjects(res.data))
       .catch((err) => console.error(err))
       .finally(() => setLoading(false));

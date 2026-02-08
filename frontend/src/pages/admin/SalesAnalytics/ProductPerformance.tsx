@@ -52,7 +52,7 @@ const ProductPerformance: React.FC = () => {
     try {
       setLoading(true);
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5000/api/admin/sales-analytics/products', {
+      const response = await fetch('https://agricorus.onrender.com/api/admin/sales-analytics/products', {
         headers: { Authorization: `Bearer ${token}` },
       });
       
@@ -113,7 +113,7 @@ const ProductPerformance: React.FC = () => {
   const downloadProductReport = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5000/api/admin/sales-analytics/download?type=products', {
+      const response = await fetch('https://agricorus.onrender.com/api/admin/sales-analytics/download?type=products', {
         headers: { Authorization: `Bearer ${token}` },
       });
       

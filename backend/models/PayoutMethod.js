@@ -27,6 +27,17 @@ const payoutMethodSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
+    isVerified: {
+      type: Boolean,
+      default: false,
+    },
+    verifiedName: {
+      type: String,
+      trim: true,
+    },
+    verificationDate: {
+      type: Date,
+    },
 
     // Bank fields
     accountHolderName: {

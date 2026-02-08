@@ -66,7 +66,7 @@ const ViewSpecificLand: React.FC = () => {
       }
 
       try {
-        const response = await fetch(`http://localhost:5000/api/landowner/lands/${id}`, {
+        const response = await fetch(`https://agricorus.onrender.com/api/landowner/lands/${id}`, {
           headers: {
             'Authorization': `Bearer ${token}`,
           },

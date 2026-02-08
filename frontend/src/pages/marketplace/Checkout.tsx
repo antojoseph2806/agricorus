@@ -66,7 +66,7 @@ const Checkout: React.FC = () => {
   const [savedAddresses, setSavedAddresses] = useState<DeliveryAddress[]>([]);
   const [selectedAddressId, setSelectedAddressId] = useState<string | null>(null);
   const [useNewAddress, setUseNewAddress] = useState(false);
-  const backendUrl = (import.meta as any).env.VITE_BACKEND_URL || 'http://localhost:5000';
+  const backendUrl = (import.meta as any).env.VITE_BACKEND_URL || 'https://agricorus.onrender.com';
   
   const [deliveryAddress, setDeliveryAddress] = useState<DeliveryAddress>({
     street: '',

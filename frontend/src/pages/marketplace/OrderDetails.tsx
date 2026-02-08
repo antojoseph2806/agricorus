@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 import MarketplaceLayout from '../../components/MarketplaceLayout';
 import ReviewWithPhotos from '../../components/ReviewWithPhotos';
+import SupportChat from '../../components/marketplace/SupportChat';
 
 interface OrderItem {
   productId: { _id: string; name: string; category: string; images: string[]; description: string; warrantyPeriod?: number };
@@ -61,7 +62,7 @@ const OrderDetails: React.FC = () => {
   const [returnReason, setReturnReason] = useState('');
   const [userReviews, setUserReviews] = useState<Record<string, { rating: number; comment?: string; photos?: Array<{ url: string; caption?: string }> }>>({});
   const [downloadingInvoice, setDownloadingInvoice] = useState(false);
-  const backendUrl = (import.meta as any).env.VITE_BACKEND_URL || 'http://localhost:5000';
+  const backendUrl = (import.meta as any).env.VITE_BACKEND_URL || 'https://agricorus.onrender.com';
   const orderPlaced = location.state?.orderPlaced;
 
   const fetchOrder = async () => {
@@ -553,6 +554,15 @@ const OrderDetails: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Support Chat */}
+      {order && order.items[0] && (
+        <SupportChat 
+          orderId={order._id}
+          productId={order.items[0].productId._id}
+          vendorId={order.items[0].vendorId._id}
+        />
+      )}
     </MarketplaceLayout>
   );
 };

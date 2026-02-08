@@ -4,7 +4,6 @@ import { Layout } from "./LandownerDashboard";
 import {
   CreditCard,
   Plus,
-  Edit3,
   Trash2,
   Shield,
   CheckCircle,
@@ -47,7 +46,7 @@ export const PayoutManagement = ({ type }: { type: "upi" | "bank" }) => {
   const fetchPayouts = async () => {
     setLoading(true);
     try {
-      const res = await axios.get("http://localhost:5000/api/payouts", axiosConfig);
+      const res = await axios.get("https://agricorus.onrender.com/api/payouts", axiosConfig);
       setPayouts(res.data.filter((p: PayoutMethod) => p.type === type));
     } catch (err: any) {
       console.error("Error fetching payouts:", err);
@@ -77,13 +76,13 @@ export const PayoutManagement = ({ type }: { type: "upi" | "bank" }) => {
     try {
       if (editingId) {
         await axios.put(
-          `http://localhost:5000/api/payouts/${editingId}`,
+          `https://agricorus.onrender.com/api/payouts/${editingId}`,
           formData,
           axiosConfig
         );
       } else {
         await axios.post(
-          `http://localhost:5000/api/payouts/add-${type}`,
+          `https://agricorus.onrender.com/api/payouts/add-${type}`,
           formData,
           axiosConfig
         );
@@ -108,7 +107,7 @@ export const PayoutManagement = ({ type }: { type: "upi" | "bank" }) => {
     if (!window.confirm("Are you sure you want to delete this payout method?")) return;
 
     try {
-      await axios.delete(`http://localhost:5000/api/payouts/${id}`, axiosConfig);
+      await axios.delete(`https://agricorus.onrender.com/api/payouts/${id}`, axiosConfig);
       fetchPayouts();
     } catch (err: any) {
       console.error("Error deleting payout:", err);
@@ -428,14 +427,9 @@ export const PayoutManagement = ({ type }: { type: "upi" | "bank" }) => {
                         <td className="py-4 px-8">
                           <div className="flex items-center gap-2">
                             <button
-                              onClick={() => handleEdit(p)}
-                              className="p-2 rounded-lg bg-blue-100 text-blue-600 hover:bg-blue-200 transition"
-                            >
-                              <Edit3 className="w-4 h-4" />
-                            </button>
-                            <button
                               onClick={() => handleDelete(p._id)}
                               className="p-2 rounded-lg bg-red-100 text-red-600 hover:bg-red-200 transition"
+                              title="Delete"
                             >
                               <Trash2 className="w-4 h-4" />
                             </button>

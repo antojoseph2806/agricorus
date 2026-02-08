@@ -73,7 +73,7 @@ const VendorKycManagement: React.FC = () => {
         ...(searchTerm && { search: searchTerm })
       });
 
-      const response = await fetch(`http://localhost:5000/api/admin/kyc/requests?${params}`, {
+      const response = await fetch(`https://agricorus.onrender.com/api/admin/kyc/requests?${params}`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -93,7 +93,7 @@ const VendorKycManagement: React.FC = () => {
   const fetchStats = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5000/api/admin/kyc/stats', {
+      const response = await fetch('https://agricorus.onrender.com/api/admin/kyc/stats', {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -113,7 +113,7 @@ const VendorKycManagement: React.FC = () => {
     setActionLoading(true);
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:5000/api/admin/kyc/approve/${id}`, {
+      const response = await fetch(`https://agricorus.onrender.com/api/admin/kyc/approve/${id}`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -147,7 +147,7 @@ const VendorKycManagement: React.FC = () => {
     setActionLoading(true);
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:5000/api/admin/kyc/reject/${id}`, {
+      const response = await fetch(`https://agricorus.onrender.com/api/admin/kyc/reject/${id}`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,

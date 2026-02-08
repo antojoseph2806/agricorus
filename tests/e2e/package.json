@@ -1,0 +1,28 @@
+{
+  "name": "vendor-e2e-tests",
+  "version": "1.0.0",
+  "description": "E2E tests for vendor functionality using Playwright (Node.js)",
+  "scripts": {
+    "test": "playwright test vendor-crud-complete.test.js",
+    "test:all": "playwright test",
+    "test:crud": "playwright test vendor-crud-complete.test.js",
+    "test:functional": "playwright test vendor-functional.test.js",
+    "test:basic": "playwright test vendor.test.js",
+    "test:headed": "playwright test vendor-crud-complete.test.js --headed",
+    "test:debug": "playwright test vendor-crud-complete.test.js --debug",
+    "test:ui": "playwright test vendor-crud-complete.test.js --ui",
+    "test:report": "playwright show-report",
+    "install": "playwright install chromium"
+  },
+  "keywords": [
+    "e2e",
+    "testing",
+    "playwright",
+    "vendor"
+  ],
+  "author": "AgriCorus Team",
+  "license": "MIT",
+  "devDependencies": {
+    "@playwright/test": "^1.40.0"
+  }
+}

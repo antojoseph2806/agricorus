@@ -173,4 +173,81 @@ router.get("/", auth, async (req, res) => {
   }
 });
 
+// ------------------ VERIFY UPI ID ------------------
+router.post("/verify-upi/:id", auth, async (req, res) => {
+  try {
+    const payout = await PayoutMethod.findOne({
+      _id: req.params.id,
+      user: req.user.id,
+      role: req.user.role,
+      type: "upi",
+    });
+
+    if (!payout) {
+      return res.status(404).json({ error: "UPI payout method not found" });
+    }
+
+    // Mock UPI verification logic
+    // In production, integrate with payment gateway API (Razorpay, PayU, etc.)
+    const mockVerifyUPI = async (upiId, expectedName) => {
+      // Simulate API delay
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      // Mock verification logic
+      // In real implementation, call payment gateway API
+      // Example: Razorpay Fund Account Validation API
+      
+      // For demo purposes, we'll do basic validation
+      if (!isValidUPI(upiId)) {
+        return { success: false, message: "Invalid UPI ID format" };
+      }
+      
+      // Mock: Extract name from UPI ID (before @)
+      const upiUsername = upiId.split('@')[0];
+      
+      // Mock: Check if name matches (simplified)
+      const normalizedExpected = expectedName.toLowerCase().replace(/\s+/g, '');
+      const normalizedUPI = upiUsername.toLowerCase().replace(/[.\-_]/g, '');
+      
+      // Mock verification result
+      if (normalizedUPI.includes(normalizedExpected.substring(0, 4)) || 
+          normalizedExpected.includes(normalizedUPI.substring(0, 4))) {
+        return {
+          success: true,
+          verifiedName: expectedName,
+          message: "UPI ID verified successfully"
+        };
+      } else {
+        return {
+          success: false,
+          message: "UPI ID does not match the provided name"
+        };
+      }
+    };
+
+    const verificationResult = await mockVerifyUPI(payout.upiId, payout.name);
+
+    if (verificationResult.success) {
+      payout.isVerified = true;
+      payout.verifiedName = verificationResult.verifiedName;
+      payout.verificationDate = new Date();
+      await payout.save();
+
+      res.json({
+        success: true,
+        message: verificationResult.message,
+        payout
+      });
+    } else {
+      res.status(400).json({
+        success: false,
+        error: verificationResult.message
+      });
+    }
+  } catch (err) {
+    console.error("Error verifying UPI:", err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 module.exports = router;

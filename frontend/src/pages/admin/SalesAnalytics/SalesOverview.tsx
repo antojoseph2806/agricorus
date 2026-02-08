@@ -48,7 +48,7 @@ const SalesOverview: React.FC = () => {
     try {
       setLoading(true);
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:5000/api/admin/sales-analytics/overview?period=${selectedPeriod}`, {
+      const response = await fetch(`https://agricorus.onrender.com/api/admin/sales-analytics/overview?period=${selectedPeriod}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       
@@ -67,7 +67,7 @@ const SalesOverview: React.FC = () => {
   const downloadReport = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:5000/api/admin/sales-analytics/download?type=overview&period=${selectedPeriod}`, {
+      const response = await fetch(`https://agricorus.onrender.com/api/admin/sales-analytics/download?type=overview&period=${selectedPeriod}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       

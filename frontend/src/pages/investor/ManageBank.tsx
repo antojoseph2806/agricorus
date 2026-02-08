@@ -53,7 +53,7 @@ export default function ManageBank() {
   const fetchMethods = async () => {
     try {
       setLoading(true);
-      const res = await axios.get("http://localhost:5000/api/payouts", {
+      const res = await axios.get("https://agricorus.onrender.com/api/payouts", {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
       setMethods(res.data.filter((m: any) => m.type === "bank"));
@@ -77,12 +77,12 @@ export default function ManageBank() {
     try {
       setSubmitting(true);
       if (editingId) {
-        await axios.put(`http://localhost:5000/api/payouts/${editingId}`, form, {
+        await axios.put(`https://agricorus.onrender.com/api/payouts/${editingId}`, form, {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         });
         showToast("Bank account updated successfully!", "success");
       } else {
-        await axios.post("http://localhost:5000/api/payouts/add-bank", form, {
+        await axios.post("https://agricorus.onrender.com/api/payouts/add-bank", form, {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         });
         showToast("Bank account added successfully!", "success");
@@ -123,7 +123,7 @@ export default function ManageBank() {
   const handleDelete = async (id: string) => {
     if (!window.confirm("Are you sure you want to delete this bank account?")) return;
     try {
-      await axios.delete(`http://localhost:5000/api/payouts/${id}`, {
+      await axios.delete(`https://agricorus.onrender.com/api/payouts/${id}`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
       showToast("Bank account deleted successfully!", "success");

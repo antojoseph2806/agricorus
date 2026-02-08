@@ -18,26 +18,35 @@ exports.getSalesMetrics = async (req, res) => {
     const { period = '30' } = req.query;
     const days = parseInt(period);
 
-    const startDate = new Date();
-    startDate.setDate(startDate.getDate() - days);
+    // Current period dates
+    const currentEndDate = new Date();
+    currentEndDate.setHours(23, 59, 59, 999);
+    const currentStartDate = new Date();
+    currentStartDate.setDate(currentStartDate.getDate() - days);
+    currentStartDate.setHours(0, 0, 0, 0);
 
-    const previousStartDate = new Date();
-    previousStartDate.setDate(previousStartDate.getDate() - days * 2);
-    const previousEndDate = new Date();
-    previousEndDate.setDate(previousEndDate.getDate() - days);
+    // Previous period dates (for comparison)
+    const previousEndDate = new Date(currentStartDate);
+    previousEndDate.setMilliseconds(-1);
+    const previousStartDate = new Date(previousEndDate);
+    previousStartDate.setDate(previousStartDate.getDate() - days);
+    previousStartDate.setHours(0, 0, 0, 0);
 
     const vendorProducts = await Product.find({ vendorId: vendorId }).select('_id');
 
+    // Fetch current period orders
     const currentOrders = await Order.find({
       'items.vendorId': vendorId,
-      createdAt: { $gte: startDate },
+      createdAt: { $gte: currentStartDate, $lte: currentEndDate },
     });
 
+    // Fetch previous period orders
     const previousOrders = await Order.find({
       'items.vendorId': vendorId,
-      createdAt: { $gte: previousStartDate, $lt: previousEndDate },
+      createdAt: { $gte: previousStartDate, $lte: previousEndDate },
     });
 
+    // Calculate current period metrics
     let totalRevenue = 0;
     let totalOrders = 0;
     const customerSet = new Set();
@@ -45,48 +54,65 @@ exports.getSalesMetrics = async (req, res) => {
 
     currentOrders.forEach((order) => {
       let hasVendorItem = false;
+      let orderRevenue = 0;
+      
       order.items.forEach((item) => {
         if (item.vendorId && item.vendorId.toString() === vendorId.toString()) {
-          totalRevenue += item.subtotal || item.price * item.quantity;
+          const itemRevenue = item.subtotal || (item.price * item.quantity);
+          orderRevenue += itemRevenue;
           hasVendorItem = true;
         }
       });
+      
       if (hasVendorItem) {
+        totalRevenue += orderRevenue;
         orderIds.add(order._id.toString());
         if (order.buyerId) customerSet.add(order.buyerId.toString());
       }
     });
     totalOrders = orderIds.size;
 
+    // Calculate previous period metrics
     let prevRevenue = 0;
     let prevOrders = 0;
     const prevOrderIds = new Set();
 
     previousOrders.forEach((order) => {
       let hasVendorItem = false;
+      let orderRevenue = 0;
+      
       order.items.forEach((item) => {
         if (item.vendorId && item.vendorId.toString() === vendorId.toString()) {
-          prevRevenue += item.subtotal || item.price * item.quantity;
+          const itemRevenue = item.subtotal || (item.price * item.quantity);
+          orderRevenue += itemRevenue;
           hasVendorItem = true;
         }
       });
+      
       if (hasVendorItem) {
+        prevRevenue += orderRevenue;
         prevOrderIds.add(order._id.toString());
       }
     });
     prevOrders = prevOrderIds.size;
 
-    const revenueGrowth = prevRevenue > 0 ? ((totalRevenue - prevRevenue) / prevRevenue) * 100 : totalRevenue > 0 ? 100 : 0;
-    const ordersGrowth = prevOrders > 0 ? ((totalOrders - prevOrders) / prevOrders) * 100 : totalOrders > 0 ? 100 : 0;
+    // Calculate growth percentages
+    const revenueGrowth = prevRevenue > 0 
+      ? ((totalRevenue - prevRevenue) / prevRevenue) * 100 
+      : totalRevenue > 0 ? 100 : 0;
+      
+    const ordersGrowth = prevOrders > 0 
+      ? ((totalOrders - prevOrders) / prevOrders) * 100 
+      : totalOrders > 0 ? 100 : 0;
 
     const metrics = {
-      totalRevenue,
+      totalRevenue: Math.round(totalRevenue * 100) / 100,
       totalOrders,
       totalProducts: vendorProducts.length,
       totalCustomers: customerSet.size,
       revenueGrowth: Math.round(revenueGrowth * 10) / 10,
       ordersGrowth: Math.round(ordersGrowth * 10) / 10,
-      averageOrderValue: totalOrders > 0 ? Math.round(totalRevenue / totalOrders) : 0,
+      averageOrderValue: totalOrders > 0 ? Math.round((totalRevenue / totalOrders) * 100) / 100 : 0,
       conversionRate: 0,
     };
 
@@ -107,49 +133,88 @@ exports.getChartData = async (req, res) => {
     const { period = '30' } = req.query;
     const days = parseInt(period);
 
+    // Set start date to beginning of day
     const startDate = new Date();
     startDate.setDate(startDate.getDate() - days);
+    startDate.setHours(0, 0, 0, 0);
+
+    // Set end date to end of current day
+    const endDate = new Date();
+    endDate.setHours(23, 59, 59, 999);
 
     const orders = await Order.find({
       'items.vendorId': vendorId,
-      createdAt: { $gte: startDate },
+      createdAt: { $gte: startDate, $lte: endDate },
     }).sort({ createdAt: 1 });
 
+    // Initialize data structure for all dates in range
     const dataByDate = {};
     for (let i = 0; i < days; i++) {
       const date = new Date();
       date.setDate(date.getDate() - (days - 1 - i));
+      date.setHours(0, 0, 0, 0);
       const dateKey = date.toISOString().split('T')[0];
       dataByDate[dateKey] = { revenue: 0, orders: 0 };
     }
 
+    // Process orders and aggregate by date
     const processedOrders = new Set();
     orders.forEach((order) => {
-      const dateKey = order.createdAt.toISOString().split('T')[0];
-      if (!dataByDate[dateKey]) {
-        dataByDate[dateKey] = { revenue: 0, orders: 0 };
-      }
+      const orderDate = new Date(order.createdAt);
+      orderDate.setHours(0, 0, 0, 0);
+      const dateKey = orderDate.toISOString().split('T')[0];
+      
+      // Only process if date is in our range
+      if (dataByDate[dateKey] !== undefined) {
+        let orderHasVendorItem = false;
+        let orderRevenue = 0;
 
-      let orderHasVendorItem = false;
-      order.items.forEach((item) => {
-        if (item.vendorId && item.vendorId.toString() === vendorId.toString()) {
-          dataByDate[dateKey].revenue += item.subtotal || item.price * item.quantity;
-          orderHasVendorItem = true;
+        order.items.forEach((item) => {
+          if (item.vendorId && item.vendorId.toString() === vendorId.toString()) {
+            const itemRevenue = item.subtotal || (item.price * item.quantity);
+            orderRevenue += itemRevenue;
+            orderHasVendorItem = true;
+          }
+        });
+
+        if (orderHasVendorItem) {
+          dataByDate[dateKey].revenue += orderRevenue;
+          
+          // Count each order only once
+          if (!processedOrders.has(order._id.toString())) {
+            dataByDate[dateKey].orders++;
+            processedOrders.add(order._id.toString());
+          }
         }
-      });
-
-      if (orderHasVendorItem && !processedOrders.has(order._id.toString())) {
-        dataByDate[dateKey].orders++;
-        processedOrders.add(order._id.toString());
       }
     });
 
+    // Sort dates and prepare output arrays
     const labels = Object.keys(dataByDate).sort();
-    const revenue = labels.map((date) => dataByDate[date].revenue);
+    const revenue = labels.map((date) => Math.round(dataByDate[date].revenue * 100) / 100);
     const ordersData = labels.map((date) => dataByDate[date].orders);
 
+    // Format labels based on period
+    const formattedLabels = labels.map((d) => {
+      const date = new Date(d + 'T00:00:00');
+      
+      if (days <= 7) {
+        // For 7 days or less, show day name and date
+        return date.toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric' });
+      } else if (days <= 30) {
+        // For 30 days, show date and month
+        return date.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
+      } else if (days <= 90) {
+        // For 90 days, show date and month
+        return date.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
+      } else {
+        // For longer periods, show month and year
+        return date.toLocaleDateString('en-IN', { month: 'short', year: '2-digit' });
+      }
+    });
+
     sendResponse(res, true, 'Chart data fetched successfully', {
-      labels: labels.map((d) => new Date(d).toLocaleDateString('en-IN', { month: 'short', day: 'numeric' })),
+      labels: formattedLabels,
       revenue,
       orders: ordersData,
     });

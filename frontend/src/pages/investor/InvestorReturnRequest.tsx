@@ -67,10 +67,10 @@ const InvestorReturnRequest: React.FC = () => {
         }
 
         const [invRes, payoutRes] = await Promise.all([
-          axios.get("http://localhost:5000/api/project-payments/investments/history", {
+          axios.get("https://agricorus.onrender.com/api/project-payments/investments/history", {
             headers: { Authorization: `Bearer ${token}` },
           }),
-          axios.get("http://localhost:5000/api/payouts/", {
+          axios.get("https://agricorus.onrender.com/api/payouts/", {
             headers: { Authorization: `Bearer ${token}` },
           }),
         ]);
@@ -109,7 +109,7 @@ const InvestorReturnRequest: React.FC = () => {
     try {
       setLoading(true);
       const res = await axios.post(
-        "http://localhost:5000/api/investor/return-requests",
+        "https://agricorus.onrender.com/api/investor/return-requests",
         { investmentId: selectedInvestment, payoutMethodId: selectedPayoutMethod },
         { headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` } }
       );

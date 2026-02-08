@@ -26,7 +26,7 @@ router.use((req, res, next) => {
 /* -----------------------------
    CREATE PROJECT  (Farmer)
 ------------------------------ */
-router.post("/projects", auth, authorizeRoles("farmer"), async (req, res) => {
+router.post("/", auth, authorizeRoles("farmer"), async (req, res) => {
   try {
     const project = new Project({
       ...req.body,
@@ -42,12 +42,12 @@ router.post("/projects", auth, authorizeRoles("farmer"), async (req, res) => {
 /* -----------------------------
    CREATE VERIFIED PROJECT (Farmer)
 ------------------------------ */
-router.post("/projects/create-verified", auth, authorizeRoles("farmer"), createVerifiedProject);
+router.post("/create-verified", auth, authorizeRoles("farmer"), createVerifiedProject);
 
 /* -----------------------------
    GET PROJECT VERIFICATION STATUS (Farmer)
 ------------------------------ */
-router.get("/projects/:id/verification-status", auth, authorizeRoles("farmer"), getVerificationStatus);
+router.get("/:id/verification-status", auth, authorizeRoles("farmer"), getVerificationStatus);
 /* -----------------------------
    GET ALL PROJECTS (Admin only)
 ------------------------------ */
@@ -72,9 +72,9 @@ router.get("/admin/projects", auth, authorizeRoles("admin"), async (req, res) =>
 });
 /* -----------------------------
    APPROVED PROJECT ROUTES (public)
-   👉 keep these ABOVE /projects/:id
+   👉 keep these ABOVE /:id
 ------------------------------ */
-router.get("/projects/approved", async (req, res) => {
+router.get("/approved", async (req, res) => {
   try {
     const projects = await Project.find({ isApproved: true })
       .populate("farmerId", "_id name email")
@@ -85,10 +85,55 @@ router.get("/projects/approved", async (req, res) => {
   }
 });
 
+// -----------------------------
+// GET ALL PROJECTS (Investor specific)
+// 👉 MUST be BEFORE /:id route
+// -----------------------------
+router.get("/investor", auth, async (req, res) => {
+  console.log('\n🔍 === INVESTOR PROJECTS REQUEST ===');
+  console.log('User:', req.user ? {
+    id: req.user._id,
+    email: req.user.email,
+    role: req.user.role
+  } : 'NO USER');
+  
+  try {
+    if (!req.user) {
+      console.log('❌ No user in request');
+      return res.status(401).json({ error: "Authentication required" });
+    }
+    
+    if (req.user.role !== "investor") {
+      console.log(`❌ Wrong role: ${req.user.role}`);
+      return res.status(403).json({ error: "Access denied. Investors only." });
+    }
+
+    console.log('✅ User is investor, fetching projects...');
+    
+    // Fetch projects that are approved and open for investment
+    const projects = await Project.find({ 
+      isApproved: true,
+      status: { $in: ["open", "ongoing", "funded"] }
+    })
+      .populate("farmerId", "_id name email")
+      .sort({ createdAt: -1 });
+
+    console.log(`📊 Found ${projects.length} approved projects`);
+    console.log('Projects:', projects.map(p => ({ title: p.title, status: p.status, approved: p.isApproved })));
+    console.log('=== END REQUEST ===\n');
+    
+    res.json(projects);
+  } catch (err) {
+    console.error("❌ Error fetching investor projects:", err);
+    console.error("Error stack:", err.stack);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 /* -----------------------------
    VIEW CLOSED PROJECTS
 ------------------------------ */
-router.get("/projects/closed", auth, async (req, res) => {
+router.get("/closed", auth, async (req, res) => {
   try {
     const projects = await Project.find({ status: "closed" })
       .populate("farmerId", "name email"); // populate farmer details
@@ -99,7 +144,7 @@ router.get("/projects/closed", auth, async (req, res) => {
   }
 });
 
-router.get("/projects/approved/:id", async (req, res) => {
+router.get("/approved/:id", async (req, res) => {
   try {
     if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
       return res.status(400).json({ error: "Invalid project ID" });
@@ -117,7 +162,7 @@ router.get("/projects/approved/:id", async (req, res) => {
   }
 });
 
-router.get("/projects/approved/slug/:slug", async (req, res) => {
+router.get("/approved/slug/:slug", async (req, res) => {
   try {
     const project = await Project.findOne({
       slug: req.params.slug,
@@ -133,7 +178,7 @@ router.get("/projects/approved/slug/:slug", async (req, res) => {
 /* -----------------------------
    VIEW FUNDED PROJECTS
 ------------------------------ */
-router.get("/projects/funded", auth, async (req, res) => {
+router.get("/funded", auth, async (req, res) => {
   try {
     const projects = await Project.find({ status: "funded" })
       .populate("farmerId", "name email"); // include farmer info
@@ -151,9 +196,9 @@ router.get("/projects/funded", auth, async (req, res) => {
 ------------------------------ */
 
 /* APPROVE PROJECT (Admin) */
-console.log('🔧 Registering APPROVE route: /projects/:id/approve');
+console.log('🔧 Registering APPROVE route: /:id/approve');
 router.patch(
-  "/projects/:id/approve",
+  "/:id/approve",
   (req, res, next) => {
     console.log('🔍 APPROVE MIDDLEWARE: Route matched!', req.params.id);
     next();
@@ -197,7 +242,7 @@ router.patch(
 
 /* REJECT PROJECT (Admin) */
 router.patch(
-  "/projects/:id/reject",
+  "/:id/reject",
   auth,
   authorizeRoles("admin"),
   async (req, res) => {
@@ -226,7 +271,7 @@ router.patch(
 );
 
 /* CLOSE PROJECT (Admin) */
-router.patch("/projects/:id/close", auth, authorizeRoles("admin"), async (req, res) => {
+router.patch("/:id/close", auth, authorizeRoles("admin"), async (req, res) => {
   try {
     if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
       return res.status(400).json({ error: "Invalid project ID" });
@@ -246,7 +291,7 @@ router.patch("/projects/:id/close", auth, authorizeRoles("admin"), async (req, r
 
 /* MARK PROJECT AS FUNDED (Admin) */
 router.patch(
-  "/projects/:id/mark-funded",
+  "/:id/mark-funded",
   auth,
   authorizeRoles("admin"),
   async (req, res) => {
@@ -276,7 +321,7 @@ router.patch(
 /* -----------------------------
    GET ALL PROJECTS (public)
 ------------------------------ */
-router.get("/projects", async (req, res) => {
+router.get("/", async (req, res) => {
   try {
     const projects = await Project.find().populate("farmerId", "_id name email");
     res.json(projects);
@@ -289,7 +334,7 @@ router.get("/projects", async (req, res) => {
    INVEST IN PROJECT (Investor)
 ------------------------------ */
 router.post(
-  "/projects/:id/invest",
+  "/:id/invest",
   auth,
   authorizeRoles("investor"),
   async (req, res) => {
@@ -335,7 +380,7 @@ router.post(
    INVESTOR FUND PROJECT
 ------------------------------ */
 router.patch(
-  "/projects/:id/fund",
+  "/:id/fund",
   auth,
   authorizeRoles("investor"),
   async (req, res) => {
@@ -374,7 +419,7 @@ router.patch(
 /* -----------------------------
    GET INVESTMENTS FOR PROJECT
 ------------------------------ */
-router.get("/projects/:id/investments", async (req, res) => {
+router.get("/:id/investments", async (req, res) => {
   try {
     if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
       return res.status(400).json({ error: "Invalid project ID" });
@@ -391,7 +436,7 @@ router.get("/projects/:id/investments", async (req, res) => {
 /* -----------------------------
    GET PROJECT BY ID (public)
 ------------------------------ */
-router.get("/projects/:id", async (req, res) => {
+router.get("/:id", async (req, res) => {
   try {
     if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
       return res.status(400).json({ error: "Invalid project ID" });
@@ -410,7 +455,7 @@ router.get("/projects/:id", async (req, res) => {
 /* -----------------------------
    GET PROJECT BY SLUG (public)
 ------------------------------ */
-router.get("/projects/slug/:slug", async (req, res) => {
+router.get("/slug/:slug", async (req, res) => {
   try {
     const project = await Project.findOne({ slug: req.params.slug }).populate(
       "farmerId",
@@ -418,26 +463,6 @@ router.get("/projects/slug/:slug", async (req, res) => {
     );
     if (!project) return res.status(404).json({ error: "Project not found" });
     res.json(project);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-
-// -----------------------------
-// GET ALL PROJECTS (Investor specific)
-// -----------------------------
-router.get("/investor", auth, async (req, res) => {
-  try {
-    if (req.user.role !== "investor") {
-      return res.status(403).json({ error: "Access denied. Investors only." });
-    }
-
-    // Only fetch projects that are OPEN
-    const projects = await Project.find({ status: "open" })
-      .populate("farmerId", "_id name email");
-
-    res.json(projects);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -473,7 +498,7 @@ router.get("/investor/:id", auth, async (req, res) => {
    UPDATE PROJECT (Farmer/Admin)
 ------------------------------ */
 router.put(
-  "/projects/:id",
+  "/:id",
   auth,
   authorizeRoles("farmer", "admin"),
   async (req, res) => {
@@ -506,7 +531,7 @@ router.put(
    DELETE PROJECT (Farmer/Admin)
 ------------------------------ */
 router.delete(
-  "/projects/:id",
+  "/:id",
   auth,
   authorizeRoles("farmer", "admin"),
   async (req, res) => {
@@ -534,107 +559,10 @@ router.delete(
   }
 );
 
-/* -----------------------------
-   INVEST IN PROJECT (Investor)
------------------------------- */
-router.post(
-  "/projects/:id/invest",
-  auth,
-  authorizeRoles("investor"),
-  async (req, res) => {
-    try {
-      if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
-        return res.status(400).json({ error: "Invalid project ID" });
-      }
-
-      const { amount } = req.body;
-      if (!amount || amount <= 0) {
-        return res
-          .status(400)
-          .json({ error: "Investment amount must be greater than zero" });
-      }
-
-      const project = await Project.findById(req.params.id);
-      if (!project) return res.status(404).json({ error: "Project not found" });
-      if (project.status !== "open") {
-        return res.status(400).json({ error: "Project is not open for funding" });
-      }
-
-      const investment = new Investment({
-        projectId: req.params.id,
-        investorId: req.user.id,
-        amount,
-      });
-      await investment.save();
-
-      project.currentFunding += amount;
-      if (project.currentFunding >= project.fundingGoal) {
-        project.status = "funded";
-      }
-      await project.save();
-
-      res.status(201).json(investment);
-    } catch (err) {
-      res.status(400).json({ error: err.message });
-    }
-  }
-);
-
-/* -----------------------------
-   GET INVESTMENTS FOR PROJECT
------------------------------- */
-router.get("/projects/:id/investments", async (req, res) => {
-  try {
-    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
-      return res.status(400).json({ error: "Invalid project ID" });
-    }
-    const investments = await Investment.find({
-      projectId: req.params.id,
-    }).populate("investorId", "_id name email");
-    res.json(investments);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-/* -----------------------------
-   GET ALL INVESTMENTS BY USER
------------------------------- */
-router.get("/users/:id/investments", async (req, res) => {
-  try {
-    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
-      return res.status(400).json({ error: "Invalid user ID" });
-    }
-    const investments = await Investment.find({
-      investorId: req.params.id,
-    }).populate("projectId", "_id title slug");
-    res.json(investments);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-/* -----------------------------
-   GET ALL INVESTMENTS BY USER
------------------------------- */
-router.get("/users/:id/investments", async (req, res) => {
-  try {
-    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
-      return res.status(400).json({ error: "Invalid user ID" });
-    }
-    const investments = await Investment.find({
-      investorId: req.params.id,
-    }).populate("projectId", "_id title slug");
-    res.json(investments);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
 /**
  * Get Total Funding across all projects
  */
-router.get("/projects/total-funding", auth, authorizeRoles("admin"), async (req, res) => {
+router.get("/total-funding", auth, authorizeRoles("admin"), async (req, res) => {
   try {
     // Aggregate sum of currentFunding from all projects
     const result = await Project.aggregate([

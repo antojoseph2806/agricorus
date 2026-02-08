@@ -42,11 +42,13 @@ const ProductDetails: React.FC = () => {
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState(0);
   const [addingToCart, setAddingToCart] = useState(false);
+  const [showSuccessAnimation, setShowSuccessAnimation] = useState(false);
 
   const fetchProduct = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`http://localhost:5000/api/marketplace/products/${id}`);
+      const backendUrl = (import.meta as any).env.VITE_BACKEND_URL || 'https://agricorus.onrender.com';
+      const response = await fetch(`${backendUrl}/api/marketplace/products/${id}`);
       const data = await response.json();
 
       if (data.success) {
@@ -62,26 +64,35 @@ const ProductDetails: React.FC = () => {
   };
 
   const addToCart = async () => {
+    const token = localStorage.getItem('token');
+    const role = localStorage.getItem('role');
+    
+    // If not logged in, show success animation then redirect to register
+    if (!token) {
+      setShowSuccessAnimation(true);
+      setTimeout(() => {
+        setShowSuccessAnimation(false);
+        navigate('/register');
+      }, 1500);
+      return;
+    }
+    
+    // Check if user has valid role for marketplace
+    const validRoles = ['farmer', 'landowner', 'investor'];
+    if (!role || !validRoles.includes(role)) {
+      setShowSuccessAnimation(true);
+      setTimeout(() => {
+        setShowSuccessAnimation(false);
+        navigate('/register');
+      }, 1500);
+      return;
+    }
+
+    // User is logged in with valid role, proceed with actual cart addition
     try {
       setAddingToCart(true);
-      const token = localStorage.getItem('token');
-      const role = localStorage.getItem('role');
-      
-      if (!token) {
-        alert('Please login to add items to cart');
-        navigate('/login');
-        return;
-      }
-      
-      // Check if user has valid role for marketplace
-      const validRoles = ['farmer', 'landowner', 'investor'];
-      if (!role || !validRoles.includes(role)) {
-        alert('To purchase from the marketplace, you need to be registered as a farmer, landowner, or investor.');
-        navigate('/register');
-        return;
-      }
-
-      const response = await fetch('http://localhost:5000/api/cart/add', {
+      const backendUrl = (import.meta as any).env.VITE_BACKEND_URL || 'https://agricorus.onrender.com';
+      const response = await fetch(`${backendUrl}/api/cart/add`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -92,14 +103,17 @@ const ProductDetails: React.FC = () => {
 
       const data = await response.json();
       if (data.success) {
-        // Navigate to cart page after successful add
-        navigate('/cart');
+        setShowSuccessAnimation(true);
+        setTimeout(() => {
+          setShowSuccessAnimation(false);
+          navigate('/cart');
+        }, 1000);
       } else {
         alert(data.message || 'Failed to add item to cart');
       }
     } catch (error) {
       console.error('Error adding to cart:', error);
-      alert('Error adding item to cart');
+      alert('Failed to add item to cart');
     } finally {
       setAddingToCart(false);
     }
@@ -212,7 +226,7 @@ const ProductDetails: React.FC = () => {
               <img
                 src={
                   product.images[selectedImage]
-                    ? `http://localhost:5000${product.images[selectedImage]}`
+                    ? `https://agricorus.onrender.com${product.images[selectedImage]}`
                     : '/placeholder-product.jpg'
                 }
                 alt={product.name}
@@ -232,7 +246,7 @@ const ProductDetails: React.FC = () => {
                     }`}
                   >
                     <img
-                      src={`http://localhost:5000${image}`}
+                      src={`https://agricorus.onrender.com${image}`}
                       alt={`${product.name} ${index + 1}`}
                       className="w-full h-full object-cover"
                     />
@@ -358,7 +372,7 @@ const ProductDetails: React.FC = () => {
               {product.safetyDocuments.map((doc, index) => (
                 <a
                   key={index}
-                  href={`http://localhost:5000${doc}`}
+                  href={`https://agricorus.onrender.com${doc}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-3 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition"
@@ -423,6 +437,23 @@ const ProductDetails: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Success Animation Modal */}
+      {showSuccessAnimation && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+          <div className="bg-white rounded-2xl p-8 max-w-sm mx-4 text-center animate-bounce">
+            <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <CheckCircle className="w-12 h-12 text-green-600" />
+            </div>
+            <h3 className="text-2xl font-bold text-gray-900 mb-2">Added to Cart!</h3>
+            <p className="text-gray-600">
+              {!localStorage.getItem('token') 
+                ? 'Redirecting to registration...' 
+                : 'Redirecting to cart...'}
+            </p>
+          </div>
+        </div>
+      )}
     </MarketplaceLayout>
   );
 };

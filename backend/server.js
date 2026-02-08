@@ -148,6 +148,7 @@ app.use("/api/vendor/profile", vendorProfileRoutes);
 app.use("/api/vendor/orders", require("./routes/vendorOrderRoutes"));
 app.use("/api/marketplace/products", marketplaceRoutes);
 app.use("/api/marketplace/payments", require("./routes/marketplacePaymentRoutes"));
+app.use("/api/marketplace/support", require("./routes/supportRoutes"));
 app.use("/api/cart", cartRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/reviews", reviewRoutes);

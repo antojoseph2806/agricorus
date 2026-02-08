@@ -1,6 +1,6 @@
 // src/pages/FarmerViewLands.tsx
 import React, { useEffect, useState } from "react";
-import { MapPin, Loader, Search, X, Filter, Server, Cloud, Cpu, Shield } from "lucide-react";
+import { MapPin, Search, X, Filter, Server, Cloud, Cpu, Shield } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 interface Land {
@@ -33,7 +33,7 @@ const FarmerViewLands: React.FC = () => {
   const navigate = useNavigate();
 
   const backendUrl =
-    (import.meta as any).env.VITE_BACKEND_URL || "http://localhost:5000";
+    (import.meta as any).env.VITE_BACKEND_URL || "https://agricorus.onrender.com";
 
   useEffect(() => {
     const fetchLands = async () => {
@@ -231,10 +231,10 @@ const FarmerViewLands: React.FC = () => {
                 <div
                   key={land._id}
                   onClick={() => navigate(`/farmer/lands/${land._id}`)}
-                  className="group bg-white rounded-xl overflow-hidden border shadow-sm hover:shadow-lg transition-all duration-300 hover:scale-[1.02] cursor-pointer"
+                  className="group bg-white rounded-2xl overflow-hidden border border-gray-200 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer"
                 >
                   {/* Image */}
-                  <div className="h-48 bg-gray-100 relative overflow-hidden">
+                  <div className="h-40 bg-gray-100 relative overflow-hidden">
                     {land.landPhotos && land.landPhotos.length > 0 ? (
                       <>
                         <img
@@ -242,59 +242,61 @@ const FarmerViewLands: React.FC = () => {
                           alt={land.title}
                           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
                       </>
                     ) : (
-                      <div className="h-full flex flex-col items-center justify-center text-gray-400">
-                        <MapPin className="w-12 h-12 mb-3" />
-                        <span className="text-sm">No image available</span>
+                      <div className="h-full flex flex-col items-center justify-center text-gray-400 bg-gradient-to-br from-gray-50 to-gray-100">
+                        <MapPin className="w-10 h-10 mb-2" />
+                        <span className="text-xs">No image</span>
                       </div>
                     )}
                     
                     {/* Badge */}
-                    <div className="absolute top-4 right-4 bg-emerald-500 p-2 rounded-lg shadow-lg">
-                      <TechIcon className="w-4 h-4 text-white" />
+                    <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm p-2 rounded-lg shadow-lg">
+                      <TechIcon className="w-4 h-4 text-emerald-600" />
                     </div>
                   </div>
 
                   {/* Details */}
-                  <div className="p-5">
-                    <h2 className="font-bold text-gray-900 text-lg mb-3 line-clamp-2 group-hover:text-emerald-600 transition-colors duration-300">
+                  <div className="p-4">
+                    <h2 className="font-bold text-gray-900 text-base mb-2 line-clamp-1 group-hover:text-emerald-600 transition-colors duration-300">
                       {land.title}
                     </h2>
 
                     <div className="flex items-start mb-3">
-                      <MapPin className="h-4 w-4 text-emerald-500 mt-1 mr-2 flex-shrink-0" />
-                      <span className="text-sm text-gray-600 line-clamp-2">
+                      <MapPin className="h-3.5 w-3.5 text-emerald-500 mt-0.5 mr-1.5 flex-shrink-0" />
+                      <span className="text-xs text-gray-600 line-clamp-1">
                         {land.location?.address}
                       </span>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-3 mb-4">
-                      <div className="bg-gray-50 p-3 rounded-lg border">
-                        <p className="text-xs text-gray-500 mb-1">Soil Type</p>
-                        <p className="text-sm font-semibold text-gray-900">
+                    <div className="grid grid-cols-2 gap-2 mb-3">
+                      <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-2 rounded-lg border border-blue-200">
+                        <p className="text-[10px] text-blue-600 font-medium mb-0.5">Soil Type</p>
+                        <p className="text-xs font-bold text-blue-900 truncate">
                           {land.soilType}
                         </p>
                       </div>
-                      <div className="bg-gray-50 p-3 rounded-lg border">
-                        <p className="text-xs text-gray-500 mb-1">Duration</p>
-                        <p className="text-sm font-semibold text-gray-900">
-                          {land.leaseDurationMonths} months
+                      <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-2 rounded-lg border border-purple-200">
+                        <p className="text-[10px] text-purple-600 font-medium mb-0.5">Duration</p>
+                        <p className="text-xs font-bold text-purple-900">
+                          {land.leaseDurationMonths}mo
                         </p>
                       </div>
                     </div>
 
-                    <div className="flex justify-between items-center pt-3 border-t">
+                    <div className="flex justify-between items-center pt-3 border-t border-gray-100">
                       <div>
-                        <p className="text-xs text-gray-500">Monthly Lease</p>
-                        <p className="text-xl font-bold text-emerald-600">
-                          ₹{land.leasePricePerMonth.toLocaleString()}
-                          <span className="text-sm font-normal text-gray-500">/month</span>
+                        <p className="text-[10px] text-gray-500 mb-0.5">Monthly Lease</p>
+                        <p className="text-lg font-bold text-emerald-600">
+                          ₹{(land.leasePricePerMonth / 1000).toFixed(0)}K
                         </p>
                       </div>
-                      <div className="text-xs text-gray-600 bg-gray-100 px-3 py-2 rounded-lg group-hover:bg-emerald-500 group-hover:text-white transition-all duration-300">
-                        View Details
+                      <div className="flex items-center gap-1 text-xs font-medium text-emerald-600 group-hover:text-emerald-700">
+                        View
+                        <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        </svg>
                       </div>
                     </div>
                   </div>
@@ -303,24 +305,6 @@ const FarmerViewLands: React.FC = () => {
             })}
           </div>
         )}
-
-        {/* Stats Footer */}
-        <div className="mt-12 grid grid-cols-2 lg:grid-cols-4 gap-6">
-          {[
-            { label: 'Total Lands', value: lands.length, color: 'bg-blue-500' },
-            { label: 'Average Price', value: '₹25K/mo', color: 'bg-purple-500' },
-            { label: 'Success Rate', value: '98%', color: 'bg-green-500' },
-            { label: 'Active Leases', value: '47', color: 'bg-emerald-500' },
-          ].map((stat, idx) => (
-            <div key={idx} className="bg-white rounded-xl shadow-sm border p-4 text-center">
-              <div className={`inline-flex p-3 rounded-lg ${stat.color} mb-2`}>
-                <div className="w-6 h-6 bg-white/20 rounded"></div>
-              </div>
-              <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
-              <p className="text-xs text-gray-600">{stat.label}</p>
-            </div>
-          ))}
-        </div>
       </div>
     </div>
   );

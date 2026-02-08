@@ -1,4 +1,6 @@
 const Notification = require('../models/Notification');
+const EmailService = require('./emailService');
+const Vendor = require('../models/Vendor');
 
 class NotificationService {
   /**
@@ -122,7 +124,8 @@ class NotificationService {
    * Create low stock notification
    */
   static async notifyLowStock(vendorId, product) {
-    return this.createNotification({
+    // Create in-app notification
+    const notification = await this.createNotification({
       vendorId,
       type: 'LOW_STOCK',
       title: 'Low Stock Alert',
@@ -137,13 +140,32 @@ class NotificationService {
       actionUrl: `/vendor/inventory`,
       actionText: 'Update Stock'
     });
+
+    // Send email alert
+    try {
+      const vendor = await Vendor.findById(vendorId);
+      if (vendor && vendor.email) {
+        await EmailService.sendLowStockAlert(
+          vendor.email,
+          vendor.businessName || vendor.ownerName,
+          product
+        );
+        console.log(`Low stock email sent to ${vendor.email} for product ${product.name}`);
+      }
+    } catch (emailError) {
+      console.error('Failed to send low stock email:', emailError);
+      // Don't fail the notification if email fails
+    }
+
+    return notification;
   }
 
   /**
    * Create out of stock notification
    */
   static async notifyOutOfStock(vendorId, product) {
-    return this.createNotification({
+    // Create in-app notification
+    const notification = await this.createNotification({
       vendorId,
       type: 'OUT_OF_STOCK',
       title: 'Product Out of Stock',
@@ -157,6 +179,24 @@ class NotificationService {
       actionUrl: `/vendor/inventory`,
       actionText: 'Restock Now'
     });
+
+    // Send email alert
+    try {
+      const vendor = await Vendor.findById(vendorId);
+      if (vendor && vendor.email) {
+        await EmailService.sendOutOfStockAlert(
+          vendor.email,
+          vendor.businessName || vendor.ownerName,
+          product
+        );
+        console.log(`Out of stock email sent to ${vendor.email} for product ${product.name}`);
+      }
+    } catch (emailError) {
+      console.error('Failed to send out of stock email:', emailError);
+      // Don't fail the notification if email fails
+    }
+
+    return notification;
   }
 
   /**

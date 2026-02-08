@@ -278,6 +278,21 @@ exports.verifyPayment = async (req, res) => {
       // Deduct stock
       product.stock -= cartItem.quantity;
       await product.save({ session });
+
+      // Check for low stock or out of stock after deduction
+      const NotificationService = require('../utils/notificationService');
+      try {
+        if (product.stock === 0) {
+          // Product went out of stock
+          await NotificationService.notifyOutOfStock(product.vendorId, product);
+        } else if (product.stock <= (product.lowStockThreshold || 10)) {
+          // Product is now low stock
+          await NotificationService.notifyLowStock(product.vendorId, product);
+        }
+      } catch (notificationError) {
+        console.error('Failed to send stock alert notification:', notificationError);
+        // Don't fail the order if notification fails
+      }
     }
 
     // Verify amount matches
@@ -415,6 +430,21 @@ exports.createCodOrder = async (req, res) => {
 
       product.stock -= cartItem.quantity;
       await product.save({ session });
+
+      // Check for low stock or out of stock after deduction
+      const NotificationService = require('../utils/notificationService');
+      try {
+        if (product.stock === 0) {
+          // Product went out of stock
+          await NotificationService.notifyOutOfStock(product.vendorId, product);
+        } else if (product.stock <= (product.lowStockThreshold || 10)) {
+          // Product is now low stock
+          await NotificationService.notifyLowStock(product.vendorId, product);
+        }
+      } catch (notificationError) {
+        console.error('Failed to send stock alert notification:', notificationError);
+        // Don't fail the order if notification fails
+      }
     }
 
     if (totalAmount <= 0) {

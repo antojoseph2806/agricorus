@@ -185,11 +185,13 @@ export default function ProjectDetails() {
     src: string;
     title: string;
   }>({ type: null, src: '', title: '' });
+  
+  const backendUrl = (import.meta as any).env.VITE_BACKEND_URL || "https://agricorus.onrender.com";
 
   // Helper function to get correct media URL
   const getMediaUrl = (filePath: string) => {
     if (!filePath) return '';
-    return filePath.startsWith('http') ? filePath : `http://localhost:5000/${filePath}`;
+    return filePath.startsWith('http') ? filePath : `${backendUrl}/${filePath}`;
   };
 
   const openModal = (type: 'image' | 'video', src: string, title: string) => {
@@ -205,7 +207,7 @@ export default function ProjectDetails() {
     const fetchProject = async () => {
       try {
         setLoading(true);
-        const res = await axios.get(`http://localhost:5000/api/projects/${id}`);
+        const res = await axios.get(`${backendUrl}/api/projects/${id}`);
         console.log("Project data:", res.data);
         if (res.data.landMedia) {
           console.log("Land media photos:", res.data.landMedia.photos);
@@ -219,14 +221,14 @@ export default function ProjectDetails() {
       }
     };
     fetchProject();
-  }, [id]);
+  }, [id, backendUrl]);
 
   // Delete project
   const handleDelete = async () => {
     if (!window.confirm("Are you sure you want to delete this project?")) return;
 
     try {
-      await axios.delete(`http://localhost:5000/api/projects/${id}`, {
+      await axios.delete(`${backendUrl}/api/projects/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       navigate("/farmer/projects");
@@ -828,14 +830,14 @@ export default function ProjectDetails() {
                         </p>
                         <div className="flex space-x-2">
                           <button 
-                            onClick={() => window.open(`http://localhost:5000/${doc.filePath}`, '_blank')}
+                            onClick={() => window.open(getMediaUrl(doc.filePath), '_blank')}
                             className="flex items-center px-3 py-1 bg-blue-100 hover:bg-blue-200 text-blue-700 text-xs font-medium rounded transition-colors duration-300"
                           >
                             <FaEye className="w-3 h-3 mr-1" />
                             View
                           </button>
                           <a
-                            href={`http://localhost:5000/${doc.filePath}`}
+                            href={getMediaUrl(doc.filePath)}
                             download
                             className="flex items-center px-3 py-1 bg-green-100 hover:bg-green-200 text-green-700 text-xs font-medium rounded transition-colors duration-300"
                           >

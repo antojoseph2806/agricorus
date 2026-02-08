@@ -66,7 +66,7 @@ const OrderHistory: React.FC = () => {
         return;
       }
 
-      const response = await fetch('http://localhost:5000/api/orders', {
+      const response = await fetch('https://agricorus.onrender.com/api/orders', {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -255,9 +255,8 @@ const OrderHistory: React.FC = () => {
                           <h3 className="text-lg font-semibold text-gray-900">
                             Order #{order.orderNumber}
                           </h3>
+                          {/* Show only order status - it's more relevant to the user */}
                           {getOrderStatusBadge(order.orderStatus)}
-                          {/* Don't show payment status badge for delivered orders */}
-                          {order.orderStatus.toUpperCase() !== 'DELIVERED' && getPaymentStatusBadge(order.paymentStatus)}
                         </div>
                         <div className="flex items-center gap-4 text-sm text-gray-600">
                           <div className="flex items-center gap-1">
@@ -453,7 +452,7 @@ const CancelOrderModal: React.FC<CancelOrderModalProps> = ({ order, onClose, onS
     setLoading(true);
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:5000/api/orders/${order._id}/cancel`, {
+      const response = await fetch(`https://agricorus.onrender.com/api/orders/${order._id}/cancel`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -582,7 +581,7 @@ const ReturnOrderModal: React.FC<ReturnOrderModalProps> = ({ order, onClose, onS
     setLoading(true);
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:5000/api/orders/${order._id}/return`, {
+      const response = await fetch(`https://agricorus.onrender.com/api/orders/${order._id}/return`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -718,7 +717,7 @@ const ReplaceOrderModal: React.FC<ReplaceOrderModalProps> = ({ order, onClose, o
     setLoading(true);
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:5000/api/orders/${order._id}/replace`, {
+      const response = await fetch(`https://agricorus.onrender.com/api/orders/${order._id}/replace`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,

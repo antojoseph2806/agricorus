@@ -39,7 +39,7 @@ export default function OngoingProjects() {
       try {
         const token = localStorage.getItem("token");
         const res = await axios.get(
-          "http://localhost:5000/api/projects/funded",
+          "https://agricorus.onrender.com/api/projects/funded",
           {
             headers: { Authorization: `Bearer ${token}` },
           }

@@ -198,10 +198,13 @@ exports.createVerifiedProject = [
             ? ownershipDocumentNumbers[index] 
             : ownershipDocumentNumbers;
           
+          // Store relative path from project root
+          const relativePath = file.path.replace(/\\/g, '/').replace(/^.*\/uploads\//, 'uploads/');
+          
           ownershipDocuments.push({
             type: docType,
             documentNumber: docNumber,
-            filePath: file.path,
+            filePath: relativePath,
             uploadedAt: new Date()
           });
         });
@@ -229,8 +232,11 @@ exports.createVerifiedProject = [
             }
           }
           
+          // Store relative path from project root
+          const relativePath = file.path.replace(/\\/g, '/').replace(/^.*\/uploads\//, 'uploads/');
+          
           landPhotos.push({
-            filePath: file.path,
+            filePath: relativePath,
             description,
             geoTag,
             uploadedAt: new Date()
@@ -260,8 +266,11 @@ exports.createVerifiedProject = [
             }
           }
           
+          // Store relative path from project root
+          const relativePath = file.path.replace(/\\/g, '/').replace(/^.*\/uploads\//, 'uploads/');
+          
           landVideos.push({
-            filePath: file.path,
+            filePath: relativePath,
             description,
             geoTag,
             uploadedAt: new Date()
@@ -281,10 +290,10 @@ exports.createVerifiedProject = [
         // Farmer Identity Verification
         farmerVerification: {
           aadhaarNumber,
-          aadhaarDocument: req.files.aadhaarDocument[0].path,
+          aadhaarDocument: req.files.aadhaarDocument[0].path.replace(/\\/g, '/').replace(/^.*\/uploads\//, 'uploads/'),
           govtIdType,
           govtIdNumber: govtIdNumber.trim(),
-          govtIdDocument: req.files.govtIdDocument[0].path,
+          govtIdDocument: req.files.govtIdDocument[0].path.replace(/\\/g, '/').replace(/^.*\/uploads\//, 'uploads/'),
           verificationStatus: 'PENDING'
         },
 

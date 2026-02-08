@@ -13,11 +13,10 @@ import {
   Shield,
   Sparkles,
   TrendingUp,
-  Star,
   ChevronLeft,
   ChevronRight,
   X,
-  Filter
+  CheckCircle
 } from 'lucide-react';
 import MarketplaceLayout from '../../components/MarketplaceLayout';
 
@@ -53,6 +52,7 @@ const Marketplace: React.FC = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [totalProducts, setTotalProducts] = useState(0);
   const [addingToCart, setAddingToCart] = useState<string | null>(null);
+  const [showSuccessAnimation, setShowSuccessAnimation] = useState(false);
   
   const [filters, setFilters] = useState<Filters>({
     category: 'all',
@@ -92,7 +92,7 @@ const Marketplace: React.FC = () => {
         sortOrder: filters.sortOrder
       });
 
-      const response = await fetch(`http://localhost:5000/api/marketplace/products?${params}`);
+      const response = await fetch(`https://agricorus.onrender.com/api/marketplace/products?${params}`);
       const data = await response.json();
 
       if (data.success) {
@@ -119,15 +119,90 @@ const Marketplace: React.FC = () => {
   };
 
   const addToCart = async (productId: string) => {
+    const token = localStorage.getItem('token');
+    const role = localStorage.getItem('role');
+    
+    // If not logged in, show success animation then redirect to register
+    if (!token) {
+      setShowSuccessAnimation(true);
+      setTimeout(() => {
+        setShowSuccessAnimation(false);
+        navigate('/register');
+      }, 1500);
+      return;
+    }
+    
+    // Check if user has valid role for marketplace
+    const validRoles = ['farmer', 'landowner', 'investor'];
+    if (!role || !validRoles.includes(role)) {
+      setShowSuccessAnimation(true);
+      setTimeout(() => {
+        setShowSuccessAnimation(false);
+        navigate('/register');
+      }, 1500);
+      return;
+    }
+
+    // User is logged in with valid role, proceed with actual cart addition
     try {
       setAddingToCart(productId);
-      const token = localStorage.getItem('token');
-      if (!token) {
-        alert('Please login to add items to cart');
-        return;
-      }
+      const backendUrl = (import.meta as any).env.VITE_BACKEND_URL || 'https://agricorus.onrender.com';
+      const response = await fetch(`${backendUrl}/api/cart/add`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ productId, quantity: 1 })
+      });
 
-      const response = await fetch('http://localhost:5000/api/cart/add', {
+      const data = await response.json();
+      if (data.success) {
+        setShowSuccessAnimation(true);
+        setTimeout(() => {
+          setShowSuccessAnimation(false);
+        }, 1000);
+      } else {
+        alert(data.message || 'Failed to add item to cart');
+      }
+    } catch (error) {
+      console.error('Error adding to cart:', error);
+      alert('Error adding item to cart');
+    } finally {
+      setAddingToCart(null);
+    }
+  };
+
+  const buyNow = async (productId: string) => {
+    const token = localStorage.getItem('token');
+    const role = localStorage.getItem('role');
+    
+    // If not logged in, show success animation then redirect to register
+    if (!token) {
+      setShowSuccessAnimation(true);
+      setTimeout(() => {
+        setShowSuccessAnimation(false);
+        navigate('/register');
+      }, 1500);
+      return;
+    }
+    
+    // Check if user has valid role for marketplace
+    const validRoles = ['farmer', 'landowner', 'investor'];
+    if (!role || !validRoles.includes(role)) {
+      setShowSuccessAnimation(true);
+      setTimeout(() => {
+        setShowSuccessAnimation(false);
+        navigate('/register');
+      }, 1500);
+      return;
+    }
+
+    // User is logged in with valid role, proceed with buy now
+    try {
+      setAddingToCart(productId);
+      const backendUrl = (import.meta as any).env.VITE_BACKEND_URL || 'https://agricorus.onrender.com';
+      const response = await fetch(`${backendUrl}/api/cart/add`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -143,8 +218,8 @@ const Marketplace: React.FC = () => {
         alert(data.message || 'Failed to add item to cart');
       }
     } catch (error) {
-      console.error('Error adding to cart:', error);
-      alert('Error adding item to cart');
+      console.error('Error:', error);
+      alert('Error processing request');
     } finally {
       setAddingToCart(null);
     }
@@ -386,53 +461,62 @@ const Marketplace: React.FC = () => {
                   // Grid Card
                   <div
                     key={product._id}
-                    className="bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-xl hover:border-emerald-200 transition-all group"
+                    className="bg-white rounded-xl border border-gray-100 overflow-hidden hover:shadow-lg hover:border-emerald-200 transition-all group"
                   >
                     {/* Image */}
-                    <div className="relative aspect-square bg-gray-50 overflow-hidden">
+                    <div className="relative h-48 bg-gray-50 overflow-hidden">
                       <img
-                        src={product.images[0] ? `http://localhost:5000${product.images[0]}` : '/placeholder-product.jpg'}
+                        src={product.images[0] ? `https://agricorus.onrender.com${product.images[0]}` : '/placeholder-product.jpg'}
                         alt={product.name}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                       />
-                      <div className="absolute top-3 left-3">
+                      <div className="absolute top-2 left-2">
                         {getStockBadge(product.stockStatus, product.stock)}
                       </div>
                       <Link
                         to={`/marketplace/product/${product._id}`}
-                        className="absolute top-3 right-3 w-9 h-9 bg-white/90 backdrop-blur rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-lg hover:bg-white"
+                        className="absolute top-2 right-2 w-8 h-8 bg-white/90 backdrop-blur rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-lg hover:bg-white"
                       >
                         <Eye className="w-4 h-4 text-gray-700" />
                       </Link>
                     </div>
 
                     {/* Info */}
-                    <div className="p-4">
-                      <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium mb-2 ${catStyle.color}`}>
-                        <span>{catStyle.icon}</span>
+                    <div className="p-3">
+                      <div className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium mb-1.5 ${catStyle.color}`}>
+                        <span className="text-xs">{catStyle.icon}</span>
                         {product.category}
                       </div>
                       
-                      <h3 className="font-semibold text-gray-800 mb-1 line-clamp-2 leading-snug">
+                      <h3 className="font-semibold text-gray-800 text-sm mb-1 line-clamp-1 leading-snug">
                         {product.name}
                       </h3>
-                      <p className="text-sm text-gray-500 mb-3">by {product.vendorBusinessName}</p>
+                      <p className="text-xs text-gray-500 mb-2">by {product.vendorBusinessName}</p>
 
-                      <div className="flex items-center justify-between">
-                        <div className="text-xl font-bold text-emerald-600">
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="text-lg font-bold text-emerald-600">
                           ₹{product.price.toLocaleString()}
                         </div>
+                      </div>
+
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => buyNow(product._id)}
+                          disabled={product.stockStatus === 'OUT_OF_STOCK' || addingToCart === product._id}
+                          className="flex-1 px-3 py-2 bg-emerald-600 text-white text-xs font-medium rounded-lg hover:bg-emerald-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition"
+                        >
+                          {addingToCart === product._id ? (
+                            <Loader2 className="w-4 h-4 animate-spin mx-auto" />
+                          ) : (
+                            'Buy Now'
+                          )}
+                        </button>
                         <button
                           onClick={() => addToCart(product._id)}
                           disabled={product.stockStatus === 'OUT_OF_STOCK' || addingToCart === product._id}
-                          className="flex items-center gap-1.5 px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition"
+                          className="w-10 h-9 flex items-center justify-center border border-emerald-600 text-emerald-600 rounded-lg hover:bg-emerald-50 disabled:border-gray-300 disabled:text-gray-300 disabled:cursor-not-allowed transition"
                         >
-                          {addingToCart === product._id ? (
-                            <Loader2 className="w-4 h-4 animate-spin" />
-                          ) : (
-                            <ShoppingCart className="w-4 h-4" />
-                          )}
-                          Add
+                          <ShoppingCart className="w-4 h-4" />
                         </button>
                       </div>
                     </div>
@@ -441,11 +525,11 @@ const Marketplace: React.FC = () => {
                   // List Card
                   <div
                     key={product._id}
-                    className="bg-white rounded-2xl border border-gray-100 p-4 flex gap-4 hover:shadow-lg hover:border-emerald-200 transition-all"
+                    className="bg-white rounded-xl border border-gray-100 p-3 flex gap-3 hover:shadow-lg hover:border-emerald-200 transition-all"
                   >
-                    <div className="w-32 h-32 flex-shrink-0 rounded-xl overflow-hidden bg-gray-50">
+                    <div className="w-24 h-24 flex-shrink-0 rounded-lg overflow-hidden bg-gray-50">
                       <img
-                        src={product.images[0] ? `http://localhost:5000${product.images[0]}` : '/placeholder-product.jpg'}
+                        src={product.images[0] ? `https://agricorus.onrender.com${product.images[0]}` : '/placeholder-product.jpg'}
                         alt={product.name}
                         className="w-full h-full object-cover"
                       />
@@ -453,36 +537,41 @@ const Marketplace: React.FC = () => {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between gap-4">
                         <div>
-                          <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium mb-2 ${catStyle.color}`}>
-                            <span>{catStyle.icon}</span>
+                          <div className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium mb-1 ${catStyle.color}`}>
+                            <span className="text-xs">{catStyle.icon}</span>
                             {product.category}
                           </div>
-                          <h3 className="font-semibold text-gray-800 mb-1">{product.name}</h3>
-                          <p className="text-sm text-gray-500">by {product.vendorBusinessName}</p>
+                          <h3 className="font-semibold text-gray-800 text-sm mb-0.5">{product.name}</h3>
+                          <p className="text-xs text-gray-500">by {product.vendorBusinessName}</p>
                         </div>
                         {getStockBadge(product.stockStatus, product.stock)}
                       </div>
-                      <p className="text-sm text-gray-600 mt-2 line-clamp-2">{product.description}</p>
-                      <div className="flex items-center justify-between mt-3">
-                        <div className="text-xl font-bold text-emerald-600">₹{product.price.toLocaleString()}</div>
+                      <div className="flex items-center justify-between mt-2">
+                        <div className="text-lg font-bold text-emerald-600">₹{product.price.toLocaleString()}</div>
                         <div className="flex items-center gap-2">
                           <Link
                             to={`/marketplace/product/${product._id}`}
-                            className="px-4 py-2 border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50 transition text-sm font-medium"
+                            className="px-3 py-1.5 border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50 transition text-xs font-medium"
                           >
-                            View Details
+                            View
                           </Link>
+                          <button
+                            onClick={() => buyNow(product._id)}
+                            disabled={product.stockStatus === 'OUT_OF_STOCK' || addingToCart === product._id}
+                            className="px-3 py-1.5 bg-emerald-600 text-white text-xs font-medium rounded-lg hover:bg-emerald-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition"
+                          >
+                            {addingToCart === product._id ? (
+                              <Loader2 className="w-3 h-3 animate-spin" />
+                            ) : (
+                              'Buy Now'
+                            )}
+                          </button>
                           <button
                             onClick={() => addToCart(product._id)}
                             disabled={product.stockStatus === 'OUT_OF_STOCK' || addingToCart === product._id}
-                            className="flex items-center gap-1.5 px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition"
+                            className="w-8 h-8 flex items-center justify-center border border-emerald-600 text-emerald-600 rounded-lg hover:bg-emerald-50 disabled:border-gray-300 disabled:text-gray-300 disabled:cursor-not-allowed transition"
                           >
-                            {addingToCart === product._id ? (
-                              <Loader2 className="w-4 h-4 animate-spin" />
-                            ) : (
-                              <ShoppingCart className="w-4 h-4" />
-                            )}
-                            Add to Cart
+                            <ShoppingCart className="w-3 h-3" />
                           </button>
                         </div>
                       </div>
@@ -541,6 +630,23 @@ const Marketplace: React.FC = () => {
           )}
         </div>
       </div>
+
+      {/* Success Animation Modal */}
+      {showSuccessAnimation && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+          <div className="bg-white rounded-2xl p-8 max-w-sm mx-4 text-center animate-bounce">
+            <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <CheckCircle className="w-12 h-12 text-green-600" />
+            </div>
+            <h3 className="text-2xl font-bold text-gray-900 mb-2">Added to Cart!</h3>
+            <p className="text-gray-600">
+              {!localStorage.getItem('token') 
+                ? 'Redirecting to registration...' 
+                : 'Item added successfully!'}
+            </p>
+          </div>
+        </div>
+      )}
     </MarketplaceLayout>
   );
 };

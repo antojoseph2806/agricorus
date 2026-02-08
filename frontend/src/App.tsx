@@ -1,5 +1,5 @@
 // src/App.tsx
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 
 // Public Pages
 import LandingPage from "./pages/LandingPage";
@@ -79,13 +79,12 @@ import VendorFeedback from "./pages/vendor/VendorFeedback";
 import VendorInventory from "./pages/vendor/VendorInventory";
 import VendorNotifications from "./pages/vendor/VendorNotifications";
 import VendorPayments from "./pages/vendor/VendorPayments";
+import VendorSupportQueries from "./pages/vendor/VendorSupportQueries";
 
 // Vendor Analytics Pages
 import VendorSalesAnalyticsDashboard from "./pages/vendor/analytics/SalesAnalyticsDashboard";
 import VendorMonthlyReports from "./pages/vendor/analytics/MonthlyReports";
-import VendorProductPerformance from "./pages/vendor/analytics/ProductPerformance";
 import VendorCustomReports from "./pages/vendor/analytics/CustomReports";
-import VendorDownloadCenter from "./pages/vendor/analytics/DownloadCenter";
 
 
 // Admin Pages
@@ -407,6 +406,15 @@ function App() {
             }
           />
           <Route
+            path="/vendor/support/queries"
+            element={
+              <ProtectedRoute
+                element={<VendorSupportQueries />}
+                allowedRoles={["vendor"]}
+              />
+            }
+          />
+          <Route
             path="/vendor/inventory"
             element={
               <ProtectedRoute
@@ -453,15 +461,6 @@ function App() {
             }
           />
           <Route
-            path="/vendor/analytics/products"
-            element={
-              <ProtectedRoute
-                element={<VendorProductPerformance />}
-                allowedRoles={["vendor"]}
-              />
-            }
-          />
-          <Route
             path="/vendor/analytics/reports"
             element={
               <ProtectedRoute
@@ -470,16 +469,10 @@ function App() {
               />
             }
           />
-          <Route
-            path="/vendor/analytics/downloads"
-            element={
-              <ProtectedRoute
-                element={<VendorDownloadCenter />}
-                allowedRoles={["vendor"]}
-              />
-            }
-          />
           {/* ----------------- Admin Routes ----------------- */}
+          {/* Redirect /admin to /admindashboard */}
+          <Route path="/admin" element={<Navigate to="/admindashboard" replace />} />
+          
           <Route
             path="/admindashboard"
             element={<ProtectedRoute element={<AdminDashboard />} allowedRoles={["admin"]} />}

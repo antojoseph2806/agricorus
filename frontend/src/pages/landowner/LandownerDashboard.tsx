@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   Users,
   TrendingUp,
@@ -16,11 +16,12 @@ import {
   BarChart3,
   UserCircle,
   CreditCard,
-  Home,
   Zap,
   Activity,
   ShoppingCart,
-  Package
+  Package,
+  User,
+  Settings
 } from 'lucide-react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 
@@ -122,7 +123,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, onToggleSidebar, isMob
     const token = localStorage.getItem('token');
     if (token) {
       try {
-        await fetch('http://localhost:5000/api/auth/logout', {
+        await fetch('https://agricorus.onrender.com/api/auth/logout', {
           method: 'POST',
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -268,6 +269,114 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, onToggleSidebar, isMob
   );
 };
 
+// ----- User Profile Dropdown Component -----
+const UserProfileDropdown: React.FC = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [profileImage, setProfileImage] = useState<string | null>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  useEffect(() => {
+    const fetchProfileImage = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) return;
+      
+      try {
+        const response = await fetch("https://agricorus.onrender.com/api/profile", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const data = await response.json();
+        if (data.profileImage) {
+          // Add backend URL if the image path doesn't already include it
+          const imageUrl = data.profileImage.startsWith('http') 
+            ? data.profileImage 
+            : `https://agricorus.onrender.com${data.profileImage}`;
+          setProfileImage(imageUrl);
+        }
+      } catch (error) {
+        console.error("Error fetching profile image:", error);
+      }
+    };
+
+    fetchProfileImage();
+  }, []);
+
+  const handleLogout = async () => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      try {
+        await fetch("https://agricorus.onrender.com/api/auth/logout", {
+          method: "POST",
+          headers: { Authorization: `Bearer ${token}` },
+        });
+      } catch (e) {
+        console.warn("Backend logout failed.");
+      }
+    }
+    localStorage.removeItem("token");
+    navigate("/login");
+  };
+
+  return (
+    <div className="relative" ref={dropdownRef}>
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="flex items-center justify-center w-10 h-10 rounded-full bg-emerald-100 hover:bg-emerald-200 text-emerald-700 transition overflow-hidden border-2 border-emerald-200"
+      >
+        {profileImage ? (
+          <img 
+            src={profileImage} 
+            alt="Profile" 
+            className="w-full h-full object-cover"
+          />
+        ) : (
+          <User className="w-5 h-5" />
+        )}
+      </button>
+
+      {isOpen && (
+        <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
+          <Link
+            to="/profile/view"
+            onClick={() => setIsOpen(false)}
+            className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition"
+          >
+            <UserCircle className="w-4 h-4" />
+            View Profile
+          </Link>
+          <Link
+            to="/profile/kyc-verify"
+            onClick={() => setIsOpen(false)}
+            className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition"
+          >
+            <Settings className="w-4 h-4" />
+            Edit Profile
+          </Link>
+          <div className="border-t border-gray-100 my-1"></div>
+          <button
+            onClick={handleLogout}
+            className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition"
+          >
+            <LogOut className="w-4 h-4" />
+            Logout
+          </button>
+        </div>
+      )}
+    </div>
+  );
+};
+
 // ----- Reusable Layout Wrapper -----
 export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -299,12 +408,22 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
             </div>
             <span className="text-xl font-bold text-gray-900">AgriCorus</span>
           </div>
-          <button
-            onClick={toggleSidebar}
-            className="p-2 rounded-md text-gray-700 hover:text-emerald-600"
-          >
-            <Menu className="w-6 h-6" />
-          </button>
+          <div className="flex items-center gap-3">
+            <UserProfileDropdown />
+            <button
+              onClick={toggleSidebar}
+              className="p-2 rounded-md text-gray-700 hover:text-emerald-600"
+            >
+              <Menu className="w-6 h-6" />
+            </button>
+          </div>
+        </div>
+
+        {/* Desktop Header with Profile Dropdown */}
+        <div className="hidden lg:block fixed top-0 right-0 left-0 bg-white border-b shadow-sm z-30 h-16" style={{ marginLeft: isSidebarOpen ? '256px' : '80px' }}>
+          <div className="h-full flex items-center justify-end px-6">
+            <UserProfileDropdown />
+          </div>
         </div>
 
         {/* Mobile Overlay Sidebar */}
@@ -329,7 +448,7 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
         </div>
 
         {/* Content Area */}
-        <main className="p-4 lg:p-8 mt-16 lg:mt-0 min-h-screen">
+        <main className="p-4 lg:p-8 mt-16 min-h-screen">
           {children}
         </main>
       </div>
@@ -339,6 +458,58 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
 
 // ----- Dashboard Page -----
 const LandownerDashboard: React.FC = () => {
+  const [stats, setStats] = useState({
+    totalLands: 0,
+    activeLeases: 0,
+    totalEarnings: 0,
+    loading: true
+  });
+
+  useEffect(() => {
+    const fetchDashboardStats = async () => {
+      const token = localStorage.getItem('token');
+      if (!token) return;
+
+      try {
+        // Fetch lands count
+        const landsResponse = await fetch('https://agricorus.onrender.com/api/landowner/lands/my', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        const landsData = await landsResponse.json();
+        const totalLands = Array.isArray(landsData) ? landsData.length : 0;
+
+        // Fetch active leases count
+        const leasesResponse = await fetch('https://agricorus.onrender.com/api/landowner/leases/active', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        const leasesData = await leasesResponse.json();
+        const activeLeases = Array.isArray(leasesData) ? leasesData.length : 0;
+
+        // Fetch payment history to calculate total earnings
+        const paymentsResponse = await fetch('https://agricorus.onrender.com/api/landowner/payments/history', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        const paymentsData = await paymentsResponse.json();
+        const payments = Array.isArray(paymentsData) ? paymentsData : [];
+        const totalEarnings = payments.reduce((sum: number, payment: any) => {
+          return sum + (payment.amount || 0);
+        }, 0);
+
+        setStats({
+          totalLands,
+          activeLeases,
+          totalEarnings,
+          loading: false
+        });
+      } catch (error) {
+        console.error('Error fetching dashboard stats:', error);
+        setStats(prev => ({ ...prev, loading: false }));
+      }
+    };
+
+    fetchDashboardStats();
+  }, []);
+
   return (
     <Layout>
       {/* Hero Header */}
@@ -433,7 +604,13 @@ const LandownerDashboard: React.FC = () => {
             <p className="text-gray-500 text-sm font-medium mb-1">
               Total Lands
             </p>
-            <p className="text-2xl font-bold text-gray-900">-</p>
+            <p className="text-2xl font-bold text-gray-900">
+              {stats.loading ? (
+                <span className="inline-block w-12 h-8 bg-gray-200 animate-pulse rounded"></span>
+              ) : (
+                stats.totalLands
+              )}
+            </p>
           </div>
         </div>
 
@@ -451,7 +628,13 @@ const LandownerDashboard: React.FC = () => {
             <p className="text-gray-500 text-sm font-medium mb-1">
               Active Leases
             </p>
-            <p className="text-2xl font-bold text-gray-900">-</p>
+            <p className="text-2xl font-bold text-gray-900">
+              {stats.loading ? (
+                <span className="inline-block w-12 h-8 bg-gray-200 animate-pulse rounded"></span>
+              ) : (
+                stats.activeLeases
+              )}
+            </p>
           </div>
         </div>
 
@@ -469,7 +652,13 @@ const LandownerDashboard: React.FC = () => {
             <p className="text-gray-500 text-sm font-medium mb-1">
               Total Earnings
             </p>
-            <p className="text-2xl font-bold text-gray-900">₹-</p>
+            <p className="text-2xl font-bold text-gray-900">
+              {stats.loading ? (
+                <span className="inline-block w-16 h-8 bg-gray-200 animate-pulse rounded"></span>
+              ) : (
+                `₹${stats.totalEarnings.toLocaleString()}`
+              )}
+            </p>
           </div>
         </div>
       </div>

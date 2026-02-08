@@ -142,7 +142,7 @@ const ReviewWithPhotos: React.FC<ReviewWithPhotosProps> = ({
       }
 
       const response = await fetch(
-        `${(import.meta as any).env.VITE_BACKEND_URL || 'http://localhost:5000'}/api/reviews`,
+        `${(import.meta as any).env.VITE_BACKEND_URL || 'https://agricorus.onrender.com'}/api/reviews`,
         {
           method: 'POST',
           headers: {
@@ -209,7 +209,7 @@ const ReviewWithPhotos: React.FC<ReviewWithPhotosProps> = ({
             {existingReview.photos.map((photo, index) => (
               <div key={index} className="relative">
                 <img
-                  src={`${(import.meta as any).env.VITE_BACKEND_URL || 'http://localhost:5000'}${photo.url}`}
+                  src={`${(import.meta as any).env.VITE_BACKEND_URL || 'https://agricorus.onrender.com'}${photo.url}`}
                   alt={photo.caption || 'Review photo'}
                   className="w-16 h-16 object-cover rounded-lg border"
                 />

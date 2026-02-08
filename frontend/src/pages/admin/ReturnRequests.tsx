@@ -80,7 +80,7 @@ const ReturnRequestsAdmin: React.FC = () => {
       setLoading(true);
       const token = localStorage.getItem("token");
       const { data } = await axios.get(
-        "http://localhost:5000/api/investor/return-requests/admin",
+        "https://agricorus.onrender.com/api/investor/return-requests/admin",
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setRequests(data.returnRequests || []);
@@ -144,7 +144,7 @@ const ReturnRequestsAdmin: React.FC = () => {
       formData.append("receipt", receiptFile);
 
       const { data } = await axios.post(
-        `http://localhost:5000/api/investor/return-requests/admin/${requestId}/upload-receipt`,
+        `https://agricorus.onrender.com/api/investor/return-requests/admin/${requestId}/upload-receipt`,
         formData,
         {
           headers: {
@@ -187,7 +187,7 @@ const ReturnRequestsAdmin: React.FC = () => {
 
       // Update status and details
       const { data } = await axios.patch(
-        `http://localhost:5000/api/investor/return-requests/admin/${selectedRequest._id}`,
+        `https://agricorus.onrender.com/api/investor/return-requests/admin/${selectedRequest._id}`,
         {
           status: modalStatus,
           adminComment,
@@ -441,7 +441,7 @@ const ReturnRequestsAdmin: React.FC = () => {
                           )}
                           {req.paymentReceipt && (
                             <a
-                              href={`http://localhost:5000${req.paymentReceipt}`}
+                              href={`https://agricorus.onrender.com${req.paymentReceipt}`}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="text-sm text-emerald-600 hover:text-emerald-700 flex items-center gap-1"
@@ -585,7 +585,7 @@ const ReturnRequestsAdmin: React.FC = () => {
                     />
                     {selectedRequest.paymentReceipt && (
                       <a
-                        href={`http://localhost:5000${selectedRequest.paymentReceipt}`}
+                        href={`https://agricorus.onrender.com${selectedRequest.paymentReceipt}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="flex items-center gap-2 px-4 py-3 rounded-xl text-emerald-600 bg-emerald-50 hover:bg-emerald-100 transition-all duration-300"

@@ -49,13 +49,13 @@ const VendorDashboard = () => {
 
       // Fetch vendor profile to get KYC status
       const [profileRes, productsRes, ordersRes] = await Promise.allSettled([
-        axios.get("http://localhost:5000/api/vendor/profile", {
+        axios.get("https://agricorus.onrender.com/api/vendor/profile", {
           headers: { Authorization: `Bearer ${token}` },
         }),
-        axios.get("http://localhost:5000/api/vendor/products?isActive=true", {
+        axios.get("https://agricorus.onrender.com/api/vendor/products?isActive=true", {
           headers: { Authorization: `Bearer ${token}` },
         }),
-        axios.get("http://localhost:5000/api/vendor/orders", {
+        axios.get("https://agricorus.onrender.com/api/vendor/orders", {
           headers: { Authorization: `Bearer ${token}` },
         }),
       ]);

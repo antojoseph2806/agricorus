@@ -21,12 +21,16 @@ interface UPIMethod {
   name: string;
   upiId: string;
   isDefault: boolean;
+  isVerified?: boolean;
+  verifiedName?: string;
+  verificationDate?: string;
 }
 
 export default function ManageUPI() {
   const [methods, setMethods] = useState<UPIMethod[]>([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [verifying, setVerifying] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({ name: "", upiId: "", isDefault: false });
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -44,7 +48,7 @@ export default function ManageUPI() {
   const fetchMethods = async () => {
     try {
       setLoading(true);
-      const res = await axios.get("http://localhost:5000/api/payouts/", {
+      const res = await axios.get("https://agricorus.onrender.com/api/payouts/", {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
       });
       setMethods(res.data.filter((m: any) => m.type === "upi"));
@@ -68,12 +72,12 @@ export default function ManageUPI() {
     try {
       setSubmitting(true);
       if (editingId) {
-        await axios.put(`http://localhost:5000/api/payouts/${editingId}`, form, {
+        await axios.put(`https://agricorus.onrender.com/api/payouts/${editingId}`, form, {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
         });
         showToast("UPI method updated successfully!", "success");
       } else {
-        await axios.post("http://localhost:5000/api/payouts/add-upi", form, {
+        await axios.post("https://agricorus.onrender.com/api/payouts/add-upi", form, {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
         });
         showToast("UPI method added successfully!", "success");
@@ -102,13 +106,28 @@ export default function ManageUPI() {
   const handleDelete = async (id: string) => {
     if (!window.confirm("Are you sure you want to delete this UPI method?")) return;
     try {
-      await axios.delete(`http://localhost:5000/api/payouts/${id}`, {
+      await axios.delete(`https://agricorus.onrender.com/api/payouts/${id}`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
       });
       showToast("UPI method deleted successfully!", "success");
       fetchMethods();
     } catch (err: any) {
       showToast(err.response?.data?.error || "Failed to delete", "error");
+    }
+  };
+
+  const handleVerify = async (id: string) => {
+    try {
+      setVerifying(id);
+      const res = await axios.post(`https://agricorus.onrender.com/api/payouts/verify-upi/${id}`, {}, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
+      });
+      showToast(res.data.message || "UPI verified successfully!", "success");
+      fetchMethods();
+    } catch (err: any) {
+      showToast(err.response?.data?.error || "Verification failed", "error");
+    } finally {
+      setVerifying(null);
     }
   };
 
@@ -296,9 +315,41 @@ export default function ManageUPI() {
                 </div>
 
                 <h3 className="font-semibold text-gray-800 text-lg mb-1">{method.name}</h3>
-                <p className="text-emerald-600 font-medium mb-4">{method.upiId}</p>
+                <p className="text-emerald-600 font-medium mb-2">{method.upiId}</p>
+
+                {/* Verification Status */}
+                {method.isVerified ? (
+                  <div className="flex items-center gap-2 mb-4 p-2 bg-emerald-50 rounded-lg">
+                    <CheckCircle className="w-4 h-4 text-emerald-600" />
+                    <span className="text-xs text-emerald-700 font-medium">Verified</span>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2 mb-4 p-2 bg-amber-50 rounded-lg">
+                    <AlertCircle className="w-4 h-4 text-amber-600" />
+                    <span className="text-xs text-amber-700 font-medium">Not Verified</span>
+                  </div>
+                )}
 
                 <div className="flex items-center gap-2 pt-4 border-t border-gray-100">
+                  {!method.isVerified && (
+                    <button
+                      onClick={() => handleVerify(method._id)}
+                      disabled={verifying === method._id}
+                      className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-emerald-600 text-white hover:bg-emerald-700 rounded-lg transition disabled:opacity-50"
+                    >
+                      {verifying === method._id ? (
+                        <>
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                          Verifying...
+                        </>
+                      ) : (
+                        <>
+                          <Shield className="w-4 h-4" />
+                          Verify
+                        </>
+                      )}
+                    </button>
+                  )}
                   <button
                     onClick={() => handleEdit(method)}
                     className="flex-1 flex items-center justify-center gap-2 px-3 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition"

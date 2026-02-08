@@ -147,7 +147,7 @@ const VendorRegister = () => {
     }
 
     try {
-      const res = await axios.post("http://localhost:5000/api/vendors/register", {
+      const res = await axios.post("https://agricorus.onrender.com/api/vendors/register", {
         businessName: form.businessName.trim(),
         ownerName: form.ownerName.trim(),
         email: form.email.trim().toLowerCase(),

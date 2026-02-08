@@ -82,7 +82,7 @@ const EditProduct = () => {
     try {
       const token = localStorage.getItem("token");
       const res = await axios.get(
-        `${(import.meta as any).env.VITE_BACKEND_URL || "http://localhost:5000"}/api/vendor/products/${id}`,
+        `${(import.meta as any).env.VITE_BACKEND_URL || "https://agricorus.onrender.com"}/api/vendor/products/${id}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -255,7 +255,7 @@ const EditProduct = () => {
       });
 
       const res = await axios.put(
-        `${(import.meta as any).env.VITE_BACKEND_URL || "http://localhost:5000"}/api/vendor/products/${id}`,
+        `${(import.meta as any).env.VITE_BACKEND_URL || "https://agricorus.onrender.com"}/api/vendor/products/${id}`,
         formDataToSend,
         {
           headers: {
@@ -432,7 +432,7 @@ const EditProduct = () => {
                     {existingImages.map((image, index) => (
                       <div key={index} className="relative">
                         <img
-                          src={`http://localhost:5000${image}`}
+                          src={`https://agricorus.onrender.com${image}`}
                           alt={`Existing ${index + 1}`}
                           className="w-full h-32 object-cover rounded-lg"
                         />
@@ -515,7 +515,7 @@ const EditProduct = () => {
                           className="flex items-center justify-between bg-gray-50 p-3 rounded-lg"
                         >
                           <a
-                            href={`http://localhost:5000${doc}`}
+                            href={`https://agricorus.onrender.com${doc}`}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="text-sm text-blue-600 hover:underline"

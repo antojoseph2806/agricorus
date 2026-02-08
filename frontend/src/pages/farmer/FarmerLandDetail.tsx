@@ -51,7 +51,7 @@ interface Land {
 const FarmerLandDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const backendUrl =
-    (import.meta as any).env.VITE_BACKEND_URL || "http://localhost:5000";
+    (import.meta as any).env.VITE_BACKEND_URL || "https://agricorus.onrender.com";
   const [land, setLand] = useState<Land | null>(null);
   const [loading, setLoading] = useState(true);
   const [requesting, setRequesting] = useState(false);
@@ -141,14 +141,14 @@ const FarmerLandDetail: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+      <div className="flex items-center justify-center min-h-screen bg-gray-50">
         <div className="flex flex-col items-center">
-          <div className="w-16 h-16 border-4 border-red-500 border-t-transparent rounded-full animate-spin mb-4 shadow-lg shadow-red-500/25"></div>
-          <p className="text-gray-300 font-medium font-poppins text-lg">
+          <div className="w-16 h-16 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin mb-4"></div>
+          <p className="text-gray-700 font-medium text-lg">
             Loading land details...
           </p>
-          <p className="text-gray-500 text-sm mt-2 font-inter">
-            Accessing agricultural network
+          <p className="text-gray-500 text-sm mt-2">
+            Fetching property information
           </p>
         </div>
       </div>
@@ -157,17 +157,17 @@ const FarmerLandDetail: React.FC = () => {
 
   if (!land) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-        <div className="text-center">
-          <div className="text-6xl text-gray-500/30 mb-4">🏞️</div>
-          <h3 className="text-2xl font-bold text-white font-poppins uppercase tracking-wide mb-4">
+      <div className="flex items-center justify-center min-h-screen bg-gray-50">
+        <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-12 text-center max-w-md">
+          <div className="text-6xl mb-6">🏞️</div>
+          <h3 className="text-2xl font-bold text-gray-800 mb-3">
             Land Not Found
           </h3>
-          <p className="text-gray-400 font-inter text-lg">
-            The requested land details could not be loaded from our network.
+          <p className="text-gray-600 mb-4">
+            The requested land details could not be loaded.
           </p>
           {error && (
-            <p className="text-red-300 mt-2 text-sm">
+            <p className="text-red-600 text-sm bg-red-50 p-3 rounded-lg">
               {error}
             </p>
           )}
@@ -183,48 +183,59 @@ const FarmerLandDetail: React.FC = () => {
     land.status !== "available";
 
   return (
-    <div className="min-h-screen bg-gray-50 px-4 py-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-emerald-50/30 to-gray-50 px-4 py-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
-        {/* Header */}
+        {/* Modern Header with Gradient */}
         <motion.div
-          className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 lg:p-8 mb-6"
+          className="relative bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 rounded-2xl shadow-xl overflow-hidden mb-6"
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.6 }}
         >
-          <div className="flex items-center mb-4">
-            <div className="h-10 w-1 bg-emerald-500 mr-4 rounded-full"></div>
-              <div>
-                <h1 className="text-3xl lg:text-4xl font-bold text-gray-900">
-                  {land.title}
-                </h1>
-                <p className="text-gray-600 mt-2">
-                  Complete technical specifications for this agricultural land.
-                </p>
+          {/* Pattern Overlay */}
+          <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAxMCAwIEwgMCAwIDAgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS1vcGFjaXR5PSIwLjA1IiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] opacity-40"></div>
+          
+          <div className="relative p-6 lg:p-8">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+              <div className="flex items-start gap-4">
+                {/* Icon Badge */}
+                <div className="flex-shrink-0 w-14 h-14 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center border border-white/30">
+                  <MapPin className="w-7 h-7 text-white" />
+                </div>
+                
+                <div>
+                  <h1 className="text-2xl lg:text-3xl font-bold text-white mb-2">
+                    {land.title}
+                  </h1>
+                  <p className="text-emerald-50 text-sm">
+                    Complete technical specifications for this agricultural land
+                  </p>
+                </div>
+              </div>
+
+              {/* Status Badge */}
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/20 backdrop-blur-sm border border-white/30">
+                <div
+                  className={`w-2 h-2 rounded-full ${
+                    land.status === "available"
+                      ? "bg-green-400"
+                      : land.status === "leased"
+                      ? "bg-red-400"
+                      : "bg-yellow-400"
+                  }`}
+                ></div>
+                <span className="text-sm text-white font-medium">
+                  {land.status.toUpperCase()} •{" "}
+                  {land.isApproved ? "Verified" : "Pending"}
+                </span>
               </div>
             </div>
-
-            {/* Status Badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gray-50 border border-gray-200">
-              <div
-                className={`w-2 h-2 rounded-full ${
-                  land.status === "available"
-                    ? "bg-emerald-500"
-                    : land.status === "leased"
-                    ? "bg-red-500"
-                    : "bg-yellow-500"
-                }`}
-              ></div>
-              <span className="text-sm text-gray-700 font-medium">
-                {land.status.toUpperCase()} •{" "}
-                {land.isApproved ? "Verified" : "Pending Verification"}
-              </span>
-            </div>
+          </div>
         </motion.div>
 
         {/* Images Gallery */}
         <motion.div
-          className="mb-4"
+          className="mb-6"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.1, duration: 0.4 }}
@@ -234,27 +245,28 @@ const FarmerLandDetail: React.FC = () => {
               {land.landPhotos.map((photo, idx) => (
                 <motion.div
                   key={idx}
-                  className="group relative cursor-pointer overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm"
-                  whileHover={{ scale: 1.01 }}
-                  transition={{ type: "spring", stiffness: 220 }}
+                  className="group relative cursor-pointer overflow-hidden rounded-xl shadow-md hover:shadow-xl transition-shadow"
+                  whileHover={{ y: -4 }}
+                  transition={{ type: "spring", stiffness: 300 }}
                   onClick={() => setSelectedImage(photo)}
                 >
                   <img
                     src={photo}
                     alt={`Land photo ${idx + 1}`}
-                    className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-500"
+                    className="w-full h-56 object-cover group-hover:scale-110 transition-transform duration-500"
                   />
-                  <div className="absolute bottom-3 left-3 bg-black/60 text-white text-xs px-2 py-1 rounded-lg">
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                  <div className="absolute bottom-3 left-3 bg-white/90 backdrop-blur-sm text-gray-800 text-xs font-medium px-3 py-1.5 rounded-lg">
                     View {idx + 1}
                   </div>
                 </motion.div>
               ))}
             </div>
           ) : (
-            <div className="flex items-center justify-center h-48 bg-white rounded-xl border border-dashed border-gray-300">
-              <MapPin className="w-10 h-10 text-gray-300" />
-              <span className="ml-3 text-gray-500">
-                No images available for this land yet.
+            <div className="flex flex-col items-center justify-center h-48 bg-white rounded-xl border-2 border-dashed border-gray-300">
+              <MapPin className="w-12 h-12 text-gray-300 mb-2" />
+              <span className="text-gray-500 text-sm">
+                No images available for this land yet
               </span>
             </div>
           )}
@@ -264,17 +276,18 @@ const FarmerLandDetail: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Land Details */}
           <motion.div
-            className="lg:col-span-2 bg-white rounded-xl border border-gray-200 shadow-sm p-6"
+            className="lg:col-span-2 bg-white rounded-xl shadow-lg p-6 border border-gray-100"
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.15, duration: 0.4 }}
           >
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-semibold text-gray-900">
+            {/* Section Header */}
+            <div className="flex items-center justify-between mb-6 pb-4 border-b border-gray-100">
+              <h2 className="text-xl font-bold text-gray-900">
                 Land Specifications
               </h2>
-              <div className="bg-emerald-50 p-2 rounded-lg">
-                <RandomTechIcon className="w-5 h-5 text-emerald-600" />
+              <div className="bg-gradient-to-br from-emerald-500 to-teal-500 p-2.5 rounded-xl shadow-sm">
+                <RandomTechIcon className="w-5 h-5 text-white" />
               </div>
             </div>
 
@@ -284,56 +297,57 @@ const FarmerLandDetail: React.FC = () => {
                   icon: MapPin,
                   label: "Location Address",
                   value: land.location.address,
-                  color: "from-blue-500 to-cyan-500",
+                  gradient: "from-blue-500 to-cyan-500",
                 },
                 {
                   icon: Droplet,
                   label: "Water Source",
                   value: land.waterSource || "Not specified",
-                  color: "from-blue-500 to-cyan-500",
+                  gradient: "from-cyan-500 to-teal-500",
                 },
                 {
                   icon: Ruler,
                   label: "Land Size",
                   value: `${land.sizeInAcres || "N/A"} acres`,
-                  color: "from-purple-500 to-pink-500",
+                  gradient: "from-purple-500 to-pink-500",
                 },
                 {
                   icon: Route,
                   label: "Accessibility",
                   value: land.accessibility || "Not specified",
-                  color: "from-green-500 to-emerald-500",
+                  gradient: "from-green-500 to-emerald-500",
                 },
                 {
                   icon: Calendar,
                   label: "Lease Duration",
                   value: `${land.leaseDurationMonths} months`,
-                  color: "from-orange-500 to-red-500",
+                  gradient: "from-orange-500 to-red-500",
                 },
                 {
                   icon: Shield,
                   label: "Soil Type",
                   value: land.soilType,
-                  color: "from-yellow-500 to-orange-500",
-                  special: true,
+                  gradient: "from-amber-500 to-orange-500",
                 },
               ].map((item, index) => (
                 <motion.div
                   key={index}
-                  className="group bg-gray-50 rounded-lg p-4 border border-gray-200 hover:border-emerald-200 hover:bg-emerald-50/40 transition-all"
-                  whileHover={{ y: -2 }}
+                  className="group relative bg-gradient-to-br from-gray-50 to-white rounded-xl p-4 border border-gray-200 hover:border-emerald-300 hover:shadow-md transition-all duration-300"
+                  whileHover={{ y: -3 }}
                 >
-                  <div className="flex items-center mb-2">
-                    <div className="p-2 rounded-md bg-emerald-50 mr-3">
-                      <item.icon className="w-4 h-4 text-emerald-600" />
+                  <div className="flex items-start gap-3">
+                    <div className={`p-2.5 rounded-lg bg-gradient-to-br ${item.gradient} shadow-sm`}>
+                      <item.icon className="w-4 h-4 text-white" />
                     </div>
-                    <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">
-                      {item.label}
-                    </span>
+                    <div className="flex-1">
+                      <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider block mb-1">
+                        {item.label}
+                      </span>
+                      <p className="text-sm font-bold text-gray-900 leading-tight">
+                        {item.value}
+                      </p>
+                    </div>
                   </div>
-                  <p className="text-base font-semibold text-gray-900">
-                    {item.value}
-                  </p>
                 </motion.div>
               ))}
             </div>
@@ -341,67 +355,99 @@ const FarmerLandDetail: React.FC = () => {
 
           {/* Pricing & Action Sidebar */}
           <motion.div
-            className="bg-gradient-to-br from-gray-900/50 to-gray-800/50 rounded-2xl p-6 border border-white/10 backdrop-blur-sm"
+            className="bg-white rounded-xl shadow-lg p-6 border border-gray-100"
             initial={{ y: 40, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.7, duration: 0.6 }}
+            transition={{ delay: 0.2, duration: 0.5 }}
           >
-            <h2 className="text-xl font-bold text-white font-poppins uppercase tracking-wide mb-6 pb-3 border-b border-white/10">
-              Lease Configuration
-            </h2>
+            {/* Header with Gradient */}
+            <div className="bg-gradient-to-r from-emerald-600 to-teal-600 rounded-xl p-4 mb-6 -mx-6 -mt-6">
+              <h2 className="text-lg font-bold text-white uppercase tracking-wide">
+                Lease Configuration
+              </h2>
+            </div>
 
             {/* Pricing Card */}
-            <div className="mb-6 p-4 bg-emerald-50 rounded-lg border border-emerald-100">
-              <div className="flex justify-between items-center mb-3">
-                <span className="text-xs font-medium text-gray-600 uppercase tracking-wide">
-                  Monthly Rate
-                </span>
-                <span className="text-2xl font-bold text-emerald-700">
-                  ₹{land.leasePricePerMonth.toLocaleString()}
-                </span>
+            <div className="mb-6 p-5 bg-gradient-to-br from-emerald-50 to-teal-50 rounded-xl border-2 border-emerald-200 shadow-sm">
+              <div className="flex justify-between items-start mb-4">
+                <div>
+                  <span className="text-xs font-semibold text-emerald-700 uppercase tracking-wider block mb-1">
+                    Monthly Rate
+                  </span>
+                  <span className="text-3xl font-bold text-emerald-700">
+                    ₹{land.leasePricePerMonth.toLocaleString()}
+                  </span>
+                </div>
+                <div className="bg-emerald-600 p-2 rounded-lg">
+                  <Calendar className="w-5 h-5 text-white" />
+                </div>
               </div>
-              <div className="flex justify-between items-center text-sm text-gray-700">
-                <span>
-                  Total for {land.leaseDurationMonths} months
-                </span>
-                <span className="font-semibold">
-                  ₹
-                  {(
-                    land.leasePricePerMonth * land.leaseDurationMonths
-                  ).toLocaleString()}
-                </span>
+              <div className="pt-3 border-t border-emerald-200">
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-gray-700 font-medium">
+                    Total ({land.leaseDurationMonths} months)
+                  </span>
+                  <span className="font-bold text-emerald-700 text-lg">
+                    ₹
+                    {(
+                      land.leasePricePerMonth * land.leaseDurationMonths
+                    ).toLocaleString()}
+                  </span>
+                </div>
               </div>
             </div>
 
             {/* Owner Information */}
             {land.owner && (
-              <div className="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
-                <h3 className="text-sm font-semibold text-gray-800 mb-3">
+              <div className="mb-6 p-4 bg-gradient-to-br from-gray-50 to-white rounded-xl border border-gray-200">
+                <h3 className="text-sm font-bold text-gray-800 mb-3 flex items-center gap-2">
+                  <Shield className="w-4 h-4 text-emerald-600" />
                   Owner Contact
                 </h3>
-                <div className="space-y-2 text-sm text-gray-700">
-                  <div className="flex items-center">
-                    <Mail className="w-4 h-4 mr-2 text-emerald-600" />
-                    <span>{land.owner.email || "N/A"}</span>
+                <div className="space-y-2.5">
+                  <div className="flex items-center gap-2 text-sm text-gray-700 bg-white p-2 rounded-lg">
+                    <Mail className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+                    <span className="truncate">{land.owner.email || "N/A"}</span>
                   </div>
-                  <div className="flex items-center">
-                    <Phone className="w-4 h-4 mr-2 text-emerald-600" />
+                  <div className="flex items-center gap-2 text-sm text-gray-700 bg-white p-2 rounded-lg">
+                    <Phone className="w-4 h-4 text-emerald-600 flex-shrink-0" />
                     <span>{land.owner.phone || "N/A"}</span>
                   </div>
                 </div>
               </div>
             )}
 
+            {/* Quick Stats */}
+            <div className="mb-6 grid grid-cols-2 gap-3">
+              <div className="bg-gradient-to-br from-blue-50 to-cyan-50 p-3 rounded-xl border border-blue-200">
+                <div className="text-xs text-blue-700 font-semibold uppercase tracking-wide mb-1">
+                  Size
+                </div>
+                <div className="text-lg font-bold text-blue-900">
+                  {land.sizeInAcres || "N/A"} acres
+                </div>
+              </div>
+              <div className="bg-gradient-to-br from-purple-50 to-pink-50 p-3 rounded-xl border border-purple-200">
+                <div className="text-xs text-purple-700 font-semibold uppercase tracking-wide mb-1">
+                  Duration
+                </div>
+                <div className="text-lg font-bold text-purple-900">
+                  {land.leaseDurationMonths} mo
+                </div>
+              </div>
+            </div>
+
             {/* Action Button */}
             <motion.button
               onClick={handleLeaseRequest}
               disabled={actionDisabled}
-              className={`w-full py-3 rounded-lg font-semibold text-sm transition-all ${
+              className={`w-full py-3.5 rounded-xl font-bold text-sm transition-all shadow-md ${
                 actionDisabled
                   ? "bg-gray-200 text-gray-500 cursor-not-allowed"
-                  : "bg-emerald-600 text-white hover:bg-emerald-700 shadow-sm"
+                  : "bg-gradient-to-r from-emerald-600 to-teal-600 text-white hover:from-emerald-700 hover:to-teal-700 hover:shadow-lg"
               }`}
               whileHover={actionDisabled ? undefined : { scale: 1.02 }}
+              whileTap={actionDisabled ? undefined : { scale: 0.98 }}
             >
               {requesting ? (
                 <div className="flex items-center justify-center gap-2">
@@ -422,7 +468,7 @@ const FarmerLandDetail: React.FC = () => {
             {/* Status Messages */}
             {message && (
               <motion.div
-                className="mt-4 p-3 bg-gradient-to-r from-green-500/20 to-emerald-500/20 text-green-400 rounded-xl border border-green-500/30 text-sm font-inter"
+                className="mt-4 p-3 bg-gradient-to-r from-green-50 to-emerald-50 text-green-700 rounded-xl border border-green-200 text-sm font-medium"
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
               >
@@ -431,56 +477,43 @@ const FarmerLandDetail: React.FC = () => {
             )}
             {error && (
               <motion.div
-                className="mt-4 p-3 bg-gradient-to-r from-red-500/20 to-pink-500/20 text-red-400 rounded-xl border border-red-500/30 text-sm font-inter"
+                className="mt-4 p-3 bg-gradient-to-r from-red-50 to-pink-50 text-red-700 rounded-xl border border-red-200 text-sm font-medium"
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
               >
                 {error}
               </motion.div>
             )}
-
-            {/* Quick Stats */}
-            <div className="mt-6 pt-4 border-t border-white/10">
-              <div className="grid grid-cols-2 gap-3 text-center">
-                <div className="bg-gray-800/30 p-2 rounded-lg">
-                  <div className="text-xs text-gray-400 uppercase tracking-wide font-poppins">
-                    Size
-                  </div>
-                  <div className="text-sm font-semibold text-white">
-                    {land.sizeInAcres || "N/A"} acres
-                  </div>
-                </div>
-                <div className="bg-gray-800/30 p-2 rounded-lg">
-                  <div className="text-xs text-gray-400 uppercase tracking-wide font-poppins">
-                    Duration
-                  </div>
-                  <div className="text-sm font-semibold text-white">
-                    {land.leaseDurationMonths} mo
-                  </div>
-                </div>
-              </div>
-            </div>
           </motion.div>
         </div>
 
         {/* Image Modal */}
         {selectedImage && (
           <motion.div
-            className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+            className="fixed inset-0 bg-black/90 backdrop-blur-md flex items-center justify-center z-50 p-4"
             onClick={() => setSelectedImage(null)}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
           >
             <motion.div
-              className="max-w-4xl max-h-full bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl p-2 border border-white/10"
+              className="max-w-5xl max-h-[90vh] bg-white rounded-2xl p-3 shadow-2xl"
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
+              onClick={(e) => e.stopPropagation()}
             >
               <img
                 src={selectedImage}
                 alt="Enlarged view"
                 className="w-full h-full object-contain rounded-xl"
               />
+              <button
+                onClick={() => setSelectedImage(null)}
+                className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm text-gray-800 p-2 rounded-full hover:bg-white transition-colors"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
             </motion.div>
           </motion.div>
         )}

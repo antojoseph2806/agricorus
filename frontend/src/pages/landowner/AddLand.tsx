@@ -12,10 +12,8 @@ import {
   Waves,
   Route,
   Badge,
-  Globe,
   FileText,
   Upload,
-  Server,
   Cloud,
   Search,
   Loader,
@@ -262,7 +260,7 @@ const AddLand: React.FC = () => {
     }
 
     try {
-      const response = await fetch('http://localhost:5000/api/landowner/lands', { 
+      const response = await fetch('https://agricorus.onrender.com/api/landowner/lands', { 
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -294,241 +292,241 @@ const AddLand: React.FC = () => {
 
   return (
     <Layout> 
-      <div className="min-h-screen bg-gray-50 py-8 px-4">
-        <div className="max-w-6xl mx-auto">
-          {/* Header Section */}
-          <div className="text-center mb-12">
-            <div className="inline-flex items-center justify-center w-20 h-20 bg-emerald-600 rounded-2xl mb-6 shadow-lg">
-              <Server className="w-10 h-10 text-white" />
-            </div>
-            <h1 className="text-4xl font-bold text-gray-900 mb-4">
-              List New Land
-            </h1>
-            <p className="text-gray-600 text-lg max-w-2xl mx-auto">
-              Add your land listing to our platform. Fill in the details below.
-            </p>
+      <div className="max-w-5xl mx-auto">
+        {/* Header Section with Gradient */}
+        <div className="relative mb-8">
+          {/* Background Gradient Banner */}
+          <div className="h-48 bg-gradient-to-br from-emerald-400 via-teal-500 to-cyan-500 rounded-3xl overflow-hidden relative">
+            <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Cg%20fill%3D%22%23ffffff%22%20fill-opacity%3D%220.1%22%3E%3Cpath%20d%3D%22M36%2034v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6%2034v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6%204V0H4v4H0v2h4v4h2V6h4V4H6z%22%2F%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E')] opacity-30"></div>
           </div>
 
+          {/* Icon Badge */}
+          <div className="absolute -bottom-12 left-1/2 -translate-x-1/2">
+            <div className="w-24 h-24 rounded-full bg-gradient-to-br from-emerald-400 to-cyan-500 p-1 shadow-xl">
+              <div className="w-full h-full rounded-full bg-white flex items-center justify-center">
+                <MapPin className="w-12 h-12 text-emerald-600" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Title Section */}
+        <div className="text-center mt-16 mb-8">
+          <h1 className="text-3xl font-bold text-gray-800">List New Land</h1>
+          <p className="text-gray-500 mt-2">Add your land listing to our platform. Fill in the details below.</p>
+        </div>
+
           {/* Main Form Card */}
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
+          <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden">
+            {/* Card Header */}
+            <div className="px-8 py-6 bg-gradient-to-r from-gray-50 to-white border-b border-gray-100">
+              <h2 className="text-xl font-bold text-gray-800">Land Information</h2>
+              <p className="text-gray-500 text-sm mt-1">Provide complete details about your land</p>
+            </div>
+
+            {/* Card Body */}
+            <div className="p-8">
             {/* Status Messages */}
             {(status === 'success' || status === 'error' || isLocating || isSearching) && (
-              <div className={`mb-8 p-6 rounded-xl flex items-center border
-                ${status === 'success' ? 'bg-green-50 border-green-200' : 
+              <div className={`mb-6 p-5 rounded-xl flex items-center border
+                ${status === 'success' ? 'bg-emerald-50 border-emerald-200' : 
                   (status === 'error' ? 'bg-red-50 border-red-200' : 
                   'bg-blue-50 border-blue-200')
                 }`}>
                 {isLocating || isSearching ? 
-                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600 mr-4"></div> : 
-                  (status === 'success' ? <CheckCircle className="w-6 h-6 mr-4 text-green-600" /> : <XCircle className="w-6 h-6 mr-4 text-red-600" />)
+                  <Loader className="w-5 h-5 animate-spin mr-3 text-blue-600" /> : 
+                  (status === 'success' ? <CheckCircle className="w-5 h-5 mr-3 text-emerald-600" /> : <XCircle className="w-5 h-5 mr-3 text-red-600" />)
                 }
                 <div>
-                  <p className={`font-semibold text-lg ${status === 'success' ? 'text-green-900' : (status === 'error' ? 'text-red-900' : 'text-blue-900')}`}>
-                    {isLocating ? 'Fetching Current Location...' : (isSearching ? 'Searching Coordinates by Address...' : (status === 'success' ? 'Operation Successful!' : 'Operation Failed'))}
+                  <p className={`font-semibold ${status === 'success' ? 'text-emerald-900' : (status === 'error' ? 'text-red-900' : 'text-blue-900')}`}>
+                    {isLocating ? 'Fetching Current Location...' : (isSearching ? 'Searching Coordinates...' : (status === 'success' ? 'Success!' : 'Error'))}
                   </p>
-                  <p className={status === 'success' ? 'text-green-700' : (status === 'error' ? 'text-red-700' : 'text-blue-700')}>
+                  <p className={`text-sm ${status === 'success' ? 'text-emerald-700' : (status === 'error' ? 'text-red-700' : 'text-blue-700')}`}>
                     {message}
                   </p>
                 </div>
               </div>
             )}
             
-            <form onSubmit={handleSubmit} className="space-y-8">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                {/* Left Column (Non-Location Fields - Omitted for brevity, they are unchanged) */}
-                <div className="space-y-6">
-                  {/* ... Land Title, Soil Type, Water Source, Accessibility fields ... */}
-                  {/* Land Title */}
-                  <div className="bg-white rounded-xl p-6 border border-gray-200 hover:border-emerald-300 transition-all duration-300">
-                    <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-3">
-                      <Badge className="w-5 h-5 inline mr-2" />
-                      Land Title <span className="text-red-600">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      name="title"
-                      id="title"
-                      value={landData.title}
-                      onChange={handleChange}
-                      required
-                      className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/25 transition-colors duration-300"
-                      placeholder="e.g., Premium 5-Acre Agricultural Plot"
-                    />
-                  </div>
+            <form onSubmit={handleSubmit} className="space-y-6">
+              {/* Land Title */}
+              <div>
+                <label htmlFor="title" className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
+                  <Badge className="w-4 h-4 text-emerald-500" />
+                  Land Title <span className="text-red-600">*</span>
+                </label>
+                <input
+                  type="text"
+                  name="title"
+                  id="title"
+                  value={landData.title}
+                  onChange={handleChange}
+                  required
+                  className="w-full px-5 py-4 bg-gray-50 border-2 border-gray-100 rounded-xl focus:outline-none focus:border-emerald-500 focus:bg-white transition-all text-gray-800 font-medium"
+                  placeholder="e.g., Premium 5-Acre Agricultural Plot"
+                />
+              </div>
 
-                  {/* Soil Type */}
-                  <div className="bg-white rounded-xl p-6 border border-gray-200 hover:border-emerald-300 transition-all duration-300">
-                    <label htmlFor="soilType" className="block text-sm font-medium text-gray-700 mb-3">
-                      <Tractor className="w-5 h-5 inline mr-2" />
-                      Soil Type <span className="text-red-600">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      name="soilType"
-                      id="soilType"
-                      value={landData.soilType}
-                      onChange={handleChange}
-                      required
-                      className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/25 transition-colors duration-300"
-                      placeholder="e.g., Alluvial, Red Soil, Black Cotton"
-                    />
-                  </div>
-
-                  {/* Water Source */}
-                  <div className="bg-white rounded-xl p-6 border border-gray-200 hover:border-emerald-300 transition-all duration-300">
-                    <label htmlFor="waterSource" className="block text-sm font-medium text-gray-700 mb-3">
-                      <Waves className="w-5 h-5 inline mr-2" />
-                      Water Source
-                    </label>
-                    <input
-                      type="text"
-                      name="waterSource"
-                      id="waterSource"
-                      value={landData.waterSource}
-                      onChange={handleChange}
-                      className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/25 transition-colors duration-300"
-                      placeholder="e.g., Borewell, River, Canal"
-                    />
-                  </div>
-
-                  {/* Accessibility */}
-                  <div className="bg-white rounded-xl p-6 border border-gray-200 hover:border-emerald-300 transition-all duration-300">
-                    <label htmlFor="accessibility" className="block text-sm font-medium text-gray-700 mb-3">
-                      <Route className="w-5 h-5 inline mr-2" />
-                      Accessibility
-                    </label>
-                    <input
-                      type="text"
-                      name="accessibility"
-                      id="accessibility"
-                      value={landData.accessibility}
-                      onChange={handleChange}
-                      className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/25 transition-colors duration-300"
-                      placeholder="e.g., Paved Road Access, Highway Nearby"
-                    />
-                  </div>
+              {/* Location Section */}
+              <div className="bg-gradient-to-r from-emerald-50 to-teal-50 rounded-2xl p-6 border border-emerald-100">
+                <div className="flex items-center mb-4">
+                  <MapPin className="w-5 h-5 text-emerald-600 mr-2" />
+                  <h3 className="text-lg font-bold text-gray-900">Location Details</h3>
                 </div>
 
-
-                {/* Right Column - Location Section (ENHANCED) */}
-                <div className="bg-white rounded-xl p-6 border border-gray-200 hover:border-emerald-300 transition-all duration-300">
-                  <div className="flex items-center mb-6">
-                    <MapPin className="w-6 h-6 text-emerald-600 mr-3" />
-                    <h3 className="text-xl font-bold text-gray-900 uppercase tracking-wider">Location Details</h3>
+                <div className="space-y-4">
+                  {/* Full Address */}
+                  <div>
+                    <label htmlFor="location.address" className="block text-sm font-semibold text-gray-700 mb-2">
+                      Full Address <span className="text-red-600">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="location.address"
+                      id="location.address"
+                      value={landData.location.address}
+                      onChange={handleChange}
+                      required
+                      className="w-full px-5 py-4 bg-white border-2 border-gray-100 rounded-xl focus:outline-none focus:border-emerald-500 transition-all text-gray-800 font-medium"
+                      placeholder="Enter complete land address"
+                      disabled={isSearching || isLocating}
+                    />
+                    <p className="text-xs text-gray-500 mt-2">
+                      Enter the address and click search, or use your current location
+                    </p>
                   </div>
 
-                  <div className="space-y-6">
-                    {/* Full Address Input */}
+                  {/* Geolocation Buttons */}
+                  <div className="flex gap-3">
+                    <button
+                      type="button"
+                      onClick={handleAddressSearch}
+                      disabled={isSearching || isLocating}
+                      className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-emerald-600 text-white rounded-xl font-semibold hover:bg-emerald-700 transition-all disabled:opacity-50 shadow-lg shadow-emerald-500/25"
+                    >
+                      {isSearching ? (
+                        <Loader className="w-5 h-5 animate-spin" />
+                      ) : (
+                        <Search className="w-5 h-5" />
+                      )}
+                      Search Address
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleCurrentLocationFetch}
+                      disabled={isSearching || isLocating}
+                      className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition-all disabled:opacity-50 shadow-lg shadow-blue-500/25"
+                    >
+                      {isLocating ? (
+                        <Loader className="w-5 h-5 animate-spin" />
+                      ) : (
+                        <LocateFixed className="w-5 h-5" />
+                      )}
+                      Use Current
+                    </button>
+                  </div>
+
+                  {/* Lat/Long */}
+                  <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label htmlFor="location.address" className="block text-sm font-medium text-gray-700 uppercase tracking-wider mb-3">
-                        Full Address <span className="text-red-600">*</span>
+                      <label htmlFor="location.latitude" className="block text-sm font-semibold text-gray-700 mb-2">
+                        Latitude <span className="text-red-600">*</span>
                       </label>
-                      <div className="relative">
-                        <input
-                          type="text"
-                          name="location.address"
-                          id="location.address"
-                          value={landData.location.address}
-                          onChange={handleChange}
-                          required
-                          className="w-full px-4 py-3 pr-12 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/25 transition-colors duration-300"
-                          placeholder="Enter complete land address"
-                          disabled={isSearching || isLocating}
-                        />
-                        <MapPin className="absolute right-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-                      </div>
-                      <p className="text-xs text-gray-500 mt-2">
-                        Enter the address and click the search button, or use your current location.
-                      </p>
+                      <input
+                        type="number"
+                        name="location.latitude"
+                        id="location.latitude"
+                        value={landData.location.latitude}
+                        onChange={handleChange}
+                        required
+                        className="w-full px-5 py-4 bg-white border-2 border-gray-100 rounded-xl focus:outline-none focus:border-emerald-500 transition-all text-gray-800 font-medium"
+                        placeholder="Auto-filled"
+                        step="any"
+                        disabled={isSearching || isLocating}
+                      />
                     </div>
-
-                    {/* Geolocation Buttons */}
-                    <div className="flex space-x-2">
-                        <button
-                          type="button"
-                          onClick={handleAddressSearch}
-                          disabled={isSearching || isLocating}
-                          className="flex-1 flex items-center justify-center p-3 bg-emerald-600 rounded-lg text-white font-semibold hover:bg-emerald-700 transition-colors duration-300 disabled:opacity-50"
-                          title="Search and Autofill Coordinates"
-                        >
-                          {isSearching ? (
-                            <Loader className="w-5 h-5 animate-spin mr-2" />
-                          ) : (
-                            <Search className="w-5 h-5 mr-2" />
-                          )}
-                          Search Address
-                        </button>
-                        <button
-                          type="button"
-                          onClick={handleCurrentLocationFetch}
-                          disabled={isSearching || isLocating}
-                          className="flex-1 flex items-center justify-center p-3 bg-blue-600 rounded-lg text-white font-semibold hover:bg-blue-700 transition-colors duration-300 disabled:opacity-50"
-                          title="Use Current Location"
-                        >
-                          {isLocating ? (
-                            <Loader className="w-5 h-5 animate-spin mr-2" />
-                          ) : (
-                            <LocateFixed className="w-5 h-5 mr-2" />
-                          )}
-                          Use Current
-                        </button>
-                    </div>
-
-                    {/* Lat/Long Inputs */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <label htmlFor="location.latitude" className="block text-sm font-medium text-gray-700 uppercase tracking-wider mb-3">
-                          Latitude <span className="text-red-600">*</span>
-                        </label>
-                        <div className="relative">
-                          <input
-                            type="number"
-                            name="location.latitude"
-                            id="location.latitude"
-                            value={landData.location.latitude}
-                            onChange={handleChange}
-                            required
-                            className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/25 transition-colors duration-300 pl-12"
-                            placeholder="Auto-filled or Manual"
-                            step="any"
-                            disabled={isSearching || isLocating}
-                          />
-                          <Globe className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-                        </div>
-                      </div>
-                      <div>
-                        <label htmlFor="location.longitude" className="block text-sm font-medium text-gray-700 uppercase tracking-wider mb-3">
-                          Longitude <span className="text-red-600">*</span>
-                        </label>
-                        <div className="relative">
-                          <input
-                            type="number"
-                            name="location.longitude"
-                            id="location.longitude"
-                            value={landData.location.longitude}
-                            onChange={handleChange}
-                            required
-                            className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/25 transition-colors duration-300 pl-12"
-                            placeholder="Auto-filled or Manual"
-                            step="any"
-                            disabled={isSearching || isLocating}
-                          />
-                          <Globe className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-                        </div>
-                      </div>
+                    <div>
+                      <label htmlFor="location.longitude" className="block text-sm font-semibold text-gray-700 mb-2">
+                        Longitude <span className="text-red-600">*</span>
+                      </label>
+                      <input
+                        type="number"
+                        name="location.longitude"
+                        id="location.longitude"
+                        value={landData.location.longitude}
+                        onChange={handleChange}
+                        required
+                        className="w-full px-5 py-4 bg-white border-2 border-gray-100 rounded-xl focus:outline-none focus:border-emerald-500 transition-all text-gray-800 font-medium"
+                        placeholder="Auto-filled"
+                        step="any"
+                        disabled={isSearching || isLocating}
+                      />
                     </div>
                   </div>
                 </div>
               </div>
 
-              {/* Specifications Grid & File Upload Sections (Omitted for brevity, they are unchanged) */}
+              {/* Land Details Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Soil Type */}
+                <div>
+                  <label htmlFor="soilType" className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
+                    <Tractor className="w-4 h-4 text-emerald-500" />
+                    Soil Type <span className="text-red-600">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    name="soilType"
+                    id="soilType"
+                    value={landData.soilType}
+                    onChange={handleChange}
+                    required
+                    className="w-full px-5 py-4 bg-gray-50 border-2 border-gray-100 rounded-xl focus:outline-none focus:border-emerald-500 focus:bg-white transition-all text-gray-800 font-medium"
+                    placeholder="e.g., Alluvial, Red Soil"
+                  />
+                </div>
+
+                {/* Water Source */}
+                <div>
+                  <label htmlFor="waterSource" className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
+                    <Waves className="w-4 h-4 text-emerald-500" />
+                    Water Source
+                  </label>
+                  <input
+                    type="text"
+                    name="waterSource"
+                    id="waterSource"
+                    value={landData.waterSource}
+                    onChange={handleChange}
+                    className="w-full px-5 py-4 bg-gray-50 border-2 border-gray-100 rounded-xl focus:outline-none focus:border-emerald-500 focus:bg-white transition-all text-gray-800 font-medium"
+                    placeholder="e.g., Borewell, River"
+                  />
+                </div>
+
+                {/* Accessibility */}
+                <div className="md:col-span-2">
+                  <label htmlFor="accessibility" className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
+                    <Route className="w-4 h-4 text-emerald-500" />
+                    Accessibility
+                  </label>
+                  <input
+                    type="text"
+                    name="accessibility"
+                    id="accessibility"
+                    value={landData.accessibility}
+                    onChange={handleChange}
+                    className="w-full px-5 py-4 bg-gray-50 border-2 border-gray-100 rounded-xl focus:outline-none focus:border-emerald-500 focus:bg-white transition-all text-gray-800 font-medium"
+                    placeholder="e.g., Paved Road Access, Highway Nearby"
+                  />
+                </div>
+              </div>
               
               {/* Specifications Grid */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {/* Size (acres) */}
-                <div className="bg-white rounded-xl p-6 border border-gray-200 hover:border-emerald-300 transition-all duration-300">
-                  <label htmlFor="sizeInAcres" className="block text-sm font-medium text-gray-700 uppercase tracking-wider mb-3">
-                    <Text className="w-5 h-5 inline mr-2" />
+                {/* Size */}
+                <div>
+                  <label htmlFor="sizeInAcres" className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
+                    <Text className="w-4 h-4 text-emerald-500" />
                     Size (acres) <span className="text-red-600">*</span>
                   </label>
                   <input
@@ -540,15 +538,15 @@ const AddLand: React.FC = () => {
                     required
                     min="0.1"
                     step="any"
-                    className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/25 transition-colors duration-300"
+                    className="w-full px-5 py-4 bg-gray-50 border-2 border-gray-100 rounded-xl focus:outline-none focus:border-emerald-500 focus:bg-white transition-all text-gray-800 font-medium"
                     placeholder="e.g., 5"
                   />
                 </div>
 
                 {/* Monthly Price */}
-                <div className="bg-white rounded-xl p-6 border border-gray-200 hover:border-emerald-300 transition-all duration-300">
-                  <label htmlFor="leasePricePerMonth" className="block text-sm font-medium text-gray-700 uppercase tracking-wider mb-3">
-                    <DollarSign className="w-5 h-5 inline mr-2" />
+                <div>
+                  <label htmlFor="leasePricePerMonth" className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
+                    <DollarSign className="w-4 h-4 text-emerald-500" />
                     Monthly Price <span className="text-red-600">*</span>
                   </label>
                   <input
@@ -560,15 +558,15 @@ const AddLand: React.FC = () => {
                     required
                     min="1"
                     step="any"
-                    className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/25 transition-colors duration-300"
+                    className="w-full px-5 py-4 bg-gray-50 border-2 border-gray-100 rounded-xl focus:outline-none focus:border-emerald-500 focus:bg-white transition-all text-gray-800 font-medium"
                     placeholder="e.g., 10000"
                   />
                 </div>
 
-                {/* Duration (months) */}
-                <div className="bg-white rounded-xl p-6 border border-gray-200 hover:border-emerald-300 transition-all duration-300">
-                  <label htmlFor="leaseDurationMonths" className="block text-sm font-medium text-gray-700 uppercase tracking-wider mb-3">
-                    <Calendar className="w-5 h-5 inline mr-2" />
+                {/* Duration */}
+                <div>
+                  <label htmlFor="leaseDurationMonths" className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
+                    <Calendar className="w-4 h-4 text-emerald-500" />
                     Duration (months) <span className="text-red-600">*</span>
                   </label>
                   <input
@@ -580,99 +578,84 @@ const AddLand: React.FC = () => {
                     required
                     min="1"
                     step="1"
-                    className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/25 transition-colors duration-300"
+                    className="w-full px-5 py-4 bg-gray-50 border-2 border-gray-100 rounded-xl focus:outline-none focus:border-emerald-500 focus:bg-white transition-all text-gray-800 font-medium"
                     placeholder="e.g., 12"
                   />
                 </div>
               </div>
 
               {/* File Upload Sections */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Photos Upload */}
-                <div className="bg-white rounded-xl p-6 border border-gray-200 hover:border-emerald-300 transition-all duration-300">
-                  <label className="block text-sm font-medium text-gray-700 uppercase tracking-wider mb-4">
-                    <Image className="w-5 h-5 inline mr-2" />
-                    Land Photos <span className="text-gray-500 text-xs">(Max 5 files)</span>
+                <div>
+                  <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-3">
+                    <Image className="w-4 h-4 text-emerald-500" />
+                    Land Photos <span className="text-gray-500 text-xs">(Max 5)</span>
                   </label>
-                  <div className="mt-2 flex justify-center px-6 pt-8 pb-8 border-2 border-dashed border-gray-300 rounded-lg bg-gray-50 hover:bg-gray-100 transition-all duration-300 group">
-                    <div className="space-y-3 text-center">
-                      <Upload className="mx-auto h-12 w-12 text-gray-400 group-hover:text-emerald-600 transition-colors" />
-                      <div className="flex text-sm text-gray-600">
-                        <label htmlFor="photo-upload-input" className="relative cursor-pointer rounded-md font-medium text-emerald-600 hover:text-emerald-700 transition-colors">
-                          <span>Upload photos</span>
-                          <input id="photo-upload-input" name="landPhotos" type="file" multiple accept=".png, .jpg, .jpeg" className="sr-only" onChange={handlePhotoChange} />
-                        </label>
-                        <p className="pl-1">or drag and drop</p>
-                      </div>
-                      <p className="text-xs text-gray-500">PNG, JPG up to 5MB each</p>
-                    </div>
+                  <div className="border-2 border-dashed border-gray-300 rounded-xl p-6 bg-gray-50 hover:bg-gray-100 transition-all text-center">
+                    <Upload className="mx-auto h-10 w-10 text-gray-400 mb-3" />
+                    <label htmlFor="photo-upload-input" className="cursor-pointer">
+                      <span className="text-emerald-600 font-medium hover:text-emerald-700">Upload photos</span>
+                      <input id="photo-upload-input" name="landPhotos" type="file" multiple accept=".png, .jpg, .jpeg" className="sr-only" onChange={handlePhotoChange} />
+                    </label>
+                    <p className="text-xs text-gray-500 mt-2">PNG, JPG up to 5MB each</p>
                   </div>
                   {landData.landPhotos && (
-                    <div className="mt-4">
-                      <p className="text-sm text-gray-700 mb-2">Selected files ({landData.landPhotos.length}):</p>
-                      <ul className="space-y-1">
-                        {Array.from(landData.landPhotos).map((file, index) => (
-                          <li key={index} className="text-xs text-gray-600 bg-gray-100 rounded px-3 py-1 truncate">
-                            📷 {file.name}
-                          </li>
-                        ))}
-                      </ul>
+                    <div className="mt-3 space-y-1">
+                      {Array.from(landData.landPhotos).map((file, index) => (
+                        <div key={index} className="text-xs text-gray-600 bg-emerald-50 rounded-lg px-3 py-2 flex items-center gap-2">
+                          <Image className="w-3 h-3 text-emerald-600" />
+                          {file.name}
+                        </div>
+                      ))}
                     </div>
                   )}
                 </div>
 
                 {/* Documents Upload */}
-                <div className="bg-white rounded-xl p-6 border border-gray-200 hover:border-emerald-300 transition-all duration-300">
-                  <label className="block text-sm font-medium text-gray-700 uppercase tracking-wider mb-4">
-                    <FileText className="w-5 h-5 inline mr-2" />
-                    Land Documents <span className="text-gray-500 text-xs">(Max 5 files)</span>
+                <div>
+                  <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-3">
+                    <FileText className="w-4 h-4 text-emerald-500" />
+                    Land Documents <span className="text-gray-500 text-xs">(Max 5)</span>
                   </label>
-                  <div className="mt-2 flex justify-center px-6 pt-8 pb-8 border-2 border-dashed border-gray-300 rounded-lg bg-gray-50 hover:bg-gray-100 transition-all duration-300 group">
-                    <div className="space-y-3 text-center">
-                      <Cloud className="mx-auto h-12 w-12 text-gray-400 group-hover:text-emerald-600 transition-colors" />
-                      <div className="flex text-sm text-gray-600">
-                        <label htmlFor="document-upload-input" className="relative cursor-pointer rounded-md font-medium text-emerald-600 hover:text-emerald-700 transition-colors">
-                          <span>Upload documents</span>
-                          <input id="document-upload-input" name="landDocuments" type="file" multiple accept=".pdf" className="sr-only" onChange={handleDocumentChange} />
-                        </label>
-                        <p className="pl-1">or drag and drop</p>
-                      </div>
-                      <p className="text-xs text-gray-500">PDFs up to 5MB each</p>
-                    </div>
+                  <div className="border-2 border-dashed border-gray-300 rounded-xl p-6 bg-gray-50 hover:bg-gray-100 transition-all text-center">
+                    <Cloud className="mx-auto h-10 w-10 text-gray-400 mb-3" />
+                    <label htmlFor="document-upload-input" className="cursor-pointer">
+                      <span className="text-emerald-600 font-medium hover:text-emerald-700">Upload documents</span>
+                      <input id="document-upload-input" name="landDocuments" type="file" multiple accept=".pdf" className="sr-only" onChange={handleDocumentChange} />
+                    </label>
+                    <p className="text-xs text-gray-500 mt-2">PDFs up to 5MB each</p>
                   </div>
                   {landData.landDocuments && (
-                    <div className="mt-4">
-                      <p className="text-sm text-gray-700 mb-2">Selected files ({landData.landDocuments.length}):</p>
-                      <ul className="space-y-1">
-                        {Array.from(landData.landDocuments).map((file, index) => (
-                          <li key={index} className="text-xs text-gray-600 bg-gray-100 rounded px-3 py-1 truncate">
-                            📄 {file.name}
-                          </li>
-                        ))}
-                      </ul>
+                    <div className="mt-3 space-y-1">
+                      {Array.from(landData.landDocuments).map((file, index) => (
+                        <div key={index} className="text-xs text-gray-600 bg-blue-50 rounded-lg px-3 py-2 flex items-center gap-2">
+                          <FileText className="w-3 h-3 text-blue-600" />
+                          {file.name}
+                        </div>
+                      ))}
                     </div>
                   )}
                 </div>
               </div>
 
-
               {/* Submit Button */}
-              <div className="pt-6">
+              <div className="pt-4">
                 <button
                   type="submit"
                   disabled={isSubmitting || isSearching || isLocating}
-                  className="w-full py-4 px-6 bg-emerald-600 text-white rounded-xl font-bold uppercase tracking-wider hover:bg-emerald-700 transition-all duration-300 ease-in-out shadow-sm disabled:opacity-50 disabled:cursor-not-allowed text-lg"
+                  className="w-full flex items-center justify-center gap-2 px-6 py-4 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-xl font-semibold hover:from-emerald-600 hover:to-teal-600 transition-all shadow-lg shadow-emerald-500/25 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isSubmitting ? (
-                    <span className="flex items-center justify-center">
-                      <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                      </svg>
-                      DEPLOYING LAND LISTING...
-                    </span>
+                    <>
+                      <Loader className="w-5 h-5 animate-spin" />
+                      Listing Land...
+                    </>
                   ) : (
-                    'DEPLOY LAND LISTING'
+                    <>
+                      <CheckCircle className="w-5 h-5" />
+                      List Land
+                    </>
                   )}
                 </button>
               </div>

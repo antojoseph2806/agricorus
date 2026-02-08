@@ -5,7 +5,6 @@ import axios from "axios";
 import { 
   FaEdit, 
   FaTrashAlt, 
-  FaPlus, 
   FaSearch, 
   FaRocket, 
   FaChartLine, 
@@ -94,12 +93,13 @@ export default function ViewProjects() {
   const [statusFilter, setStatusFilter] = useState("all");
   const [verificationFilter, setVerificationFilter] = useState("all");
   const navigate = useNavigate();
+  const backendUrl = (import.meta as any).env.VITE_BACKEND_URL || "https://agricorus.onrender.com";
 
   useEffect(() => {
     const fetchProjects = async () => {
       try {
         setLoading(true);
-        const res = await axios.get("http://localhost:5000/api/projects");
+        const res = await axios.get(`${backendUrl}/api/projects`);
         if (Array.isArray(res.data)) {
           setProjects(res.data);
           setFilteredProjects(res.data);
@@ -115,7 +115,7 @@ export default function ViewProjects() {
       }
     };
     fetchProjects();
-  }, []);
+  }, [backendUrl]);
 
   useEffect(() => {
     let filtered = projects;
@@ -147,7 +147,7 @@ export default function ViewProjects() {
   const handleDelete = async (id: string) => {
     if (!window.confirm("Are you sure you want to delete this project?")) return;
     try {
-      await axios.delete(`http://localhost:5000/api/projects/${id}`, {
+      await axios.delete(`${backendUrl}/api/projects/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setProjects(projects.filter((p) => p._id !== id));

@@ -64,7 +64,7 @@ const RevenueTrends: React.FC = () => {
       setLoading(true);
       const token = localStorage.getItem('token');
       const response = await fetch(
-        `http://localhost:5000/api/admin/sales-analytics/revenue?period=${selectedPeriod}`,
+        `https://agricorus.onrender.com/api/admin/sales-analytics/revenue?period=${selectedPeriod}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -87,7 +87,7 @@ const RevenueTrends: React.FC = () => {
     try {
       const token = localStorage.getItem('token');
       const response = await fetch(
-        `http://localhost:5000/api/admin/sales-analytics/download?type=revenue&period=${selectedPeriod}`,
+        `https://agricorus.onrender.com/api/admin/sales-analytics/download?type=revenue&period=${selectedPeriod}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }

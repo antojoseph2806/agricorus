@@ -21,7 +21,7 @@ const NotificationBell = () => {
       const token = localStorage.getItem("token");
       
       const response = await axios.get(
-        `${(import.meta as any).env.VITE_BACKEND_URL || "http://localhost:5000"}/api/vendor/notifications/count`,
+        `${(import.meta as any).env.VITE_BACKEND_URL || "https://agricorus.onrender.com"}/api/vendor/notifications/count`,
         {
           headers: { Authorization: `Bearer ${token}` }
         }

@@ -1,0 +1,1065 @@
+{
+  "config": {
+    "configFile": "C:\\Users\\antom\\OneDrive\\Documents\\agricorus\\tests\\e2e\\playwright.config.js",
+    "rootDir": "C:/Users/antom/OneDrive/Documents/agricorus/tests/e2e",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "C:/Users/antom/OneDrive/Documents/agricorus/tests/e2e/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "C:/Users/antom/OneDrive/Documents/agricorus/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "html",
+        {
+          "outputFolder": "playwright-report"
+        }
+      ],
+      [
+        "json",
+        {
+          "outputFile": "test-results/results.json"
+        }
+      ],
+      [
+        "list",
+        null
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "runAgents": "none",
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.58.1",
+    "workers": 2,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "vendor-crud-complete.test.js",
+      "file": "vendor-crud-complete.test.js",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "1. Vendor Authentication (CREATE Session)",
+          "file": "vendor-crud-complete.test.js",
+          "line": 54,
+          "column": 6,
+          "specs": [
+            {
+              "title": "should successfully login and create session",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 10556,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-02-04T05:39:45.914Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f76d4cff0bbb4f25cd50-dffb4f61a2ffb034d866",
+              "file": "vendor-crud-complete.test.js",
+              "line": 55,
+              "column": 3
+            },
+            {
+              "title": "should maintain session across page navigation",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 13751,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-02-04T05:39:57.076Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f76d4cff0bbb4f25cd50-7455aa02ba4bc3b1b837",
+              "file": "vendor-crud-complete.test.js",
+              "line": 77,
+              "column": 3
+            }
+          ]
+        },
+        {
+          "title": "2. Vendor Dashboard (READ)",
+          "file": "vendor-crud-complete.test.js",
+          "line": 98,
+          "column": 6,
+          "specs": [
+            {
+              "title": "should display dashboard with metrics",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 4839,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-02-04T05:40:10.896Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f76d4cff0bbb4f25cd50-1403be9079dcac53b640",
+              "file": "vendor-crud-complete.test.js",
+              "line": 103,
+              "column": 3
+            },
+            {
+              "title": "should display navigation menu",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 5904,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-02-04T05:40:15.817Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f76d4cff0bbb4f25cd50-c9daf513536eacb3a943",
+              "file": "vendor-crud-complete.test.js",
+              "line": 115,
+              "column": 3
+            },
+            {
+              "title": "should display KYC status",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 8283,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-02-04T05:40:21.764Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f76d4cff0bbb4f25cd50-92a7c112ccc035771677",
+              "file": "vendor-crud-complete.test.js",
+              "line": 121,
+              "column": 3
+            }
+          ]
+        },
+        {
+          "title": "3. Product Management (CRUD)",
+          "file": "vendor-crud-complete.test.js",
+          "line": 131,
+          "column": 6,
+          "specs": [
+            {
+              "title": "3.1 CREATE - Should add a new product successfully",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 13525,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-02-04T05:40:30.091Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f76d4cff0bbb4f25cd50-01bba16b165f422748f9",
+              "file": "vendor-crud-complete.test.js",
+              "line": 139,
+              "column": 3
+            },
+            {
+              "title": "3.2 READ - Should display products list",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 9565,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-02-04T05:40:43.663Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f76d4cff0bbb4f25cd50-23ae6b858153a127ae16",
+              "file": "vendor-crud-complete.test.js",
+              "line": 176,
+              "column": 3
+            },
+            {
+              "title": "3.3 READ - Should view product details",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 7861,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-02-04T05:40:53.306Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f76d4cff0bbb4f25cd50-62d7fb8fb1f812fad216",
+              "file": "vendor-crud-complete.test.js",
+              "line": 189,
+              "column": 3
+            },
+            {
+              "title": "3.4 UPDATE - Should navigate to edit product page",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 10223,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-02-04T05:41:01.239Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f76d4cff0bbb4f25cd50-02391429803170dbc29f",
+              "file": "vendor-crud-complete.test.js",
+              "line": 208,
+              "column": 3
+            },
+            {
+              "title": "3.5 UPDATE - Should update product inventory",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 8349,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-02-04T05:41:11.518Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f76d4cff0bbb4f25cd50-b8c910a62fff3ab0d13d",
+              "file": "vendor-crud-complete.test.js",
+              "line": 230,
+              "column": 3
+            },
+            {
+              "title": "3.6 DELETE - Should have delete functionality",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 7651,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-02-04T05:41:19.921Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f76d4cff0bbb4f25cd50-9a92843bc68b8869234c",
+              "file": "vendor-crud-complete.test.js",
+              "line": 254,
+              "column": 3
+            }
+          ]
+        },
+        {
+          "title": "4. Order Management (READ & UPDATE)",
+          "file": "vendor-crud-complete.test.js",
+          "line": 274,
+          "column": 6,
+          "specs": [
+            {
+              "title": "4.1 READ - Should display orders page",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 7646,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-02-04T05:41:27.621Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f76d4cff0bbb4f25cd50-63de6ea7e9672af8c4cf",
+              "file": "vendor-crud-complete.test.js",
+              "line": 280,
+              "column": 3
+            },
+            {
+              "title": "4.2 READ - Should filter orders by status",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 7513,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-02-04T05:41:35.305Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f76d4cff0bbb4f25cd50-5715865c1cbf3b6906d3",
+              "file": "vendor-crud-complete.test.js",
+              "line": 292,
+              "column": 3
+            },
+            {
+              "title": "4.3 UPDATE - Should have order status update functionality",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 8074,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-02-04T05:41:42.856Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f76d4cff0bbb4f25cd50-5f83d895f99134c7bef7",
+              "file": "vendor-crud-complete.test.js",
+              "line": 302,
+              "column": 3
+            }
+          ]
+        },
+        {
+          "title": "5. Profile Management (READ & UPDATE)",
+          "file": "vendor-crud-complete.test.js",
+          "line": 324,
+          "column": 6,
+          "specs": [
+            {
+              "title": "5.1 READ - Should display vendor profile",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 8510,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-02-04T05:41:50.967Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f76d4cff0bbb4f25cd50-56f2f82ca0e8ea381338",
+              "file": "vendor-crud-complete.test.js",
+              "line": 330,
+              "column": 3
+            },
+            {
+              "title": "5.2 READ - Should display KYC status",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 9049,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-02-04T05:41:59.533Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f76d4cff0bbb4f25cd50-cafdc5b8701d80964265",
+              "file": "vendor-crud-complete.test.js",
+              "line": 342,
+              "column": 3
+            },
+            {
+              "title": "5.3 UPDATE - Should have profile update form",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 7139,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-02-04T05:42:08.628Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f76d4cff0bbb4f25cd50-ee35d902457c62f0914a",
+              "file": "vendor-crud-complete.test.js",
+              "line": 352,
+              "column": 3
+            }
+          ]
+        },
+        {
+          "title": "6. Inventory Management (READ & UPDATE)",
+          "file": "vendor-crud-complete.test.js",
+          "line": 365,
+          "column": 6,
+          "specs": [
+            {
+              "title": "6.1 READ - Should display inventory page",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 8332,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-02-04T05:42:15.806Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f76d4cff0bbb4f25cd50-f8d078ee4af3509752c3",
+              "file": "vendor-crud-complete.test.js",
+              "line": 371,
+              "column": 3
+            },
+            {
+              "title": "6.2 READ - Should display stock information",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 7901,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-02-04T05:42:24.185Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f76d4cff0bbb4f25cd50-bb4c7587278c0ecc915e",
+              "file": "vendor-crud-complete.test.js",
+              "line": 383,
+              "column": 3
+            }
+          ]
+        },
+        {
+          "title": "7. Payments (READ)",
+          "file": "vendor-crud-complete.test.js",
+          "line": 396,
+          "column": 6,
+          "specs": [
+            {
+              "title": "7.1 READ - Should display payments page",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 7714,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-02-04T05:42:32.132Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f76d4cff0bbb4f25cd50-c7a265b8ab507ea20c1f",
+              "file": "vendor-crud-complete.test.js",
+              "line": 402,
+              "column": 3
+            }
+          ]
+        },
+        {
+          "title": "8. Analytics (READ)",
+          "file": "vendor-crud-complete.test.js",
+          "line": 417,
+          "column": 6,
+          "specs": [
+            {
+              "title": "8.1 READ - Should display analytics page",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 7546,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-02-04T05:42:39.893Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f76d4cff0bbb4f25cd50-bb3324c7b56068e27799",
+              "file": "vendor-crud-complete.test.js",
+              "line": 423,
+              "column": 3
+            }
+          ]
+        },
+        {
+          "title": "9. Notifications (READ)",
+          "file": "vendor-crud-complete.test.js",
+          "line": 439,
+          "column": 6,
+          "specs": [
+            {
+              "title": "9.1 READ - Should display notifications page",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 7788,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-02-04T05:42:47.478Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f76d4cff0bbb4f25cd50-2bdc655a85eb3ad5d7c0",
+              "file": "vendor-crud-complete.test.js",
+              "line": 445,
+              "column": 3
+            }
+          ]
+        },
+        {
+          "title": "10. Complete Navigation (READ All Pages)",
+          "file": "vendor-crud-complete.test.js",
+          "line": 460,
+          "column": 6,
+          "specs": [
+            {
+              "title": "10.1 Should navigate to all vendor pages successfully",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 28786,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "✓ Dashboard page loaded successfully\n"
+                        },
+                        {
+                          "text": "✓ Products page loaded successfully\n"
+                        },
+                        {
+                          "text": "✓ Add Product page loaded successfully\n"
+                        },
+                        {
+                          "text": "✓ Orders page loaded successfully\n"
+                        },
+                        {
+                          "text": "✓ Payments page loaded successfully\n"
+                        },
+                        {
+                          "text": "✓ Analytics page loaded successfully\n"
+                        },
+                        {
+                          "text": "✓ Profile page loaded successfully\n"
+                        },
+                        {
+                          "text": "✓ Inventory page loaded successfully\n"
+                        },
+                        {
+                          "text": "✓ Notifications page loaded successfully\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-02-04T05:42:55.306Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f76d4cff0bbb4f25cd50-6079e47aae9cf8fcb9f1",
+              "file": "vendor-crud-complete.test.js",
+              "line": 461,
+              "column": 3
+            }
+          ]
+        },
+        {
+          "title": "11. Logout (DELETE Session)",
+          "file": "vendor-crud-complete.test.js",
+          "line": 497,
+          "column": 6,
+          "specs": [
+            {
+              "title": "11.1 DELETE - Should logout successfully",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 12420,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-02-04T05:43:24.127Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f76d4cff0bbb4f25cd50-2d2e404f8a675ee72622",
+              "file": "vendor-crud-complete.test.js",
+              "line": 498,
+              "column": 3
+            }
+          ]
+        },
+        {
+          "title": "12. CRUD Operations Summary",
+          "file": "vendor-crud-complete.test.js",
+          "line": 524,
+          "column": 6,
+          "specs": [
+            {
+              "title": "12.1 Verify all CRUD operations are available",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 7486,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "CRUD Operations Available: { create: \u001b[33mtrue\u001b[39m, read: \u001b[33mtrue\u001b[39m, update: \u001b[33mtrue\u001b[39m, delete: \u001b[33mfalse\u001b[39m }\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-02-04T05:43:36.600Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f76d4cff0bbb4f25cd50-71d78d55ebb7cac86c4d",
+              "file": "vendor-crud-complete.test.js",
+              "line": 525,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-02-04T05:39:41.502Z",
+    "duration": 243523.94499999998,
+    "expected": 25,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

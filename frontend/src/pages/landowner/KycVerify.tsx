@@ -96,7 +96,7 @@ const KycVerify: React.FC = () => {
       const token = localStorage.getItem('token');
       if (!token) throw new Error('User not logged in. Please login first.');
 
-      const res = await axios.post('http://localhost:5000/api/kyc/verify', formData, {
+      const res = await axios.post('https://agricorus.onrender.com/api/kyc/verify', formData, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'multipart/form-data',

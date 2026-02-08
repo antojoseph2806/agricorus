@@ -27,12 +27,53 @@ export default function InvestorProjects() {
     const fetchProjects = async () => {
       try {
         setLoading(true);
-        const res = await axios.get("http://localhost:5000/api/projects/investor", {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        const token = localStorage.getItem("token");
+        const role = localStorage.getItem("role");
+        const backendUrl = (import.meta as any).env.VITE_BACKEND_URL || "https://agricorus.onrender.com";
+        
+        console.log("🔍 Fetching projects from:", `${backendUrl}/api/projects/investor`);
+        console.log("🔑 Token exists:", !!token);
+        console.log("👤 User role:", role);
+        console.log("🌐 Backend URL from env:", (import.meta as any).env.VITE_BACKEND_URL);
+        
+        if (!token) {
+          console.error("❌ No token found! User not logged in.");
+          alert("Please login first");
+          return;
+        }
+        
+        if (role !== "investor") {
+          console.error("❌ Wrong role! Current role:", role);
+          alert(`Wrong user role: ${role}. Please login as investor.`);
+          return;
+        }
+        
+        const res = await axios.get(`${backendUrl}/api/projects/investor`, {
+          headers: { Authorization: `Bearer ${token}` },
         });
-        setProjects(res.data);
-      } catch (err) {
-        console.error(err);
+        
+        console.log("✅ Projects response:", res.data);
+        console.log("📊 Number of projects:", res.data.length);
+        
+        if (res.data && Array.isArray(res.data)) {
+          setProjects(res.data);
+          console.log("✅ Projects set successfully:", res.data.length);
+        } else {
+          console.error("❌ Invalid response format:", res.data);
+        }
+      } catch (err: any) {
+        console.error("❌ Error fetching projects:", err);
+        console.error("❌ Error message:", err.message);
+        console.error("❌ Error response:", err.response?.data);
+        console.error("❌ Error status:", err.response?.status);
+        
+        if (err.response?.status === 403) {
+          console.error("🚫 Access denied - check if user is logged in as investor");
+          alert("Access denied. Please login as investor.");
+        } else if (err.code === "ERR_NETWORK") {
+          console.error("🌐 Network error - backend might not be running");
+          alert("Cannot connect to backend. Is the server running on port 5000?");
+        }
       } finally {
         setLoading(false);
       }

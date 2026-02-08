@@ -1,5 +1,5 @@
 // src/components/FarmerLayout.tsx
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Outlet, Link, useNavigate, useLocation } from "react-router-dom";
 import {
   TrendingUp,
@@ -13,12 +13,111 @@ import {
   UserCircle,
   LogOut,
   ChevronDown,
-  ShoppingBag
+  ShoppingBag,
+  User,
+  Settings
 } from "lucide-react";
 
 interface FarmerLayoutProps {
   children?: React.ReactNode;
 }
+
+// -------------------- USER PROFILE DROPDOWN --------------------
+const UserProfileDropdown: React.FC = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [profileImage, setProfileImage] = useState<string | null>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  useEffect(() => {
+    const fetchProfileImage = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) return;
+      
+      try {
+        const response = await fetch("https://agricorus.onrender.com/api/profile", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const data = await response.json();
+        if (data.profileImage) {
+          // Add backend URL if the image path doesn't already include it
+          const imageUrl = data.profileImage.startsWith('http') 
+            ? data.profileImage 
+            : `https://agricorus.onrender.com${data.profileImage}`;
+          setProfileImage(imageUrl);
+        }
+      } catch (error) {
+        console.error("Error fetching profile image:", error);
+      }
+    };
+
+    fetchProfileImage();
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    navigate("/login");
+  };
+
+  return (
+    <div className="relative" ref={dropdownRef}>
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="flex items-center justify-center w-10 h-10 rounded-full bg-emerald-100 hover:bg-emerald-200 text-emerald-700 transition overflow-hidden border-2 border-emerald-200"
+      >
+        {profileImage ? (
+          <img 
+            src={profileImage} 
+            alt="Profile" 
+            className="w-full h-full object-cover"
+          />
+        ) : (
+          <User className="w-5 h-5" />
+        )}
+      </button>
+
+      {isOpen && (
+        <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
+          <Link
+            to="/farmer/profile"
+            onClick={() => setIsOpen(false)}
+            className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition"
+          >
+            <UserCircle className="w-4 h-4" />
+            View Profile
+          </Link>
+          <Link
+            to="/farmer/kyc/verify"
+            onClick={() => setIsOpen(false)}
+            className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition"
+          >
+            <Settings className="w-4 h-4" />
+            Edit Profile
+          </Link>
+          <div className="border-t border-gray-100 my-1"></div>
+          <button
+            onClick={handleLogout}
+            className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition"
+          >
+            <LogOut className="w-4 h-4" />
+            Logout
+          </button>
+        </div>
+      )}
+    </div>
+  );
+};
 
 const FarmerLayout: React.FC<FarmerLayoutProps> = ({ children }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true); // Desktop default: open
@@ -266,6 +365,12 @@ const FarmerLayout: React.FC<FarmerLayoutProps> = ({ children }) => {
             <Menu className="w-6 h-6" />
           </button>
           <span className="text-lg font-bold">AgriCorus</span>
+          <UserProfileDropdown />
+        </div>
+
+        {/* Top Navbar Desktop */}
+        <div className="hidden md:flex items-center justify-end px-6 h-16 bg-white border-b">
+          <UserProfileDropdown />
         </div>
 
         <main className="flex-1 p-6 overflow-auto">

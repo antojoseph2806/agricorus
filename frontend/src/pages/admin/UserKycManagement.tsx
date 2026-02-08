@@ -53,7 +53,7 @@ const UserKycManagement: React.FC = () => {
   const getAxios = () => {
     if (!token) throw new Error("No authentication token found");
     return axios.create({
-      baseURL: "http://localhost:5000",
+      baseURL: "https://agricorus.onrender.com",
       headers: { Authorization: `Bearer ${token}` },
     });
   };
@@ -73,7 +73,8 @@ const UserKycManagement: React.FC = () => {
 
   const fetchStats = async () => {
     try {
-      const { data } = await getAxios().get("/api/admin/user-kyc/stats");
+      const params: any = { role: roleFilter };
+      const { data } = await getAxios().get("/api/admin/user-kyc/stats", { params });
       setStats(data.data);
     } catch (err) {
       console.error("Failed to fetch stats:", err);
@@ -201,15 +202,12 @@ const UserKycManagement: React.FC = () => {
 
         {/* Statistics */}
         {stats && (
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4 mb-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
             {[
-              { label: 'Total', value: stats.total, color: 'bg-blue-500', icon: FileText },
+              { label: 'Total', value: roleFilter === 'all' ? stats.total : (roleFilter === 'farmer' ? stats.byRole.farmer : roleFilter === 'landowner' ? stats.byRole.landowner : stats.byRole.investor), color: 'bg-blue-500', icon: FileText },
               { label: 'Pending', value: stats.byStatus.Pending, color: 'bg-yellow-500', icon: Clock },
               { label: 'Verified', value: stats.byStatus.Verified, color: 'bg-green-500', icon: CheckCircle2 },
               { label: 'Rejected', value: stats.byStatus.Rejected, color: 'bg-red-500', icon: XCircle },
-              { label: 'Farmers', value: stats.byRole.farmer, color: 'bg-emerald-600', icon: Users },
-              { label: 'Landowners', value: stats.byRole.landowner, color: 'bg-blue-600', icon: MapPin },
-              { label: 'Investors', value: stats.byRole.investor, color: 'bg-purple-600', icon: DollarSign },
             ].map((stat, i) => (
               <div key={i} className="bg-white rounded-xl p-5 border shadow-sm hover:shadow-md transition-all">
                 <div className="flex items-center justify-between mb-3">

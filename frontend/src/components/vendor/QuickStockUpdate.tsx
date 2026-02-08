@@ -38,7 +38,7 @@ const QuickStockUpdate = ({ product, isOpen, onClose, onUpdate }: QuickStockUpda
       const token = localStorage.getItem("token");
       
       const response = await axios.patch(
-        `${(import.meta as any).env.VITE_BACKEND_URL || "http://localhost:5000"}/api/vendor/inventory/${product._id}/stock`,
+        `${(import.meta as any).env.VITE_BACKEND_URL || "https://agricorus.onrender.com"}/api/vendor/inventory/${product._id}/stock`,
         {
           stock: newStock,
           lowStockThreshold: newThreshold,

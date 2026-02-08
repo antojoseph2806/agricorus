@@ -99,7 +99,7 @@ const VendorProfile = () => {
   const fetchProfile = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.get("http://localhost:5000/api/vendor/profile", {
+      const res = await axios.get("https://agricorus.onrender.com/api/vendor/profile", {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -237,8 +237,8 @@ const VendorProfile = () => {
       });
 
       const url = profile
-        ? "http://localhost:5000/api/vendor/profile"
-        : "http://localhost:5000/api/vendor/profile";
+        ? "https://agricorus.onrender.com/api/vendor/profile"
+        : "https://agricorus.onrender.com/api/vendor/profile";
       const method = profile ? "PUT" : "POST";
 
       const res = await axios[method.toLowerCase() as "post" | "put"](

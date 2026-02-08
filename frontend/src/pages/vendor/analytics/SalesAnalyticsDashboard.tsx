@@ -8,13 +8,12 @@ import {
   ShoppingCart,
   Package,
   Users,
-  Calendar,
-  Download,
   RefreshCw,
   AlertCircle,
   BarChart3,
-  PieChart,
-  Activity
+  Activity,
+  Maximize2,
+  X
 } from "lucide-react";
 
 interface SalesMetrics {
@@ -71,7 +70,11 @@ const SalesAnalyticsDashboard = () => {
   const [recentOrders, setRecentOrders] = useState<RecentOrder[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [selectedPeriod, setSelectedPeriod] = useState("30"); // days
+  const [selectedPeriod, setSelectedPeriod] = useState("30");
+  const [chartModal, setChartModal] = useState<{ open: boolean; type: 'revenue' | 'orders' | null }>({ 
+    open: false, 
+    type: null 
+  });
 
   const fetchAnalytics = async () => {
     try {
@@ -80,16 +83,16 @@ const SalesAnalyticsDashboard = () => {
       const token = localStorage.getItem("token");
       
       const [metricsRes, chartRes, productsRes, ordersRes] = await Promise.all([
-        axios.get(`${(import.meta as any).env.VITE_BACKEND_URL || "http://localhost:5000"}/api/vendor/analytics/metrics?period=${selectedPeriod}`, {
+        axios.get(`${(import.meta as any).env.VITE_BACKEND_URL || "https://agricorus.onrender.com"}/api/vendor/analytics/metrics?period=${selectedPeriod}`, {
           headers: { Authorization: `Bearer ${token}` }
         }),
-        axios.get(`${(import.meta as any).env.VITE_BACKEND_URL || "http://localhost:5000"}/api/vendor/analytics/chart?period=${selectedPeriod}`, {
+        axios.get(`${(import.meta as any).env.VITE_BACKEND_URL || "https://agricorus.onrender.com"}/api/vendor/analytics/chart?period=${selectedPeriod}`, {
           headers: { Authorization: `Bearer ${token}` }
         }),
-        axios.get(`${(import.meta as any).env.VITE_BACKEND_URL || "http://localhost:5000"}/api/vendor/analytics/top-products?limit=5`, {
+        axios.get(`${(import.meta as any).env.VITE_BACKEND_URL || "https://agricorus.onrender.com"}/api/vendor/analytics/top-products?limit=5`, {
           headers: { Authorization: `Bearer ${token}` }
         }),
-        axios.get(`${(import.meta as any).env.VITE_BACKEND_URL || "http://localhost:5000"}/api/vendor/analytics/recent-orders?limit=5`, {
+        axios.get(`${(import.meta as any).env.VITE_BACKEND_URL || "https://agricorus.onrender.com"}/api/vendor/analytics/recent-orders?limit=5`, {
           headers: { Authorization: `Bearer ${token}` }
         })
       ]);
@@ -114,7 +117,8 @@ const SalesAnalyticsDashboard = () => {
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-IN', {
       style: 'currency',
-      currency: 'INR'
+      currency: 'INR',
+      maximumFractionDigits: 0
     }).format(amount);
   };
 
@@ -149,10 +153,148 @@ const SalesAnalyticsDashboard = () => {
     }
   };
 
+  const ChartComponent = ({ 
+    data, 
+    labels, 
+    type, 
+    color,
+    isModal = false 
+  }: { 
+    data: number[]; 
+    labels: string[]; 
+    type: 'revenue' | 'orders';
+    color: string;
+    isModal?: boolean;
+  }) => {
+    const maxValue = Math.max(...data, 1);
+    const chartHeight = isModal ? 'h-96' : 'h-48';
+    
+    const labelInterval = data.length <= 7 ? 1 : data.length <= 30 ? Math.ceil(data.length / 10) : Math.ceil(data.length / 12);
+    
+    return (
+      <div className={chartHeight}>
+        <div className={`${isModal ? 'h-80' : 'h-40'} flex items-end justify-between gap-1 px-2`}>
+          {data.map((value, index) => {
+            const heightPercent = (value / maxValue) * 100;
+            const showLabel = index % labelInterval === 0 || index === data.length - 1;
+            
+            return (
+              <div key={index} className="flex-1 flex flex-col items-center group relative min-w-0">
+                <div
+                  className={`w-full ${color} rounded-t transition-all duration-200 cursor-pointer min-h-[2px]`}
+                  style={{ height: `${Math.max(heightPercent, 1)}%` }}
+                >
+                  <div className="invisible group-hover:visible absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs rounded py-2 px-3 whitespace-nowrap z-20 shadow-lg">
+                    <div className="font-semibold mb-1">{labels[index]}</div>
+                    <div className="text-gray-200">
+                      {type === 'revenue' ? formatCurrency(value) : `${value} ${value === 1 ? 'order' : 'orders'}`}
+                    </div>
+                    <div className="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-gray-900"></div>
+                  </div>
+                </div>
+                {showLabel && (
+                  <div className={`${isModal ? 'text-xs' : 'text-[9px]'} text-gray-500 mt-2 text-center leading-tight truncate w-full`}>
+                    {labels[index]}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+        <div className="mt-3 flex items-center justify-between text-xs text-gray-500 px-2">
+          <span className="font-medium">{labels[0]}</span>
+          <span className="font-medium">{labels[labels.length - 1]}</span>
+        </div>
+      </div>
+    );
+  };
+
+  const ChartModal = () => {
+    if (!chartModal.open || !chartModal.type) return null;
+
+    const isRevenue = chartModal.type === 'revenue';
+    const data = isRevenue ? chartData.revenue : chartData.orders;
+    const title = isRevenue ? 'Revenue Trend' : 'Orders Trend';
+    const color = isRevenue ? 'bg-gradient-to-t from-blue-600 to-blue-400' : 'bg-gradient-to-t from-green-600 to-green-400';
+    const icon = isRevenue ? DollarSign : ShoppingCart;
+    const Icon = icon;
+
+    const totalValue = data.reduce((sum, val) => sum + val, 0);
+    const avgValue = data.length > 0 ? totalValue / data.length : 0;
+    const maxValue = Math.max(...data, 0);
+    const minValue = Math.min(...data.filter(v => v > 0), 0);
+
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div className="bg-white rounded-2xl shadow-2xl max-w-6xl w-full max-h-[90vh] overflow-auto">
+          <div className="sticky top-0 bg-white border-b px-6 py-4 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className={`w-12 h-12 ${isRevenue ? 'bg-blue-100' : 'bg-green-100'} rounded-xl flex items-center justify-center`}>
+                <Icon className={`w-6 h-6 ${isRevenue ? 'text-blue-600' : 'text-green-600'}`} />
+              </div>
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900">{title}</h2>
+                <p className="text-sm text-gray-600">
+                  {selectedPeriod === '7' ? 'Last 7 days' : 
+                   selectedPeriod === '30' ? 'Last 30 days' : 
+                   selectedPeriod === '90' ? 'Last 3 months' : 'Last year'}
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={() => setChartModal({ open: false, type: null })}
+              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            >
+              <X className="w-6 h-6" />
+            </button>
+          </div>
+
+          <div className="p-6">
+            <div className="grid grid-cols-4 gap-4 mb-6">
+              <div className="bg-gray-50 rounded-xl p-4">
+                <div className="text-sm text-gray-600 mb-1">Total</div>
+                <div className="text-xl font-bold text-gray-900">
+                  {isRevenue ? formatCurrency(totalValue) : totalValue}
+                </div>
+              </div>
+              <div className="bg-gray-50 rounded-xl p-4">
+                <div className="text-sm text-gray-600 mb-1">Average</div>
+                <div className="text-xl font-bold text-gray-900">
+                  {isRevenue ? formatCurrency(avgValue) : Math.round(avgValue)}
+                </div>
+              </div>
+              <div className="bg-gray-50 rounded-xl p-4">
+                <div className="text-sm text-gray-600 mb-1">Peak</div>
+                <div className="text-xl font-bold text-gray-900">
+                  {isRevenue ? formatCurrency(maxValue) : maxValue}
+                </div>
+              </div>
+              <div className="bg-gray-50 rounded-xl p-4">
+                <div className="text-sm text-gray-600 mb-1">Lowest</div>
+                <div className="text-xl font-bold text-gray-900">
+                  {isRevenue ? formatCurrency(minValue) : minValue}
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white border rounded-xl p-6">
+              <ChartComponent
+                data={data}
+                labels={chartData.labels}
+                type={chartModal.type}
+                color={color}
+                isModal={true}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <VendorLayout>
       <div className="p-6 max-w-7xl mx-auto">
-        {/* Header */}
         <div className="mb-8">
           <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
             <div>
@@ -189,7 +331,6 @@ const SalesAnalyticsDashboard = () => {
           </div>
         )}
 
-        {/* Key Metrics Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <div className="bg-white rounded-xl shadow-sm border p-6">
             <div className="flex items-center justify-between mb-4">
@@ -248,72 +389,77 @@ const SalesAnalyticsDashboard = () => {
           </div>
         </div>
 
-        {/* Charts Section */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-          {/* Revenue Chart */}
           <div className="bg-white rounded-xl shadow-sm border p-6">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-lg font-semibold text-gray-900">Revenue Trend</h3>
-              <BarChart3 className="w-5 h-5 text-gray-400" />
+              <div className="flex items-center gap-2">
+                <h3 className="text-lg font-semibold text-gray-900">Revenue Trend</h3>
+              </div>
+              <button
+                onClick={() => setChartModal({ open: true, type: 'revenue' })}
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                title="Expand chart"
+              >
+                <Maximize2 className="w-4 h-4 text-gray-600" />
+              </button>
             </div>
             {loading ? (
               <div className="h-64 flex items-center justify-center">
                 <div className="w-8 h-8 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
               </div>
-            ) : (
-              <div className="h-64 flex items-end justify-between gap-2">
-                {chartData.revenue.map((value, index) => (
-                  <div key={index} className="flex-1 flex flex-col items-center">
-                    <div
-                      className="w-full bg-blue-500 rounded-t-sm min-h-[4px] transition-all duration-300 hover:bg-blue-600"
-                      style={{
-                        height: `${Math.max((value / Math.max(...chartData.revenue)) * 200, 4)}px`
-                      }}
-                      title={`${chartData.labels[index]}: ${formatCurrency(value)}`}
-                    />
-                    <div className="text-xs text-gray-500 mt-2 transform -rotate-45 origin-left">
-                      {chartData.labels[index]}
-                    </div>
-                  </div>
-                ))}
+            ) : chartData.revenue.length === 0 ? (
+              <div className="h-64 flex items-center justify-center text-gray-500">
+                <div className="text-center">
+                  <BarChart3 className="w-12 h-12 mx-auto mb-2 text-gray-300" />
+                  <p>No revenue data available</p>
+                </div>
               </div>
+            ) : (
+              <ChartComponent
+                data={chartData.revenue}
+                labels={chartData.labels}
+                type="revenue"
+                color="bg-gradient-to-t from-blue-600 to-blue-400 hover:from-blue-700 hover:to-blue-500"
+              />
             )}
           </div>
 
-          {/* Orders Chart */}
           <div className="bg-white rounded-xl shadow-sm border p-6">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-lg font-semibold text-gray-900">Orders Trend</h3>
-              <PieChart className="w-5 h-5 text-gray-400" />
+              <div className="flex items-center gap-2">
+                <h3 className="text-lg font-semibold text-gray-900">Orders Trend</h3>
+              </div>
+              <button
+                onClick={() => setChartModal({ open: true, type: 'orders' })}
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                title="Expand chart"
+              >
+                <Maximize2 className="w-4 h-4 text-gray-600" />
+              </button>
             </div>
             {loading ? (
               <div className="h-64 flex items-center justify-center">
                 <div className="w-8 h-8 border-4 border-green-200 border-t-green-600 rounded-full animate-spin"></div>
               </div>
-            ) : (
-              <div className="h-64 flex items-end justify-between gap-2">
-                {chartData.orders.map((value, index) => (
-                  <div key={index} className="flex-1 flex flex-col items-center">
-                    <div
-                      className="w-full bg-green-500 rounded-t-sm min-h-[4px] transition-all duration-300 hover:bg-green-600"
-                      style={{
-                        height: `${Math.max((value / Math.max(...chartData.orders)) * 200, 4)}px`
-                      }}
-                      title={`${chartData.labels[index]}: ${value} orders`}
-                    />
-                    <div className="text-xs text-gray-500 mt-2 transform -rotate-45 origin-left">
-                      {chartData.labels[index]}
-                    </div>
-                  </div>
-                ))}
+            ) : chartData.orders.length === 0 ? (
+              <div className="h-64 flex items-center justify-center text-gray-500">
+                <div className="text-center">
+                  <ShoppingCart className="w-12 h-12 mx-auto mb-2 text-gray-300" />
+                  <p>No order data available</p>
+                </div>
               </div>
+            ) : (
+              <ChartComponent
+                data={chartData.orders}
+                labels={chartData.labels}
+                type="orders"
+                color="bg-gradient-to-t from-green-600 to-green-400 hover:from-green-700 hover:to-green-500"
+              />
             )}
           </div>
         </div>
 
-        {/* Top Products & Recent Orders */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Top Products */}
           <div className="bg-white rounded-xl shadow-sm border p-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-6">Top Performing Products</h3>
             {loading ? (
@@ -353,7 +499,6 @@ const SalesAnalyticsDashboard = () => {
             )}
           </div>
 
-          {/* Recent Orders */}
           <div className="bg-white rounded-xl shadow-sm border p-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-6">Recent Orders</h3>
             {loading ? (
@@ -392,6 +537,8 @@ const SalesAnalyticsDashboard = () => {
           </div>
         </div>
       </div>
+
+      <ChartModal />
     </VendorLayout>
   );
 };

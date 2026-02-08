@@ -72,7 +72,7 @@ const VendorFeedback = () => {
       setError("");
       const token = localStorage.getItem("token");
       const response = await axios.get(
-        `${(import.meta as any).env.VITE_BACKEND_URL || "http://localhost:5000"}/api/vendor/reviews`,
+        `${(import.meta as any).env.VITE_BACKEND_URL || "https://agricorus.onrender.com"}/api/vendor/reviews`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }

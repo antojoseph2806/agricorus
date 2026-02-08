@@ -225,6 +225,8 @@ exports.rejectUserKyc = async (req, res) => {
  */
 exports.getUserKycStats = async (req, res) => {
   try {
+    const { role } = req.query; // Get role filter from query params
+    
     const stats = await KYC.aggregate([
       {
         $lookup: {
@@ -237,6 +239,8 @@ exports.getUserKycStats = async (req, res) => {
       {
         $unwind: '$user'
       },
+      // Filter by role if specified
+      ...(role && role !== 'all' ? [{ $match: { 'user.role': role } }] : []),
       {
         $group: {
           _id: {
@@ -248,31 +252,35 @@ exports.getUserKycStats = async (req, res) => {
       }
     ]);
     
-    // Initialize all combinations
-    const statusCounts = {
-      Pending: { farmer: 0, landowner: 0, investor: 0, total: 0 },
-      Verified: { farmer: 0, landowner: 0, investor: 0, total: 0 },
-      Rejected: { farmer: 0, landowner: 0, investor: 0, total: 0 }
-    };
+    // Initialize counts
+    const byStatus = { Pending: 0, Verified: 0, Rejected: 0 };
+    const byRole = { farmer: 0, landowner: 0, investor: 0 };
+    let total = 0;
     
     // Fill in actual counts
     stats.forEach(stat => {
       const status = stat._id.status;
-      const role = stat._id.role;
-      if (statusCounts[status] && ['farmer', 'landowner', 'investor'].includes(role)) {
-        statusCounts[status][role] = stat.count;
-        statusCounts[status].total += stat.count;
+      const userRole = stat._id.role;
+      const count = stat.count;
+      
+      if (byStatus.hasOwnProperty(status)) {
+        byStatus[status] += count;
       }
+      
+      if (byRole.hasOwnProperty(userRole)) {
+        byRole[userRole] += count;
+      }
+      
+      total += count;
     });
-    
-    const totalKyc = Object.values(statusCounts).reduce((sum, status) => sum + status.total, 0);
     
     res.json({
       success: true,
       message: 'KYC statistics retrieved successfully',
       data: {
-        ...statusCounts,
-        TOTAL: totalKyc
+        byStatus,
+        byRole,
+        total
       }
     });
   } catch (error) {

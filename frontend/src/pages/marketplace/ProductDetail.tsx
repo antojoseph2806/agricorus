@@ -48,7 +48,7 @@ const ProductDetail = () => {
     try {
       setLoading(true);
       const res = await axios.get(
-        `http://localhost:5000/api/marketplace/products/${id}`
+        `https://agricorus.onrender.com/api/marketplace/products/${id}`
       );
 
       if (res.data.success) {
@@ -79,7 +79,7 @@ const ProductDetail = () => {
     try {
       const token = localStorage.getItem("token");
       const res = await axios.post(
-        "http://localhost:5000/api/cart/add",
+        "https://agricorus.onrender.com/api/cart/add",
         {
           productId: product._id,
           quantity: quantity,
@@ -179,7 +179,7 @@ const ProductDetail = () => {
               <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden mb-4">
                 {product.images && product.images.length > 0 ? (
                   <img
-                    src={`http://localhost:5000${product.images[selectedImage]}`}
+                    src={`https://agricorus.onrender.com${product.images[selectedImage]}`}
                     alt={product.name}
                     className="w-full h-full object-cover"
                   />
@@ -204,7 +204,7 @@ const ProductDetail = () => {
                       }`}
                     >
                       <img
-                        src={`http://localhost:5000${image}`}
+                        src={`https://agricorus.onrender.com${image}`}
                         alt={`${product.name} ${index + 1}`}
                         className="w-full h-full object-cover"
                       />
@@ -286,7 +286,7 @@ const ProductDetail = () => {
                     {product.safetyDocuments.map((doc, index) => (
                       <a
                         key={index}
-                        href={`http://localhost:5000${doc}`}
+                        href={`https://agricorus.onrender.com${doc}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="block text-sm text-yellow-700 hover:text-yellow-900 underline"
