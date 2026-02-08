@@ -6,6 +6,11 @@ import { Sprout, Menu, X, ShoppingBag } from 'lucide-react';
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
 
+  // Close menu when a link is clicked
+  const handleLinkClick = () => {
+    setIsOpen(false);
+  };
+
   return (
     <motion.nav
       initial={{ y: -100 }}
@@ -15,7 +20,7 @@ const Navbar: React.FC = () => {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          <Link to="/">
+          <Link to="/" onClick={handleLinkClick}>
             <motion.div
               whileHover={{ scale: 1.05 }}
               className="flex items-center space-x-2 cursor-pointer"
@@ -63,18 +68,20 @@ const Navbar: React.FC = () => {
             exit={{ opacity: 0, y: -20 }}
             className="md:hidden bg-white/95 backdrop-blur-md rounded-lg mt-2 p-4 space-y-4"
           >
-            <a href="#features" className="block text-gray-700 hover:text-primary-600 transition-colors">Features</a>
-            <a href="#how-it-works" className="block text-gray-700 hover:text-primary-600 transition-colors">How it Works</a>
+            <Link to="#" onClick={handleLinkClick} className="block text-gray-700 hover:text-emerald-600 transition-colors">Browse Investments Plans</Link>
+            <Link to="/public-lands" onClick={handleLinkClick} className="block text-gray-700 hover:text-emerald-600 transition-colors">Browse Lands</Link>
             <Link 
               to="/marketplace" 
-              className="flex items-center gap-2 text-gray-700 hover:text-primary-600 transition-colors"
+              onClick={handleLinkClick}
+              className="flex items-center gap-2 text-gray-700 hover:text-emerald-600 transition-colors"
             >
               <ShoppingBag className="h-4 w-4" />
               Marketplace
             </Link>
-            <a href="#about" className="block text-gray-700 hover:text-primary-600 transition-colors">About</a>
-            <Link to="/login" className="block text-gray-700 hover:text-primary-600 transition-colors">Login</Link>
-            <Link to="/register" className="btn-primary block text-center">Get Started</Link>
+            <Link to="/about" onClick={handleLinkClick} className="block text-gray-700 hover:text-emerald-600 transition-colors">About Us</Link>
+            <Link to="/contact" onClick={handleLinkClick} className="block text-gray-700 hover:text-emerald-600 transition-colors">Contact Us</Link>
+            <Link to="/register" onClick={handleLinkClick} className="btn-primary block text-center">Get Started</Link>
+            <Link to="/vendor/register" onClick={handleLinkClick} className="btn-primary block text-center">Register as a vendor?</Link>
           </motion.div>
         )}
       </div>

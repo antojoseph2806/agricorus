@@ -186,52 +186,51 @@ const OrderHistory: React.FC = () => {
     <MarketplaceLayout>
       <div className="space-y-6">
         {/* Header */}
-        <div className="bg-white rounded-lg shadow-sm border p-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
+        <div className="bg-white rounded-lg shadow-sm border p-4 sm:p-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
               <Link
                 to="/marketplace"
                 className="flex items-center gap-2 text-gray-600 hover:text-emerald-600 transition"
               >
                 <ArrowLeft className="w-4 h-4" />
-                Back to Marketplace
+                <span className="text-sm sm:text-base">Back to Marketplace</span>
               </Link>
-              <div className="text-gray-300">|</div>
+              <div className="hidden sm:block text-gray-300">|</div>
               <div className="flex items-center gap-2">
                 <Package className="w-5 h-5 text-emerald-600" />
-                <h1 className="text-2xl font-bold text-gray-900">Order History</h1>
+                <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Order History</h1>
               </div>
             </div>
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3">
               <Link
                 to="/cart"
-                className="flex items-center gap-2 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition"
+                className="flex items-center gap-2 px-3 sm:px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition text-sm"
               >
                 <ShoppingCart className="w-4 h-4" />
-                Cart
+                <span className="hidden sm:inline">Cart</span>
               </Link>
               <button
                 onClick={fetchOrders}
-                className="flex items-center gap-2 px-4 py-2 text-gray-600 hover:text-emerald-600 transition"
+                className="flex items-center gap-2 px-3 sm:px-4 py-2 text-gray-600 hover:text-emerald-600 transition text-sm"
               >
                 <RefreshCw className="w-4 h-4" />
-                Refresh
+                <span className="hidden sm:inline">Refresh</span>
               </button>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-6 sm:py-8">
         {orders.length === 0 ? (
-          <div className="text-center py-12">
-            <Package className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-            <h2 className="text-xl font-semibold text-gray-900 mb-2">No orders yet</h2>
-            <p className="text-gray-600 mb-6">Start shopping to see your orders here</p>
-            <Link
-              to="/marketplace"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition"
-            >
+          <div className="text-center py-12 sm:py-16">
+            <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Package className="w-8 h-8 sm:w-10 sm:h-10 text-gray-400" />
+            </div>
+            <h2 className="text-lg sm:text-xl font-semibold text-gray-900 mb-2">No orders yet</h2>
+            <p className="text-sm sm:text-base text-gray-600 mb-6">Start shopping to see your orders here</p>
+            <Link to="/marketplace" className="inline-flex items-center gap-2 px-4 sm:px-6 py-2.5 sm:py-3 bg-emerald-600 text-white rounded-lg sm:rounded-xl hover:bg-emerald-700 transition text-sm sm:text-base font-medium">
               <ShoppingCart className="w-4 h-4" />
               Start Shopping
             </Link>
@@ -239,76 +238,62 @@ const OrderHistory: React.FC = () => {
         ) : (
           <div className="space-y-6">
             <div className="flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-gray-900">
+              <h2 className="text-base sm:text-lg font-semibold text-gray-900">
                 Your Orders ({orders.length})
               </h2>
             </div>
 
-            <div className="space-y-4">
+            <div className="space-y-3 sm:space-y-4">
               {orders.map((order) => (
-                <div key={order._id} className="bg-white rounded-lg shadow-sm border overflow-hidden">
+                <div key={order._id} className="bg-white rounded-lg sm:rounded-xl border border-gray-100 overflow-hidden shadow-sm hover:shadow-md transition">
                   {/* Order Header */}
-                  <div className="p-6 border-b border-gray-200">
-                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                  <div className="p-3 sm:p-4 lg:p-6 border-b border-gray-200">
+                    <div className="flex flex-col gap-3 sm:gap-4">
                       <div>
-                        <div className="flex items-center gap-3 mb-2">
-                          <h3 className="text-lg font-semibold text-gray-900">
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-2">
+                          <h3 className="text-sm sm:text-base lg:text-lg font-semibold text-gray-900">
                             Order #{order.orderNumber}
                           </h3>
-                          {/* Show only order status - it's more relevant to the user */}
                           {getOrderStatusBadge(order.orderStatus)}
                         </div>
-                        <div className="flex items-center gap-4 text-sm text-gray-600">
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-xs sm:text-sm text-gray-600">
                           <div className="flex items-center gap-1">
-                            <Calendar className="w-4 h-4" />
-                            <span>Placed on {new Date(order.createdAt).toLocaleDateString()}</span>
+                            <Calendar className="w-3 h-3 sm:w-4 sm:h-4" />
+                            <span>{new Date(order.createdAt).toLocaleDateString()}</span>
                           </div>
                           <div className="flex items-center gap-1">
-                            <CreditCard className="w-4 h-4" />
+                            <CreditCard className="w-3 h-3 sm:w-4 sm:h-4" />
                             <span>₹{order.totalAmount.toLocaleString()}</span>
                           </div>
                           <div className="flex items-center gap-1">
-                            <Package className="w-4 h-4" />
+                            <Package className="w-3 h-3 sm:w-4 sm:h-4" />
                             <span>{order.items.length} item{order.items.length > 1 ? 's' : ''}</span>
                           </div>
                         </div>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <Link
-                          to={`/orders/${order._id}`}
-                          className="flex items-center gap-2 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition"
-                        >
-                          <Eye className="w-4 h-4" />
+                      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 flex-wrap">
+                        <Link to={`/orders/${order._id}`} className="flex items-center justify-center gap-2 px-3 sm:px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition text-xs sm:text-sm font-medium">
+                          <Eye className="w-3 h-3 sm:w-4 sm:h-4" />
                           View Details
                         </Link>
                         
-                        {/* Action Buttons */}
                         {canCancelOrder(order) && (
-                          <button
-                            onClick={() => handleCancelOrder(order)}
-                            className="flex items-center gap-2 px-4 py-2 border border-red-300 text-red-700 rounded-lg hover:bg-red-50 transition"
-                          >
-                            <XCircle className="w-4 h-4" />
+                          <button onClick={() => handleCancelOrder(order)} className="flex items-center justify-center gap-2 px-3 sm:px-4 py-2 border border-red-300 text-red-700 rounded-lg hover:bg-red-50 transition text-xs sm:text-sm font-medium">
+                            <XCircle className="w-3 h-3 sm:w-4 sm:h-4" />
                             Cancel
                           </button>
                         )}
                         
                         {canReturnOrder(order) && (
-                          <button
-                            onClick={() => handleReturnOrder(order)}
-                            className="flex items-center gap-2 px-4 py-2 border border-orange-300 text-orange-700 rounded-lg hover:bg-orange-50 transition"
-                          >
-                            <RotateCcw className="w-4 h-4" />
+                          <button onClick={() => handleReturnOrder(order)} className="flex items-center justify-center gap-2 px-3 sm:px-4 py-2 border border-orange-300 text-orange-700 rounded-lg hover:bg-orange-50 transition text-xs sm:text-sm font-medium">
+                            <RotateCcw className="w-3 h-3 sm:w-4 sm:h-4" />
                             Return
                           </button>
                         )}
                         
                         {canReplaceOrder(order) && (
-                          <button
-                            onClick={() => handleReplaceOrder(order)}
-                            className="flex items-center gap-2 px-4 py-2 border border-blue-300 text-blue-700 rounded-lg hover:bg-blue-50 transition"
-                          >
-                            <Repeat className="w-4 h-4" />
+                          <button onClick={() => handleReplaceOrder(order)} className="flex items-center justify-center gap-2 px-3 sm:px-4 py-2 border border-blue-300 text-blue-700 rounded-lg hover:bg-blue-50 transition text-xs sm:text-sm font-medium">
+                            <Repeat className="w-3 h-3 sm:w-4 sm:h-4" />
                             Replace
                           </button>
                         )}
@@ -317,33 +302,33 @@ const OrderHistory: React.FC = () => {
                   </div>
 
                   {/* Order Items Preview */}
-                  <div className="p-6">
-                    <div className="space-y-3">
+                  <div className="p-3 sm:p-4 lg:p-6">
+                    <div className="space-y-2 sm:space-y-3">
                       {order.items.slice(0, 3).map((item, index) => (
-                        <div key={index} className="flex items-center justify-between">
-                          <div className="flex-1">
-                            <h4 className="font-medium text-gray-900">{item.productName}</h4>
-                            <p className="text-sm text-gray-600">Quantity: {item.quantity}</p>
+                        <div key={index} className="flex items-center justify-between gap-2">
+                          <div className="flex-1 min-w-0">
+                            <h4 className="font-medium text-gray-900 text-xs sm:text-sm lg:text-base truncate">{item.productName}</h4>
+                            <p className="text-xs text-gray-600">Quantity: {item.quantity}</p>
                           </div>
-                          <div className="text-sm font-medium text-gray-900">
+                          <div className="text-xs sm:text-sm font-medium text-gray-900 whitespace-nowrap">
                             ₹{item.subtotal.toLocaleString()}
                           </div>
                         </div>
                       ))}
                       
                       {order.items.length > 3 && (
-                        <div className="text-sm text-gray-600 text-center py-2">
+                        <div className="text-xs sm:text-sm text-gray-600 text-center py-2">
                           +{order.items.length - 3} more item{order.items.length - 3 > 1 ? 's' : ''}
                         </div>
                       )}
                     </div>
 
                     {/* Delivery Address */}
-                    <div className="mt-4 pt-4 border-t border-gray-200">
+                    <div className="mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-gray-200">
                       <div className="flex items-start gap-2">
-                        <MapPin className="w-4 h-4 text-gray-500 mt-0.5" />
-                        <div className="text-sm text-gray-600">
-                          <span className="font-medium">Delivery Address: </span>
+                        <MapPin className="w-3 h-3 sm:w-4 sm:h-4 text-gray-500 mt-0.5 flex-shrink-0" />
+                        <div className="text-xs sm:text-sm text-gray-600">
+                          <span className="font-medium">Delivery: </span>
                           {order.deliveryAddress.street}, {order.deliveryAddress.district}, {order.deliveryAddress.state} - {order.deliveryAddress.pincode}
                         </div>
                       </div>
@@ -352,7 +337,7 @@ const OrderHistory: React.FC = () => {
                     {/* Order Notes */}
                     {order.notes && (
                       <div className="mt-2">
-                        <div className="text-sm text-gray-600">
+                        <div className="text-xs sm:text-sm text-gray-600">
                           <span className="font-medium">Notes: </span>
                           {order.notes}
                         </div>

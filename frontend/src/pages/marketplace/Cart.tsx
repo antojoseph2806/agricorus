@@ -364,12 +364,12 @@ const Cart: React.FC = () => {
             {/* Order Summary Sidebar */}
             <div className="space-y-3 sm:space-y-4">
               {/* Summary Card */}
-              <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden sticky top-6">
-                <div className="px-5 py-4 bg-gray-50/80 border-b border-gray-100">
-                  <h2 className="font-semibold text-gray-800">Order Summary</h2>
+              <div className="bg-white rounded-xl sm:rounded-2xl border border-gray-100 overflow-hidden lg:sticky lg:top-6">
+                <div className="px-4 sm:px-5 py-3 sm:py-4 bg-gray-50/80 border-b border-gray-100">
+                  <h2 className="text-base sm:text-lg font-semibold text-gray-800">Order Summary</h2>
                 </div>
-                <div className="p-5">
-                  <div className="space-y-3">
+                <div className="p-4 sm:p-5">
+                  <div className="space-y-2 sm:space-y-3">
                     <div className="flex justify-between text-sm">
                       <span className="text-gray-500">Subtotal ({calculateTotalItems()} items)</span>
                       <span className="text-gray-800 font-medium">₹{calculateTotal().toLocaleString()}</span>
@@ -380,33 +380,33 @@ const Cart: React.FC = () => {
                     </div>
                   </div>
 
-                  <div className="mt-4 pt-4 border-t border-gray-200">
+                  <div className="mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-gray-200">
                     <div className="flex justify-between items-center">
-                      <span className="text-lg font-semibold text-gray-800">Total</span>
-                      <span className="text-2xl font-bold text-emerald-600">₹{calculateTotal().toLocaleString()}</span>
+                      <span className="text-base sm:text-lg font-semibold text-gray-800">Total</span>
+                      <span className="text-xl sm:text-2xl font-bold text-emerald-600">₹{calculateTotal().toLocaleString()}</span>
                     </div>
                   </div>
 
                   {/* Checkout Button */}
-                  <div className="mt-5">
+                  <div className="mt-4 sm:mt-5">
                     {hasUnavailableItems ? (
                       <div className="text-center">
-                        <div className="flex items-center justify-center gap-2 text-red-600 mb-3 text-sm">
+                        <div className="flex items-center justify-center gap-2 text-red-600 mb-3 text-xs sm:text-sm">
                           <AlertCircle className="w-4 h-4" /> Remove unavailable items to proceed
                         </div>
-                        <button disabled className="w-full py-3.5 bg-gray-200 text-gray-500 rounded-xl font-medium cursor-not-allowed">
+                        <button disabled className="w-full py-3 sm:py-3.5 bg-gray-200 text-gray-500 rounded-lg sm:rounded-xl font-medium cursor-not-allowed text-sm sm:text-base">
                           Cannot Checkout
                         </button>
                       </div>
                     ) : !userRole || !['farmer', 'landowner', 'investor'].includes(userRole) ? (
                       <button onClick={() => navigate('/checkout')}
-                        className="w-full py-3.5 bg-amber-500 text-white rounded-xl font-semibold hover:bg-amber-600 transition flex items-center justify-center gap-2">
-                        <CreditCard className="w-5 h-5" /> Continue to Login
+                        className="w-full py-3 sm:py-3.5 bg-amber-500 text-white rounded-lg sm:rounded-xl font-semibold hover:bg-amber-600 transition flex items-center justify-center gap-2 text-sm sm:text-base">
+                        <CreditCard className="w-4 h-4 sm:w-5 sm:h-5" /> Continue to Login
                       </button>
                     ) : (
                       <Link to="/checkout"
-                        className="w-full py-3.5 bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-xl font-semibold hover:from-emerald-700 hover:to-teal-700 transition flex items-center justify-center gap-2 shadow-lg shadow-emerald-200">
-                        <CreditCard className="w-5 h-5" /> Proceed to Checkout
+                        className="w-full py-3 sm:py-3.5 bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-lg sm:rounded-xl font-semibold hover:from-emerald-700 hover:to-teal-700 transition flex items-center justify-center gap-2 shadow-lg shadow-emerald-200 text-sm sm:text-base">
+                        <CreditCard className="w-4 h-4 sm:w-5 sm:h-5" /> Proceed to Checkout
                       </Link>
                     )}
                   </div>
@@ -414,34 +414,34 @@ const Cart: React.FC = () => {
               </div>
 
               {/* Trust Badges */}
-              <div className="bg-emerald-50 border border-emerald-100 rounded-xl p-4">
+              <div className="bg-emerald-50 border border-emerald-100 rounded-lg sm:rounded-xl p-3 sm:p-4">
                 <div className="flex items-center gap-2 text-emerald-700 mb-2">
                   <Shield className="w-4 h-4" />
-                  <span className="text-sm font-medium">Secure Checkout</span>
+                  <span className="text-xs sm:text-sm font-medium">Secure Checkout</span>
                 </div>
                 <p className="text-xs text-emerald-600">Your payment is encrypted and secure. All vendors are verified.</p>
               </div>
 
               {/* Delivery Info */}
-              <div className="bg-blue-50 border border-blue-100 rounded-xl p-4">
+              <div className="bg-blue-50 border border-blue-100 rounded-lg sm:rounded-xl p-3 sm:p-4">
                 <div className="flex items-center gap-2 text-blue-700 mb-2">
                   <Truck className="w-4 h-4" />
-                  <span className="text-sm font-medium">Free Delivery</span>
+                  <span className="text-xs sm:text-sm font-medium">Free Delivery</span>
                 </div>
                 <p className="text-xs text-blue-600">Estimated delivery in 3-7 business days</p>
               </div>
 
               {/* Promo Banner */}
-              <div className="bg-gradient-to-r from-purple-500 to-indigo-500 rounded-xl p-4 text-white">
+              <div className="bg-gradient-to-r from-purple-500 to-indigo-500 rounded-lg sm:rounded-xl p-3 sm:p-4 text-white">
                 <div className="flex items-center gap-2 mb-1">
                   <Tag className="w-4 h-4" />
-                  <span className="text-sm font-medium">Quality Assured</span>
+                  <span className="text-xs sm:text-sm font-medium">Quality Assured</span>
                 </div>
                 <p className="text-xs text-purple-100">All products from verified agricultural vendors</p>
               </div>
 
               {/* Continue Shopping */}
-              <Link to="/marketplace" className="flex items-center justify-center gap-2 py-3 text-emerald-600 hover:text-emerald-700 font-medium transition">
+              <Link to="/marketplace" className="flex items-center justify-center gap-2 py-2.5 sm:py-3 text-emerald-600 hover:text-emerald-700 font-medium transition text-sm sm:text-base">
                 <ArrowLeft className="w-4 h-4" /> Continue Shopping
               </Link>
             </div>

@@ -140,6 +140,13 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, onToggleSidebar, isMob
     setOpenDropdown(openDropdown === label ? null : label);
   };
 
+  const handleNavClick = () => {
+    // Close mobile sidebar when navigation item is clicked
+    if (isMobile) {
+      onToggleSidebar();
+    }
+  };
+
   const isActive = (href: string) => {
     if (href === '#') return false;
     return location.pathname === href || location.pathname.startsWith(href + '/');
@@ -219,6 +226,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, onToggleSidebar, isMob
                           <Link
                             key={idx}
                             to={child.href}
+                            onClick={handleNavClick}
                             className={`flex items-center gap-2 px-3 py-2 text-sm rounded-lg transition-all duration-200 ${
                               childActive
                                 ? 'bg-emerald-50 text-emerald-700 font-medium'
@@ -236,6 +244,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, onToggleSidebar, isMob
               ) : (
                 <Link
                   to={item.href}
+                  onClick={handleNavClick}
                   className={`flex items-center gap-2 px-3 py-2 text-sm rounded-lg transition-all duration-200 group ${
                     active
                       ? 'bg-emerald-50 text-emerald-700 font-medium'

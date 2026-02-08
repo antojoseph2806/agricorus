@@ -162,30 +162,23 @@ const ProductDetail = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-4 sm:py-6">
         {/* Back Button */}
-        <button
-          onClick={() => navigate("/marketplace")}
-          className="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-6"
-        >
-          <ArrowLeft className="w-5 h-5" />
+        <button onClick={() => navigate("/marketplace")} className="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-4 sm:mb-6 text-sm sm:text-base">
+          <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
           Back to Marketplace
         </button>
 
-        <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 p-6">
+        <div className="bg-white rounded-lg sm:rounded-xl shadow-sm overflow-hidden">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-8 p-4 sm:p-6">
             {/* Product Images */}
             <div>
-              <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden mb-4">
+              <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden mb-3 sm:mb-4">
                 {product.images && product.images.length > 0 ? (
-                  <img
-                    src={`https://agricorus.onrender.com${product.images[selectedImage]}`}
-                    alt={product.name}
-                    className="w-full h-full object-cover"
-                  />
+                  <img src={`https://agricorus.onrender.com${product.images[selectedImage]}`} alt={product.name} className="w-full h-full object-cover" />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center">
-                    <Package className="w-24 h-24 text-gray-400" />
+                    <Package className="w-16 h-16 sm:w-24 sm:h-24 text-gray-400" />
                   </div>
                 )}
               </div>
@@ -194,20 +187,9 @@ const ProductDetail = () => {
               {product.images && product.images.length > 1 && (
                 <div className="grid grid-cols-4 gap-2">
                   {product.images.map((image, index) => (
-                    <button
-                      key={index}
-                      onClick={() => setSelectedImage(index)}
-                      className={`aspect-square rounded-lg overflow-hidden border-2 ${
-                        selectedImage === index
-                          ? "border-green-600"
-                          : "border-gray-200"
-                      }`}
-                    >
-                      <img
-                        src={`https://agricorus.onrender.com${image}`}
-                        alt={`${product.name} ${index + 1}`}
-                        className="w-full h-full object-cover"
-                      />
+                    <button key={index} onClick={() => setSelectedImage(index)}
+                      className={`aspect-square rounded-lg overflow-hidden border-2 ${selectedImage === index ? "border-green-600" : "border-gray-200"}`}>
+                      <img src={`https://agricorus.onrender.com${image}`} alt={`${product.name} ${index + 1}`} className="w-full h-full object-cover" />
                     </button>
                   ))}
                 </div>
@@ -216,24 +198,18 @@ const ProductDetail = () => {
 
             {/* Product Info */}
             <div>
-              <div className="flex items-start justify-between mb-4">
+              <div className="flex items-start justify-between mb-3 sm:mb-4">
                 <div className="flex-1">
-                  <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                  <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-2">
                     {product.name}
                   </h1>
-                  <div className="flex items-center gap-3 mb-4">
-                    <span
-                      className={`px-3 py-1 rounded-full text-sm font-medium ${getCategoryColor(
-                        product.category
-                      )}`}
-                    >
+                  <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4 flex-wrap">
+                    <span className={`px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium ${getCategoryColor(product.category)}`}>
                       {product.category}
                     </span>
                     {stockBadge && (
-                      <span
-                        className={`flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium ${stockBadge.color}`}
-                      >
-                        <StatusIcon className="w-4 h-4" />
+                      <span className={`flex items-center gap-1 px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium ${stockBadge.color}`}>
+                        <StatusIcon className="w-3 h-3 sm:w-4 sm:h-4" />
                         {stockBadge.label}
                       </span>
                     )}
@@ -242,21 +218,21 @@ const ProductDetail = () => {
               </div>
 
               {/* Price */}
-              <div className="mb-6">
-                <p className="text-4xl font-bold text-green-600 mb-2">
+              <div className="mb-4 sm:mb-6">
+                <p className="text-2xl sm:text-3xl lg:text-4xl font-bold text-green-600 mb-2">
                   ₹{product.price.toLocaleString()}
                 </p>
-                <p className="text-sm text-gray-500">
+                <p className="text-xs sm:text-sm text-gray-500">
                   Stock: {product.stock} units available
                 </p>
               </div>
 
               {/* Vendor Info */}
-              <div className="flex items-center gap-2 mb-6 p-3 bg-gray-50 rounded-lg">
-                <Store className="w-5 h-5 text-gray-600" />
+              <div className="flex items-center gap-2 mb-4 sm:mb-6 p-3 bg-gray-50 rounded-lg">
+                <Store className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600" />
                 <div>
-                  <p className="text-sm text-gray-600">Sold by</p>
-                  <p className="font-semibold text-gray-900">
+                  <p className="text-xs sm:text-sm text-gray-600">Sold by</p>
+                  <p className="text-sm sm:text-base font-semibold text-gray-900">
                     {product.vendorBusinessName}
                   </p>
                 </div>
@@ -264,11 +240,11 @@ const ProductDetail = () => {
 
               {/* Warranty Info */}
               {product.warrantyPeriod && (
-                <div className="flex items-center gap-2 mb-6 p-3 bg-blue-50 rounded-lg">
-                  <Shield className="w-5 h-5 text-blue-600" />
+                <div className="flex items-center gap-2 mb-4 sm:mb-6 p-3 bg-blue-50 rounded-lg">
+                  <Shield className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600" />
                   <div>
-                    <p className="text-sm text-blue-600">Warranty</p>
-                    <p className="font-semibold text-blue-900">
+                    <p className="text-xs sm:text-sm text-blue-600">Warranty</p>
+                    <p className="text-sm sm:text-base font-semibold text-blue-900">
                       {product.warrantyPeriod} months warranty
                     </p>
                   </div>
@@ -277,20 +253,15 @@ const ProductDetail = () => {
 
               {/* Safety Documents (for Pesticides) */}
               {product.category === "Pesticides" && product.safetyDocuments && product.safetyDocuments.length > 0 && (
-                <div className="mb-6 p-3 bg-yellow-50 rounded-lg">
+                <div className="mb-4 sm:mb-6 p-3 bg-yellow-50 rounded-lg">
                   <div className="flex items-center gap-2 mb-2">
-                    <FileText className="w-5 h-5 text-yellow-600" />
-                    <p className="font-semibold text-yellow-900">Safety Documents</p>
+                    <FileText className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-600" />
+                    <p className="text-sm sm:text-base font-semibold text-yellow-900">Safety Documents</p>
                   </div>
                   <div className="space-y-1">
                     {product.safetyDocuments.map((doc, index) => (
-                      <a
-                        key={index}
-                        href={`https://agricorus.onrender.com${doc}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="block text-sm text-yellow-700 hover:text-yellow-900 underline"
-                      >
+                      <a key={index} href={`https://agricorus.onrender.com${doc}`} target="_blank" rel="noopener noreferrer"
+                        className="block text-xs sm:text-sm text-yellow-700 hover:text-yellow-900 underline">
                         View Safety Document {index + 1}
                       </a>
                     ))}
@@ -300,41 +271,29 @@ const ProductDetail = () => {
 
               {/* Quantity and Add to Cart */}
               {!isOutOfStock && (
-                <div className="mb-6">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                <div className="mb-4 sm:mb-6">
+                  <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">
                     Quantity
                   </label>
-                  <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-3 sm:gap-4">
                     <div className="flex items-center border border-gray-300 rounded-lg">
-                      <button
-                        type="button"
-                        onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                        disabled={quantity <= 1}
-                        className="px-4 py-2 hover:bg-gray-50 disabled:opacity-50"
-                      >
+                      <button type="button" onClick={() => setQuantity(Math.max(1, quantity - 1))} disabled={quantity <= 1}
+                        className="px-3 sm:px-4 py-2 hover:bg-gray-50 disabled:opacity-50 text-sm sm:text-base">
                         -
                       </button>
-                      <input
-                        type="number"
-                        value={quantity}
+                      <input type="number" value={quantity}
                         onChange={(e) => {
                           const val = parseInt(e.target.value) || 1;
                           setQuantity(Math.min(Math.max(1, val), product.stock));
                         }}
-                        min="1"
-                        max={product.stock}
-                        className="w-20 text-center border-0 focus:ring-0"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setQuantity(Math.min(product.stock, quantity + 1))}
-                        disabled={quantity >= product.stock}
-                        className="px-4 py-2 hover:bg-gray-50 disabled:opacity-50"
-                      >
+                        min="1" max={product.stock}
+                        className="w-16 sm:w-20 text-center border-0 focus:ring-0 text-sm sm:text-base" />
+                      <button type="button" onClick={() => setQuantity(Math.min(product.stock, quantity + 1))} disabled={quantity >= product.stock}
+                        className="px-3 sm:px-4 py-2 hover:bg-gray-50 disabled:opacity-50 text-sm sm:text-base">
                         +
                       </button>
                     </div>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-xs sm:text-sm text-gray-500">
                       Max: {product.stock} units
                     </p>
                   </div>
@@ -342,22 +301,15 @@ const ProductDetail = () => {
               )}
 
               {/* Add to Cart Button */}
-              <button
-                onClick={handleAddToCart}
-                disabled={isOutOfStock || addingToCart || quantity > product.stock}
-                className="w-full flex items-center justify-center gap-2 bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-green-500/30"
-              >
-                <ShoppingCart className="w-5 h-5" />
-                {addingToCart
-                  ? "Adding to Cart..."
-                  : isOutOfStock
-                  ? "Out of Stock"
-                  : "Add to Cart"}
+              <button onClick={handleAddToCart} disabled={isOutOfStock || addingToCart || quantity > product.stock}
+                className="w-full flex items-center justify-center gap-2 bg-green-600 text-white py-2.5 sm:py-3 rounded-lg font-semibold hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-green-500/30 text-sm sm:text-base">
+                <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5" />
+                {addingToCart ? "Adding to Cart..." : isOutOfStock ? "Out of Stock" : "Add to Cart"}
               </button>
 
               {product.stockStatus === "LOW_STOCK" && (
-                <p className="mt-2 text-sm text-yellow-600 flex items-center gap-1">
-                  <AlertTriangle className="w-4 h-4" />
+                <p className="mt-2 text-xs sm:text-sm text-yellow-600 flex items-center gap-1">
+                  <AlertTriangle className="w-3 h-3 sm:w-4 sm:h-4" />
                   Only {product.stock} units left in stock!
                 </p>
               )}
@@ -365,11 +317,11 @@ const ProductDetail = () => {
           </div>
 
           {/* Description */}
-          <div className="border-t p-6">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">
+          <div className="border-t p-4 sm:p-6">
+            <h2 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3 sm:mb-4">
               Product Description
             </h2>
-            <p className="text-gray-700 whitespace-pre-wrap">
+            <p className="text-sm sm:text-base text-gray-700 whitespace-pre-wrap">
               {product.description || "No description available."}
             </p>
           </div>
