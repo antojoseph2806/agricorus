@@ -292,40 +292,40 @@ const AddLand: React.FC = () => {
 
   return (
     <Layout> 
-      <div className="max-w-5xl mx-auto">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6">
         {/* Header Section with Gradient */}
         <div className="relative mb-8">
           {/* Background Gradient Banner */}
-          <div className="h-48 bg-gradient-to-br from-emerald-400 via-teal-500 to-cyan-500 rounded-3xl overflow-hidden relative">
+          <div className="h-32 sm:h-48 bg-gradient-to-br from-emerald-400 via-teal-500 to-cyan-500 rounded-2xl sm:rounded-3xl overflow-hidden relative">
             <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Cg%20fill%3D%22%23ffffff%22%20fill-opacity%3D%220.1%22%3E%3Cpath%20d%3D%22M36%2034v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6%2034v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6%204V0H4v4H0v2h4v4h2V6h4V4H6z%22%2F%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E')] opacity-30"></div>
           </div>
 
           {/* Icon Badge */}
-          <div className="absolute -bottom-12 left-1/2 -translate-x-1/2">
-            <div className="w-24 h-24 rounded-full bg-gradient-to-br from-emerald-400 to-cyan-500 p-1 shadow-xl">
+          <div className="absolute -bottom-8 sm:-bottom-12 left-1/2 -translate-x-1/2">
+            <div className="w-16 h-16 sm:w-24 sm:h-24 rounded-full bg-gradient-to-br from-emerald-400 to-cyan-500 p-1 shadow-xl">
               <div className="w-full h-full rounded-full bg-white flex items-center justify-center">
-                <MapPin className="w-12 h-12 text-emerald-600" />
+                <MapPin className="w-8 h-8 sm:w-12 sm:h-12 text-emerald-600" />
               </div>
             </div>
           </div>
         </div>
 
         {/* Title Section */}
-        <div className="text-center mt-16 mb-8">
-          <h1 className="text-3xl font-bold text-gray-800">List New Land</h1>
-          <p className="text-gray-500 mt-2">Add your land listing to our platform. Fill in the details below.</p>
+        <div className="text-center mt-12 sm:mt-16 mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">List New Land</h1>
+          <p className="text-sm sm:text-base text-gray-500 mt-2 px-4">Add your land listing to our platform. Fill in the details below.</p>
         </div>
 
           {/* Main Form Card */}
-          <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden">
+          <div className="bg-white rounded-2xl sm:rounded-3xl shadow-xl border border-gray-100 overflow-hidden">
             {/* Card Header */}
-            <div className="px-8 py-6 bg-gradient-to-r from-gray-50 to-white border-b border-gray-100">
-              <h2 className="text-xl font-bold text-gray-800">Land Information</h2>
-              <p className="text-gray-500 text-sm mt-1">Provide complete details about your land</p>
+            <div className="px-4 sm:px-8 py-4 sm:py-6 bg-gradient-to-r from-gray-50 to-white border-b border-gray-100">
+              <h2 className="text-lg sm:text-xl font-bold text-gray-800">Land Information</h2>
+              <p className="text-gray-500 text-xs sm:text-sm mt-1">Provide complete details about your land</p>
             </div>
 
             {/* Card Body */}
-            <div className="p-8">
+            <div className="p-4 sm:p-8">
             {/* Status Messages */}
             {(status === 'success' || status === 'error' || isLocating || isSearching) && (
               <div className={`mb-6 p-5 rounded-xl flex items-center border
@@ -397,17 +397,17 @@ const AddLand: React.FC = () => {
                   </div>
 
                   {/* Geolocation Buttons */}
-                  <div className="flex gap-3">
+                  <div className="flex flex-col sm:flex-row gap-3">
                     <button
                       type="button"
                       onClick={handleAddressSearch}
                       disabled={isSearching || isLocating}
-                      className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-emerald-600 text-white rounded-xl font-semibold hover:bg-emerald-700 transition-all disabled:opacity-50 shadow-lg shadow-emerald-500/25"
+                      className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-emerald-600 text-white rounded-xl text-sm sm:text-base font-semibold hover:bg-emerald-700 transition-all disabled:opacity-50 shadow-lg shadow-emerald-500/25"
                     >
                       {isSearching ? (
-                        <Loader className="w-5 h-5 animate-spin" />
+                        <Loader className="w-4 h-4 sm:w-5 sm:h-5 animate-spin" />
                       ) : (
-                        <Search className="w-5 h-5" />
+                        <Search className="w-4 h-4 sm:w-5 sm:h-5" />
                       )}
                       Search Address
                     </button>
@@ -415,12 +415,12 @@ const AddLand: React.FC = () => {
                       type="button"
                       onClick={handleCurrentLocationFetch}
                       disabled={isSearching || isLocating}
-                      className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition-all disabled:opacity-50 shadow-lg shadow-blue-500/25"
+                      className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 text-white rounded-xl text-sm sm:text-base font-semibold hover:bg-blue-700 transition-all disabled:opacity-50 shadow-lg shadow-blue-500/25"
                     >
                       {isLocating ? (
-                        <Loader className="w-5 h-5 animate-spin" />
+                        <Loader className="w-4 h-4 sm:w-5 sm:h-5 animate-spin" />
                       ) : (
-                        <LocateFixed className="w-5 h-5" />
+                        <LocateFixed className="w-4 h-4 sm:w-5 sm:h-5" />
                       )}
                       Use Current
                     </button>
@@ -467,7 +467,7 @@ const AddLand: React.FC = () => {
               </div>
 
               {/* Land Details Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                 {/* Soil Type */}
                 <div>
                   <label htmlFor="soilType" className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
@@ -522,7 +522,7 @@ const AddLand: React.FC = () => {
               </div>
               
               {/* Specifications Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
                 {/* Size */}
                 <div>
                   <label htmlFor="sizeInAcres" className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
@@ -585,7 +585,7 @@ const AddLand: React.FC = () => {
               </div>
 
               {/* File Upload Sections */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                 {/* Photos Upload */}
                 <div>
                   <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-3">
