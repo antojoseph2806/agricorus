@@ -360,6 +360,7 @@ const OrderHistory: React.FC = () => {
             </div>
           </div>
         )}
+        </div>
       </div>
 
       {/* Cancel Order Modal */}
