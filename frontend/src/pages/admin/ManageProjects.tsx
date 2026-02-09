@@ -493,17 +493,17 @@ const ManageProjects: React.FC = () => {
 
         {/* Project Details Modal */}
         {showDetailsModal && selectedProject && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-3 sm:p-4">
             <div className="bg-white rounded-lg shadow-2xl w-full max-w-6xl max-h-[90vh] overflow-hidden">
               {/* Modal Header */}
-              <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-6 flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
-                    <Layers className="w-6 h-6 text-white" />
+              <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-4 sm:p-6 flex items-center justify-between gap-3">
+                <div className="flex items-center gap-3 sm:gap-4 min-w-0 flex-1">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-white/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <Layers className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                   </div>
-                  <div>
-                    <h2 className="text-2xl font-bold text-white">{selectedProject.title}</h2>
-                    <p className="text-blue-100">Complete Project Details</p>
+                  <div className="min-w-0 flex-1">
+                    <h2 className="text-lg sm:text-2xl font-bold text-white truncate">{selectedProject.title}</h2>
+                    <p className="text-blue-100 text-xs sm:text-sm truncate">Complete Project Details</p>
                   </div>
                 </div>
                 <button
@@ -511,75 +511,77 @@ const ManageProjects: React.FC = () => {
                     setShowDetailsModal(false);
                     setSelectedProject(null);
                   }}
-                  className="text-white/80 hover:text-white transition p-2 hover:bg-white/10 rounded-lg"
+                  className="text-white/80 hover:text-white transition p-2 hover:bg-white/10 rounded-lg flex-shrink-0"
                 >
-                  <X className="w-6 h-6" />
+                  <X className="w-5 h-5 sm:w-6 sm:h-6" />
                 </button>
               </div>
 
               {/* Modal Content */}
-              <div className="overflow-y-auto max-h-[calc(90vh-100px)] p-6">
+              <div className="overflow-y-auto max-h-[calc(90vh-100px)] p-4 sm:p-6">
                 {/* Status Bar */}
-                <div className="bg-gray-50 rounded-lg p-4 mb-6 flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <span className={`px-4 py-2 rounded-lg text-sm font-semibold ${getStatusColor(selectedProject.status)}`}>
-                      {selectedProject.status.toUpperCase()}
-                    </span>
-                    {!selectedProject.isApproved && (
-                      <span className="px-4 py-2 rounded-lg text-sm font-semibold bg-red-100 text-red-700">
-                        PENDING APPROVAL
+                <div className="bg-gray-50 rounded-lg p-3 sm:p-4 mb-4 sm:mb-6">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                    <div className="flex flex-wrap items-center gap-2 sm:gap-4">
+                      <span className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-semibold ${getStatusColor(selectedProject.status)}`}>
+                        {selectedProject.status.toUpperCase()}
                       </span>
-                    )}
-                    <span className="text-gray-600 text-sm">ID: #{selectedProject._id.slice(-8).toUpperCase()}</span>
-                  </div>
-                  <div className="flex gap-2">
-                    {!selectedProject.isApproved ? (
-                      <>
+                      {!selectedProject.isApproved && (
+                        <span className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-semibold bg-red-100 text-red-700">
+                          PENDING APPROVAL
+                        </span>
+                      )}
+                      <span className="text-gray-600 text-xs sm:text-sm">ID: #{selectedProject._id.slice(-8).toUpperCase()}</span>
+                    </div>
+                    <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+                      {!selectedProject.isApproved ? (
+                        <>
+                          <button
+                            onClick={() => {
+                              handleApprove(selectedProject._id);
+                              setShowDetailsModal(false);
+                            }}
+                            className="flex items-center justify-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium text-sm sm:text-base"
+                          >
+                            <CheckCircle2 className="w-4 h-4" />
+                            Approve
+                          </button>
+                          <button
+                            onClick={() => {
+                              handleReject(selectedProject._id);
+                              setShowDetailsModal(false);
+                            }}
+                            className="flex items-center justify-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium text-sm sm:text-base"
+                          >
+                            <XCircle className="w-4 h-4" />
+                            Reject
+                          </button>
+                        </>
+                      ) : (
                         <button
                           onClick={() => {
-                            handleApprove(selectedProject._id);
+                            handleClose(selectedProject._id);
                             setShowDetailsModal(false);
                           }}
-                          className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium"
+                          className="flex items-center justify-center gap-2 px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg font-medium text-sm sm:text-base"
                         >
-                          <CheckCircle2 className="w-4 h-4" />
-                          Approve
+                          <Archive className="w-4 h-4" />
+                          Close Project
                         </button>
-                        <button
-                          onClick={() => {
-                            handleReject(selectedProject._id);
-                            setShowDetailsModal(false);
-                          }}
-                          className="flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium"
-                        >
-                          <XCircle className="w-4 h-4" />
-                          Reject
-                        </button>
-                      </>
-                    ) : (
-                      <button
-                        onClick={() => {
-                          handleClose(selectedProject._id);
-                          setShowDetailsModal(false);
-                        }}
-                        className="flex items-center gap-2 px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg font-medium"
-                      >
-                        <Archive className="w-4 h-4" />
-                        Close Project
-                      </button>
-                    )}
+                      )}
+                    </div>
                   </div>
                 </div>
 
                 {/* Main Content Grid */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
                   {/* Project Information */}
-                  <div className="bg-white border border-gray-200 rounded-lg p-6">
-                    <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-                      <FileText className="w-5 h-5 text-blue-600" />
+                  <div className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6">
+                    <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-3 sm:mb-4 flex items-center gap-2">
+                      <FileText className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600" />
                       Project Information
                     </h3>
-                    <div className="space-y-3">
+                    <div className="space-y-2 sm:space-y-3 text-sm sm:text-base">
                       <div>
                         <label className="text-sm text-gray-600">Title</label>
                         <p className="font-semibold text-gray-900">{selectedProject.title}</p>

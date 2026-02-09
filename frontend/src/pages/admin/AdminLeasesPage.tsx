@@ -115,46 +115,46 @@ const AdminLeasesPage: React.FC = () => {
 
   return (
     <Layout>
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 p-6">
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 p-3 sm:p-4 lg:p-6">
         {/* Stats Header Bar */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 mb-4 sm:mb-6">
           <Card className="bg-white shadow-lg border-0 rounded-xl hover:shadow-xl transition-all duration-300">
-            <CardContent className="p-4">
+            <CardContent className="p-3 sm:p-4">
               <div className="flex items-center">
-                <div className="bg-blue-50 p-3 rounded-lg mr-4">
-                  <TrendingUp className="w-6 h-6 text-blue-600" />
+                <div className="bg-blue-50 p-2 sm:p-3 rounded-lg mr-3 sm:mr-4 flex-shrink-0">
+                  <TrendingUp className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" />
                 </div>
-                <div>
-                  <p className="text-sm text-gray-600 font-medium">Total Leases</p>
-                  <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs sm:text-sm text-gray-600 font-medium">Total Leases</p>
+                  <p className="text-xl sm:text-2xl font-bold text-gray-900">{stats.total}</p>
                 </div>
               </div>
             </CardContent>
           </Card>
 
           <Card className="bg-white shadow-lg border-0 rounded-xl hover:shadow-xl transition-all duration-300">
-            <CardContent className="p-4">
+            <CardContent className="p-3 sm:p-4">
               <div className="flex items-center">
-                <div className="bg-green-50 p-3 rounded-lg mr-4">
-                  <Users className="w-6 h-6 text-green-600" />
+                <div className="bg-green-50 p-2 sm:p-3 rounded-lg mr-3 sm:mr-4 flex-shrink-0">
+                  <Users className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
                 </div>
-                <div>
-                  <p className="text-sm text-gray-600 font-medium">Active Leases</p>
-                  <p className="text-2xl font-bold text-gray-900">{stats.active}</p>
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs sm:text-sm text-gray-600 font-medium">Active Leases</p>
+                  <p className="text-xl sm:text-2xl font-bold text-gray-900">{stats.active}</p>
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="bg-white shadow-lg border-0 rounded-xl hover:shadow-xl transition-all duration-300">
-            <CardContent className="p-4">
+          <Card className="bg-white shadow-lg border-0 rounded-xl hover:shadow-xl transition-all duration-300 sm:col-span-2 lg:col-span-1">
+            <CardContent className="p-3 sm:p-4">
               <div className="flex items-center">
-                <div className="bg-yellow-50 p-3 rounded-lg mr-4">
-                  <Calendar className="w-6 h-6 text-yellow-600" />
+                <div className="bg-yellow-50 p-2 sm:p-3 rounded-lg mr-3 sm:mr-4 flex-shrink-0">
+                  <Calendar className="w-5 h-5 sm:w-6 sm:h-6 text-yellow-600" />
                 </div>
-                <div>
-                  <p className="text-sm text-gray-600 font-medium">Pending Leases</p>
-                  <p className="text-2xl font-bold text-gray-900">{stats.pending}</p>
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs sm:text-sm text-gray-600 font-medium">Pending Leases</p>
+                  <p className="text-xl sm:text-2xl font-bold text-gray-900">{stats.pending}</p>
                 </div>
               </div>
             </CardContent>
@@ -165,13 +165,13 @@ const AdminLeasesPage: React.FC = () => {
         <Card className="shadow-2xl border-0 rounded-2xl overflow-hidden bg-white">
           <CardContent className="p-0">
             {/* Header with gradient background */}
-            <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-6 text-white">
-              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                <div>
-                  <h2 className="text-2xl font-bold">Manage Leases</h2>
-                  <p className="text-blue-100 mt-1">Monitor and manage all lease agreements</p>
+            <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-4 sm:p-6 text-white">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4">
+                <div className="min-w-0 flex-1">
+                  <h2 className="text-xl sm:text-2xl font-bold">Manage Leases</h2>
+                  <p className="text-blue-100 mt-1 text-sm sm:text-base">Monitor and manage all lease agreements</p>
                 </div>
-                <div className="flex gap-3 items-center">
+                <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 items-stretch sm:items-center w-full sm:w-auto">
                   {/* Filter by status */}
                   <select
                     value={filter}
@@ -179,7 +179,7 @@ const AdminLeasesPage: React.FC = () => {
                       setFilter(e.target.value);
                       fetchLeases(e.target.value || undefined);
                     }}
-                    className="border-0 rounded-lg px-4 py-2 text-sm bg-white/20 backdrop-blur-sm text-white focus:ring-2 focus:ring-white/50"
+                    className="border-0 rounded-lg px-3 sm:px-4 py-2 text-xs sm:text-sm bg-white/20 backdrop-blur-sm text-white focus:ring-2 focus:ring-white/50"
                   >
                     <option value="" className="text-gray-900">All Leases</option>
                     <option value="active" className="text-gray-900">Active</option>
@@ -194,17 +194,17 @@ const AdminLeasesPage: React.FC = () => {
                     size="sm"
                     onClick={() => fetchLeases(filter)}
                     disabled={loading}
-                    className="bg-white/20 hover:bg-white/30 border-0 text-white backdrop-blur-sm"
+                    className="bg-white/20 hover:bg-white/30 border-0 text-white backdrop-blur-sm text-xs sm:text-sm"
                   >
-                    <RefreshCcw className="w-4 h-4 mr-2" />
+                    <RefreshCcw className="w-3 h-3 sm:w-4 sm:h-4 mr-2" />
                     Refresh
                   </Button>
                 </div>
               </div>
             </div>
 
-            {/* Table */}
-            <div className="overflow-x-auto">
+            {/* Table - Desktop View */}
+            <div className="hidden lg:block overflow-x-auto">
               <table className="min-w-full">
                 <thead className="bg-gray-50 border-b">
                   <tr>
@@ -302,11 +302,81 @@ const AdminLeasesPage: React.FC = () => {
               </table>
             </div>
 
+            {/* Mobile Card View */}
+            <div className="block lg:hidden divide-y divide-gray-200">
+              {leases.map((lease) => (
+                <div key={lease._id} className="p-4 hover:bg-gradient-to-r hover:from-blue-50/50 hover:to-purple-50/50 transition-all duration-200">
+                  <div className="space-y-3">
+                    {/* Land Info */}
+                    <div>
+                      <p className="font-medium text-gray-900 text-sm">{lease.land?.title || "N/A"}</p>
+                      <p className="text-xs text-gray-500 mt-1">
+                        {lease.land?.location ? renderLocation(lease.land.location) : "No location"}
+                      </p>
+                    </div>
+
+                    {/* Farmer & Owner */}
+                    <div className="grid grid-cols-2 gap-3 text-xs">
+                      <div>
+                        <p className="text-gray-500 mb-1">Farmer</p>
+                        <p className="font-medium text-gray-900">{lease.farmer?.name || "N/A"}</p>
+                        <p className="text-gray-500 truncate">{lease.farmer?.email || ""}</p>
+                      </div>
+                      <div>
+                        <p className="text-gray-500 mb-1">Owner</p>
+                        <p className="font-medium text-gray-900">{lease.owner?.name || "N/A"}</p>
+                        <p className="text-gray-500 truncate">{lease.owner?.email || ""}</p>
+                      </div>
+                    </div>
+
+                    {/* Status Badge */}
+                    <div>
+                      <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border ${getStatusColor(lease.status)}`}>
+                        {lease.status}
+                      </span>
+                    </div>
+
+                    {/* Actions */}
+                    <div className="flex flex-col sm:flex-row gap-2 pt-2">
+                      <Button
+                        size="sm"
+                        variant="destructive"
+                        onClick={() => deleteLease(lease._id)}
+                        className="bg-red-500 hover:bg-red-600 border-0 transition-colors text-xs flex-1"
+                      >
+                        <Trash2 className="w-3 h-3 mr-1" />
+                        Delete
+                      </Button>
+
+                      <select
+                        value={lease.status}
+                        onChange={(e) => changeStatus(lease._id, e.target.value)}
+                        className="border border-gray-300 rounded-lg px-3 py-1.5 text-xs focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all flex-1"
+                      >
+                        <option value="completed">Completed</option>
+                        <option value="cancelled">Cancelled</option>
+                        <option value="active">Active</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              ))}
+              {leases.length === 0 && (
+                <div className="text-center py-12 text-gray-500">
+                  <div className="flex flex-col items-center justify-center">
+                    <Star className="w-12 h-12 text-gray-300 mb-2" />
+                    <p className="text-base font-medium">No leases found</p>
+                    <p className="text-sm">Try changing your filters or check back later</p>
+                  </div>
+                </div>
+              )}
+            </div>
+
             {/* Footer with summary */}
-            <div className="bg-gray-50 px-6 py-3 border-t">
-              <div className="flex justify-between items-center text-sm text-gray-600">
+            <div className="bg-gray-50 px-4 sm:px-6 py-3 border-t">
+              <div className="flex flex-col sm:flex-row justify-between items-center gap-2 text-xs sm:text-sm text-gray-600">
                 <span>Showing {leases.length} lease{leases.length !== 1 ? 's' : ''}</span>
-                <span>Last updated: {new Date().toLocaleTimeString()}</span>
+                <span className="text-center sm:text-right">Last updated: {new Date().toLocaleTimeString()}</span>
               </div>
             </div>
           </CardContent>
