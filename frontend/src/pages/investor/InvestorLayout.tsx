@@ -127,22 +127,6 @@ const Sidebar: React.FC<SidebarProps> = ({
     return children.some(child => location.pathname === child.href || location.pathname.startsWith(child.href + '/'));
   };
 
-  const handleLogout = async () => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      try {
-        await fetch("https://agricorus.onrender.com/api/auth/logout", {
-          method: "POST",
-          headers: { Authorization: `Bearer ${token}` },
-        });
-      } catch (e) {
-        console.warn("Backend logout failed.");
-      }
-    }
-    localStorage.removeItem("token");
-    navigate("/login");
-  };
-
   return (
     <div
       className={`flex flex-col h-full bg-white shadow-xl border-r transition-all duration-300 ${
