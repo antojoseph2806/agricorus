@@ -76,7 +76,6 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, onToggleSidebar, isMob
       href: '#',
       children: [
         { label: 'Customer Queries', icon: MessageSquare, href: '/vendor/support/queries' },
-        { label: 'Warranty / Service', icon: ShieldCheck, href: '/vendor/support/warranty' },
       ],
     },
     { label: 'Ratings & Feedback', icon: Star, href: '/vendor/feedback' },
