@@ -366,93 +366,93 @@ const AdminLandManagement: React.FC<AdminLandManagementProps> = ({ statusFilter 
 
         {/* Lands Grid */}
         {filteredLands.length === 0 ? (
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center">
-            <LandPlot className="mx-auto h-16 w-16 text-gray-400 mb-4" />
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">No land listings found</h3>
-            <p className="text-gray-600 mb-4">Try adjusting your search criteria or check back later.</p>
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8 sm:p-12 text-center">
+            <LandPlot className="mx-auto h-12 w-12 sm:h-16 sm:w-16 text-gray-400 mb-4" />
+            <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-2">No land listings found</h3>
+            <p className="text-sm sm:text-base text-gray-600 mb-4">Try adjusting your search criteria or check back later.</p>
             <button 
               onClick={() => setSearchTerm('')}
-              className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+              className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm sm:text-base"
             >
               Clear Search
             </button>
           </div>
         ) : (
-          <div className="grid gap-6">
+          <div className="grid gap-4 sm:gap-6">
             {filteredLands.map((land) => (
               <div key={land._id} className="bg-white rounded-xl shadow-sm hover:shadow-lg transition-shadow duration-300 border border-gray-200">
                 {/* Land Header */}
-                <div className="border-b border-gray-200 p-6">
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <h3 className="text-lg font-bold text-gray-900 mb-2">{land.title}</h3>
-                      <div className="flex items-center space-x-4">
+                <div className="border-b border-gray-200 p-4 sm:p-6">
+                  <div className="flex justify-between items-start gap-3">
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-2 truncate">{land.title}</h3>
+                      <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
                         {getStatusBadge(land)}
-                        <span className="text-sm text-gray-500">
+                        <span className="text-xs sm:text-sm text-gray-500">
                           Listed {land.createdAt ? new Date(land.createdAt).toLocaleDateString() : 'N/A'}
                         </span>
                       </div>
                     </div>
-                    <button className="text-gray-400 hover:text-gray-600 p-2">
+                    <button className="text-gray-400 hover:text-gray-600 p-2 flex-shrink-0">
                       <MoreVertical className="w-5 h-5" />
                     </button>
                   </div>
                 </div>
 
                 {/* Land Details */}
-                <div className="p-6">
-                  <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div className="p-4 sm:p-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
                     {/* Owner Info */}
                     <div className="flex items-center space-x-3">
-                      <div className="bg-blue-100 p-2 rounded-lg">
-                        <User className="w-5 h-5 text-blue-600" />
+                      <div className="bg-blue-100 p-2 rounded-lg flex-shrink-0">
+                        <User className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600" />
                       </div>
-                      <div>
-                        <p className="text-sm text-gray-600">Owner</p>
-                        <p className="font-medium text-gray-900">{land.owner?.name || 'N/A'}</p>
-                        <p className="text-xs text-gray-500">{land.owner?.email}</p>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-xs sm:text-sm text-gray-600">Owner</p>
+                        <p className="font-medium text-sm sm:text-base text-gray-900 truncate">{land.owner?.name || 'N/A'}</p>
+                        <p className="text-xs text-gray-500 truncate">{land.owner?.email}</p>
                       </div>
                     </div>
 
                     {/* Location */}
                     <div className="flex items-center space-x-3">
-                      <div className="bg-green-100 p-2 rounded-lg">
-                        <MapPin className="w-5 h-5 text-green-600" />
+                      <div className="bg-green-100 p-2 rounded-lg flex-shrink-0">
+                        <MapPin className="w-4 h-4 sm:w-5 sm:h-5 text-green-600" />
                       </div>
-                      <div>
-                        <p className="text-sm text-gray-600">Location</p>
-                        <p className="font-medium text-gray-900">{land.location?.address || 'N/A'}</p>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-xs sm:text-sm text-gray-600">Location</p>
+                        <p className="font-medium text-sm sm:text-base text-gray-900 truncate">{land.location?.address || 'N/A'}</p>
                       </div>
                     </div>
 
                     {/* Size */}
                     <div className="flex items-center space-x-3">
-                      <div className="bg-purple-100 p-2 rounded-lg">
-                        <LandPlot className="w-5 h-5 text-purple-600" />
+                      <div className="bg-purple-100 p-2 rounded-lg flex-shrink-0">
+                        <LandPlot className="w-4 h-4 sm:w-5 sm:h-5 text-purple-600" />
                       </div>
-                      <div>
-                        <p className="text-sm text-gray-600">Size</p>
-                        <p className="font-medium text-gray-900">{land.sizeInAcres} acres</p>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-xs sm:text-sm text-gray-600">Size</p>
+                        <p className="font-medium text-sm sm:text-base text-gray-900">{land.sizeInAcres} acres</p>
                       </div>
                     </div>
 
                     {/* Price */}
                     <div className="flex items-center space-x-3">
-                      <div className="bg-orange-100 p-2 rounded-lg">
-                        <DollarSign className="w-5 h-5 text-orange-600" />
+                      <div className="bg-orange-100 p-2 rounded-lg flex-shrink-0">
+                        <DollarSign className="w-4 h-4 sm:w-5 sm:h-5 text-orange-600" />
                       </div>
-                      <div>
-                        <p className="text-sm text-gray-600">Monthly Lease</p>
-                        <p className="font-medium text-gray-900">₹{land.leasePricePerMonth.toLocaleString()}</p>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-xs sm:text-sm text-gray-600">Monthly Lease</p>
+                        <p className="font-medium text-sm sm:text-base text-gray-900">₹{land.leasePricePerMonth.toLocaleString()}</p>
                       </div>
                     </div>
                   </div>
 
                   {/* Action Buttons */}
-                  <div className="flex justify-end space-x-3 mt-6 pt-6 border-t border-gray-200">
+                  <div className="flex flex-col sm:flex-row sm:justify-end gap-2 sm:gap-3 mt-4 sm:mt-6 pt-4 sm:pt-6 border-t border-gray-200">
                     <button
                       onClick={() => navigate(`/admin/lands/${land._id}`)}
-                      className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg font-medium transition-colors duration-200 flex items-center"
+                      className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center text-sm sm:text-base"
                     >
                       <Eye className="w-4 h-4 mr-2" />
                       View Details
@@ -461,7 +461,7 @@ const AdminLandManagement: React.FC<AdminLandManagementProps> = ({ statusFilter 
                     {land.isApproved ? (
                       <button
                         onClick={() => handleUnapprove(land._id)}
-                        className="bg-yellow-100 hover:bg-yellow-200 text-yellow-700 px-4 py-2 rounded-lg font-medium transition-colors duration-200 flex items-center"
+                        className="bg-yellow-100 hover:bg-yellow-200 text-yellow-700 px-4 py-2 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center text-sm sm:text-base"
                       >
                         <AlertCircle className="w-4 h-4 mr-2" />
                         Set to Pending
@@ -469,7 +469,7 @@ const AdminLandManagement: React.FC<AdminLandManagementProps> = ({ statusFilter 
                     ) : (
                       <button
                         onClick={() => handleApprove(land._id)}
-                        className="bg-green-100 hover:bg-green-200 text-green-700 px-4 py-2 rounded-lg font-medium transition-colors duration-200 flex items-center"
+                        className="bg-green-100 hover:bg-green-200 text-green-700 px-4 py-2 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center text-sm sm:text-base"
                       >
                         <CheckCircle className="w-4 h-4 mr-2" />
                         Approve
@@ -478,7 +478,7 @@ const AdminLandManagement: React.FC<AdminLandManagementProps> = ({ statusFilter 
                     
                     <button
                       onClick={() => handleReject(land._id)}
-                      className="bg-red-100 hover:bg-red-200 text-red-700 px-4 py-2 rounded-lg font-medium transition-colors duration-200 flex items-center"
+                      className="bg-red-100 hover:bg-red-200 text-red-700 px-4 py-2 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center text-sm sm:text-base"
                     >
                       <XCircle className="w-4 h-4 mr-2" />
                       Reject
@@ -486,7 +486,7 @@ const AdminLandManagement: React.FC<AdminLandManagementProps> = ({ statusFilter 
                     
                     <button
                       onClick={() => handleDelete(land._id)}
-                      className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200 flex items-center"
+                      className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center text-sm sm:text-base"
                     >
                       <Trash2 className="w-4 h-4 mr-2" />
                       Delete
@@ -500,10 +500,10 @@ const AdminLandManagement: React.FC<AdminLandManagementProps> = ({ statusFilter 
 
         {/* Footer */}
         {filteredLands.length > 0 && (
-          <div className="mt-6 bg-white rounded-xl shadow-sm border border-gray-200 p-4">
-            <div className="flex justify-between items-center text-sm text-gray-600">
+          <div className="mt-4 sm:mt-6 bg-white rounded-xl shadow-sm border border-gray-200 p-3 sm:p-4">
+            <div className="flex flex-col sm:flex-row justify-between items-center gap-3 sm:gap-0 text-xs sm:text-sm text-gray-600">
               <span>Showing {filteredLands.length} of {lands.length} listings</span>
-              <div className="flex space-x-6">
+              <div className="flex flex-wrap justify-center gap-3 sm:gap-6">
                 <span className="flex items-center">
                   <span className="w-3 h-3 bg-green-500 rounded-full mr-2"></span>
                   Approved: {stats.approved}

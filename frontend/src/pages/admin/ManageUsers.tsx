@@ -194,18 +194,18 @@ const ManageUsers: React.FC<ManageUsersProps> = ({ role }) => {
 
   return (
     <Layout>
-      <div className="space-y-6">
+      <div className="space-y-4 sm:space-y-6 px-3 sm:px-0">
         {/* Header */}
-        <div className="flex justify-between items-center">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-0">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">
+            <h1 className="text-xl sm:text-2xl font-bold text-gray-900">
               Manage {role.charAt(0).toUpperCase() + role.slice(1)}s
             </h1>
-            <p className="text-gray-600">View and manage {role} accounts</p>
+            <p className="text-sm sm:text-base text-gray-600">View and manage {role} accounts</p>
           </div>
           <button
             onClick={fetchUsers}
-            className="flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition"
+            className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition text-sm sm:text-base"
           >
             <RefreshCw className="w-4 h-4" />
             Refresh
@@ -213,41 +213,41 @@ const ManageUsers: React.FC<ManageUsersProps> = ({ role }) => {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="bg-white p-6 rounded-lg shadow border">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+          <div className="bg-white p-4 sm:p-6 rounded-lg shadow border">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Total {role.charAt(0).toUpperCase() + role.slice(1)}s</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
+                <p className="text-xs sm:text-sm font-medium text-gray-600">Total {role.charAt(0).toUpperCase() + role.slice(1)}s</p>
+                <p className="text-xl sm:text-2xl font-bold text-gray-900">{stats.total}</p>
               </div>
-              <Users className="w-8 h-8 text-gray-400" />
+              <Users className="w-6 h-6 sm:w-8 sm:h-8 text-gray-400" />
             </div>
           </div>
           
-          <div className="bg-white p-6 rounded-lg shadow border">
+          <div className="bg-white p-4 sm:p-6 rounded-lg shadow border">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Active Users</p>
-                <p className="text-2xl font-bold text-green-600">{stats.active}</p>
+                <p className="text-xs sm:text-sm font-medium text-gray-600">Active Users</p>
+                <p className="text-xl sm:text-2xl font-bold text-green-600">{stats.active}</p>
               </div>
-              <UserCheck className="w-8 h-8 text-green-400" />
+              <UserCheck className="w-6 h-6 sm:w-8 sm:h-8 text-green-400" />
             </div>
           </div>
           
-          <div className="bg-white p-6 rounded-lg shadow border">
+          <div className="bg-white p-4 sm:p-6 rounded-lg shadow border sm:col-span-2 lg:col-span-1">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Blocked Users</p>
-                <p className="text-2xl font-bold text-red-600">{stats.blocked}</p>
+                <p className="text-xs sm:text-sm font-medium text-gray-600">Blocked Users</p>
+                <p className="text-xl sm:text-2xl font-bold text-red-600">{stats.blocked}</p>
               </div>
-              <UserX className="w-8 h-8 text-red-400" />
+              <UserX className="w-6 h-6 sm:w-8 sm:h-8 text-red-400" />
             </div>
           </div>
         </div>
 
         {/* Filters */}
-        <div className="bg-white p-4 rounded-lg shadow border">
-          <div className="flex flex-col md:flex-row gap-4">
+        <div className="bg-white p-3 sm:p-4 rounded-lg shadow border">
+          <div className="flex flex-col md:flex-row gap-3 sm:gap-4">
             <div className="flex-1">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
@@ -256,7 +256,7 @@ const ManageUsers: React.FC<ManageUsersProps> = ({ role }) => {
                   placeholder="Search by name, email, or phone..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm sm:text-base"
                 />
               </div>
             </div>
@@ -265,7 +265,7 @@ const ManageUsers: React.FC<ManageUsersProps> = ({ role }) => {
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value as any)}
-                className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                className="flex-1 sm:flex-none px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm sm:text-base"
               >
                 <option value="all">All Status</option>
                 <option value="active">Active Only</option>
@@ -276,163 +276,215 @@ const ManageUsers: React.FC<ManageUsersProps> = ({ role }) => {
         </div>
 
         {error ? (
-          <div className="bg-white rounded-lg shadow border p-6 text-center">
-            <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
-            <p className="text-red-500 font-medium text-lg mb-2">Error Loading Users</p>
-            <p className="text-gray-600">{error}</p>
+          <div className="bg-white rounded-lg shadow border p-4 sm:p-6 text-center">
+            <AlertCircle className="w-10 h-10 sm:w-12 sm:h-12 text-red-500 mx-auto mb-4" />
+            <p className="text-red-500 font-medium text-base sm:text-lg mb-2">Error Loading Users</p>
+            <p className="text-sm sm:text-base text-gray-600">{error}</p>
             <button 
               onClick={fetchUsers}
-              className="mt-4 bg-emerald-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-emerald-700 transition"
+              className="mt-4 bg-emerald-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-emerald-700 transition text-sm sm:text-base"
             >
               Retry
             </button>
           </div>
         ) : filteredUsers.length === 0 ? (
-          <div className="bg-white rounded-lg shadow border p-12 text-center">
-            <Users className="w-16 h-16 mx-auto text-gray-400 mb-4" />
-            <p className="text-gray-600 text-lg mb-2">No {role}s found</p>
-            <p className="text-gray-500">Try adjusting your search criteria</p>
+          <div className="bg-white rounded-lg shadow border p-8 sm:p-12 text-center">
+            <Users className="w-12 h-12 sm:w-16 sm:h-16 mx-auto text-gray-400 mb-4" />
+            <p className="text-gray-600 text-base sm:text-lg mb-2">No {role}s found</p>
+            <p className="text-sm sm:text-base text-gray-500">Try adjusting your search criteria</p>
           </div>
         ) : (
-          /* Users Table */
-          <div className="bg-white rounded-lg shadow border overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      User Details
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Contact Info
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Status
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Joined
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Actions
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {filteredUsers.map((user) => (
-                    <tr key={user._id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center">
-                          <div className="w-10 h-10 bg-emerald-100 rounded-full flex items-center justify-center mr-3">
-                            <Shield className="w-5 h-5 text-emerald-600" />
-                          </div>
-                          <div>
-                            <div className="text-sm font-medium text-gray-900">
-                              {user.name || "Unnamed User"}
-                            </div>
-                            <div className="text-sm text-gray-500 capitalize">{user.role}</div>
-                          </div>
+          <>
+            {/* Mobile Card View */}
+            <div className="block lg:hidden space-y-3">
+              {filteredUsers.map((user) => (
+                <div key={user._id} className="bg-white rounded-lg shadow border p-4">
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="flex items-center gap-3 flex-1 min-w-0">
+                      <div className="w-10 h-10 bg-emerald-100 rounded-full flex items-center justify-center flex-shrink-0">
+                        <Shield className="w-5 h-5 text-emerald-600" />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <div className="text-sm font-medium text-gray-900 truncate">
+                          {user.name || "Unnamed User"}
                         </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div>
-                          <div className="text-sm text-gray-900 flex items-center gap-1">
-                            <Mail className="w-3 h-3 text-gray-400" />
-                            {user.email}
-                          </div>
-                          <div className="text-sm text-gray-500 flex items-center gap-1 mt-1">
-                            <Phone className="w-3 h-3 text-gray-400" />
-                            {user.phone}
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center gap-2">
-                          {getStatusIcon(user.isBlocked)}
-                          <span className={getStatusBadge(user.isBlocked)}>
-                            {user.isBlocked ? 'BLOCKED' : 'ACTIVE'}
-                          </span>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        <div className="flex items-center gap-1">
-                          <Calendar className="w-3 h-3 text-gray-400" />
-                          {formatDate(user.joined || user.createdAt)}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <button
-                          onClick={() => openModal(user)}
-                          className="flex items-center gap-1 text-emerald-600 hover:text-emerald-900"
-                        >
-                          <Eye className="w-4 h-4" />
-                          View Details
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+                        <div className="text-xs text-gray-500 capitalize">{user.role}</div>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2 flex-shrink-0">
+                      {getStatusIcon(user.isBlocked)}
+                      <span className={getStatusBadge(user.isBlocked)}>
+                        {user.isBlocked ? 'BLOCKED' : 'ACTIVE'}
+                      </span>
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-2 mb-3">
+                    <div className="text-xs text-gray-900 flex items-center gap-1">
+                      <Mail className="w-3 h-3 text-gray-400 flex-shrink-0" />
+                      <span className="truncate">{user.email}</span>
+                    </div>
+                    <div className="text-xs text-gray-500 flex items-center gap-1">
+                      <Phone className="w-3 h-3 text-gray-400 flex-shrink-0" />
+                      {user.phone}
+                    </div>
+                    <div className="text-xs text-gray-500 flex items-center gap-1">
+                      <Calendar className="w-3 h-3 text-gray-400 flex-shrink-0" />
+                      {formatDate(user.joined || user.createdAt)}
+                    </div>
+                  </div>
+                  
+                  <button
+                    onClick={() => openModal(user)}
+                    className="w-full flex items-center justify-center gap-2 text-emerald-600 hover:text-emerald-900 text-sm font-medium py-2 border border-emerald-200 rounded-lg hover:bg-emerald-50 transition"
+                  >
+                    <Eye className="w-4 h-4" />
+                    View Details
+                  </button>
+                </div>
+              ))}
             </div>
-          </div>
+
+            {/* Desktop Table View */}
+            <div className="hidden lg:block bg-white rounded-lg shadow border overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-gray-200">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        User Details
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Contact Info
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Status
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Joined
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Actions
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {filteredUsers.map((user) => (
+                      <tr key={user._id} className="hover:bg-gray-50">
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="flex items-center">
+                            <div className="w-10 h-10 bg-emerald-100 rounded-full flex items-center justify-center mr-3">
+                              <Shield className="w-5 h-5 text-emerald-600" />
+                            </div>
+                            <div>
+                              <div className="text-sm font-medium text-gray-900">
+                                {user.name || "Unnamed User"}
+                              </div>
+                              <div className="text-sm text-gray-500 capitalize">{user.role}</div>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div>
+                            <div className="text-sm text-gray-900 flex items-center gap-1">
+                              <Mail className="w-3 h-3 text-gray-400" />
+                              {user.email}
+                            </div>
+                            <div className="text-sm text-gray-500 flex items-center gap-1 mt-1">
+                              <Phone className="w-3 h-3 text-gray-400" />
+                              {user.phone}
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="flex items-center gap-2">
+                            {getStatusIcon(user.isBlocked)}
+                            <span className={getStatusBadge(user.isBlocked)}>
+                              {user.isBlocked ? 'BLOCKED' : 'ACTIVE'}
+                            </span>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          <div className="flex items-center gap-1">
+                            <Calendar className="w-3 h-3 text-gray-400" />
+                            {formatDate(user.joined || user.createdAt)}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                          <button
+                            onClick={() => openModal(user)}
+                            className="flex items-center gap-1 text-emerald-600 hover:text-emerald-900"
+                          >
+                            <Eye className="w-4 h-4" />
+                            View Details
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </>
         )}
 
         {/* Modal for User Details */}
         {showModal && selectedUser && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-3 sm:p-4 z-50">
             <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-              <div className="p-6">
-                <div className="flex justify-between items-center mb-6">
-                  <h2 className="text-xl font-bold text-gray-900">User Details</h2>
+              <div className="p-4 sm:p-6">
+                <div className="flex justify-between items-center mb-4 sm:mb-6">
+                  <h2 className="text-lg sm:text-xl font-bold text-gray-900">User Details</h2>
                   <button
                     onClick={() => setShowModal(false)}
                     className="text-gray-400 hover:text-gray-600"
                   >
-                    <MoreVertical className="w-6 h-6" />
+                    <MoreVertical className="w-5 h-5 sm:w-6 sm:h-6" />
                   </button>
                 </div>
 
-                <div className="space-y-6">
+                <div className="space-y-4 sm:space-y-6">
                   {/* User Information */}
-                  <div className="bg-gray-50 rounded-lg p-4">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                      <Shield className="w-5 h-5" />
+                  <div className="bg-gray-50 rounded-lg p-3 sm:p-4">
+                    <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4 flex items-center gap-2">
+                      <Shield className="w-4 h-4 sm:w-5 sm:h-5" />
                       User Information
                     </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                       <div>
-                        <label className="text-sm font-medium text-gray-500">Name</label>
+                        <label className="text-xs sm:text-sm font-medium text-gray-500">Name</label>
                         <p className="text-sm text-gray-900">{selectedUser.name || "Not provided"}</p>
                       </div>
                       <div>
-                        <label className="text-sm font-medium text-gray-500">Role</label>
+                        <label className="text-xs sm:text-sm font-medium text-gray-500">Role</label>
                         <p className="text-sm text-gray-900 capitalize">{selectedUser.role}</p>
                       </div>
-                      <div>
-                        <label className="text-sm font-medium text-gray-500">Email</label>
-                        <p className="text-sm text-gray-900">{selectedUser.email}</p>
+                      <div className="sm:col-span-2">
+                        <label className="text-xs sm:text-sm font-medium text-gray-500">Email</label>
+                        <p className="text-sm text-gray-900 break-all">{selectedUser.email}</p>
                       </div>
                       <div>
-                        <label className="text-sm font-medium text-gray-500">Phone</label>
+                        <label className="text-xs sm:text-sm font-medium text-gray-500">Phone</label>
                         <p className="text-sm text-gray-900">{selectedUser.phone}</p>
                       </div>
-                      <div>
-                        <label className="text-sm font-medium text-gray-500">User ID</label>
-                        <p className="text-sm text-gray-900 font-mono">{selectedUser._id}</p>
+                      <div className="sm:col-span-2">
+                        <label className="text-xs sm:text-sm font-medium text-gray-500">User ID</label>
+                        <p className="text-xs sm:text-sm text-gray-900 font-mono break-all">{selectedUser._id}</p>
                       </div>
                       <div>
-                        <label className="text-sm font-medium text-gray-500">Joined Date</label>
+                        <label className="text-xs sm:text-sm font-medium text-gray-500">Joined Date</label>
                         <p className="text-sm text-gray-900">{formatDate(selectedUser.joined || selectedUser.createdAt)}</p>
                       </div>
                     </div>
                   </div>
 
                   {/* Status Information */}
-                  <div className="bg-gray-50 rounded-lg p-4">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                      <CheckCircle2 className="w-5 h-5" />
+                  <div className="bg-gray-50 rounded-lg p-3 sm:p-4">
+                    <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4 flex items-center gap-2">
+                      <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5" />
                       Account Status
                     </h3>
-                    <div className="flex items-center gap-2 mb-4">
+                    <div className="flex items-center gap-2 mb-3 sm:mb-4">
                       {getStatusIcon(selectedUser.isBlocked)}
                       <span className={getStatusBadge(selectedUser.isBlocked)}>
                         {selectedUser.isBlocked ? 'BLOCKED' : 'ACTIVE'}
@@ -440,7 +492,7 @@ const ManageUsers: React.FC<ManageUsersProps> = ({ role }) => {
                     </div>
                     {selectedUser.updatedAt && (
                       <div>
-                        <label className="text-sm font-medium text-gray-500">Last Updated</label>
+                        <label className="text-xs sm:text-sm font-medium text-gray-500">Last Updated</label>
                         <p className="text-sm text-gray-900">{formatDate(selectedUser.updatedAt)}</p>
                       </div>
                     )}
@@ -448,13 +500,13 @@ const ManageUsers: React.FC<ManageUsersProps> = ({ role }) => {
                 </div>
 
                 {/* Actions */}
-                <div className="mt-8 pt-6 border-t">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Admin Actions</h3>
-                  <div className="flex flex-wrap gap-4">
+                <div className="mt-6 sm:mt-8 pt-4 sm:pt-6 border-t">
+                  <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4">Admin Actions</h3>
+                  <div className="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4">
                     <button
                       onClick={() => toggleBlock(selectedUser._id, selectedUser.isBlocked)}
                       disabled={actionLoading === selectedUser._id}
-                      className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium disabled:opacity-50 ${
+                      className={`flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-medium disabled:opacity-50 text-sm sm:text-base ${
                         selectedUser.isBlocked
                           ? 'bg-green-600 hover:bg-green-700 text-white'
                           : 'bg-yellow-600 hover:bg-yellow-700 text-white'
@@ -470,7 +522,7 @@ const ManageUsers: React.FC<ManageUsersProps> = ({ role }) => {
                     <button
                       onClick={() => handleDelete(selectedUser._id)}
                       disabled={actionLoading === selectedUser._id}
-                      className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50"
+                      className="flex items-center justify-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 text-sm sm:text-base"
                     >
                       <Trash2 className="w-4 h-4" />
                       {actionLoading === selectedUser._id ? 'Deleting...' : 'Delete User'}
@@ -484,10 +536,10 @@ const ManageUsers: React.FC<ManageUsersProps> = ({ role }) => {
 
         {/* Footer Stats */}
         {filteredUsers.length > 0 && (
-          <div className="bg-white rounded-lg shadow border p-4">
-            <div className="flex flex-col sm:flex-row justify-between items-center text-sm text-gray-600">
+          <div className="bg-white rounded-lg shadow border p-3 sm:p-4">
+            <div className="flex flex-col sm:flex-row justify-between items-center text-xs sm:text-sm text-gray-600 gap-2 sm:gap-0">
               <span>Showing {filteredUsers.length} of {users.length} users</span>
-              <div className="flex space-x-4 mt-2 sm:mt-0">
+              <div className="flex space-x-3 sm:space-x-4">
                 <span className="flex items-center">
                   <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
                   Active: {stats.active}
