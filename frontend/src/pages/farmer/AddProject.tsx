@@ -759,7 +759,7 @@ export default function AddProject() {
             className="w-full px-3 sm:px-4 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
           >
             <option value="">Select Irrigation Source</option>
-            <option value="BORE_WELL">Bore Well</option>on>
+            <option value="BORE_WELL">Bore Well</option>
             <option value="CANAL">Canal</option>
             <option value="RIVER">River</option>
             <option value="POND">Pond</option>
