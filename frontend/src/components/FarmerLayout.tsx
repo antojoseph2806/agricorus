@@ -341,7 +341,7 @@ const UserProfileDropdown: React.FC = () => {
             View Profile
           </Link>
           <Link
-            to="/farmer/kyc/verify"
+            to="/farmer/profile"
             onClick={() => setIsOpen(false)}
             className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition"
           >

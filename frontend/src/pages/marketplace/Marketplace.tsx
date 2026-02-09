@@ -264,21 +264,21 @@ const Marketplace: React.FC = () => {
       <div className="min-h-screen bg-gray-50">
         {/* Gradient Header Banner - Matching ViewLands */}
         <div className="relative mb-6 sm:mb-8 overflow-hidden">
-          <div className="h-40 sm:h-48 bg-gradient-to-br from-emerald-400 via-teal-500 to-cyan-500 rounded-none sm:rounded-3xl overflow-hidden relative">
+          <div className="h-36 sm:h-48 bg-gradient-to-br from-emerald-400 via-teal-500 to-cyan-500 rounded-none sm:rounded-3xl overflow-hidden relative">
             <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Cg%20fill%3D%22%23ffffff%22%20fill-opacity%3D%220.1%22%3E%3Cpath%20d%3D%22M36%2034v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6%2034v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6%204V0H4v4H0v2h4v4h2V6h4V4H6z%22%2F%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E')] opacity-30"></div>
             <div className="absolute inset-0 flex flex-col items-center justify-center px-4 text-center">
-              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-2 flex items-center gap-2 sm:gap-3 flex-wrap justify-center">
-                <Leaf className="w-6 h-6 sm:w-8 sm:h-8" />
+              <h1 className="text-xl sm:text-3xl lg:text-4xl font-bold text-white mb-1 sm:mb-2 flex items-center gap-2 sm:gap-3 flex-wrap justify-center">
+                <Leaf className="w-5 h-5 sm:w-8 sm:h-8" />
                 <span>AgriMarket</span>
               </h1>
-              <p className="text-sm sm:text-base text-emerald-100">Quality agricultural products from verified vendors</p>
+              <p className="text-xs sm:text-base text-emerald-100">Quality agricultural products from verified vendors</p>
             </div>
-            <div className="absolute top-4 right-4 sm:top-6 sm:right-8 flex items-center gap-2">
-              <Link to="/orders" className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 bg-white/10 hover:bg-white/20 text-white rounded-lg sm:rounded-xl text-xs sm:text-sm font-medium transition backdrop-blur-sm">
+            <div className="absolute top-2 right-2 sm:top-6 sm:right-8 flex items-center gap-1.5 sm:gap-2">
+              <Link to="/orders" className="flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-1.5 sm:py-2.5 bg-white/10 hover:bg-white/20 text-white rounded-lg sm:rounded-xl text-xs sm:text-sm font-medium transition backdrop-blur-sm">
                 <Package className="w-3 h-3 sm:w-4 sm:h-4" />
                 <span className="hidden sm:inline">Orders</span>
               </Link>
-              <Link to="/cart" className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-5 py-2 sm:py-2.5 bg-white text-emerald-600 rounded-lg sm:rounded-xl text-xs sm:text-sm font-semibold hover:bg-emerald-50 transition shadow-lg">
+              <Link to="/cart" className="flex items-center gap-1 sm:gap-2 px-2 sm:px-5 py-1.5 sm:py-2.5 bg-white text-emerald-600 rounded-lg sm:rounded-xl text-xs sm:text-sm font-semibold hover:bg-emerald-50 transition shadow-lg">
                 <ShoppingCart className="w-3 h-3 sm:w-4 sm:h-4" />
                 <span>Cart</span>
               </Link>
@@ -286,19 +286,19 @@ const Marketplace: React.FC = () => {
           </div>
 
           {/* Icon Badge */}
-          <div className="absolute -bottom-10 sm:-bottom-12 left-1/2 -translate-x-1/2">
-            <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-br from-emerald-400 to-cyan-500 p-1 shadow-xl">
+          <div className="absolute -bottom-8 sm:-bottom-12 left-1/2 -translate-x-1/2">
+            <div className="w-16 h-16 sm:w-24 sm:h-24 rounded-full bg-gradient-to-br from-emerald-400 to-cyan-500 p-1 shadow-xl">
               <div className="w-full h-full rounded-full bg-white flex items-center justify-center">
-                <ShoppingCart className="w-10 h-10 sm:w-12 sm:h-12 text-emerald-600" />
+                <ShoppingCart className="w-8 h-8 sm:w-12 sm:h-12 text-emerald-600" />
               </div>
             </div>
           </div>
         </div>
 
         {/* Title Section */}
-        <div className="text-center mt-12 sm:mt-16 mb-6 sm:mb-8 px-4">
-          <h2 className="text-2xl sm:text-3xl font-bold text-gray-800">Browse Products</h2>
-          <p className="text-gray-500 mt-2 text-sm sm:text-base">Discover quality agricultural supplies</p>
+        <div className="text-center mt-10 sm:mt-16 mb-4 sm:mb-8 px-4">
+          <h2 className="text-xl sm:text-3xl font-bold text-gray-800">Browse Products</h2>
+          <p className="text-gray-500 mt-1 sm:mt-2 text-xs sm:text-base">Discover quality agricultural supplies</p>
         </div>
 
         <div className="max-w-7xl mx-auto px-3 sm:px-6 py-4 sm:py-6">
@@ -334,13 +334,13 @@ const Marketplace: React.FC = () => {
             </div>
           </div>
           {/* Category Pills */}
-          <div className="mb-4 sm:mb-6 -mx-3 sm:mx-0 px-3 sm:px-0">
-            <div className="flex items-center gap-2 sm:gap-3 overflow-x-auto pb-2 scrollbar-hide">
+          <div className="mb-4 sm:mb-6">
+            <div className="flex items-center gap-2 sm:gap-3 overflow-x-auto pb-2 scrollbar-hide -mx-3 px-3 sm:mx-0 sm:px-0">
               {categories.map(cat => (
               <button
                 key={cat.value}
                 onClick={() => handleFilterChange('category', cat.value)}
-                className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-medium whitespace-nowrap transition-all ${
+                className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-medium whitespace-nowrap transition-all flex-shrink-0 ${
                   filters.category === cat.value
                     ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-200'
                     : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200'
@@ -472,18 +472,18 @@ const Marketplace: React.FC = () => {
                     className="bg-white rounded-xl sm:rounded-2xl border border-gray-100 overflow-hidden hover:shadow-xl hover:border-emerald-200 transition-all group"
                   >
                     {/* Image */}
-                    <div className="relative h-48 sm:h-56 bg-gray-50 overflow-hidden">
+                    <div className="relative h-44 sm:h-56 bg-gray-50 overflow-hidden">
                       <img
                         src={product.images[0] ? `https://agricorus.onrender.com${product.images[0]}` : '/placeholder-product.jpg'}
                         alt={product.name}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                       />
-                      <div className="absolute top-2 sm:top-3 left-2 sm:left-3">
+                      <div className="absolute top-2 left-2">
                         {getStockBadge(product.stockStatus, product.stock)}
                       </div>
                       <Link
                         to={`/marketplace/product/${product._id}`}
-                        className="absolute top-2 sm:top-3 right-2 sm:right-3 w-8 h-8 sm:w-10 sm:h-10 bg-white/90 backdrop-blur rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-lg hover:bg-white"
+                        className="absolute top-2 right-2 w-8 h-8 sm:w-10 sm:h-10 bg-white/90 backdrop-blur rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-lg hover:bg-white"
                       >
                         <Eye className="w-4 h-4 sm:w-5 sm:h-5 text-gray-700" />
                       </Link>
@@ -491,18 +491,18 @@ const Marketplace: React.FC = () => {
 
                     {/* Info */}
                     <div className="p-3 sm:p-4">
-                      <div className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium mb-2 ${catStyle.color}`}>
+                      <div className={`inline-flex items-center gap-1 px-2 py-0.5 sm:py-1 rounded-full text-xs font-medium mb-2 ${catStyle.color}`}>
                         <span className="text-xs sm:text-sm">{catStyle.icon}</span>
                         <span className="text-xs">{product.category}</span>
                       </div>
                       
-                      <h3 className="font-semibold text-gray-800 text-sm sm:text-base mb-1 line-clamp-2 leading-snug">
+                      <h3 className="font-semibold text-gray-800 text-sm sm:text-base mb-1 line-clamp-2 leading-snug min-h-[2.5rem] sm:min-h-[3rem]">
                         {product.name}
                       </h3>
-                      <p className="text-xs text-gray-500 mb-3 truncate">by {product.vendorBusinessName}</p>
+                      <p className="text-xs text-gray-500 mb-2 sm:mb-3 truncate">by {product.vendorBusinessName}</p>
 
-                      <div className="flex items-center justify-between mb-3">
-                        <div className="text-xl sm:text-2xl font-bold text-emerald-600">
+                      <div className="flex items-center justify-between mb-2 sm:mb-3">
+                        <div className="text-lg sm:text-2xl font-bold text-emerald-600">
                           ₹{product.price.toLocaleString()}
                         </div>
                       </div>
@@ -522,7 +522,7 @@ const Marketplace: React.FC = () => {
                         <button
                           onClick={() => addToCart(product._id)}
                           disabled={product.stockStatus === 'OUT_OF_STOCK' || addingToCart === product._id}
-                          className="w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center border-2 border-emerald-600 text-emerald-600 rounded-lg sm:rounded-xl hover:bg-emerald-50 disabled:border-gray-300 disabled:text-gray-300 disabled:cursor-not-allowed transition"
+                          className="w-9 h-9 sm:w-11 sm:h-11 flex items-center justify-center border-2 border-emerald-600 text-emerald-600 rounded-lg sm:rounded-xl hover:bg-emerald-50 disabled:border-gray-300 disabled:text-gray-300 disabled:cursor-not-allowed transition flex-shrink-0"
                         >
                           <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5" />
                         </button>
@@ -657,6 +657,16 @@ const Marketplace: React.FC = () => {
           </div>
         </div>
       )}
+
+      <style>{`
+        .scrollbar-hide {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+        .scrollbar-hide::-webkit-scrollbar {
+          display: none;
+        }
+      `}</style>
     </MarketplaceLayout>
   );
 };

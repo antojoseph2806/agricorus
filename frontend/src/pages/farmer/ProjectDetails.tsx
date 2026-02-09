@@ -317,98 +317,100 @@ export default function ProjectDetails() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4">
+    <div className="min-h-screen bg-gray-50 p-3 sm:p-4">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0 mb-6 sm:mb-8">
           <button
             onClick={() => navigate("/farmer/projects")}
-            className="flex items-center text-gray-600 hover:text-gray-900 font-semibold transition-all duration-300"
+            className="flex items-center text-gray-600 hover:text-gray-900 font-semibold transition-all duration-300 text-sm sm:text-base"
           >
-            <FaArrowLeft className="mr-2" />
+            <FaArrowLeft className="mr-2 w-3 h-3 sm:w-4 sm:h-4" />
             Back to Projects
           </button>
           
           {canEditOrDelete && (
-            <div className="flex space-x-3">
+            <div className="flex gap-2 sm:gap-3 w-full sm:w-auto">
               <button
                 onClick={() => navigate(`/farmer/projects/edit/${project._id}`)}
-                className="flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-all duration-300"
+                className="flex-1 sm:flex-none flex items-center justify-center px-3 sm:px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-all duration-300 text-xs sm:text-sm"
               >
-                <FaEdit className="mr-2" />
-                Edit Project
+                <FaEdit className="mr-1 sm:mr-2 w-3 h-3 sm:w-4 sm:h-4" />
+                <span className="hidden sm:inline">Edit Project</span>
+                <span className="sm:hidden">Edit</span>
               </button>
               <button
                 onClick={handleDelete}
-                className="flex items-center px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-semibold transition-all duration-300"
+                className="flex-1 sm:flex-none flex items-center justify-center px-3 sm:px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-semibold transition-all duration-300 text-xs sm:text-sm"
               >
-                <FaTrashAlt className="mr-2" />
-                Delete Project
+                <FaTrashAlt className="mr-1 sm:mr-2 w-3 h-3 sm:w-4 sm:h-4" />
+                <span className="hidden sm:inline">Delete Project</span>
+                <span className="sm:hidden">Delete</span>
               </button>
             </div>
           )}
         </div>
 
         {/* Project Header Card */}
-        <div className="bg-white rounded-xl shadow-sm border p-8 mb-6">
-          <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
+        <div className="bg-white rounded-xl shadow-sm border p-4 sm:p-8 mb-4 sm:mb-6">
+          <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4 sm:gap-6">
             <div className="flex-grow">
-              <div className="flex items-start gap-4 mb-4">
-                <div className="w-16 h-16 bg-emerald-500 rounded-xl flex items-center justify-center">
-                  <FaRocket className="text-white text-2xl" />
+              <div className="flex items-start gap-3 sm:gap-4 mb-3 sm:mb-4">
+                <div className="w-12 h-12 sm:w-16 sm:h-16 bg-emerald-500 rounded-xl flex items-center justify-center flex-shrink-0">
+                  <FaRocket className="text-white text-lg sm:text-2xl" />
                 </div>
-                <div className="flex-grow">
-                  <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                <div className="flex-grow min-w-0">
+                  <h1 className="text-xl sm:text-3xl font-bold text-gray-900 mb-1 sm:mb-2 break-words">
                     {project.title}
                   </h1>
-                  <p className="text-gray-600 text-lg leading-relaxed">
+                  <p className="text-gray-600 text-sm sm:text-lg leading-relaxed line-clamp-3 sm:line-clamp-none">
                     {project.description}
                   </p>
                 </div>
               </div>
               
               {/* Project Info Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4 mt-4 sm:mt-6">
                 {project.cropType && (
                   <div className="flex items-center text-gray-600">
-                    <FaLeaf className="w-5 h-5 mr-3 text-green-500" />
-                    <div>
-                      <p className="text-sm font-medium text-gray-500">Crop Type</p>
-                      <p className="font-semibold">{project.cropType}</p>
+                    <FaLeaf className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3 text-green-500 flex-shrink-0" />
+                    <div className="min-w-0">
+                      <p className="text-xs sm:text-sm font-medium text-gray-500">Crop Type</p>
+                      <p className="font-semibold text-sm sm:text-base truncate">{project.cropType}</p>
                     </div>
                   </div>
                 )}
                 
                 <div className="flex items-center text-gray-600">
-                  <FaCalendarAlt className="w-5 h-5 mr-3 text-blue-500" />
-                  <div>
-                    <p className="text-sm font-medium text-gray-500">Created</p>
-                    <p className="font-semibold">{formatDate(project.createdAt)}</p>
+                  <FaCalendarAlt className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3 text-blue-500 flex-shrink-0" />
+                  <div className="min-w-0">
+                    <p className="text-xs sm:text-sm font-medium text-gray-500">Created</p>
+                    <p className="font-semibold text-sm sm:text-base truncate">{formatDate(project.createdAt)}</p>
                   </div>
                 </div>
                 
                 <div className="flex items-center text-gray-600">
-                  <FaUser className="w-5 h-5 mr-3 text-purple-500" />
-                  <div>
-                    <p className="text-sm font-medium text-gray-500">Farmer</p>
-                    <p className="font-semibold">{project.farmerId?.name}</p>
+                  <FaUser className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3 text-purple-500 flex-shrink-0" />
+                  <div className="min-w-0">
+                    <p className="text-xs sm:text-sm font-medium text-gray-500">Farmer</p>
+                    <p className="font-semibold text-sm sm:text-base truncate">{project.farmerId?.name}</p>
                   </div>
                 </div>
               </div>
             </div>
             
             {/* Status Badges */}
-            <div className="flex flex-col gap-3">
-              <div className={`inline-flex items-center rounded-lg px-4 py-2 text-sm font-semibold ${getStatusColors(project.status)}`}>
+            <div className="flex flex-row lg:flex-col gap-2 sm:gap-3 flex-wrap lg:flex-nowrap">
+              <div className={`inline-flex items-center rounded-lg px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold ${getStatusColors(project.status)}`}>
                 {project.status.charAt(0).toUpperCase() + project.status.slice(1)}
               </div>
-              <div className={`inline-flex items-center rounded-lg px-4 py-2 text-sm font-semibold ${getStatusColors(project.overallVerificationStatus)}`}>
+              <div className={`inline-flex items-center rounded-lg px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold ${getStatusColors(project.overallVerificationStatus)}`}>
                 {getVerificationIcon(project.overallVerificationStatus)}
                 <span className="ml-2">{project.overallVerificationStatus.replace('_', ' ')}</span>
               </div>
               {project.isApproved && (
-                <div className="inline-flex items-center rounded-lg px-4 py-2 text-sm font-semibold text-green-700 bg-green-100 border border-green-200">
-                  <FaCheckCircle className="w-4 h-4 mr-2" />
+                <div className="inline-flex items-center rounded-lg px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold text-green-700 bg-green-100 border border-green-200">
+                  <FaCheckCircle className="w-3 h-3 sm:w-4 sm:h-4 mr-2" />
                   Approved
                 </div>
               )}
@@ -417,24 +419,24 @@ export default function ProjectDetails() {
         </div>
 
         {/* Funding Progress Card */}
-        <div className="bg-white rounded-xl shadow-sm border p-6 mb-6">
-          <div className="flex items-center mb-4">
-            <FaChartLine className="text-emerald-600 text-xl mr-3" />
-            <h2 className="text-xl font-bold text-gray-900">Funding Progress</h2>
+        <div className="bg-white rounded-xl shadow-sm border p-4 sm:p-6 mb-4 sm:mb-6">
+          <div className="flex items-center mb-3 sm:mb-4">
+            <FaChartLine className="text-emerald-600 text-lg sm:text-xl mr-2 sm:mr-3" />
+            <h2 className="text-lg sm:text-xl font-bold text-gray-900">Funding Progress</h2>
           </div>
           
-          <div className="mb-4">
+          <div className="mb-3 sm:mb-4">
             <div className="flex justify-between items-center mb-2">
-              <span className="text-sm font-semibold text-gray-700">Progress</span>
-              <span className="text-sm font-bold text-emerald-600">{progressPercentage.toFixed(0)}%</span>
+              <span className="text-xs sm:text-sm font-semibold text-gray-700">Progress</span>
+              <span className="text-xs sm:text-sm font-bold text-emerald-600">{progressPercentage.toFixed(0)}%</span>
             </div>
-            <div className="w-full bg-gray-200 rounded-full h-3 mb-4">
+            <div className="w-full bg-gray-200 rounded-full h-2 sm:h-3 mb-3 sm:mb-4">
               <div
-                className="bg-gradient-to-r from-emerald-500 to-blue-500 h-3 rounded-full transition-all duration-500"
+                className="bg-gradient-to-r from-emerald-500 to-blue-500 h-2 sm:h-3 rounded-full transition-all duration-500"
                 style={{ width: `${progressPercentage}%` }}
               ></div>
             </div>
-            <div className="flex justify-between text-lg">
+            <div className="flex justify-between text-sm sm:text-lg flex-wrap gap-2">
               <span className="font-bold text-gray-900">{formatCurrency(project.currentFunding)}</span>
               <span className="text-gray-600">Target: {formatCurrency(project.fundingGoal)}</span>
             </div>
@@ -442,27 +444,28 @@ export default function ProjectDetails() {
         </div>
 
         {/* Tabs */}
-        <div className="bg-white rounded-xl shadow-sm border mb-6">
-          <div className="border-b border-gray-200">
-            <nav className="flex space-x-8 px-6">
+        <div className="bg-white rounded-xl shadow-sm border mb-4 sm:mb-6">
+          <div className="border-b border-gray-200 overflow-x-auto">
+            <nav className="flex px-3 sm:px-6 min-w-max">
               {tabs.map((tab) => (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center py-4 px-2 border-b-2 font-medium text-sm transition-colors duration-300 ${
+                  className={`flex items-center py-3 sm:py-4 px-2 sm:px-2 border-b-2 font-medium text-xs sm:text-sm transition-colors duration-300 whitespace-nowrap ${
                     activeTab === tab.id
                       ? "border-emerald-500 text-emerald-600"
                       : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
                   }`}
                 >
-                  <tab.icon className="w-4 h-4 mr-2" />
-                  {tab.label}
+                  <tab.icon className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+                  <span className="hidden sm:inline">{tab.label}</span>
+                  <span className="sm:hidden">{tab.label.split(' ')[0]}</span>
                 </button>
               ))}
             </nav>
           </div>
 
-          <div className="p-6">
+          <div className="p-4 sm:p-6">
             {/* Overview Tab */}
             {activeTab === "overview" && (
               <div className="space-y-6">

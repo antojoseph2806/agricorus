@@ -576,127 +576,127 @@ export default function AddProject() {
 
   // Step 3: Land Details (simplified for demo)
   const renderLandDetailsStep = () => (
-    <div className="space-y-6">
-      <div className="text-center mb-6">
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">Land Details</h2>
-        <p className="text-gray-600">Provide comprehensive information about your land</p>
+    <div className="space-y-4 sm:space-y-6">
+      <div className="text-center mb-4 sm:mb-6">
+        <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">Land Details</h2>
+        <p className="text-sm sm:text-base text-gray-600">Provide comprehensive information about your land</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">State *</label>
+          <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">State *</label>
           <input
             type="text"
             placeholder="e.g., Karnataka"
             value={landDetails.state}
             onChange={(e) => setLandDetails({ ...landDetails, state: e.target.value })}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+            className="w-full px-3 sm:px-4 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">District *</label>
+          <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">District *</label>
           <input
             type="text"
             placeholder="e.g., Bangalore Rural"
             value={landDetails.district}
             onChange={(e) => setLandDetails({ ...landDetails, district: e.target.value })}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+            className="w-full px-3 sm:px-4 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Tehsil *</label>
+          <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">Tehsil *</label>
           <input
             type="text"
             placeholder="e.g., Devanahalli"
             value={landDetails.tehsil}
             onChange={(e) => setLandDetails({ ...landDetails, tehsil: e.target.value })}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+            className="w-full px-3 sm:px-4 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Village *</label>
+          <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">Village *</label>
           <input
             type="text"
             placeholder="e.g., Chikkajala"
             value={landDetails.village}
             onChange={(e) => setLandDetails({ ...landDetails, village: e.target.value })}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+            className="w-full px-3 sm:px-4 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Panchayat *</label>
+          <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">Panchayat *</label>
           <input
             type="text"
             placeholder="e.g., Chikkajala Gram Panchayat"
             value={landDetails.panchayat}
             onChange={(e) => setLandDetails({ ...landDetails, panchayat: e.target.value })}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+            className="w-full px-3 sm:px-4 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Municipality</label>
+          <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">Municipality</label>
           <input
             type="text"
             placeholder="e.g., Devanahalli Municipality (if applicable)"
             value={landDetails.municipality}
             onChange={(e) => setLandDetails({ ...landDetails, municipality: e.target.value })}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+            className="w-full px-3 sm:px-4 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Street Address</label>
+          <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">Street Address</label>
           <input
             type="text"
             placeholder="e.g., Near Village School"
             value={landDetails.street}
             onChange={(e) => setLandDetails({ ...landDetails, street: e.target.value })}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+            className="w-full px-3 sm:px-4 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Landmark</label>
+          <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">Landmark</label>
           <input
             type="text"
             placeholder="e.g., Opposite Water Tank"
             value={landDetails.landmark}
             onChange={(e) => setLandDetails({ ...landDetails, landmark: e.target.value })}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+            className="w-full px-3 sm:px-4 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Pincode *</label>
+          <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">Pincode *</label>
           <input
             type="text"
             placeholder="e.g., 562110"
             value={landDetails.pincode}
             onChange={(e) => setLandDetails({ ...landDetails, pincode: e.target.value })}
             maxLength={6}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+            className="w-full px-3 sm:px-4 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Survey Number *</label>
+          <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">Survey Number *</label>
           <input
             type="text"
             placeholder="e.g., 123/4A"
             value={landDetails.surveyNumber}
             onChange={(e) => setLandDetails({ ...landDetails, surveyNumber: e.target.value })}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+            className="w-full px-3 sm:px-4 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Sub-Division Number</label>
+          <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">Sub-Division Number</label>
           <input
             type="text"
             placeholder="e.g., 4A (if applicable)"
             value={landDetails.subDivisionNumber}
             onChange={(e) => setLandDetails({ ...landDetails, subDivisionNumber: e.target.value })}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+            className="w-full px-3 sm:px-4 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Land Area *</label>
-          <div className="flex space-x-2">
+          <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">Land Area *</label>
+          <div className="flex gap-2">
             <input
               type="number"
               placeholder="e.g., 2.5"
@@ -704,12 +704,12 @@ export default function AddProject() {
               onChange={(e) => setLandDetails({ ...landDetails, landAreaValue: e.target.value })}
               step="0.1"
               min="0.1"
-              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+              className="flex-1 px-3 sm:px-4 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
             />
             <select
               value={landDetails.landAreaUnit}
               onChange={(e) => setLandDetails({ ...landDetails, landAreaUnit: e.target.value })}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+              className="px-2 sm:px-4 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
             >
               <option value="">Unit *</option>
               <option value="ACRE">Acre</option>
@@ -720,11 +720,11 @@ export default function AddProject() {
           </div>
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Land Type *</label>
+          <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">Land Type *</label>
           <select
             value={landDetails.landType}
             onChange={(e) => setLandDetails({ ...landDetails, landType: e.target.value })}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+            className="w-full px-3 sm:px-4 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
           >
             <option value="">Select Land Type</option>
             <option value="AGRICULTURAL">Agricultural</option>
@@ -735,11 +735,11 @@ export default function AddProject() {
           </select>
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Soil Type</label>
+          <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">Soil Type</label>
           <select
             value={landDetails.soilType}
             onChange={(e) => setLandDetails({ ...landDetails, soilType: e.target.value })}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+            className="w-full px-3 sm:px-4 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
           >
             <option value="">Select Soil Type</option>
             <option value="ALLUVIAL">Alluvial</option>
@@ -752,14 +752,14 @@ export default function AddProject() {
           </select>
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Irrigation Source</label>
+          <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">Irrigation Source</label>
           <select
             value={landDetails.irrigationSource}
             onChange={(e) => setLandDetails({ ...landDetails, irrigationSource: e.target.value })}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+            className="w-full px-3 sm:px-4 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
           >
             <option value="">Select Irrigation Source</option>
-            <option value="BORE_WELL">Bore Well</option>
+            <option value="BORE_WELL">Bore Well</option>on>
             <option value="CANAL">Canal</option>
             <option value="RIVER">River</option>
             <option value="POND">Pond</option>
@@ -769,25 +769,25 @@ export default function AddProject() {
           </select>
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Latitude *</label>
+          <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">Latitude *</label>
           <input
             type="number"
             placeholder="e.g., 13.1986"
             value={landDetails.latitude}
             onChange={(e) => setLandDetails({ ...landDetails, latitude: e.target.value })}
             step="any"
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+            className="w-full px-3 sm:px-4 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Longitude *</label>
+          <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">Longitude *</label>
           <input
             type="number"
             placeholder="e.g., 77.7066"
             value={landDetails.longitude}
             onChange={(e) => setLandDetails({ ...landDetails, longitude: e.target.value })}
             step="any"
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+            className="w-full px-3 sm:px-4 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
           />
         </div>
         <div className="flex items-end">
@@ -795,14 +795,15 @@ export default function AddProject() {
             type="button"
             onClick={getCurrentLocation}
             disabled={geoLocationLoading}
-            className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-400 flex items-center justify-center"
+            className="w-full px-3 sm:px-4 py-2 text-sm sm:text-base bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-400 flex items-center justify-center"
           >
             {geoLocationLoading ? (
-              <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2"></div>
+              <div className="w-3 h-3 sm:w-4 sm:h-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2"></div>
             ) : (
-              <MapPin className="w-4 h-4 mr-2" />
+              <MapPin className="w-3 h-3 sm:w-4 sm:h-4 mr-2" />
             )}
-            Get Current Location
+            <span className="hidden sm:inline">Get Current Location</span>
+            <span className="sm:hidden">Get Location</span>
           </button>
         </div>
       </div>
@@ -811,19 +812,19 @@ export default function AddProject() {
 
   // Step 4: Land Ownership
   const renderLandOwnershipStep = () => (
-    <div className="space-y-6">
-      <div className="text-center mb-6">
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">Land Ownership</h2>
-        <p className="text-gray-600">Provide ownership details and supporting documents</p>
+    <div className="space-y-4 sm:space-y-6">
+      <div className="text-center mb-4 sm:mb-6">
+        <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">Land Ownership</h2>
+        <p className="text-sm sm:text-base text-gray-600">Provide ownership details and supporting documents</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Ownership Type *</label>
+          <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">Ownership Type *</label>
           <select
             value={landOwnership.ownershipType}
             onChange={(e) => setLandOwnership({ ...landOwnership, ownershipType: e.target.value })}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+            className="w-full px-3 sm:px-4 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
           >
             <option value="">Select Ownership Type</option>
             <option value="OWNED">Owned</option>
@@ -833,21 +834,21 @@ export default function AddProject() {
           </select>
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Owner Name *</label>
+          <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">Owner Name *</label>
           <input
             type="text"
             placeholder="e.g., Rajesh Kumar"
             value={landOwnership.ownerName}
             onChange={(e) => setLandOwnership({ ...landOwnership, ownerName: e.target.value })}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+            className="w-full px-3 sm:px-4 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Relation to Owner *</label>
+          <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">Relation to Owner *</label>
           <select
             value={landOwnership.relationToOwner}
             onChange={(e) => setLandOwnership({ ...landOwnership, relationToOwner: e.target.value })}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+            className="w-full px-3 sm:px-4 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
           >
             <option value="">Select Relation</option>
             <option value="SELF">Self</option>
@@ -863,16 +864,16 @@ export default function AddProject() {
 
       {/* Ownership Documents */}
       <div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Ownership Documents</h3>
+        <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4">Ownership Documents</h3>
         
         {/* Add Document Form */}
-        <div className="bg-gray-50 p-4 rounded-lg mb-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+        <div className="bg-gray-50 p-3 sm:p-4 rounded-lg mb-3 sm:mb-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4 mb-3 sm:mb-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Document Type</label>
+              <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">Document Type</label>
               <select
                 id="docType"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                className="w-full px-3 sm:px-4 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
               >
                 <option value="">Select Document Type</option>
                 <option value="PATTA">Patta</option>
@@ -886,22 +887,22 @@ export default function AddProject() {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Document Number</label>
+              <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">Document Number</label>
               <input
                 type="text"
                 id="docNumber"
                 placeholder="e.g., PATTA/2023/001"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                className="w-full px-3 sm:px-4 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Upload Document</label>
+              <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">Upload Document</label>
               <input
                 type="file"
                 id="docFile"
                 accept=".pdf,.jpg,.jpeg,.png"
                 ref={documentInputRef}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                className="w-full px-3 sm:px-4 py-2 text-xs sm:text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
               />
             </div>
           </div>
@@ -919,9 +920,9 @@ export default function AddProject() {
                 if (documentInputRef.current) documentInputRef.current.value = '';
               }
             }}
-            className="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 flex items-center"
+            className="px-3 sm:px-4 py-2 text-sm sm:text-base bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 flex items-center"
           >
-            <FileCheck className="w-4 h-4 mr-2" />
+            <FileCheck className="w-3 h-3 sm:w-4 sm:h-4 mr-2" />
             Add Document
           </button>
         </div>
@@ -931,17 +932,17 @@ export default function AddProject() {
           <div className="space-y-2">
             {landOwnership.documents.map((doc, index) => (
               <div key={index} className="flex items-center justify-between bg-white p-3 border rounded-lg">
-                <div>
-                  <p className="font-medium">{doc.type.replace('_', ' ')}</p>
-                  <p className="text-sm text-gray-600">{doc.documentNumber}</p>
-                  <p className="text-sm text-gray-500">{doc.file.name}</p>
+                <div className="min-w-0 flex-1">
+                  <p className="font-medium text-sm sm:text-base truncate">{doc.type.replace('_', ' ')}</p>
+                  <p className="text-xs sm:text-sm text-gray-600 truncate">{doc.documentNumber}</p>
+                  <p className="text-xs sm:text-sm text-gray-500 truncate">{doc.file.name}</p>
                 </div>
                 <button
                   type="button"
                   onClick={() => removeOwnershipDocument(index)}
-                  className="text-red-600 hover:text-red-800"
+                  className="text-red-600 hover:text-red-800 flex-shrink-0 ml-2"
                 >
-                  <XCircle className="w-5 h-5" />
+                  <XCircle className="w-4 h-4 sm:w-5 sm:h-5" />
                 </button>
               </div>
             ))}
@@ -953,18 +954,18 @@ export default function AddProject() {
 
   // Step 5: Media Upload
   const renderMediaUploadStep = () => (
-    <div className="space-y-6">
-      <div className="text-center mb-6">
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">Land Media</h2>
-        <p className="text-gray-600">Upload geo-tagged photos and videos of your land</p>
+    <div className="space-y-4 sm:space-y-6">
+      <div className="text-center mb-4 sm:mb-6">
+        <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">Land Media</h2>
+        <p className="text-sm sm:text-base text-gray-600">Upload geo-tagged photos and videos of your land</p>
       </div>
 
-      <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
-        <div className="flex items-start">
-          <Info className="w-5 h-5 text-yellow-600 mr-2 mt-0.5" />
+      <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 sm:p-4 mb-4 sm:mb-6">
+        <div className="flex items-start gap-2">
+          <Info className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
           <div>
-            <h3 className="font-semibold text-yellow-900 text-sm">Media Requirements</h3>
-            <ul className="text-yellow-800 text-sm mt-1 space-y-1">
+            <h3 className="font-semibold text-yellow-900 text-xs sm:text-sm">Media Requirements</h3>
+            <ul className="text-yellow-800 text-xs sm:text-sm mt-1 space-y-1">
               <li>• Minimum 5 photos required</li>
               <li>• Minimum 1 video required</li>
               <li>• All media will be automatically geo-tagged</li>
@@ -977,12 +978,12 @@ export default function AddProject() {
 
       {/* Photo Upload */}
       <div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-          <Camera className="w-5 h-5 mr-2" />
+        <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4 flex items-center">
+          <Camera className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
           Land Photos ({landMedia.photos.length}/5 minimum)
         </h3>
         
-        <div className="mb-4">
+        <div className="mb-3 sm:mb-4">
           <input
             type="file"
             ref={photoInputRef}
@@ -994,40 +995,40 @@ export default function AddProject() {
           <button
             type="button"
             onClick={() => photoInputRef.current?.click()}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center"
+            className="px-3 sm:px-4 py-2 text-sm sm:text-base bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center"
           >
-            <Upload className="w-4 h-4 mr-2" />
+            <Upload className="w-3 h-3 sm:w-4 sm:h-4 mr-2" />
             Upload Photos
           </button>
         </div>
 
         {landMedia.photos.length > 0 && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
             {landMedia.photos.map((photo, index) => (
-              <div key={index} className="border rounded-lg p-3">
+              <div key={index} className="border rounded-lg p-2 sm:p-3">
                 <img
                   src={photo.preview}
                   alt={`Land photo ${index + 1}`}
-                  className="w-full h-32 object-cover rounded mb-2"
+                  className="w-full h-28 sm:h-32 object-cover rounded mb-2"
                 />
                 <input
                   type="text"
                   placeholder="Photo description..."
                   value={photo.description}
                   onChange={(e) => updateMediaDescription(index, 'photos', e.target.value)}
-                  className="w-full px-2 py-1 text-sm border border-gray-300 rounded mb-2"
+                  className="w-full px-2 py-1 text-xs sm:text-sm border border-gray-300 rounded mb-2"
                 />
                 {photo.geoTag && (
-                  <p className="text-xs text-green-600 mb-2">
+                  <p className="text-xs text-green-600 mb-2 truncate">
                     ✓ Geo-tagged: {photo.geoTag.latitude.toFixed(6)}, {photo.geoTag.longitude.toFixed(6)}
                   </p>
                 )}
                 <button
                   type="button"
                   onClick={() => removeMediaFile(index, 'photos')}
-                  className="text-red-600 hover:text-red-800 text-sm flex items-center"
+                  className="text-red-600 hover:text-red-800 text-xs sm:text-sm flex items-center"
                 >
-                  <XCircle className="w-4 h-4 mr-1" />
+                  <XCircle className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
                   Remove
                 </button>
               </div>
@@ -1038,12 +1039,12 @@ export default function AddProject() {
 
       {/* Video Upload */}
       <div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-          <Video className="w-5 h-5 mr-2" />
+        <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4 flex items-center">
+          <Video className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
           Land Videos ({landMedia.videos.length}/1 minimum)
         </h3>
         
-        <div className="mb-4">
+        <div className="mb-3 sm:mb-4">
           <input
             type="file"
             ref={videoInputRef}
@@ -1055,40 +1056,40 @@ export default function AddProject() {
           <button
             type="button"
             onClick={() => videoInputRef.current?.click()}
-            className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 flex items-center"
+            className="px-3 sm:px-4 py-2 text-sm sm:text-base bg-purple-600 text-white rounded-lg hover:bg-purple-700 flex items-center"
           >
-            <Upload className="w-4 h-4 mr-2" />
+            <Upload className="w-3 h-3 sm:w-4 sm:h-4 mr-2" />
             Upload Videos
           </button>
         </div>
 
         {landMedia.videos.length > 0 && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
             {landMedia.videos.map((video, index) => (
-              <div key={index} className="border rounded-lg p-3">
+              <div key={index} className="border rounded-lg p-2 sm:p-3">
                 <video
                   src={video.preview}
                   controls
-                  className="w-full h-32 object-cover rounded mb-2"
+                  className="w-full h-28 sm:h-32 object-cover rounded mb-2"
                 />
                 <input
                   type="text"
                   placeholder="Video description..."
                   value={video.description}
                   onChange={(e) => updateMediaDescription(index, 'videos', e.target.value)}
-                  className="w-full px-2 py-1 text-sm border border-gray-300 rounded mb-2"
+                  className="w-full px-2 py-1 text-xs sm:text-sm border border-gray-300 rounded mb-2"
                 />
                 {video.geoTag && (
-                  <p className="text-xs text-green-600 mb-2">
+                  <p className="text-xs text-green-600 mb-2 truncate">
                     ✓ Geo-tagged: {video.geoTag.latitude.toFixed(6)}, {video.geoTag.longitude.toFixed(6)}
                   </p>
                 )}
                 <button
                   type="button"
                   onClick={() => removeMediaFile(index, 'videos')}
-                  className="text-red-600 hover:text-red-800 text-sm flex items-center"
+                  className="text-red-600 hover:text-red-800 text-xs sm:text-sm flex items-center"
                 >
-                  <XCircle className="w-4 h-4 mr-1" />
+                  <XCircle className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
                   Remove
                 </button>
               </div>
