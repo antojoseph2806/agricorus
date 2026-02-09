@@ -232,16 +232,16 @@ const VendorKycManagement: React.FC = () => {
 
   return (
     <Layout>
-      <div className="space-y-6">
+      <div className="space-y-4 sm:space-y-6">
         {/* Header */}
-        <div className="flex justify-between items-center">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">Vendor KYC Management</h1>
-            <p className="text-gray-600">Review and manage vendor KYC submissions</p>
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4">
+          <div className="w-full sm:w-auto">
+            <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Vendor KYC Management</h1>
+            <p className="text-sm sm:text-base text-gray-600">Review and manage vendor KYC submissions</p>
           </div>
           <button
             onClick={() => window.location.reload()}
-            className="flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition"
+            className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition text-sm sm:text-base"
           >
             <RefreshCw className="w-4 h-4" />
             Refresh
@@ -249,61 +249,61 @@ const VendorKycManagement: React.FC = () => {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-          <div className="bg-white p-6 rounded-lg shadow border">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
+          <div className="bg-white p-4 sm:p-6 rounded-lg shadow border">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Total Requests</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.TOTAL}</p>
+                <p className="text-xs sm:text-sm font-medium text-gray-600">Total Requests</p>
+                <p className="text-xl sm:text-2xl font-bold text-gray-900">{stats.TOTAL}</p>
               </div>
-              <Users className="w-8 h-8 text-gray-400" />
+              <Users className="w-6 h-6 sm:w-8 sm:h-8 text-gray-400" />
             </div>
           </div>
           
-          <div className="bg-white p-6 rounded-lg shadow border">
+          <div className="bg-white p-4 sm:p-6 rounded-lg shadow border">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Pending</p>
-                <p className="text-2xl font-bold text-yellow-600">{stats.PENDING}</p>
+                <p className="text-xs sm:text-sm font-medium text-gray-600">Pending</p>
+                <p className="text-xl sm:text-2xl font-bold text-yellow-600">{stats.PENDING}</p>
               </div>
-              <Clock className="w-8 h-8 text-yellow-400" />
+              <Clock className="w-6 h-6 sm:w-8 sm:h-8 text-yellow-400" />
             </div>
           </div>
           
-          <div className="bg-white p-6 rounded-lg shadow border">
+          <div className="bg-white p-4 sm:p-6 rounded-lg shadow border">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Submitted</p>
-                <p className="text-2xl font-bold text-blue-600">{stats.SUBMITTED}</p>
+                <p className="text-xs sm:text-sm font-medium text-gray-600">Submitted</p>
+                <p className="text-xl sm:text-2xl font-bold text-blue-600">{stats.SUBMITTED}</p>
               </div>
-              <AlertCircle className="w-8 h-8 text-blue-400" />
+              <AlertCircle className="w-6 h-6 sm:w-8 sm:h-8 text-blue-400" />
             </div>
           </div>
           
-          <div className="bg-white p-6 rounded-lg shadow border">
+          <div className="bg-white p-4 sm:p-6 rounded-lg shadow border">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Verified</p>
-                <p className="text-2xl font-bold text-green-600">{stats.VERIFIED}</p>
+                <p className="text-xs sm:text-sm font-medium text-gray-600">Verified</p>
+                <p className="text-xl sm:text-2xl font-bold text-green-600">{stats.VERIFIED}</p>
               </div>
-              <CheckCircle className="w-8 h-8 text-green-400" />
+              <CheckCircle className="w-6 h-6 sm:w-8 sm:h-8 text-green-400" />
             </div>
           </div>
           
-          <div className="bg-white p-6 rounded-lg shadow border">
+          <div className="bg-white p-4 sm:p-6 rounded-lg shadow border">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Rejected</p>
-                <p className="text-2xl font-bold text-red-600">{stats.REJECTED}</p>
+                <p className="text-xs sm:text-sm font-medium text-gray-600">Rejected</p>
+                <p className="text-xl sm:text-2xl font-bold text-red-600">{stats.REJECTED}</p>
               </div>
-              <XCircle className="w-8 h-8 text-red-400" />
+              <XCircle className="w-6 h-6 sm:w-8 sm:h-8 text-red-400" />
             </div>
           </div>
         </div>
 
         {/* Filters */}
-        <div className="bg-white p-4 rounded-lg shadow border">
-          <div className="flex flex-col md:flex-row gap-4">
+        <div className="bg-white p-3 sm:p-4 rounded-lg shadow border">
+          <div className="flex flex-col md:flex-row gap-3 sm:gap-4">
             <div className="flex-1">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
@@ -312,16 +312,16 @@ const VendorKycManagement: React.FC = () => {
                   placeholder="Search by business name, owner name, email, or PAN..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                  className="w-full pl-10 pr-3 sm:pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm sm:text-base"
                 />
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <Filter className="w-4 h-4 text-gray-400" />
+              <Filter className="w-4 h-4 text-gray-400 flex-shrink-0" />
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm sm:text-base"
               >
                 <option value="ALL">All Status</option>
                 <option value="PENDING">Pending</option>
@@ -333,9 +333,59 @@ const VendorKycManagement: React.FC = () => {
           </div>
         </div>
 
-        {/* KYC Requests Table */}
+        {/* KYC Requests Table/Cards */}
         <div className="bg-white rounded-lg shadow border overflow-hidden">
-          <div className="overflow-x-auto">
+          {/* Mobile Card View */}
+          <div className="block lg:hidden divide-y divide-gray-200">
+            {kycRequests.map((request) => (
+              <div key={request._id} className="p-4 hover:bg-gray-50">
+                <div className="space-y-3">
+                  <div>
+                    <div className="text-sm font-medium text-gray-900 truncate">{request.ownerName}</div>
+                    <div className="text-xs text-gray-500 truncate">{request.email}</div>
+                    <div className="text-xs text-gray-500">{request.phone}</div>
+                  </div>
+                  
+                  <div className="bg-gray-50 rounded-lg p-3 space-y-2">
+                    <div>
+                      <p className="text-xs text-gray-500">Business Name</p>
+                      <p className="text-sm font-medium text-gray-900 truncate">{request.businessName}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-500">Business Type</p>
+                      <p className="text-sm text-gray-900">{request.businessType}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-500">Status</p>
+                      <div className="flex items-center gap-2 mt-1">
+                        {getStatusIcon(request.kycStatus)}
+                        <span className={getStatusBadge(request.kycStatus)}>
+                          {request.kycStatus}
+                        </span>
+                      </div>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-500">Submitted</p>
+                      <p className="text-sm text-gray-900">
+                        {request.submittedAt ? new Date(request.submittedAt).toLocaleDateString() : 'Not submitted'}
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <button
+                    onClick={() => openModal(request)}
+                    className="w-full flex items-center justify-center gap-1 text-emerald-600 hover:text-emerald-900 text-sm font-medium py-2 border border-emerald-200 rounded-lg hover:bg-emerald-50 transition"
+                  >
+                    <Eye className="w-4 h-4" />
+                    View Details
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Desktop Table View */}
+          <div className="hidden lg:block overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
@@ -449,53 +499,53 @@ const VendorKycManagement: React.FC = () => {
 
         {/* Modal for KYC Details */}
         {showModal && selectedRequest && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-3 sm:p-4 z-50">
             <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-              <div className="p-6">
-                <div className="flex justify-between items-center mb-6">
-                  <h2 className="text-xl font-bold text-gray-900">KYC Request Details</h2>
+              <div className="p-4 sm:p-6">
+                <div className="flex justify-between items-center mb-4 sm:mb-6 gap-3">
+                  <h2 className="text-lg sm:text-xl font-bold text-gray-900 truncate">KYC Request Details</h2>
                   <button
                     onClick={() => setShowModal(false)}
-                    className="text-gray-400 hover:text-gray-600"
+                    className="text-gray-400 hover:text-gray-600 flex-shrink-0"
                   >
-                    <XCircle className="w-6 h-6" />
+                    <XCircle className="w-5 h-5 sm:w-6 sm:h-6" />
                   </button>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                   {/* Vendor Information */}
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-semibold text-gray-900">Vendor Information</h3>
-                    <div className="space-y-2">
+                  <div className="space-y-3 sm:space-y-4">
+                    <h3 className="text-base sm:text-lg font-semibold text-gray-900">Vendor Information</h3>
+                    <div className="space-y-2 text-sm sm:text-base">
                       <div>
-                        <label className="text-sm font-medium text-gray-500">Owner Name</label>
+                        <label className="text-xs sm:text-sm font-medium text-gray-500">Owner Name</label>
                         <p className="text-sm text-gray-900">{selectedRequest.ownerName}</p>
                       </div>
                       <div>
-                        <label className="text-sm font-medium text-gray-500">Email</label>
-                        <p className="text-sm text-gray-900">{selectedRequest.email}</p>
+                        <label className="text-xs sm:text-sm font-medium text-gray-500">Email</label>
+                        <p className="text-sm text-gray-900 break-all">{selectedRequest.email}</p>
                       </div>
                       <div>
-                        <label className="text-sm font-medium text-gray-500">Phone</label>
+                        <label className="text-xs sm:text-sm font-medium text-gray-500">Phone</label>
                         <p className="text-sm text-gray-900">{selectedRequest.phone}</p>
                       </div>
                       <div>
-                        <label className="text-sm font-medium text-gray-500">Business Name</label>
-                        <p className="text-sm text-gray-900">{selectedRequest.businessName}</p>
+                        <label className="text-xs sm:text-sm font-medium text-gray-500">Business Name</label>
+                        <p className="text-sm text-gray-900 break-words">{selectedRequest.businessName}</p>
                       </div>
                       <div>
-                        <label className="text-sm font-medium text-gray-500">Business Type</label>
+                        <label className="text-xs sm:text-sm font-medium text-gray-500">Business Type</label>
                         <p className="text-sm text-gray-900">{selectedRequest.businessType}</p>
                       </div>
                     </div>
                   </div>
 
                   {/* Status Information */}
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-semibold text-gray-900">Status Information</h3>
-                    <div className="space-y-2">
+                  <div className="space-y-3 sm:space-y-4">
+                    <h3 className="text-base sm:text-lg font-semibold text-gray-900">Status Information</h3>
+                    <div className="space-y-2 text-sm sm:text-base">
                       <div>
-                        <label className="text-sm font-medium text-gray-500">Current Status</label>
+                        <label className="text-xs sm:text-sm font-medium text-gray-500">Current Status</label>
                         <div className="flex items-center gap-2 mt-1">
                           {getStatusIcon(selectedRequest.kycStatus)}
                           <span className={getStatusBadge(selectedRequest.kycStatus)}>
@@ -505,7 +555,7 @@ const VendorKycManagement: React.FC = () => {
                       </div>
                       {selectedRequest.submittedAt && (
                         <div>
-                          <label className="text-sm font-medium text-gray-500">Submitted At</label>
+                          <label className="text-xs sm:text-sm font-medium text-gray-500">Submitted At</label>
                           <p className="text-sm text-gray-900">
                             {new Date(selectedRequest.submittedAt).toLocaleString()}
                           </p>
@@ -513,7 +563,7 @@ const VendorKycManagement: React.FC = () => {
                       )}
                       {selectedRequest.verifiedAt && (
                         <div>
-                          <label className="text-sm font-medium text-gray-500">Verified At</label>
+                          <label className="text-xs sm:text-sm font-medium text-gray-500">Verified At</label>
                           <p className="text-sm text-gray-900">
                             {new Date(selectedRequest.verifiedAt).toLocaleString()}
                           </p>
@@ -521,8 +571,8 @@ const VendorKycManagement: React.FC = () => {
                       )}
                       {selectedRequest.rejectionReason && (
                         <div>
-                          <label className="text-sm font-medium text-gray-500">Rejection Reason</label>
-                          <p className="text-sm text-red-600">{selectedRequest.rejectionReason}</p>
+                          <label className="text-xs sm:text-sm font-medium text-gray-500">Rejection Reason</label>
+                          <p className="text-sm text-red-600 break-words">{selectedRequest.rejectionReason}</p>
                         </div>
                       )}
                     </div>
@@ -531,14 +581,14 @@ const VendorKycManagement: React.FC = () => {
 
                 {/* Actions */}
                 {selectedRequest.kycStatus === 'SUBMITTED' && (
-                  <div className="mt-6 pt-6 border-t">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Actions</h3>
-                    <div className="flex flex-col gap-4">
-                      <div className="flex gap-4">
+                  <div className="mt-4 sm:mt-6 pt-4 sm:pt-6 border-t">
+                    <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4">Actions</h3>
+                    <div className="flex flex-col gap-3 sm:gap-4">
+                      <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
                         <button
                           onClick={() => handleApprove(selectedRequest._id)}
                           disabled={actionLoading}
-                          className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50"
+                          className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 text-sm sm:text-base"
                         >
                           <CheckCircle className="w-4 h-4" />
                           {actionLoading ? 'Processing...' : 'Approve KYC'}
@@ -546,18 +596,18 @@ const VendorKycManagement: React.FC = () => {
                       </div>
                       
                       <div className="space-y-2">
-                        <label className="text-sm font-medium text-gray-700">Rejection Reason</label>
+                        <label className="text-xs sm:text-sm font-medium text-gray-700">Rejection Reason</label>
                         <textarea
                           value={rejectionReason}
                           onChange={(e) => setRejectionReason(e.target.value)}
                           placeholder="Enter reason for rejection..."
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm sm:text-base"
                           rows={3}
                         />
                         <button
                           onClick={() => handleReject(selectedRequest._id)}
                           disabled={actionLoading || !rejectionReason.trim()}
-                          className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50"
+                          className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 text-sm sm:text-base"
                         >
                           <XCircle className="w-4 h-4" />
                           {actionLoading ? 'Processing...' : 'Reject KYC'}
