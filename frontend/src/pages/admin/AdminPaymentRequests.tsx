@@ -466,9 +466,7 @@ const AdminPaymentRequests: React.FC = () => {
 
               {/* Desktop Table View */}
               <div className="hidden lg:block overflow-x-auto">
-              {/* Desktop Table View */}
-              <div className="hidden lg:block overflow-x-auto">
-              <table className="w-full">
+                <table className="w-full">
                 <thead>
                   <tr className="border-b border-gray-200 bg-gray-50">
                     <th className="text-left py-4 px-6 text-gray-700 font-semibold uppercase tracking-wide text-sm">Request Details</th>
@@ -559,7 +557,7 @@ const AdminPaymentRequests: React.FC = () => {
                 </tbody>
               </table>
             </div>
-            </>
+          </>
           )}
         </div>
 
