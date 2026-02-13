@@ -96,7 +96,7 @@ const CustomReports = () => {
       const token = localStorage.getItem("token");
       
       const response = await axios.post(
-        `${(import.meta as any).env.VITE_BACKEND_URL || "https://agricorus.duckdns.org"}/api/vendor/analytics/generate-custom-report`,
+        `${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/vendor/analytics/generate-custom-report`,
         reportConfig,
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -137,7 +137,7 @@ const CustomReports = () => {
       const token = localStorage.getItem("token");
       
       const response = await axios.post(
-        `${(import.meta as any).env.VITE_BACKEND_URL || "https://agricorus.duckdns.org"}/api/vendor/analytics/save-report-config`,
+        `${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/vendor/analytics/save-report-config`,
         reportConfig,
         {
           headers: { Authorization: `Bearer ${token}` }

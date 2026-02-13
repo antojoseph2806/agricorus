@@ -67,7 +67,7 @@ const AdminViewSpecificLand: React.FC = () => {
       }
 
       try {
-        const response = await fetch(`https://agricorus.duckdns.org/api/admin/lands/${id}`, {
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/admin/lands/${id}`, {
           headers: {
             'Authorization': `Bearer ${token}`,
           },

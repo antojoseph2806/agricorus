@@ -42,11 +42,11 @@ const InventoryWidget = () => {
       
       const [overviewRes, alertsRes] = await Promise.all([
         axios.get(
-          `${(import.meta as any).env.VITE_BACKEND_URL || "https://agricorus.duckdns.org"}/api/vendor/inventory`,
+          `${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/vendor/inventory`,
           { headers: { Authorization: `Bearer ${token}` } }
         ),
         axios.get(
-          `${(import.meta as any).env.VITE_BACKEND_URL || "https://agricorus.duckdns.org"}/api/vendor/inventory/alerts`,
+          `${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/vendor/inventory/alerts`,
           { headers: { Authorization: `Bearer ${token}` } }
         )
       ]);

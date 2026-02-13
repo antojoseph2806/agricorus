@@ -26,7 +26,7 @@ export default function EditProject() {
       try {
         setLoading(true);
         const res = await axios.get(
-          `https://agricorus.duckdns.org/api/projects/${id}`,
+          `${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/projects/${id}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         const project = res.data;
@@ -61,7 +61,7 @@ export default function EditProject() {
     e.preventDefault();
     try {
       await axios.put(
-        `https://agricorus.duckdns.org/api/projects/${id}`,
+        `${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/projects/${id}`,
         {
           title: form.title,
           description: form.description,

@@ -123,7 +123,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, onToggleSidebar, isMob
     const token = localStorage.getItem('token');
     if (token) {
       try {
-        await fetch('https://agricorus.duckdns.org/api/auth/logout', {
+        await fetch(`${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/auth/logout`, {
           method: 'POST',
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -302,7 +302,7 @@ const UserProfileDropdown: React.FC = () => {
       if (!token) return;
       
       try {
-        const response = await fetch("https://agricorus.duckdns.org/api/profile", {
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/profile`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const data = await response.json();
@@ -310,7 +310,7 @@ const UserProfileDropdown: React.FC = () => {
           // Add backend URL if the image path doesn't already include it
           const imageUrl = data.profileImage.startsWith('http') 
             ? data.profileImage 
-            : `https://agricorus.duckdns.org${data.profileImage}`;
+            : `${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}${data.profileImage}`;
           setProfileImage(imageUrl);
         }
       } catch (error) {
@@ -325,7 +325,7 @@ const UserProfileDropdown: React.FC = () => {
     const token = localStorage.getItem("token");
     if (token) {
       try {
-        await fetch("https://agricorus.duckdns.org/api/auth/logout", {
+        await fetch(`${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/auth/logout`, {
           method: "POST",
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -501,21 +501,21 @@ const LandownerDashboard: React.FC = () => {
 
       try {
         // Fetch lands count
-        const landsResponse = await fetch('https://agricorus.duckdns.org/api/landowner/lands/my', {
+        const landsResponse = await fetch(`${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/landowner/lands/my`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         const landsData = await landsResponse.json();
         const totalLands = Array.isArray(landsData) ? landsData.length : 0;
 
         // Fetch active leases count
-        const leasesResponse = await fetch('https://agricorus.duckdns.org/api/landowner/leases/active', {
+        const leasesResponse = await fetch(`${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/landowner/leases/active`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         const leasesData = await leasesResponse.json();
         const activeLeases = Array.isArray(leasesData) ? leasesData.length : 0;
 
         // Fetch payment history to calculate total earnings
-        const paymentsResponse = await fetch('https://agricorus.duckdns.org/api/landowner/payments/history', {
+        const paymentsResponse = await fetch(`${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/landowner/payments/history`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         const paymentsData = await paymentsResponse.json();

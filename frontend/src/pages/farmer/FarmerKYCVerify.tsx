@@ -32,7 +32,7 @@ const FarmerKYCVerify: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
 
-  const API_URL = "https://agricorus.duckdns.org";
+  const API_URL = `${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}`;
 
   useEffect(() => {
     if (!selectedFile) {

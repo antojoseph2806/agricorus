@@ -51,7 +51,7 @@ const PublicLandDetail: React.FC = () => {
   const [userRole, setUserRole] = useState<string | null>(null);
 
   const backendUrl =
-    (import.meta as any).env.VITE_BACKEND_URL || "https://agricorus.duckdns.org";
+    import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
 
   /** -------------------- Check Authentication & Role -------------------- */
   useEffect(() => {

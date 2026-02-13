@@ -46,7 +46,7 @@ const Orders = () => {
     try {
       setLoading(true);
       const token = localStorage.getItem("token");
-      const res = await axios.get("https://agricorus.duckdns.org/api/orders", {
+      const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/orders`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 

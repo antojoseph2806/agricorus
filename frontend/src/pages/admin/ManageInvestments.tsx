@@ -37,7 +37,7 @@ const ManageInvestments: React.FC = () => {
   const [selectedInvestment, setSelectedInvestment] = useState<Investment | null>(null);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
 
-  const API_BASE = "https://agricorus.duckdns.org/api/admin/investments";
+  const API_BASE = `${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/admin/investments`;
 
   const getToken = () => localStorage.getItem("token");
 

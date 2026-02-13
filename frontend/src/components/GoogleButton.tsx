@@ -49,7 +49,7 @@ const GoogleButton: React.FC<GoogleButtonProps> = ({ text = 'Continue with Googl
 
       const decoded: GoogleUserPayload = jwtDecode(credentialResponse.credential);
 
-      const res = await fetch('https://agricorus.duckdns.org/api/auth/google', {
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/auth/google`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

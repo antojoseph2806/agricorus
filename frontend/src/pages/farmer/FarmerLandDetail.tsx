@@ -51,7 +51,7 @@ interface Land {
 const FarmerLandDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const backendUrl =
-    (import.meta as any).env.VITE_BACKEND_URL || "https://agricorus.duckdns.org";
+    import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
   const [land, setLand] = useState<Land | null>(null);
   const [loading, setLoading] = useState(true);
   const [requesting, setRequesting] = useState(false);

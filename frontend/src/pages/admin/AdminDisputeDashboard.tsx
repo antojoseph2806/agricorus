@@ -38,7 +38,7 @@ const AdminDisputeDashboard: React.FC = () => {
     try {
       setLoading(true);
       const res = await axios.get(
-        `https://agricorus.duckdns.org/api/landowner/disputes/admin/all${
+        `${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/landowner/disputes/admin/all${
           selectedStatus ? `?status=${selectedStatus}` : ""
         }`,
         {
@@ -64,7 +64,7 @@ const AdminDisputeDashboard: React.FC = () => {
       const adminRemarks = prompt("Enter admin remarks (optional):") || "";
 
       await axios.patch(
-        `https://agricorus.duckdns.org/api/landowner/disputes/admin/${disputeId}/action`,
+        `${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/landowner/disputes/admin/${disputeId}/action`,
         { action, adminRemarks },
         { headers: { Authorization: `Bearer ${token}` } }
       );

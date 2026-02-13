@@ -90,7 +90,7 @@ const PhotoModal: React.FC<PhotoModalProps> = ({
 
         {/* Image */}
         <img
-          src={`${(import.meta as any).env.VITE_BACKEND_URL || 'https://agricorus.duckdns.org'}${currentPhoto.url}`}
+          src={`${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}${currentPhoto.url}`}
           alt={currentPhoto.caption || 'Review photo'}
           className="max-w-full max-h-full object-contain"
         />
@@ -286,7 +286,7 @@ const ReviewDisplay: React.FC<ReviewDisplayProps> = ({
                             className="relative group cursor-pointer"
                           >
                             <img
-                              src={`${(import.meta as any).env.VITE_BACKEND_URL || 'https://agricorus.duckdns.org'}${photo.url}`}
+                              src={`${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}${photo.url}`}
                               alt={photo.caption || 'Review photo'}
                               className="w-20 h-20 object-cover rounded-lg border hover:opacity-90 transition-opacity"
                             />

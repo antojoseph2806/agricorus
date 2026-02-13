@@ -33,7 +33,7 @@ const ActiveLeases: React.FC = () => {
   const [reason, setReason] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
-  const getImageUrl = (path: string) => path?.startsWith('http') ? path : `https://agricorus.duckdns.org/${path}`;
+  const getImageUrl = (path: string) => path?.startsWith('http') ? path : `${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/${path}`;
   const formatCurrency = (n: number) => new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", minimumFractionDigits: 0 }).format(n);
   const getProgress = (l: Lease) => ((l.paymentsMade || 0) / (l.totalPayments || 1)) * 100;
 
@@ -41,7 +41,7 @@ const ActiveLeases: React.FC = () => {
     setLoading(true);
     const token = localStorage.getItem("token");
     try {
-      const res = await fetch("https://agricorus.duckdns.org/api/farmer/leases/active", { headers: { Authorization: `Bearer ${token}` } });
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/farmer/leases/active`, { headers: { Authorization: `Bearer ${token}` } });
       const data = await res.json();
       setLeases(Array.isArray(data) ? data : data.leases || []);
     } catch { setLeases([]); }
@@ -59,13 +59,13 @@ const ActiveLeases: React.FC = () => {
   const handlePayment = async (leaseId: string) => {
     const token = localStorage.getItem("token");
     try {
-      const res = await fetch(`https://agricorus.duckdns.org/api/payments/order/${leaseId}`, { method: "POST", headers: { Authorization: `Bearer ${token}` } });
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/payments/order/${leaseId}`, { method: "POST", headers: { Authorization: `Bearer ${token}` } });
       const order = await res.json();
       if (!order.orderId) { setAlert({ type: "error", message: "Failed to create order." }); return; }
       new window.Razorpay({
         key: order.key, amount: order.amount, currency: order.currency, name: "AgriCorus", order_id: order.orderId,
         handler: async (r: any) => {
-          const v = await fetch("https://agricorus.duckdns.org/api/payments/verify", {
+          const v = await fetch(`${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/payments/verify`, {
             method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
             body: JSON.stringify({ razorpay_order_id: r.razorpay_order_id, razorpay_payment_id: r.razorpay_payment_id, razorpay_signature: r.razorpay_signature, leaseId })
           });
@@ -80,7 +80,7 @@ const ActiveLeases: React.FC = () => {
     if (!category || !reason.trim()) { setAlert({ type: "warning", message: "Fill required fields." }); return; }
     setSubmitting(true);
     try {
-      const res = await fetch("https://agricorus.duckdns.org/api/disputes", {
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/disputes`, {
         method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${localStorage.getItem("token")}` },
         body: JSON.stringify({ leaseId: selectedLeaseId, category, reason })
       });

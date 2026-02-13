@@ -29,7 +29,7 @@ export const KYCStatus = () => {
         throw new Error("Authentication required. Please log in.");
       }
 
-      const response = await fetch("https://agricorus.duckdns.org/api/kyc/status", {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/kyc/status`, {
         method: "GET",
         headers: {
           "Authorization": `Bearer ${token}`,

@@ -41,7 +41,7 @@ const InvestorProfile: React.FC = () => {
       if (!token) return;
       try {
         setLoading(true);
-        const { data } = await axios.get<UserProfile>("https://agricorus.duckdns.org/api/profile", {
+        const { data } = await axios.get<UserProfile>(`${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/profile`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setUser(data);
@@ -51,7 +51,7 @@ const InvestorProfile: React.FC = () => {
           role: data.role || "",
         });
         if (data.profileImage) {
-          setPreview(`https://agricorus.duckdns.org${data.profileImage}`);
+          setPreview(`${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}${data.profileImage}`);
         }
       } catch (err) {
         console.error("Error fetching profile:", err);
@@ -96,7 +96,7 @@ const InvestorProfile: React.FC = () => {
 
     try {
       setLoading(true);
-      const { data } = await axios.put<UserProfile>("https://agricorus.duckdns.org/api/profile", submitData, {
+      const { data } = await axios.put<UserProfile>(`${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/profile`, submitData, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data",
@@ -111,7 +111,7 @@ const InvestorProfile: React.FC = () => {
       });
       setProfileImage(null);
       if (data.profileImage) {
-        setPreview(`https://agricorus.duckdns.org${data.profileImage}`);
+        setPreview(`${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}${data.profileImage}`);
       }
       setIsEditing(false);
       setSaveSuccess(true);
@@ -132,7 +132,7 @@ const InvestorProfile: React.FC = () => {
         phone: user.phone || "",
         role: user.role || "",
       });
-      setPreview(user.profileImage ? `https://agricorus.duckdns.org${user.profileImage}` : null);
+      setPreview(user.profileImage ? `${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}${user.profileImage}` : null);
       setProfileImage(null);
     }
     setIsEditing(false);
@@ -192,7 +192,7 @@ const InvestorProfile: React.FC = () => {
             <div className="relative group">
               <div className="w-20 h-20 sm:w-32 sm:h-32 lg:w-36 lg:h-36 rounded-full bg-gradient-to-br from-emerald-400 to-cyan-500 p-1 shadow-xl">
                 <img
-                  src={preview || (user.profileImage ? `https://agricorus.duckdns.org${user.profileImage}` : DEFAULT_IMAGE_URL)}
+                  src={preview || (user.profileImage ? `${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}${user.profileImage}` : DEFAULT_IMAGE_URL)}
                   alt="Profile"
                   className="w-full h-full object-cover rounded-full bg-white"
                 />

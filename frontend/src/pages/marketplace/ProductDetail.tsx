@@ -10,7 +10,8 @@ import {
   AlertTriangle,
   PackageX,
   FileText,
-  Shield
+  Shield,
+  Zap
 } from "lucide-react";
 
 interface ProductDetail {
@@ -48,7 +49,7 @@ const ProductDetail = () => {
     try {
       setLoading(true);
       const res = await axios.get(
-        `https://agricorus.duckdns.org/api/marketplace/products/${id}`
+        `${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/marketplace/products/${id}`
       );
 
       if (res.data.success) {
@@ -79,7 +80,7 @@ const ProductDetail = () => {
     try {
       const token = localStorage.getItem("token");
       const res = await axios.post(
-        "https://agricorus.duckdns.org/api/cart/add",
+        `${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/cart/add`,
         {
           productId: product._id,
           quantity: quantity,
@@ -91,6 +92,41 @@ const ProductDetail = () => {
 
       if (res.data.success) {
         alert("Item added to cart successfully!");
+      }
+    } catch (error: any) {
+      alert(error.response?.data?.message || "Failed to add to cart");
+    } finally {
+      setAddingToCart(false);
+    }
+  };
+
+  const handleBuyNow = async () => {
+    if (!userRole || !["farmer", "landowner"].includes(userRole)) {
+      alert("Please login as Farmer or Landowner to purchase");
+      navigate("/login");
+      return;
+    }
+
+    if (!product || product.stock < quantity) {
+      alert("Insufficient stock");
+      return;
+    }
+
+    setAddingToCart(true);
+    try {
+      const token = localStorage.getItem("token");
+      const res = await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/cart/add`,
+        {
+          productId: product._id,
+          quantity: quantity,
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      if (res.data.success) {
         navigate("/cart");
       }
     } catch (error: any) {
@@ -175,7 +211,7 @@ const ProductDetail = () => {
             <div>
               <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden mb-3 sm:mb-4">
                 {product.images && product.images.length > 0 ? (
-                  <img src={`https://agricorus.duckdns.org${product.images[selectedImage]}`} alt={product.name} className="w-full h-full object-cover" />
+                  <img src={`${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}${product.images[selectedImage]}`} alt={product.name} className="w-full h-full object-cover" />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center">
                     <Package className="w-16 h-16 sm:w-24 sm:h-24 text-gray-400" />
@@ -189,7 +225,7 @@ const ProductDetail = () => {
                   {product.images.map((image, index) => (
                     <button key={index} onClick={() => setSelectedImage(index)}
                       className={`aspect-square rounded-lg overflow-hidden border-2 ${selectedImage === index ? "border-green-600" : "border-gray-200"}`}>
-                      <img src={`https://agricorus.duckdns.org${image}`} alt={`${product.name} ${index + 1}`} className="w-full h-full object-cover" />
+                      <img src={`${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}${image}`} alt={`${product.name} ${index + 1}`} className="w-full h-full object-cover" />
                     </button>
                   ))}
                 </div>
@@ -260,7 +296,7 @@ const ProductDetail = () => {
                   </div>
                   <div className="space-y-1">
                     {product.safetyDocuments.map((doc, index) => (
-                      <a key={index} href={`https://agricorus.duckdns.org${doc}`} target="_blank" rel="noopener noreferrer"
+                      <a key={index} href={`${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}${doc}`} target="_blank" rel="noopener noreferrer"
                         className="block text-xs sm:text-sm text-yellow-700 hover:text-yellow-900 underline">
                         View Safety Document {index + 1}
                       </a>
@@ -300,17 +336,36 @@ const ProductDetail = () => {
                 </div>
               )}
 
-              {/* Add to Cart Button */}
-              <button onClick={handleAddToCart} disabled={isOutOfStock || addingToCart || quantity > product.stock}
-                className="w-full flex items-center justify-center gap-2 bg-green-600 text-white py-2.5 sm:py-3 rounded-lg font-semibold hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-green-500/30 text-sm sm:text-base">
-                <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5" />
-                {addingToCart ? "Adding to Cart..." : isOutOfStock ? "Out of Stock" : "Add to Cart"}
-              </button>
+              {/* Action Buttons */}
+              <div className="space-y-3">
+                {/* Buy Now Button - Primary */}
+                <button 
+                  onClick={handleBuyNow} 
+                  disabled={isOutOfStock || addingToCart || quantity > product.stock}
+                  className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-emerald-600 to-teal-600 text-white py-3 sm:py-3.5 rounded-xl font-bold hover:from-emerald-700 hover:to-teal-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-emerald-500/30 text-sm sm:text-base group relative overflow-hidden"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
+                  <Zap className="w-4 h-4 sm:w-5 sm:h-5 relative z-10" />
+                  <span className="relative z-10">
+                    {addingToCart ? "Processing..." : isOutOfStock ? "Out of Stock" : "Buy Now"}
+                  </span>
+                </button>
+
+                {/* Add to Cart Button - Secondary */}
+                <button 
+                  onClick={handleAddToCart} 
+                  disabled={isOutOfStock || addingToCart || quantity > product.stock}
+                  className="w-full flex items-center justify-center gap-2 bg-white border-2 border-emerald-600 text-emerald-600 py-3 sm:py-3.5 rounded-xl font-semibold hover:bg-emerald-50 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
+                >
+                  <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5" />
+                  {addingToCart ? "Adding..." : isOutOfStock ? "Out of Stock" : "Add to Cart"}
+                </button>
+              </div>
 
               {product.stockStatus === "LOW_STOCK" && (
-                <p className="mt-2 text-xs sm:text-sm text-yellow-600 flex items-center gap-1">
-                  <AlertTriangle className="w-3 h-3 sm:w-4 sm:h-4" />
-                  Only {product.stock} units left in stock!
+                <p className="mt-3 text-xs sm:text-sm text-amber-600 flex items-center gap-1.5 bg-amber-50 px-3 py-2 rounded-lg">
+                  <AlertTriangle className="w-4 h-4 flex-shrink-0" />
+                  <span>Only {product.stock} units left in stock!</span>
                 </p>
               )}
             </div>

@@ -75,7 +75,7 @@ const ManageProjects: React.FC = () => {
 
   const getAxios = () => {
     return axios.create({
-      baseURL: "https://agricorus.duckdns.org",
+      baseURL: `${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}`,
       headers: { Authorization: `Bearer ${token}` },
     });
   };
@@ -775,7 +775,7 @@ const ManageProjects: React.FC = () => {
                               {selectedProject.landOwnership.documents.map((doc, idx) => (
                                 <a
                                   key={idx}
-                                  href={`https://agricorus.duckdns.org/${doc.filePath}`}
+                                  href={`${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/${doc.filePath}`}
                                   target="_blank"
                                   rel="noopener noreferrer"
                                   className="flex items-center gap-2 text-blue-600 hover:text-blue-700 text-sm"
@@ -808,13 +808,13 @@ const ManageProjects: React.FC = () => {
                               {selectedProject.landMedia.photos.slice(0, 6).map((photo, idx) => (
                                 <a
                                   key={idx}
-                                  href={`https://agricorus.duckdns.org/${photo.filePath}`}
+                                  href={`${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/${photo.filePath}`}
                                   target="_blank"
                                   rel="noopener noreferrer"
                                   className="aspect-square bg-gray-100 rounded-lg overflow-hidden hover:opacity-80 transition"
                                 >
                                   <img
-                                    src={`https://agricorus.duckdns.org/${photo.filePath}`}
+                                    src={`${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/${photo.filePath}`}
                                     alt={`Land photo ${idx + 1}`}
                                     className="w-full h-full object-cover"
                                   />
@@ -835,7 +835,7 @@ const ManageProjects: React.FC = () => {
                               {selectedProject.landMedia.videos.map((video, idx) => (
                                 <a
                                   key={idx}
-                                  href={`https://agricorus.duckdns.org/${video.filePath}`}
+                                  href={`${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/${video.filePath}`}
                                   target="_blank"
                                   rel="noopener noreferrer"
                                   className="flex items-center gap-2 text-blue-600 hover:text-blue-700 text-sm"

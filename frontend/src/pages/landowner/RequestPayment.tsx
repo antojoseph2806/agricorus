@@ -52,7 +52,7 @@ const RequestPayment: React.FC = () => {
   const fetchLeases = async () => {
     try {
       const res = await axios.get(
-        "https://agricorus.duckdns.org/api/leases/owner/eligible-payments",
+        `${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/leases/owner/eligible-payments`,
         { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
       );
       setLeases(res.data);
@@ -66,7 +66,7 @@ const RequestPayment: React.FC = () => {
 
   const fetchPayoutMethods = async () => {
     try {
-      const res = await axios.get("https://agricorus.duckdns.org/api/payouts/", {
+      const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/payouts/`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
       setPayoutMethods(res.data);
@@ -95,7 +95,7 @@ const RequestPayment: React.FC = () => {
     setLoading(true);
     try {
       const res = await axios.post(
-        `https://agricorus.duckdns.org/api/payment-requests/request-payment/${selectedLease}`,
+        `${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/payment-requests/request-payment/${selectedLease}`,
         { payoutMethodId: selectedMethod, amount },
         { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
       );

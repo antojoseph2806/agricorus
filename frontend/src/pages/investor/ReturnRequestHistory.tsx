@@ -82,7 +82,7 @@ const ReturnRequestHistory: React.FC = () => {
       setLoading(true);
       const token = localStorage.getItem("token");
       const res = await axios.get(
-        "https://agricorus.duckdns.org/api/investor/return-requests",
+        `${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/investor/return-requests`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setRequests(res.data.returnRequests || []);
@@ -441,7 +441,7 @@ const ReturnRequestHistory: React.FC = () => {
                               )}
                               {req.paymentReceipt && (
                                 <a
-                                  href={`https://agricorus.duckdns.org${req.paymentReceipt}`}
+                                  href={`${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}${req.paymentReceipt}`}
                                   target="_blank"
                                   rel="noopener noreferrer"
                                   className="flex items-center gap-2 text-purple-600 hover:text-purple-700 font-medium mt-2"

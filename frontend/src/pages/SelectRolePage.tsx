@@ -14,7 +14,7 @@ const SelectRolePage = () => {
     if (!userId || !tempToken) return alert('Invalid session');
 
     try {
-      const res = await axios.post('https://agricorus.duckdns.org/api/auth/set-role', {
+      const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/auth/set-role`, {
         userId,
         role,
       });

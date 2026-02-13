@@ -29,7 +29,7 @@ export default function InvestorProjects() {
         setLoading(true);
         const token = localStorage.getItem("token");
         const role = localStorage.getItem("role");
-        const backendUrl = (import.meta as any).env.VITE_BACKEND_URL || "https://agricorus.duckdns.org";
+        const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
         
         console.log("🔍 Fetching projects from:", `${backendUrl}/api/projects/investor`);
         console.log("🔑 Token exists:", !!token);

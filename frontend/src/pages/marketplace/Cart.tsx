@@ -49,7 +49,7 @@ const Cart: React.FC = () => {
   const [userRole, setUserRole] = useState<string | null>(null);
   const [localQuantities, setLocalQuantities] = useState<Record<string, number>>({});
   const debounceTimers = useRef<Record<string, NodeJS.Timeout>>({});
-  const backendUrl = (import.meta as any).env.VITE_BACKEND_URL || 'https://agricorus.duckdns.org';
+  const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
 
   const fetchCart = async () => {
     try {

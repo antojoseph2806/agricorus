@@ -39,7 +39,7 @@ export default function OngoingProjects() {
       try {
         const token = localStorage.getItem("token");
         const res = await axios.get(
-          "https://agricorus.duckdns.org/api/projects/funded",
+          `${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/projects/funded`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
