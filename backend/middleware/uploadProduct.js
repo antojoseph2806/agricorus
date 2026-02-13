@@ -26,7 +26,7 @@ const storage = new CloudinaryStorage({
       resourceType = 'image';
     } else if (file.fieldname === 'safetyDocuments') {
       folder = 'products/safety-docs';
-      resourceType = 'auto'; // supports PDFs
+      resourceType = 'auto'; // supports both images and PDFs
     }
 
     return {

@@ -45,11 +45,14 @@ const MarketplaceLayout: React.FC<MarketplaceLayoutProps> = ({ children }) => {
     case 'investor':
       return <InvestorLayout>{children}</InvestorLayout>;
     default:
-      // For public access or unknown roles, render without navbar
+      // For public access or unknown roles, render with main navbar
       return (
-        <div className="min-h-screen bg-gray-50">
-          {children}
-        </div>
+        <>
+          <Navbar />
+          <div className="min-h-screen bg-gray-50">
+            {children}
+          </div>
+        </>
       );
   }
 };

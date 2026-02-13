@@ -144,10 +144,10 @@ const Marketplace: React.FC = () => {
 
   return (
     <MarketplaceLayout>
-      <div className="min-h-screen bg-white w-full overflow-x-hidden">
+      <div className="min-h-screen bg-white w-full overflow-x-hidden pt-16">
         
         {/* Search Bar */}
-        <div className="sticky top-0 z-40 bg-white border-b border-gray-100 px-4 py-4">
+        <div className="sticky top-16 z-40 bg-white border-b border-gray-100 px-4 py-4">
           <div className="relative max-w-7xl mx-auto">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
             <input 
