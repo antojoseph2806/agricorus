@@ -309,7 +309,7 @@ const Cart: React.FC = () => {
                     <div className="flex gap-3 sm:gap-4">
                       {/* Image */}
                       <Link to={`/marketplace/product/${item.productId}`} className="w-20 h-20 sm:w-24 sm:h-24 flex-shrink-0 rounded-lg sm:rounded-xl overflow-hidden bg-gray-100">
-                        <img src={item.image ? `${backendUrl}${item.image}` : '/placeholder-product.jpg'}
+                        <img src={item.image || '/placeholder-product.jpg'}
                           alt={item.productName} className="w-full h-full object-cover hover:scale-105 transition-transform" />
                       </Link>
 

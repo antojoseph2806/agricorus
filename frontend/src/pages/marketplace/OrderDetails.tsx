@@ -292,7 +292,7 @@ const OrderDetails: React.FC = () => {
                       <div key={index} className="p-5">
                         <div className="flex gap-4">
                           <Link to={`/marketplace/product/${item.productId._id}`} className="w-20 h-20 flex-shrink-0 rounded-xl overflow-hidden bg-gray-100">
-                            <img src={item.productId.images?.[0] ? `${backendUrl}${item.productId.images[0]}` : '/placeholder-product.jpg'}
+                            <img src={item.productId.images?.[0] || '/placeholder-product.jpg'}
                               alt={item.productName} className="w-full h-full object-cover hover:scale-105 transition-transform" />
                           </Link>
                           <div className="flex-1 min-w-0">

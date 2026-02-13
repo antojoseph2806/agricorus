@@ -662,7 +662,7 @@ const Checkout: React.FC = () => {
                     {cart.items.map((item) => (
                       <div key={item.productId} className="flex gap-3">
                         <div className="w-14 h-14 flex-shrink-0 rounded-lg overflow-hidden bg-gray-100">
-                          <img src={item.image ? `${backendUrl}${item.image}` : '/placeholder-product.jpg'}
+                          <img src={item.image || '/placeholder-product.jpg'}
                             alt={item.productName} className="w-full h-full object-cover" />
                         </div>
                         <div className="flex-1 min-w-0">
