@@ -225,9 +225,7 @@ const ProductDetails: React.FC = () => {
             <div className="aspect-square bg-white rounded-lg border overflow-hidden">
               <img
                 src={
-                  product.images[selectedImage]
-                    ? `${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}${product.images[selectedImage]}`
-                    : '/placeholder-product.jpg'
+                  product.images[selectedImage] || '/placeholder-product.jpg'
                 }
                 alt={product.name}
                 className="w-full h-full object-cover"
@@ -246,7 +244,7 @@ const ProductDetails: React.FC = () => {
                     }`}
                   >
                     <img
-                      src={`${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}${image}`}
+                      src={image}
                       alt={`${product.name} ${index + 1}`}
                       className="w-full h-full object-cover"
                     />
@@ -372,7 +370,7 @@ const ProductDetails: React.FC = () => {
               {product.safetyDocuments.map((doc, index) => (
                 <a
                   key={index}
-                  href={`${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}${doc}`}
+                  href={doc}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-3 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition"

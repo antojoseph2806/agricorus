@@ -287,7 +287,7 @@ const ProductList = () => {
                   <div className="h-40 sm:h-48 bg-gray-200 rounded-t-lg overflow-hidden relative">
                     {product.images && product.images.length > 0 ? (
                       <img
-                        src={`${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}${product.images[0]}`}
+                        src={product.images[0]}
                         alt={product.name}
                         className="w-full h-full object-cover"
                       />

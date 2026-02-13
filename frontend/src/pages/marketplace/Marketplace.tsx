@@ -212,7 +212,7 @@ const Marketplace: React.FC = () => {
                   {/* Image Container */}
                   <div className="relative aspect-square rounded-t-2xl sm:rounded-t-3xl overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100">
                     <img 
-                      src={product.images[0] ? `${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}${product.images[0]}` : '/placeholder.jpg'} 
+                      src={product.images[0] || '/placeholder.jpg'} 
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                       alt={product.name}
                     />

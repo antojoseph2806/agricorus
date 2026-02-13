@@ -432,7 +432,7 @@ const EditProduct = () => {
                     {existingImages.map((image, index) => (
                       <div key={index} className="relative">
                         <img
-                          src={`${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}${image}`}
+                          src={image}
                           alt={`Existing ${index + 1}`}
                           className="w-full h-32 object-cover rounded-lg"
                         />

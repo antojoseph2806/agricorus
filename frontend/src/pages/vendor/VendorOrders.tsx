@@ -338,7 +338,7 @@ const VendorOrders = () => {
                           <div className="flex items-center space-x-3 sm:space-x-4 min-w-0 flex-1 w-full sm:w-auto">
                             {item.productId?.images?.[0] && (
                               <img
-                                src={`${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}${item.productId.images[0]}`}
+                                src={item.productId.images[0]}
                                 alt={item.productName}
                                 className="w-12 h-12 sm:w-16 sm:h-16 object-cover rounded flex-shrink-0"
                               />

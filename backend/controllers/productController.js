@@ -1,7 +1,6 @@
 const Product = require('../models/Product');
 const mongoose = require('mongoose');
-const path = require('path');
-const fs = require('fs');
+const { deleteFromCloudinary, extractPublicId } = require('../config/cloudinary');
 
 /**
  * Helper function to format API response
@@ -22,17 +21,21 @@ const isValidObjectId = (id) => {
 };
 
 /**
- * Helper function to delete files
+ * Helper function to delete files from Cloudinary
  */
-const deleteFiles = (filePaths) => {
-  filePaths.forEach(filePath => {
-    if (filePath) {
-      const fullPath = path.join(__dirname, '..', filePath);
-      if (fs.existsSync(fullPath)) {
-        fs.unlinkSync(fullPath);
-      }
-    }
+const deleteCloudinaryFiles = async (fileUrls) => {
+  const deletePromises = fileUrls.map(async (url) => {
+    if (!url) return;
+    
+    const publicId = extractPublicId(url);
+    if (!publicId) return;
+    
+    // Determine resource type based on URL
+    const resourceType = url.includes('/raw/') ? 'raw' : 'image';
+    await deleteFromCloudinary(publicId, resourceType);
   });
+  
+  await Promise.all(deletePromises);
 };
 
 /**
@@ -61,36 +64,30 @@ exports.createProduct = async (req, res) => {
       return sendResponse(res, false, 'Price and stock cannot be negative', null, 400);
     }
 
-    // Handle images (from multer.fields, images is already an array)
+    // Handle images (from multer with Cloudinary storage)
     const images = [];
     if (req.files && req.files.images) {
       const imageFiles = req.files.images;
       if (imageFiles.length > 5) {
-        // Delete uploaded files if validation fails
-        imageFiles.forEach(file => {
-          const filePath = path.join(__dirname, '../uploads/products/images', file.filename);
-          if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
-        });
+        // Delete uploaded files from Cloudinary if validation fails
+        await deleteCloudinaryFiles(imageFiles.map(file => file.path));
         return sendResponse(res, false, 'Maximum 5 images allowed', null, 400);
       }
-      images.push(...imageFiles.map(file => `/uploads/products/images/${file.filename}`));
+      images.push(...imageFiles.map(file => file.path)); // Cloudinary URL
     }
 
-    // Handle safety documents (from multer.fields, safetyDocuments is already an array)
+    // Handle safety documents (from multer with Cloudinary storage)
     const safetyDocuments = [];
     if (req.files && req.files.safetyDocuments) {
       const docFiles = req.files.safetyDocuments;
-      safetyDocuments.push(...docFiles.map(file => `/uploads/products/safety-docs/${file.filename}`));
+      safetyDocuments.push(...docFiles.map(file => file.path)); // Cloudinary URL
     }
 
     // Validate safety documents for Pesticides
     if (category === 'Pesticides' && safetyDocuments.length === 0) {
-      // Clean up uploaded images
+      // Clean up uploaded images from Cloudinary
       if (images.length > 0) {
-        images.forEach(img => {
-          const filePath = path.join(__dirname, '..', img);
-          if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
-        });
+        await deleteCloudinaryFiles(images);
       }
       return sendResponse(res, false, 'Safety documents are required for Pesticides', null, 400);
     }
@@ -118,19 +115,17 @@ exports.createProduct = async (req, res) => {
   } catch (error) {
     console.error('Create product error:', error);
     
-    // Clean up uploaded files on error
+    // Clean up uploaded files from Cloudinary on error
     if (req.files) {
+      const filesToDelete = [];
       if (req.files.images) {
-        req.files.images.forEach(file => {
-          const filePath = path.join(__dirname, '../uploads/products/images', file.filename);
-          if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
-        });
+        filesToDelete.push(...req.files.images.map(file => file.path));
       }
       if (req.files.safetyDocuments) {
-        req.files.safetyDocuments.forEach(file => {
-          const filePath = path.join(__dirname, '../uploads/products/safety-docs', file.filename);
-          if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
-        });
+        filesToDelete.push(...req.files.safetyDocuments.map(file => file.path));
+      }
+      if (filesToDelete.length > 0) {
+        await deleteCloudinaryFiles(filesToDelete);
       }
     }
 
@@ -231,37 +226,34 @@ exports.updateProduct = async (req, res) => {
       return sendResponse(res, false, 'Stock cannot be negative', null, 400);
     }
 
-    // Handle new images (from multer.fields, images is already an array)
+    // Handle new images (from multer with Cloudinary storage)
     if (req.files && req.files.images) {
       const imageFiles = req.files.images;
       if (imageFiles.length > 5) {
-        imageFiles.forEach(file => {
-          const filePath = path.join(__dirname, '../uploads/products/images', file.filename);
-          if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
-        });
+        await deleteCloudinaryFiles(imageFiles.map(file => file.path));
         return sendResponse(res, false, 'Maximum 5 images allowed', null, 400);
       }
 
-      // Delete old images
+      // Delete old images from Cloudinary
       if (product.images && product.images.length > 0) {
-        deleteFiles(product.images);
+        await deleteCloudinaryFiles(product.images);
       }
 
-      // Add new images
-      product.images = imageFiles.map(file => `/uploads/products/images/${file.filename}`);
+      // Add new images (Cloudinary URLs)
+      product.images = imageFiles.map(file => file.path);
     }
 
-    // Handle new safety documents (from multer.fields, safetyDocuments is already an array)
+    // Handle new safety documents (from multer with Cloudinary storage)
     if (req.files && req.files.safetyDocuments) {
       const docFiles = req.files.safetyDocuments;
 
-      // Delete old documents
+      // Delete old documents from Cloudinary
       if (product.safetyDocuments && product.safetyDocuments.length > 0) {
-        deleteFiles(product.safetyDocuments);
+        await deleteCloudinaryFiles(product.safetyDocuments);
       }
 
-      // Add new documents
-      product.safetyDocuments = docFiles.map(file => `/uploads/products/safety-docs/${file.filename}`);
+      // Add new documents (Cloudinary URLs)
+      product.safetyDocuments = docFiles.map(file => file.path);
     }
 
     // Validate safety documents for Pesticides
