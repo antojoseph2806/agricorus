@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const vendorAuth = require('../middleware/vendorAuth');
-const { uploadProductFiles } = require('../middleware/uploadProduct');
+const upload = require('../middleware/uploadProduct');
 const {
   createProduct,
   getVendorProducts,
@@ -20,7 +20,10 @@ const {
 router.post(
   '/',
   vendorAuth,
-  uploadProductFiles,
+  upload.fields([
+    { name: 'images', maxCount: 5 },
+    { name: 'safetyDocuments', maxCount: 10 }
+  ]),
   createProduct
 );
 
@@ -46,7 +49,10 @@ router.get('/:id', vendorAuth, getProductById);
 router.put(
   '/:id',
   vendorAuth,
-  uploadProductFiles,
+  upload.fields([
+    { name: 'images', maxCount: 5 },
+    { name: 'safetyDocuments', maxCount: 10 }
+  ]),
   updateProduct
 );
 

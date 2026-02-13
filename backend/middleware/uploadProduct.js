@@ -1,45 +1,49 @@
 const multer = require('multer');
-const {
-  productImageStorage,
-  safetyDocumentStorage,
-  combinedStorage,
-  imageFilter,
-  pdfFilter,
-  combinedFilter
-} = require('../config/cloudinary');
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
+const cloudinary = require('cloudinary').v2;
+require('dotenv').config();
 
-// Multer instances using Cloudinary storage
-const uploadProductImages = multer({
-  storage: productImageStorage,
-  fileFilter: imageFilter,
-  limits: {
-    fileSize: 5 * 1024 * 1024 // 5MB limit per image
+// Configure Cloudinary
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
+});
+
+// Dynamic storage for products - same approach as land uploads
+const storage = new CloudinaryStorage({
+  cloudinary,
+  params: async (req, file) => {
+    const ext = file.originalname.split('.').pop();
+    const filename = file.originalname.replace(/\.[^/.]+$/, ''); // remove extension
+
+    // Choose folder based on field name
+    let folder = 'products'; // default folder
+    let resourceType = 'auto';
+    
+    if (file.fieldname === 'images') {
+      folder = 'products/images';
+      resourceType = 'image';
+    } else if (file.fieldname === 'safetyDocuments') {
+      folder = 'products/safety-docs';
+      resourceType = 'auto'; // supports PDFs
+    }
+
+    return {
+      folder,
+      resource_type: resourceType,
+      public_id: `${filename}-${Date.now()}`,
+      format: ext
+    };
   }
 });
 
-const uploadSafetyDocuments = multer({
-  storage: safetyDocumentStorage,
-  fileFilter: pdfFilter,
-  limits: {
-    fileSize: 10 * 1024 * 1024 // 10MB limit per document
-  }
-});
-
-// Combined multer for handling both images and documents in one request
-const uploadProductFiles = multer({
-  storage: combinedStorage,
-  fileFilter: combinedFilter,
+const upload = multer({ 
+  storage,
   limits: {
     fileSize: 10 * 1024 * 1024 // 10MB limit per file
   }
-}).fields([
-  { name: 'images', maxCount: 5 },
-  { name: 'safetyDocuments', maxCount: 10 }
-]);
+});
 
-module.exports = {
-  uploadProductImages,
-  uploadSafetyDocuments,
-  uploadProductFiles
-};
+module.exports = upload;
 

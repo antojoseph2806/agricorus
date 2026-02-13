@@ -64,23 +64,21 @@ exports.createProduct = async (req, res) => {
       return sendResponse(res, false, 'Price and stock cannot be negative', null, 400);
     }
 
-    // Handle images (from multer with Cloudinary storage)
+    // Handle images - extract URLs from uploaded files (same as land approach)
     const images = [];
     if (req.files && req.files.images) {
       const imageFiles = req.files.images;
       if (imageFiles.length > 5) {
-        // Delete uploaded files from Cloudinary if validation fails
-        await deleteCloudinaryFiles(imageFiles.map(file => file.path));
         return sendResponse(res, false, 'Maximum 5 images allowed', null, 400);
       }
-      images.push(...imageFiles.map(file => file.path)); // Cloudinary URL
+      images.push(...imageFiles.map(file => file.path)); // Cloudinary URL from multer
     }
 
-    // Handle safety documents (from multer with Cloudinary storage)
+    // Handle safety documents - extract URLs from uploaded files (same as land approach)
     const safetyDocuments = [];
     if (req.files && req.files.safetyDocuments) {
       const docFiles = req.files.safetyDocuments;
-      safetyDocuments.push(...docFiles.map(file => file.path)); // Cloudinary URL
+      safetyDocuments.push(...docFiles.map(file => file.path)); // Cloudinary URL from multer
     }
 
     // Validate safety documents for Pesticides
@@ -114,21 +112,6 @@ exports.createProduct = async (req, res) => {
     sendResponse(res, true, 'Product created successfully', product, 201);
   } catch (error) {
     console.error('Create product error:', error);
-    
-    // Clean up uploaded files from Cloudinary on error
-    if (req.files) {
-      const filesToDelete = [];
-      if (req.files.images) {
-        filesToDelete.push(...req.files.images.map(file => file.path));
-      }
-      if (req.files.safetyDocuments) {
-        filesToDelete.push(...req.files.safetyDocuments.map(file => file.path));
-      }
-      if (filesToDelete.length > 0) {
-        await deleteCloudinaryFiles(filesToDelete);
-      }
-    }
-
     sendResponse(res, false, error.message || 'Error creating product', null, 500);
   }
 };
@@ -226,11 +209,10 @@ exports.updateProduct = async (req, res) => {
       return sendResponse(res, false, 'Stock cannot be negative', null, 400);
     }
 
-    // Handle new images (from multer with Cloudinary storage)
+    // Handle new images - extract URLs from uploaded files (same as land approach)
     if (req.files && req.files.images) {
       const imageFiles = req.files.images;
       if (imageFiles.length > 5) {
-        await deleteCloudinaryFiles(imageFiles.map(file => file.path));
         return sendResponse(res, false, 'Maximum 5 images allowed', null, 400);
       }
 
@@ -239,11 +221,11 @@ exports.updateProduct = async (req, res) => {
         await deleteCloudinaryFiles(product.images);
       }
 
-      // Add new images (Cloudinary URLs)
+      // Add new images (Cloudinary URLs from multer)
       product.images = imageFiles.map(file => file.path);
     }
 
-    // Handle new safety documents (from multer with Cloudinary storage)
+    // Handle new safety documents - extract URLs from uploaded files (same as land approach)
     if (req.files && req.files.safetyDocuments) {
       const docFiles = req.files.safetyDocuments;
 
@@ -252,7 +234,7 @@ exports.updateProduct = async (req, res) => {
         await deleteCloudinaryFiles(product.safetyDocuments);
       }
 
-      // Add new documents (Cloudinary URLs)
+      // Add new documents (Cloudinary URLs from multer)
       product.safetyDocuments = docFiles.map(file => file.path);
     }
 
