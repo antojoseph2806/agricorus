@@ -47,7 +47,7 @@ const ProductDetails: React.FC = () => {
   const fetchProduct = async () => {
     try {
       setLoading(true);
-      const backendUrl = (import.meta as any).env.VITE_BACKEND_URL || 'https://agricorus.onrender.com';
+      const backendUrl = (import.meta as any).env.VITE_BACKEND_URL || 'https://agricorus.duckdns.org';
       const response = await fetch(`${backendUrl}/api/marketplace/products/${id}`);
       const data = await response.json();
 
@@ -91,7 +91,7 @@ const ProductDetails: React.FC = () => {
     // User is logged in with valid role, proceed with actual cart addition
     try {
       setAddingToCart(true);
-      const backendUrl = (import.meta as any).env.VITE_BACKEND_URL || 'https://agricorus.onrender.com';
+      const backendUrl = (import.meta as any).env.VITE_BACKEND_URL || 'https://agricorus.duckdns.org';
       const response = await fetch(`${backendUrl}/api/cart/add`, {
         method: 'POST',
         headers: {
@@ -226,7 +226,7 @@ const ProductDetails: React.FC = () => {
               <img
                 src={
                   product.images[selectedImage]
-                    ? `https://agricorus.onrender.com${product.images[selectedImage]}`
+                    ? `https://agricorus.duckdns.org${product.images[selectedImage]}`
                     : '/placeholder-product.jpg'
                 }
                 alt={product.name}
@@ -246,7 +246,7 @@ const ProductDetails: React.FC = () => {
                     }`}
                   >
                     <img
-                      src={`https://agricorus.onrender.com${image}`}
+                      src={`https://agricorus.duckdns.org${image}`}
                       alt={`${product.name} ${index + 1}`}
                       className="w-full h-full object-cover"
                     />
@@ -372,7 +372,7 @@ const ProductDetails: React.FC = () => {
               {product.safetyDocuments.map((doc, index) => (
                 <a
                   key={index}
-                  href={`https://agricorus.onrender.com${doc}`}
+                  href={`https://agricorus.duckdns.org${doc}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-3 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition"

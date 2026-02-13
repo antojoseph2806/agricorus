@@ -25,7 +25,7 @@ const MyDisputes: React.FC = () => {
   useEffect(() => {
     const fetchDisputes = async () => {
       try {
-        const res = await axios.get("https://agricorus.onrender.com/api/disputes/my", {
+        const res = await axios.get("https://agricorus.duckdns.org/api/disputes/my", {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         });
         setDisputes(res.data);

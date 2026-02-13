@@ -44,7 +44,7 @@ export default function InvestmentHistory() {
     const fetchInvestments = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await axios.get("https://agricorus.onrender.com/api/project-payments/investments/history", {
+        const res = await axios.get("https://agricorus.duckdns.org/api/project-payments/investments/history", {
           headers: { Authorization: `Bearer ${token}` },
         });
         setInvestments(res.data.investments);

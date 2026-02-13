@@ -92,7 +92,7 @@ const Marketplace: React.FC = () => {
         sortOrder: filters.sortOrder
       });
 
-      const response = await fetch(`https://agricorus.onrender.com/api/marketplace/products?${params}`);
+      const response = await fetch(`https://agricorus.duckdns.org/api/marketplace/products?${params}`);
       const data = await response.json();
 
       if (data.success) {
@@ -146,7 +146,7 @@ const Marketplace: React.FC = () => {
     // User is logged in with valid role, proceed with actual cart addition
     try {
       setAddingToCart(productId);
-      const backendUrl = (import.meta as any).env.VITE_BACKEND_URL || 'https://agricorus.onrender.com';
+      const backendUrl = (import.meta as any).env.VITE_BACKEND_URL || 'https://agricorus.duckdns.org';
       const response = await fetch(`${backendUrl}/api/cart/add`, {
         method: 'POST',
         headers: {
@@ -201,7 +201,7 @@ const Marketplace: React.FC = () => {
     // User is logged in with valid role, proceed with buy now
     try {
       setAddingToCart(productId);
-      const backendUrl = (import.meta as any).env.VITE_BACKEND_URL || 'https://agricorus.onrender.com';
+      const backendUrl = (import.meta as any).env.VITE_BACKEND_URL || 'https://agricorus.duckdns.org';
       const response = await fetch(`${backendUrl}/api/cart/add`, {
         method: 'POST',
         headers: {
@@ -474,7 +474,7 @@ const Marketplace: React.FC = () => {
                     {/* Image */}
                     <div className="relative h-44 sm:h-56 bg-gray-50 overflow-hidden">
                       <img
-                        src={product.images[0] ? `https://agricorus.onrender.com${product.images[0]}` : '/placeholder-product.jpg'}
+                        src={product.images[0] ? `https://agricorus.duckdns.org${product.images[0]}` : '/placeholder-product.jpg'}
                         alt={product.name}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                       />
@@ -537,7 +537,7 @@ const Marketplace: React.FC = () => {
                   >
                     <div className="w-24 h-24 sm:w-32 sm:h-32 flex-shrink-0 rounded-lg overflow-hidden bg-gray-50">
                       <img
-                        src={product.images[0] ? `https://agricorus.onrender.com${product.images[0]}` : '/placeholder-product.jpg'}
+                        src={product.images[0] ? `https://agricorus.duckdns.org${product.images[0]}` : '/placeholder-product.jpg'}
                         alt={product.name}
                         className="w-full h-full object-cover"
                       />

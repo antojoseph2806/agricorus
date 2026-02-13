@@ -29,7 +29,7 @@ const AdminEditLeasePage: React.FC = () => {
     if (!id) return;
     try {
       setLoading(true);
-      const res = await axios.get(`https://agricorus.onrender.com/api/admin/leases/${id}`, {
+      const res = await axios.get(`https://agricorus.duckdns.org/api/admin/leases/${id}`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
       setLease(res.data);

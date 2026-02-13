@@ -32,7 +32,7 @@ export default function ClosedProjects() {
       try {
         const token = localStorage.getItem("token");
         const res = await axios.get(
-          "https://agricorus.onrender.com/api/projects/closed",
+          "https://agricorus.duckdns.org/api/projects/closed",
           {
             headers: {
               Authorization: `Bearer ${token}`,

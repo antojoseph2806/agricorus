@@ -260,7 +260,7 @@ const AddLand: React.FC = () => {
     }
 
     try {
-      const response = await fetch('https://agricorus.onrender.com/api/landowner/lands', { 
+      const response = await fetch('https://agricorus.duckdns.org/api/landowner/lands', { 
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,

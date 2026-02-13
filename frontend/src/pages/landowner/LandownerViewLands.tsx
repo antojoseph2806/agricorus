@@ -51,7 +51,7 @@ const LandownerViewLands: React.FC = () => {
       }
 
       try {
-        const response = await fetch('https://agricorus.onrender.com/api/landowner/lands/my', {
+        const response = await fetch('https://agricorus.duckdns.org/api/landowner/lands/my', {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -82,7 +82,7 @@ const LandownerViewLands: React.FC = () => {
 
     const token = localStorage.getItem('token');
     try {
-      const response = await fetch(`https://agricorus.onrender.com/api/landowner/lands/${landId}`, {
+      const response = await fetch(`https://agricorus.duckdns.org/api/landowner/lands/${landId}`, {
         method: 'DELETE',
         headers: {
           Authorization: `Bearer ${token}`,

@@ -35,7 +35,7 @@ const FarmerProfile: React.FC = () => {
   const [saveSuccess, setSaveSuccess] = useState(false);
 
   const token = localStorage.getItem("token");
-  const BASE_URL = "https://agricorus.onrender.com";
+  const BASE_URL = "https://agricorus.duckdns.org";
 
   useEffect(() => {
     const fetchProfile = async () => {

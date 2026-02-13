@@ -60,7 +60,7 @@ const DownloadReports: React.FC = () => {
         requestBody.endDate = customEndDate;
       }
 
-      const response = await fetch('https://agricorus.onrender.com/api/admin/sales-analytics/generate-report', {
+      const response = await fetch('https://agricorus.duckdns.org/api/admin/sales-analytics/generate-report', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -97,7 +97,7 @@ const DownloadReports: React.FC = () => {
   const downloadExistingReport = async (requestId: string) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`https://agricorus.onrender.com/api/admin/sales-analytics/download-report/${requestId}`, {
+      const response = await fetch(`https://agricorus.duckdns.org/api/admin/sales-analytics/download-report/${requestId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 

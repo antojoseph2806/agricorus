@@ -193,7 +193,7 @@ const AddProduct = () => {
       });
 
       const res = await axios.post(
-        `${(import.meta as any).env.VITE_BACKEND_URL || "https://agricorus.onrender.com"}/api/vendor/products`,
+        `${(import.meta as any).env.VITE_BACKEND_URL || "https://agricorus.duckdns.org"}/api/vendor/products`,
         formDataToSend,
         {
           headers: {

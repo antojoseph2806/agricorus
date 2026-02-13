@@ -40,7 +40,7 @@ const ManageAddresses: React.FC = () => {
   const [editingAddress, setEditingAddress] = useState<Address | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [deleting, setDeleting] = useState<string | null>(null);
-  const backendUrl = (import.meta as any).env.VITE_BACKEND_URL || 'https://agricorus.onrender.com';
+  const backendUrl = (import.meta as any).env.VITE_BACKEND_URL || 'https://agricorus.duckdns.org';
 
   const [formData, setFormData] = useState({
     label: '',

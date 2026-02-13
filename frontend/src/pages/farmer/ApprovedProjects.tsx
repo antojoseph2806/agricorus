@@ -29,7 +29,7 @@ export default function ApprovedProjects() {
 
   useEffect(() => {
     axios
-      .get("https://agricorus.onrender.com/api/projects/approved")
+      .get("https://agricorus.duckdns.org/api/projects/approved")
       .then((res) => setProjects(res.data))
       .catch((err) => console.error(err))
       .finally(() => setLoading(false));

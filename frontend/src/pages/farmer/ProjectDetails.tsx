@@ -186,7 +186,7 @@ export default function ProjectDetails() {
     title: string;
   }>({ type: null, src: '', title: '' });
   
-  const backendUrl = (import.meta as any).env.VITE_BACKEND_URL || "https://agricorus.onrender.com";
+  const backendUrl = (import.meta as any).env.VITE_BACKEND_URL || "https://agricorus.duckdns.org";
 
   // Helper function to get correct media URL
   const getMediaUrl = (filePath: string) => {

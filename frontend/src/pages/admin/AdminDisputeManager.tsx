@@ -18,7 +18,7 @@ import {
   Shield,
 } from "lucide-react";
 
-const API_BASE = "https://agricorus.onrender.com/api/disputes/admin";
+const API_BASE = "https://agricorus.duckdns.org/api/disputes/admin";
 
 interface UserRef {
   _id: string;

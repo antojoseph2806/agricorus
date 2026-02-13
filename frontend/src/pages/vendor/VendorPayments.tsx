@@ -95,7 +95,7 @@ const VendorPayments = () => {
       if (filters.endDate) params.append('endDate', filters.endDate);
 
       const response = await axios.get(
-        `${(import.meta as any).env.VITE_BACKEND_URL || "https://agricorus.onrender.com"}/api/vendor/payments?${params.toString()}`,
+        `${(import.meta as any).env.VITE_BACKEND_URL || "https://agricorus.duckdns.org"}/api/vendor/payments?${params.toString()}`,
         {
           headers: { Authorization: `Bearer ${token}` }
         }
@@ -129,7 +129,7 @@ const VendorPayments = () => {
       const token = localStorage.getItem("token");
       
       const response = await axios.post(
-        `${(import.meta as any).env.VITE_BACKEND_URL || "https://agricorus.onrender.com"}/api/vendor/payments/${selectedPayment._id}/refund`,
+        `${(import.meta as any).env.VITE_BACKEND_URL || "https://agricorus.duckdns.org"}/api/vendor/payments/${selectedPayment._id}/refund`,
         {
           refundAmount: amount,
           refundReason: refundReason.trim()

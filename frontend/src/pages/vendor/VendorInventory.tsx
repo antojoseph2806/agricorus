@@ -90,15 +90,15 @@ const VendorInventory = () => {
       
       const [overviewRes, alertsRes, movementsRes] = await Promise.all([
         axios.get(
-          `${(import.meta as any).env.VITE_BACKEND_URL || "https://agricorus.onrender.com"}/api/vendor/inventory`,
+          `${(import.meta as any).env.VITE_BACKEND_URL || "https://agricorus.duckdns.org"}/api/vendor/inventory`,
           { headers: { Authorization: `Bearer ${token}` } }
         ),
         axios.get(
-          `${(import.meta as any).env.VITE_BACKEND_URL || "https://agricorus.onrender.com"}/api/vendor/inventory/alerts`,
+          `${(import.meta as any).env.VITE_BACKEND_URL || "https://agricorus.duckdns.org"}/api/vendor/inventory/alerts`,
           { headers: { Authorization: `Bearer ${token}` } }
         ),
         axios.get(
-          `${(import.meta as any).env.VITE_BACKEND_URL || "https://agricorus.onrender.com"}/api/vendor/inventory/movements`,
+          `${(import.meta as any).env.VITE_BACKEND_URL || "https://agricorus.duckdns.org"}/api/vendor/inventory/movements`,
           { headers: { Authorization: `Bearer ${token}` } }
         )
       ]);
@@ -141,7 +141,7 @@ const VendorInventory = () => {
       const token = localStorage.getItem("token");
       
       const response = await axios.patch(
-        `${(import.meta as any).env.VITE_BACKEND_URL || "https://agricorus.onrender.com"}/api/vendor/inventory/${productId}/stock`,
+        `${(import.meta as any).env.VITE_BACKEND_URL || "https://agricorus.duckdns.org"}/api/vendor/inventory/${productId}/stock`,
         {
           stock: newStock,
           lowStockThreshold: newThreshold,

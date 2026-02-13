@@ -41,7 +41,7 @@ export default function SupportChat({ orderId, productId, vendorId }: SupportCha
     try {
       setLoading(true);
       const token = localStorage.getItem('token');
-      const backendUrl = (import.meta as any).env.VITE_BACKEND_URL || 'https://agricorus.onrender.com';
+      const backendUrl = (import.meta as any).env.VITE_BACKEND_URL || 'https://agricorus.duckdns.org';
       
       const params = new URLSearchParams();
       if (orderId) params.append('orderId', orderId);
@@ -68,7 +68,7 @@ export default function SupportChat({ orderId, productId, vendorId }: SupportCha
     try {
       setSending(true);
       const token = localStorage.getItem('token');
-      const backendUrl = (import.meta as any).env.VITE_BACKEND_URL || 'https://agricorus.onrender.com';
+      const backendUrl = (import.meta as any).env.VITE_BACKEND_URL || 'https://agricorus.duckdns.org';
       
       console.log('Sending message:', {
         orderId,

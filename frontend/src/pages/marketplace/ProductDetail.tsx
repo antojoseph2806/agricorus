@@ -48,7 +48,7 @@ const ProductDetail = () => {
     try {
       setLoading(true);
       const res = await axios.get(
-        `https://agricorus.onrender.com/api/marketplace/products/${id}`
+        `https://agricorus.duckdns.org/api/marketplace/products/${id}`
       );
 
       if (res.data.success) {
@@ -79,7 +79,7 @@ const ProductDetail = () => {
     try {
       const token = localStorage.getItem("token");
       const res = await axios.post(
-        "https://agricorus.onrender.com/api/cart/add",
+        "https://agricorus.duckdns.org/api/cart/add",
         {
           productId: product._id,
           quantity: quantity,
@@ -175,7 +175,7 @@ const ProductDetail = () => {
             <div>
               <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden mb-3 sm:mb-4">
                 {product.images && product.images.length > 0 ? (
-                  <img src={`https://agricorus.onrender.com${product.images[selectedImage]}`} alt={product.name} className="w-full h-full object-cover" />
+                  <img src={`https://agricorus.duckdns.org${product.images[selectedImage]}`} alt={product.name} className="w-full h-full object-cover" />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center">
                     <Package className="w-16 h-16 sm:w-24 sm:h-24 text-gray-400" />
@@ -189,7 +189,7 @@ const ProductDetail = () => {
                   {product.images.map((image, index) => (
                     <button key={index} onClick={() => setSelectedImage(index)}
                       className={`aspect-square rounded-lg overflow-hidden border-2 ${selectedImage === index ? "border-green-600" : "border-gray-200"}`}>
-                      <img src={`https://agricorus.onrender.com${image}`} alt={`${product.name} ${index + 1}`} className="w-full h-full object-cover" />
+                      <img src={`https://agricorus.duckdns.org${image}`} alt={`${product.name} ${index + 1}`} className="w-full h-full object-cover" />
                     </button>
                   ))}
                 </div>
@@ -260,7 +260,7 @@ const ProductDetail = () => {
                   </div>
                   <div className="space-y-1">
                     {product.safetyDocuments.map((doc, index) => (
-                      <a key={index} href={`https://agricorus.onrender.com${doc}`} target="_blank" rel="noopener noreferrer"
+                      <a key={index} href={`https://agricorus.duckdns.org${doc}`} target="_blank" rel="noopener noreferrer"
                         className="block text-xs sm:text-sm text-yellow-700 hover:text-yellow-900 underline">
                         View Safety Document {index + 1}
                       </a>

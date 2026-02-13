@@ -59,7 +59,7 @@ const VerifiedVendors: React.FC = () => {
         ...(searchTerm && { search: searchTerm })
       });
 
-      const response = await fetch(`https://agricorus.onrender.com/api/admin/kyc/verified-vendors?${params}`, {
+      const response = await fetch(`https://agricorus.duckdns.org/api/admin/kyc/verified-vendors?${params}`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'

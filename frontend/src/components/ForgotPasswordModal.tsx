@@ -81,7 +81,7 @@ const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({ onClose }) =>
     setLoading(true);
 
     try {
-      const res = await fetch('https://agricorus.onrender.com/api/forgot-password/send-otp', {
+      const res = await fetch('https://agricorus.duckdns.org/api/forgot-password/send-otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ phone })
@@ -118,7 +118,7 @@ const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({ onClose }) =>
     setLoading(true);
 
     try {
-      const res = await fetch('https://agricorus.onrender.com/api/forgot-password/verify-otp', {
+      const res = await fetch('https://agricorus.duckdns.org/api/forgot-password/verify-otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ phone, otp })
@@ -162,7 +162,7 @@ const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({ onClose }) =>
     setLoading(true);
 
     try {
-      const res = await fetch('https://agricorus.onrender.com/api/forgot-password/reset-password', {
+      const res = await fetch('https://agricorus.duckdns.org/api/forgot-password/reset-password', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ phone, otp, newPassword })

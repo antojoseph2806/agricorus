@@ -45,7 +45,7 @@ const MonthlyReports: React.FC = () => {
       setLoading(true);
       const token = localStorage.getItem('token');
       const response = await fetch(
-        `https://agricorus.onrender.com/api/admin/sales-analytics/monthly?month=${selectedMonth + 1}&year=${selectedYear}`,
+        `https://agricorus.duckdns.org/api/admin/sales-analytics/monthly?month=${selectedMonth + 1}&year=${selectedYear}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -66,7 +66,7 @@ const MonthlyReports: React.FC = () => {
     try {
       const token = localStorage.getItem('token');
       const response = await fetch(
-        `https://agricorus.onrender.com/api/admin/sales-analytics/download?type=monthly&month=${selectedMonth + 1}&year=${selectedYear}`,
+        `https://agricorus.duckdns.org/api/admin/sales-analytics/download?type=monthly&month=${selectedMonth + 1}&year=${selectedYear}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }

@@ -46,7 +46,7 @@ const Orders = () => {
     try {
       setLoading(true);
       const token = localStorage.getItem("token");
-      const res = await axios.get("https://agricorus.onrender.com/api/orders", {
+      const res = await axios.get("https://agricorus.duckdns.org/api/orders", {
         headers: { Authorization: `Bearer ${token}` },
       });
 

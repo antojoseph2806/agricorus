@@ -21,7 +21,7 @@ const VendorLogin = () => {
 
     try {
       const res = await axios.post(
-        "https://agricorus.onrender.com/api/vendors/login",
+        "https://agricorus.duckdns.org/api/vendors/login",
         { email, password }
       );
 
@@ -240,7 +240,7 @@ const ForgotPasswordModal = ({ onClose }: ForgotPasswordModalProps) => {
     setLoading(true);
 
     try {
-      const res = await axios.post("https://agricorus.onrender.com/api/vendors/forgot-password", {
+      const res = await axios.post("https://agricorus.duckdns.org/api/vendors/forgot-password", {
         email,
       });
 
@@ -272,7 +272,7 @@ const ForgotPasswordModal = ({ onClose }: ForgotPasswordModalProps) => {
     setLoading(true);
 
     try {
-      const res = await axios.post("https://agricorus.onrender.com/api/vendors/verify-otp", {
+      const res = await axios.post("https://agricorus.duckdns.org/api/vendors/verify-otp", {
         email,
         otp,
       });
@@ -312,7 +312,7 @@ const ForgotPasswordModal = ({ onClose }: ForgotPasswordModalProps) => {
     setLoading(true);
 
     try {
-      const res = await axios.post("https://agricorus.onrender.com/api/vendors/reset-password", {
+      const res = await axios.post("https://agricorus.duckdns.org/api/vendors/reset-password", {
         email,
         otp,
         newPassword,

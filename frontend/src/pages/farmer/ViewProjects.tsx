@@ -93,7 +93,7 @@ export default function ViewProjects() {
   const [statusFilter, setStatusFilter] = useState("all");
   const [verificationFilter, setVerificationFilter] = useState("all");
   const navigate = useNavigate();
-  const backendUrl = (import.meta as any).env.VITE_BACKEND_URL || "https://agricorus.onrender.com";
+  const backendUrl = (import.meta as any).env.VITE_BACKEND_URL || "https://agricorus.duckdns.org";
 
   useEffect(() => {
     const fetchProjects = async () => {

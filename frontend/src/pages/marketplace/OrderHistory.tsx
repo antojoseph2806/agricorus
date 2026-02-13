@@ -66,7 +66,7 @@ const OrderHistory: React.FC = () => {
         return;
       }
 
-      const response = await fetch('https://agricorus.onrender.com/api/orders', {
+      const response = await fetch('https://agricorus.duckdns.org/api/orders', {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -449,7 +449,7 @@ const CancelOrderModal: React.FC<CancelOrderModalProps> = ({ order, onClose, onS
     setLoading(true);
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`https://agricorus.onrender.com/api/orders/${order._id}/cancel`, {
+      const response = await fetch(`https://agricorus.duckdns.org/api/orders/${order._id}/cancel`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -578,7 +578,7 @@ const ReturnOrderModal: React.FC<ReturnOrderModalProps> = ({ order, onClose, onS
     setLoading(true);
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`https://agricorus.onrender.com/api/orders/${order._id}/return`, {
+      const response = await fetch(`https://agricorus.duckdns.org/api/orders/${order._id}/return`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -714,7 +714,7 @@ const ReplaceOrderModal: React.FC<ReplaceOrderModalProps> = ({ order, onClose, o
     setLoading(true);
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`https://agricorus.onrender.com/api/orders/${order._id}/replace`, {
+      const response = await fetch(`https://agricorus.duckdns.org/api/orders/${order._id}/replace`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,

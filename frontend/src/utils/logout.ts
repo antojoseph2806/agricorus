@@ -5,7 +5,7 @@ export const logout = async () => {
 
   if (token) {
     try {
-      await fetch('https://agricorus.onrender.com/api/auth/logout', {
+      await fetch('https://agricorus.duckdns.org/api/auth/logout', {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,

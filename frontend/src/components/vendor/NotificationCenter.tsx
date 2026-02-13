@@ -56,7 +56,7 @@ const NotificationCenter = ({ isOpen, onClose, unreadCount, onUnreadCountChange 
       const token = localStorage.getItem("token");
       
       const response = await axios.get(
-        `${(import.meta as any).env.VITE_BACKEND_URL || "https://agricorus.onrender.com"}/api/vendor/notifications`,
+        `${(import.meta as any).env.VITE_BACKEND_URL || "https://agricorus.duckdns.org"}/api/vendor/notifications`,
         {
           headers: { Authorization: `Bearer ${token}` },
           params: {
@@ -82,7 +82,7 @@ const NotificationCenter = ({ isOpen, onClose, unreadCount, onUnreadCountChange 
       const token = localStorage.getItem("token");
       
       await axios.patch(
-        `${(import.meta as any).env.VITE_BACKEND_URL || "https://agricorus.onrender.com"}/api/vendor/notifications/${notificationId}/read`,
+        `${(import.meta as any).env.VITE_BACKEND_URL || "https://agricorus.duckdns.org"}/api/vendor/notifications/${notificationId}/read`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -108,7 +108,7 @@ const NotificationCenter = ({ isOpen, onClose, unreadCount, onUnreadCountChange 
       const token = localStorage.getItem("token");
       
       await axios.patch(
-        `${(import.meta as any).env.VITE_BACKEND_URL || "https://agricorus.onrender.com"}/api/vendor/notifications/read-all`,
+        `${(import.meta as any).env.VITE_BACKEND_URL || "https://agricorus.duckdns.org"}/api/vendor/notifications/read-all`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -129,7 +129,7 @@ const NotificationCenter = ({ isOpen, onClose, unreadCount, onUnreadCountChange 
       const token = localStorage.getItem("token");
       
       await axios.delete(
-        `${(import.meta as any).env.VITE_BACKEND_URL || "https://agricorus.onrender.com"}/api/vendor/notifications/${notificationId}`,
+        `${(import.meta as any).env.VITE_BACKEND_URL || "https://agricorus.duckdns.org"}/api/vendor/notifications/${notificationId}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
 

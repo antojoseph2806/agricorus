@@ -77,7 +77,7 @@ const PaymentHistory: React.FC = () => {
       }
 
       const { data } = await axios.get(
-        "https://agricorus.onrender.com/api/payment-requests/my-requests",
+        "https://agricorus.duckdns.org/api/payment-requests/my-requests",
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -102,7 +102,7 @@ const PaymentHistory: React.FC = () => {
       if (!token) return;
 
       await axios.patch(
-        `https://agricorus.onrender.com/api/payment-requests/cancel-request/${requestId}`,
+        `https://agricorus.duckdns.org/api/payment-requests/cancel-request/${requestId}`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -326,7 +326,7 @@ const PaymentHistory: React.FC = () => {
                             )}
                             {req.paymentReceipt && (
                               <a
-                                href={`https://agricorus.onrender.com${req.paymentReceipt}`}
+                                href={`https://agricorus.duckdns.org${req.paymentReceipt}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="flex items-center gap-2 text-sm text-emerald-600 hover:text-emerald-700 font-medium"
@@ -426,7 +426,7 @@ const PaymentHistory: React.FC = () => {
                     )}
                     {req.paymentReceipt && (
                       <a
-                        href={`https://agricorus.onrender.com${req.paymentReceipt}`}
+                        href={`https://agricorus.duckdns.org${req.paymentReceipt}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="flex items-center gap-2 text-xs text-emerald-600 hover:text-emerald-700 font-medium"

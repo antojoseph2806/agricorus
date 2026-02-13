@@ -23,7 +23,7 @@ const KycStatus: React.FC = () => {
     const fetchStatus = async () => {
       try {
         const token = localStorage.getItem('token');
-        const { data } = await axios.get<KycStatusResponse>('https://agricorus.onrender.com/api/kyc/status', {
+        const { data } = await axios.get<KycStatusResponse>('https://agricorus.duckdns.org/api/kyc/status', {
           headers: { Authorization: `Bearer ${token}` },
         });
         setStatus(data);

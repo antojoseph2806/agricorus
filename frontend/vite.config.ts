@@ -12,7 +12,7 @@ export default defineConfig({
   base: '/', // ✅ Important for Netlify deployment
   server: {
     proxy: {
-      '/api': 'https://agricorus.onrender.com',
+      '/api': 'https://agricorus.duckdns.org',
     },
   },
 });

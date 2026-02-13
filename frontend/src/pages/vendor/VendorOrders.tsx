@@ -91,7 +91,7 @@ const VendorOrders = () => {
       const params = selectedStatus !== "ALL" ? { status: selectedStatus } : {};
       
       const response = await axios.get(
-        `${(import.meta as any).env.VITE_BACKEND_URL || "https://agricorus.onrender.com"}/api/vendor/orders`,
+        `${(import.meta as any).env.VITE_BACKEND_URL || "https://agricorus.duckdns.org"}/api/vendor/orders`,
         {
           headers: { Authorization: `Bearer ${token}` },
           params
@@ -119,7 +119,7 @@ const VendorOrders = () => {
       const token = localStorage.getItem("token");
       
       const response = await axios.patch(
-        `${(import.meta as any).env.VITE_BACKEND_URL || "https://agricorus.onrender.com"}/api/vendor/orders/${orderId}/status`,
+        `${(import.meta as any).env.VITE_BACKEND_URL || "https://agricorus.duckdns.org"}/api/vendor/orders/${orderId}/status`,
         {
           orderStatus: newStatus,
           statusDescription: statusDescription.trim()
@@ -338,7 +338,7 @@ const VendorOrders = () => {
                           <div className="flex items-center space-x-3 sm:space-x-4 min-w-0 flex-1 w-full sm:w-auto">
                             {item.productId?.images?.[0] && (
                               <img
-                                src={`${(import.meta as any).env.VITE_BACKEND_URL || "https://agricorus.onrender.com"}${item.productId.images[0]}`}
+                                src={`${(import.meta as any).env.VITE_BACKEND_URL || "https://agricorus.duckdns.org"}${item.productId.images[0]}`}
                                 alt={item.productName}
                                 className="w-12 h-12 sm:w-16 sm:h-16 object-cover rounded flex-shrink-0"
                               />

@@ -51,15 +51,15 @@ const AdminLandManagement: React.FC<AdminLandManagementProps> = ({ statusFilter 
   const getEndpoint = (filter: string) => {
     switch (filter) {
       case 'all':
-        return 'https://agricorus.onrender.com/api/admin/lands/all';
+        return 'https://agricorus.duckdns.org/api/admin/lands/all';
       case 'pending':
-        return 'https://agricorus.onrender.com/api/admin/lands/pending';
+        return 'https://agricorus.duckdns.org/api/admin/lands/pending';
       case 'approved':
-        return 'https://agricorus.onrender.com/api/admin/lands/approved';
+        return 'https://agricorus.duckdns.org/api/admin/lands/approved';
       case 'rejected':
-        return 'https://agricorus.onrender.com/api/admin/lands/rejected';
+        return 'https://agricorus.duckdns.org/api/admin/lands/rejected';
       default:
-        return 'https://agricorus.onrender.com/api/admin/lands/all';
+        return 'https://agricorus.duckdns.org/api/admin/lands/all';
     }
   };
 
@@ -136,7 +136,7 @@ const AdminLandManagement: React.FC<AdminLandManagementProps> = ({ statusFilter 
         return;
     }
     try {
-      const response = await fetch(`https://agricorus.onrender.com/api/admin/lands/approve/${landId}`, {
+      const response = await fetch(`https://agricorus.duckdns.org/api/admin/lands/approve/${landId}`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -169,7 +169,7 @@ const AdminLandManagement: React.FC<AdminLandManagementProps> = ({ statusFilter 
         return;
     }
     try {
-      const response = await fetch(`https://agricorus.onrender.com/api/admin/lands/reject/${landId}`, {
+      const response = await fetch(`https://agricorus.duckdns.org/api/admin/lands/reject/${landId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -201,7 +201,7 @@ const AdminLandManagement: React.FC<AdminLandManagementProps> = ({ statusFilter 
         return;
     }
     try {
-      const response = await fetch(`https://agricorus.onrender.com/api/admin/lands/unapprove/${landId}`, {
+      const response = await fetch(`https://agricorus.duckdns.org/api/admin/lands/unapprove/${landId}`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -231,7 +231,7 @@ const AdminLandManagement: React.FC<AdminLandManagementProps> = ({ statusFilter 
         return;
     }
     try {
-      const response = await fetch(`https://agricorus.onrender.com/api/admin/lands/${landId}`, {
+      const response = await fetch(`https://agricorus.duckdns.org/api/admin/lands/${landId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`,
