@@ -49,7 +49,7 @@ const MarketplaceLayout: React.FC<MarketplaceLayoutProps> = ({ children }) => {
       return (
         <>
           <Navbar />
-          <div className="min-h-screen bg-gray-50">
+          <div className="pt-16">
             {children}
           </div>
         </>

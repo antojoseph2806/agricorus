@@ -185,3 +185,59 @@ exports.getProductDetails = async (req, res) => {
   }
 };
 
+
+/**
+ * @route   POST /api/marketplace/products/batch
+ * @desc    Get multiple products by IDs (for guest cart)
+ * @access  Public
+ */
+exports.getBatchProducts = async (req, res) => {
+  try {
+    const { productIds } = req.body;
+
+    if (!productIds || !Array.isArray(productIds) || productIds.length === 0) {
+      return sendResponse(res, false, 'Product IDs are required', null, 400);
+    }
+
+    // Validate all IDs
+    const validIds = productIds.filter(id => isValidObjectId(id));
+    
+    if (validIds.length === 0) {
+      return sendResponse(res, false, 'No valid product IDs provided', null, 400);
+    }
+
+    // Find products
+    const products = await Product.find({
+      _id: { $in: validIds },
+      isActive: true
+    }).lean();
+
+    // Add vendor info and stock status
+    const productsWithVendor = await Promise.all(
+      products.map(async (product) => {
+        const vendorProfile = await VendorProfile.findOne({ vendorId: product.vendorId })
+          .select('businessName')
+          .lean();
+        
+        return {
+          _id: product._id,
+          name: product.name,
+          category: product.category,
+          price: product.price,
+          stock: product.stock,
+          images: product.images,
+          vendorId: product.vendorId,
+          vendorBusinessName: vendorProfile?.businessName || 'Unknown Vendor',
+          stockStatus: product.stock === 0 ? 'OUT_OF_STOCK' : product.stock < 10 ? 'LOW_STOCK' : 'IN_STOCK'
+        };
+      })
+    );
+
+    sendResponse(res, true, 'Products retrieved successfully', {
+      products: productsWithVendor
+    });
+  } catch (error) {
+    console.error('Get batch products error:', error);
+    sendResponse(res, false, 'Error retrieving products', null, 500);
+  }
+};

@@ -59,7 +59,64 @@ const Cart: React.FC = () => {
       setUserRole(role);
       
       if (!token) {
-        navigate('/login');
+        // Load guest cart from localStorage
+        const guestCart = JSON.parse(localStorage.getItem('guestCart') || '[]');
+        
+        if (guestCart.length === 0) {
+          setCart({ items: [], subtotal: 0, totalItems: 0, itemCount: 0 });
+          setLoading(false);
+          return;
+        }
+        
+        // Fetch product details for guest cart items
+        const productIds = guestCart.map((item: any) => item.productId);
+        const response = await fetch(`${backendUrl}/api/marketplace/products/batch`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ productIds })
+        });
+        
+        const data = await response.json();
+        if (data.success) {
+          const cartItems: CartItem[] = guestCart.map((guestItem: any) => {
+            const product = data.data.products.find((p: any) => p._id === guestItem.productId);
+            if (!product) return null;
+            
+            return {
+              productId: product._id,
+              productName: product.name,
+              category: product.category,
+              price: product.price,
+              priceAtAddTime: product.price,
+              quantity: guestItem.quantity,
+              stock: product.stock,
+              image: product.images[0] || null,
+              vendorId: product.vendorId,
+              vendorBusinessName: product.vendorBusinessName || 'Unknown Vendor',
+              subtotal: product.price * guestItem.quantity,
+              isAvailable: product.stockStatus !== 'OUT_OF_STOCK',
+              maxQuantity: Math.min(guestItem.quantity + product.stock, product.stock)
+            };
+          }).filter(Boolean);
+          
+          const subtotal = cartItems.reduce((sum, item) => sum + item.subtotal, 0);
+          const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+          
+          setCart({
+            items: cartItems,
+            subtotal,
+            totalItems,
+            itemCount: cartItems.length
+          });
+          
+          const quantities: Record<string, number> = {};
+          cartItems.forEach((item: CartItem) => {
+            quantities[item.productId] = item.quantity;
+          });
+          setLocalQuantities(quantities);
+        }
+        
+        setLoading(false);
         return;
       }
 
@@ -87,6 +144,20 @@ const Cart: React.FC = () => {
     try {
       setUpdating(productId);
       const token = localStorage.getItem('token');
+      
+      // Handle guest cart
+      if (!token) {
+        const guestCart = JSON.parse(localStorage.getItem('guestCart') || '[]');
+        const itemIndex = guestCart.findIndex((item: any) => item.productId === productId);
+        
+        if (itemIndex >= 0) {
+          guestCart[itemIndex].quantity = newQuantity;
+          localStorage.setItem('guestCart', JSON.stringify(guestCart));
+          await fetchCart();
+        }
+        setUpdating(null);
+        return;
+      }
       
       const response = await fetch(`${backendUrl}/api/cart/update`, {
         method: 'PATCH',
@@ -150,6 +221,16 @@ const Cart: React.FC = () => {
     try {
       setUpdating(productId);
       const token = localStorage.getItem('token');
+      
+      // Handle guest cart
+      if (!token) {
+        const guestCart = JSON.parse(localStorage.getItem('guestCart') || '[]');
+        const updatedCart = guestCart.filter((item: any) => item.productId !== productId);
+        localStorage.setItem('guestCart', JSON.stringify(updatedCart));
+        await fetchCart();
+        setUpdating(null);
+        return;
+      }
       
       const response = await fetch(`${backendUrl}/api/cart/remove/${productId}`, {
         method: 'DELETE',
@@ -416,7 +497,15 @@ const Cart: React.FC = () => {
                           Cannot Checkout
                         </button>
                       </div>
-                    ) : !userRole || !['farmer', 'landowner', 'investor'].includes(userRole) ? (
+                    ) : !userRole ? (
+                      <div className="space-y-2">
+                        <button onClick={() => navigate('/register')}
+                          className="w-full py-3 sm:py-3.5 bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-lg sm:rounded-xl font-semibold hover:from-emerald-700 hover:to-teal-700 transition flex items-center justify-center gap-2 shadow-lg shadow-emerald-200 text-sm sm:text-base">
+                          <CreditCard className="w-4 h-4 sm:w-5 sm:h-5" /> Create Account to Checkout
+                        </button>
+                        <p className="text-xs text-center text-gray-500">Already have an account? <button onClick={() => navigate('/login')} className="text-emerald-600 font-medium hover:underline">Login</button></p>
+                      </div>
+                    ) : !['farmer', 'landowner', 'investor'].includes(userRole) ? (
                       <button onClick={() => navigate('/checkout')}
                         className="w-full py-3 sm:py-3.5 bg-amber-500 text-white rounded-lg sm:rounded-xl font-semibold hover:bg-amber-600 transition flex items-center justify-center gap-2 text-sm sm:text-base">
                         <CreditCard className="w-4 h-4 sm:w-5 sm:h-5" /> Continue to Login

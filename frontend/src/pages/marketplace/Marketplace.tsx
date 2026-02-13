@@ -107,7 +107,37 @@ const Marketplace: React.FC = () => {
 
   const addToCart = async (productId: string) => {
     const token = localStorage.getItem('token');
-    if (!token) { navigate('/register'); return; }
+    
+    // If not logged in, store in local storage
+    if (!token) {
+      try {
+        setAddingToCart(productId);
+        
+        // Get existing guest cart
+        const guestCart = JSON.parse(localStorage.getItem('guestCart') || '[]');
+        
+        // Check if product already exists
+        const existingIndex = guestCart.findIndex((item: any) => item.productId === productId);
+        
+        if (existingIndex >= 0) {
+          guestCart[existingIndex].quantity += 1;
+        } else {
+          guestCart.push({ productId, quantity: 1 });
+        }
+        
+        localStorage.setItem('guestCart', JSON.stringify(guestCart));
+        
+        setShowSuccessAnimation(true);
+        setTimeout(() => setShowSuccessAnimation(false), 1500);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setAddingToCart(null);
+      }
+      return;
+    }
+    
+    // If logged in, add to server cart
     try {
       setAddingToCart(productId);
       const response = await fetch(`${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/cart/add`, {
@@ -125,7 +155,37 @@ const Marketplace: React.FC = () => {
 
   const buyNow = async (productId: string) => {
     const token = localStorage.getItem('token');
-    if (!token) { navigate('/register'); return; }
+    
+    // If not logged in, store in local storage and redirect to login
+    if (!token) {
+      try {
+        setAddingToCart(productId);
+        
+        // Get existing guest cart
+        const guestCart = JSON.parse(localStorage.getItem('guestCart') || '[]');
+        
+        // Check if product already exists
+        const existingIndex = guestCart.findIndex((item: any) => item.productId === productId);
+        
+        if (existingIndex >= 0) {
+          guestCart[existingIndex].quantity += 1;
+        } else {
+          guestCart.push({ productId, quantity: 1 });
+        }
+        
+        localStorage.setItem('guestCart', JSON.stringify(guestCart));
+        
+        // Redirect to register/login
+        navigate('/register');
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setAddingToCart(null);
+      }
+      return;
+    }
+    
+    // If logged in, add to cart and navigate
     try {
       setAddingToCart(productId);
       const response = await fetch(`${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/cart/add`, {
@@ -144,10 +204,10 @@ const Marketplace: React.FC = () => {
 
   return (
     <MarketplaceLayout>
-      <div className="min-h-screen bg-white w-full overflow-x-hidden pt-16">
+      <div className="min-h-screen bg-white w-full overflow-x-hidden">
         
         {/* Search Bar */}
-        <div className="sticky top-16 z-40 bg-white border-b border-gray-100 px-4 py-4">
+        <div className="sticky top-0 z-40 bg-white border-b border-gray-100 px-4 py-4">
           <div className="relative max-w-7xl mx-auto">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
             <input 
