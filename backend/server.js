@@ -55,7 +55,7 @@ const auth = require('./middleware/auth');
 // Middleware
 // ------------------------
 const allowedOrigins = [
-  'http://localhost:5173'
+  'https://agricorus.vercel.app'
 ];
 
 app.use(cors({
