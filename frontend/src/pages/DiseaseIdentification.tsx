@@ -77,7 +77,7 @@ const DiseaseIdentificationContent: React.FC = () => {
     formData.append('file', selectedImage);
 
     try {
-      const response = await fetch('https://agricorus.duckdns.org/predict', {
+      const response = await fetch('http://localhost:8000/predict', {
         method: 'POST',
         body: formData,
       });
