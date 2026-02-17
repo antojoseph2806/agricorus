@@ -67,10 +67,10 @@ const InvestorReturnRequest: React.FC = () => {
         }
 
         const [invRes, payoutRes] = await Promise.all([
-          axios.get(`${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/project-payments/investments/history`, {
+          axios.get(`${import.meta.env.VITE_BACKEND_URL || "https://agricorus.duckdns.org"}/api/project-payments/investments/history`, {
             headers: { Authorization: `Bearer ${token}` },
           }),
-          axios.get(`${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/payouts/`, {
+          axios.get(`${import.meta.env.VITE_BACKEND_URL || "https://agricorus.duckdns.org"}/api/payouts/`, {
             headers: { Authorization: `Bearer ${token}` },
           }),
         ]);
@@ -109,7 +109,7 @@ const InvestorReturnRequest: React.FC = () => {
     try {
       setLoading(true);
       const res = await axios.post(
-        `${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/investor/return-requests`,
+        `${import.meta.env.VITE_BACKEND_URL || "https://agricorus.duckdns.org"}/api/investor/return-requests`,
         { investmentId: selectedInvestment, payoutMethodId: selectedPayoutMethod },
         { headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` } }
       );

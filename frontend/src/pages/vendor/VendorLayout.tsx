@@ -86,7 +86,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, onToggleSidebar, isMob
     const token = localStorage.getItem('token');
     if (token) {
       try {
-        await fetch(`${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/auth/logout`, {
+        await fetch(`${import.meta.env.VITE_BACKEND_URL || "https://agricorus.duckdns.org"}/api/auth/logout`, {
           method: 'POST',
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -268,7 +268,7 @@ const UserProfileDropdown: React.FC = () => {
     const token = localStorage.getItem("token");
     if (token) {
       try {
-        await fetch(`${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/auth/logout`, {
+        await fetch(`${import.meta.env.VITE_BACKEND_URL || "https://agricorus.duckdns.org"}/api/auth/logout`, {
           method: "POST",
           headers: { Authorization: `Bearer ${token}` },
         });

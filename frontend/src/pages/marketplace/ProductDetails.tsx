@@ -47,7 +47,7 @@ const ProductDetails: React.FC = () => {
   const fetchProduct = async () => {
     try {
       setLoading(true);
-      const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
+      const backendUrl = import.meta.env.VITE_BACKEND_URL || "https://agricorus.duckdns.org";
       const response = await fetch(`${backendUrl}/api/marketplace/products/${id}`);
       const data = await response.json();
 
@@ -91,7 +91,7 @@ const ProductDetails: React.FC = () => {
     // User is logged in with valid role, proceed with actual cart addition
     try {
       setAddingToCart(true);
-      const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
+      const backendUrl = import.meta.env.VITE_BACKEND_URL || "https://agricorus.duckdns.org";
       const response = await fetch(`${backendUrl}/api/cart/add`, {
         method: 'POST',
         headers: {

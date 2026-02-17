@@ -25,7 +25,7 @@ const CancelledLeases: React.FC = () => {
     const fetchCancelledLeases = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await fetch(`${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/farmer/leases/cancelled`, {
+        const res = await fetch(`${import.meta.env.VITE_BACKEND_URL || "https://agricorus.duckdns.org"}/api/farmer/leases/cancelled`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const data = await res.json();

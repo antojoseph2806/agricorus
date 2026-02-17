@@ -64,7 +64,7 @@ const RevenueTrends: React.FC = () => {
       setLoading(true);
       const token = localStorage.getItem('token');
       const response = await fetch(
-        `${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/admin/sales-analytics/revenue?period=${selectedPeriod}`,
+        `${import.meta.env.VITE_BACKEND_URL || "https://agricorus.duckdns.org"}/api/admin/sales-analytics/revenue?period=${selectedPeriod}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -87,7 +87,7 @@ const RevenueTrends: React.FC = () => {
     try {
       const token = localStorage.getItem('token');
       const response = await fetch(
-        `${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/admin/sales-analytics/download?type=revenue&period=${selectedPeriod}`,
+        `${import.meta.env.VITE_BACKEND_URL || "https://agricorus.duckdns.org"}/api/admin/sales-analytics/download?type=revenue&period=${selectedPeriod}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }

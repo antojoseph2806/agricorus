@@ -53,6 +53,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, onToggleSidebar, isMob
       ],
     },
     { label: 'View Lands', icon: MapPin, href: '/lands/farmer' },
+    { label: 'Disease Identification', icon: Activity, href: '/disease-identification' },
     {
       label: 'Crowdfunding',
       icon: TrendingUp,

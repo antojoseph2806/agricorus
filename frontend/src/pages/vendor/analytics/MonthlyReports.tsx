@@ -54,7 +54,7 @@ const MonthlyReports = () => {
       const token = localStorage.getItem("token");
       
       const response = await axios.get(
-        `${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/vendor/analytics/monthly-report`,
+        `${import.meta.env.VITE_BACKEND_URL || "https://agricorus.duckdns.org"}/api/vendor/analytics/monthly-report`,
         {
           headers: { Authorization: `Bearer ${token}` },
           params: {
@@ -83,7 +83,7 @@ const MonthlyReports = () => {
       const token = localStorage.getItem("token");
       
       const response = await axios.get(
-        `${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/vendor/analytics/download-monthly-report`,
+        `${import.meta.env.VITE_BACKEND_URL || "https://agricorus.duckdns.org"}/api/vendor/analytics/download-monthly-report`,
         {
           headers: { Authorization: `Bearer ${token}` },
           params: {

@@ -37,7 +37,7 @@ const ProductList = () => {
   const fetchKYCStatus = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/vendor/profile/status`, {
+      const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL || "https://agricorus.duckdns.org"}/api/vendor/profile/status`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -54,8 +54,8 @@ const ProductList = () => {
       const token = localStorage.getItem("token");
       const url =
         filter === "all"
-          ? `${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/vendor/products`
-          : `${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/vendor/products?isActive=${filter === "active"}`;
+          ? `${import.meta.env.VITE_BACKEND_URL || "https://agricorus.duckdns.org"}/api/vendor/products`
+          : `${import.meta.env.VITE_BACKEND_URL || "https://agricorus.duckdns.org"}/api/vendor/products?isActive=${filter === "active"}`;
 
       const res = await axios.get(url, {
         headers: { Authorization: `Bearer ${token}` },
@@ -77,7 +77,7 @@ const ProductList = () => {
 
     try {
       const token = localStorage.getItem("token");
-      await axios.delete(`${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/vendor/products/${id}`, {
+      await axios.delete(`${import.meta.env.VITE_BACKEND_URL || "https://agricorus.duckdns.org"}/api/vendor/products/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -157,7 +157,7 @@ const ProductList = () => {
     try {
       const token = localStorage.getItem("token");
       const res = await axios.patch(
-        `${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/vendor/products/${product._id}/inventory`,
+        `${import.meta.env.VITE_BACKEND_URL || "https://agricorus.duckdns.org"}/api/vendor/products/${product._id}/inventory`,
         { isActive: !product.isActive },
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -422,7 +422,7 @@ const ProductList = () => {
               try {
                 const token = localStorage.getItem("token");
                 const res = await axios.patch(
-                  `${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/vendor/products/${selectedProduct._id}/inventory`,
+                  `${import.meta.env.VITE_BACKEND_URL || "https://agricorus.duckdns.org"}/api/vendor/products/${selectedProduct._id}/inventory`,
                   data,
                   {
                     headers: { Authorization: `Bearer ${token}` },

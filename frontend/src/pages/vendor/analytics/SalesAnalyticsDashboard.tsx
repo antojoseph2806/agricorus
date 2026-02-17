@@ -83,16 +83,16 @@ const SalesAnalyticsDashboard = () => {
       const token = localStorage.getItem("token");
       
       const [metricsRes, chartRes, productsRes, ordersRes] = await Promise.all([
-        axios.get(`${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/vendor/analytics/metrics?period=${selectedPeriod}`, {
+        axios.get(`${import.meta.env.VITE_BACKEND_URL || "https://agricorus.duckdns.org"}/api/vendor/analytics/metrics?period=${selectedPeriod}`, {
           headers: { Authorization: `Bearer ${token}` }
         }),
-        axios.get(`${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/vendor/analytics/chart?period=${selectedPeriod}`, {
+        axios.get(`${import.meta.env.VITE_BACKEND_URL || "https://agricorus.duckdns.org"}/api/vendor/analytics/chart?period=${selectedPeriod}`, {
           headers: { Authorization: `Bearer ${token}` }
         }),
-        axios.get(`${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/vendor/analytics/top-products?limit=5`, {
+        axios.get(`${import.meta.env.VITE_BACKEND_URL || "https://agricorus.duckdns.org"}/api/vendor/analytics/top-products?limit=5`, {
           headers: { Authorization: `Bearer ${token}` }
         }),
-        axios.get(`${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/vendor/analytics/recent-orders?limit=5`, {
+        axios.get(`${import.meta.env.VITE_BACKEND_URL || "https://agricorus.duckdns.org"}/api/vendor/analytics/recent-orders?limit=5`, {
           headers: { Authorization: `Bearer ${token}` }
         })
       ]);

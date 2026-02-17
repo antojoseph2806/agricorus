@@ -52,7 +52,7 @@ interface ManageUsersProps {
   role: "landowner" | "farmer" | "investor";
 }
 
-const API_BASE_URL = `${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}`;
+const API_BASE_URL = `${import.meta.env.VITE_BACKEND_URL || "https://agricorus.duckdns.org"}`;
 
 const ManageUsers: React.FC<ManageUsersProps> = ({ role }) => {
   const [users, setUsers] = useState<User[]>([]);

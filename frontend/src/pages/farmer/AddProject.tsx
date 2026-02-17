@@ -299,7 +299,7 @@ export default function AddProject() {
       });
 
       await axios.post(
-        `${import.meta.env.VITE_BACKEND_URL || `${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}`}/api/projects/create-verified`,
+        `${import.meta.env.VITE_BACKEND_URL || `${import.meta.env.VITE_BACKEND_URL || "https://agricorus.duckdns.org"}`}/api/projects/create-verified`,
         formData,
         {
           headers: {

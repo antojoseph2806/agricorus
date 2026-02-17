@@ -55,7 +55,7 @@ export default function InvestorProjectDetails() {
       if (!token) return;
       try {
         setPageLoading(true);
-        const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/projects/investor/${id}`, {
+        const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL || "https://agricorus.duckdns.org"}/api/projects/investor/${id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setProject(res.data);
@@ -112,7 +112,7 @@ export default function InvestorProjectDetails() {
 
     try {
       setLoading(true);
-      const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/project-payments/create-order`,
+      const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL || "https://agricorus.duckdns.org"}/api/project-payments/create-order`,
         { amount: investAmount, projectId: project._id },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -127,12 +127,12 @@ export default function InvestorProjectDetails() {
         order_id: order.id,
         handler: async function (response: any) {
           try {
-            await axios.post(`${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/project-payments/verify`,
+            await axios.post(`${import.meta.env.VITE_BACKEND_URL || "https://agricorus.duckdns.org"}/api/project-payments/verify`,
               { razorpay_payment_id: response.razorpay_payment_id, razorpay_order_id: response.razorpay_order_id, razorpay_signature: response.razorpay_signature, projectId: project._id, amount: investAmount },
               { headers: { Authorization: `Bearer ${token}` } }
             );
             alert("Payment successful!");
-            const updated = await axios.get(`${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/projects/investor/${project._id}`, { headers: { Authorization: `Bearer ${token}` } });
+            const updated = await axios.get(`${import.meta.env.VITE_BACKEND_URL || "https://agricorus.duckdns.org"}/api/projects/investor/${project._id}`, { headers: { Authorization: `Bearer ${token}` } });
             setProject(updated.data);
           } catch (err) {
             alert("Payment verification failed. Contact support.");

@@ -33,8 +33,8 @@ const AdminLeasesPage: React.FC = () => {
     try {
       setLoading(true);
       const url = status
-        ? `${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/admin/leases?status=${status}`
-        : `${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/admin/leases`;
+        ? `${import.meta.env.VITE_BACKEND_URL || "https://agricorus.duckdns.org"}/api/admin/leases?status=${status}`
+        : `${import.meta.env.VITE_BACKEND_URL || "https://agricorus.duckdns.org"}/api/admin/leases`;
       const res = await axios.get(url, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
@@ -49,7 +49,7 @@ const AdminLeasesPage: React.FC = () => {
   const deleteLease = async (id: string) => {
     if (!window.confirm("Are you sure you want to delete this lease?")) return;
     try {
-      await axios.delete(`${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/admin/leases/${id}`, {
+      await axios.delete(`${import.meta.env.VITE_BACKEND_URL || "https://agricorus.duckdns.org"}/api/admin/leases/${id}`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
       fetchLeases(filter);
@@ -61,7 +61,7 @@ const AdminLeasesPage: React.FC = () => {
   const changeStatus = async (id: string, status: string) => {
     try {
       await axios.put(
-        `${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/admin/leases/${id}/status`,
+        `${import.meta.env.VITE_BACKEND_URL || "https://agricorus.duckdns.org"}/api/admin/leases/${id}/status`,
         { status },
         { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
       );

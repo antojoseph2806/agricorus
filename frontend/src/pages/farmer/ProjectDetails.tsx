@@ -186,7 +186,7 @@ export default function ProjectDetails() {
     title: string;
   }>({ type: null, src: '', title: '' });
   
-  const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
+  const backendUrl = import.meta.env.VITE_BACKEND_URL || "https://agricorus.duckdns.org";
 
   // Helper function to get correct media URL
   const getMediaUrl = (filePath: string) => {

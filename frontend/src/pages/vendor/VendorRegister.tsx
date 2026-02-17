@@ -147,7 +147,7 @@ const VendorRegister = () => {
     }
 
     try {
-      const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/vendors/register`, {
+      const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL || "https://agricorus.duckdns.org"}/api/vendors/register`, {
         businessName: form.businessName.trim(),
         ownerName: form.ownerName.trim(),
         email: form.email.trim().toLowerCase(),

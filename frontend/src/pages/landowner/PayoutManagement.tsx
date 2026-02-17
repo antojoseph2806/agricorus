@@ -46,7 +46,7 @@ export const PayoutManagement = ({ type }: { type: "upi" | "bank" }) => {
   const fetchPayouts = async () => {
     setLoading(true);
     try {
-      const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/payouts`, axiosConfig);
+      const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL || "https://agricorus.duckdns.org"}/api/payouts`, axiosConfig);
       setPayouts(res.data.filter((p: PayoutMethod) => p.type === type));
     } catch (err: any) {
       console.error("Error fetching payouts:", err);
@@ -76,13 +76,13 @@ export const PayoutManagement = ({ type }: { type: "upi" | "bank" }) => {
     try {
       if (editingId) {
         await axios.put(
-          `${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/payouts/${editingId}`,
+          `${import.meta.env.VITE_BACKEND_URL || "https://agricorus.duckdns.org"}/api/payouts/${editingId}`,
           formData,
           axiosConfig
         );
       } else {
         await axios.post(
-          `${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/payouts/add-${type}`,
+          `${import.meta.env.VITE_BACKEND_URL || "https://agricorus.duckdns.org"}/api/payouts/add-${type}`,
           formData,
           axiosConfig
         );
@@ -107,7 +107,7 @@ export const PayoutManagement = ({ type }: { type: "upi" | "bank" }) => {
     if (!window.confirm("Are you sure you want to delete this payout method?")) return;
 
     try {
-      await axios.delete(`${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/payouts/${id}`, axiosConfig);
+      await axios.delete(`${import.meta.env.VITE_BACKEND_URL || "https://agricorus.duckdns.org"}/api/payouts/${id}`, axiosConfig);
       fetchPayouts();
     } catch (err: any) {
       console.error("Error deleting payout:", err);

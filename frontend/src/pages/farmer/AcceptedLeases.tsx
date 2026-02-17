@@ -36,7 +36,7 @@ const AcceptedLeases: React.FC = () => {
     const fetchAcceptedLeases = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await fetch(`${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/farmer/leases/accepted`, {
+        const res = await fetch(`${import.meta.env.VITE_BACKEND_URL || "https://agricorus.duckdns.org"}/api/farmer/leases/accepted`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const data = await res.json();
@@ -56,7 +56,7 @@ const AcceptedLeases: React.FC = () => {
   const handlePayment = async (leaseId: string) => {
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/payments/order/${leaseId}`, {
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL || "https://agricorus.duckdns.org"}/api/payments/order/${leaseId}`, {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -73,7 +73,7 @@ const AcceptedLeases: React.FC = () => {
         description: "Lease Payment",
         order_id: orderData.orderId,
         handler: async function (response: any) {
-          const verifyRes = await fetch(`${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/payments/verify`, {
+          const verifyRes = await fetch(`${import.meta.env.VITE_BACKEND_URL || "https://agricorus.duckdns.org"}/api/payments/verify`, {
             method: "POST",
             headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
             body: JSON.stringify({

@@ -62,7 +62,7 @@ const OrderDetails: React.FC = () => {
   const [returnReason, setReturnReason] = useState('');
   const [userReviews, setUserReviews] = useState<Record<string, { rating: number; comment?: string; photos?: Array<{ url: string; caption?: string }> }>>({});
   const [downloadingInvoice, setDownloadingInvoice] = useState(false);
-  const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
+  const backendUrl = import.meta.env.VITE_BACKEND_URL || "https://agricorus.duckdns.org";
   const orderPlaced = location.state?.orderPlaced;
 
   const fetchOrder = async () => {

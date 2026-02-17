@@ -48,7 +48,7 @@ export default function ManageUPI() {
   const fetchMethods = async () => {
     try {
       setLoading(true);
-      const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/payouts/`, {
+      const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL || "https://agricorus.duckdns.org"}/api/payouts/`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
       });
       setMethods(res.data.filter((m: any) => m.type === "upi"));
@@ -72,12 +72,12 @@ export default function ManageUPI() {
     try {
       setSubmitting(true);
       if (editingId) {
-        await axios.put(`${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/payouts/${editingId}`, form, {
+        await axios.put(`${import.meta.env.VITE_BACKEND_URL || "https://agricorus.duckdns.org"}/api/payouts/${editingId}`, form, {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
         });
         showToast("UPI method updated successfully!", "success");
       } else {
-        await axios.post(`${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/payouts/add-upi`, form, {
+        await axios.post(`${import.meta.env.VITE_BACKEND_URL || "https://agricorus.duckdns.org"}/api/payouts/add-upi`, form, {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
         });
         showToast("UPI method added successfully!", "success");
@@ -106,7 +106,7 @@ export default function ManageUPI() {
   const handleDelete = async (id: string) => {
     if (!window.confirm("Are you sure you want to delete this UPI method?")) return;
     try {
-      await axios.delete(`${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/payouts/${id}`, {
+      await axios.delete(`${import.meta.env.VITE_BACKEND_URL || "https://agricorus.duckdns.org"}/api/payouts/${id}`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
       });
       showToast("UPI method deleted successfully!", "success");
@@ -119,7 +119,7 @@ export default function ManageUPI() {
   const handleVerify = async (id: string) => {
     try {
       setVerifying(id);
-      const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/payouts/verify-upi/${id}`, {}, {
+      const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL || "https://agricorus.duckdns.org"}/api/payouts/verify-upi/${id}`, {}, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
       });
       showToast(res.data.message || "UPI verified successfully!", "success");

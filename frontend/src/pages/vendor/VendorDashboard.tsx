@@ -49,13 +49,13 @@ const VendorDashboard = () => {
 
       // Fetch vendor profile to get KYC status
       const [profileRes, productsRes, ordersRes] = await Promise.allSettled([
-        axios.get(`${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/vendor/profile`, {
+        axios.get(`${import.meta.env.VITE_BACKEND_URL || "https://agricorus.duckdns.org"}/api/vendor/profile`, {
           headers: { Authorization: `Bearer ${token}` },
         }),
-        axios.get(`${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/vendor/products?isActive=true`, {
+        axios.get(`${import.meta.env.VITE_BACKEND_URL || "https://agricorus.duckdns.org"}/api/vendor/products?isActive=true`, {
           headers: { Authorization: `Bearer ${token}` },
         }),
-        axios.get(`${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/vendor/orders`, {
+        axios.get(`${import.meta.env.VITE_BACKEND_URL || "https://agricorus.duckdns.org"}/api/vendor/orders`, {
           headers: { Authorization: `Bearer ${token}` },
         }),
       ]);

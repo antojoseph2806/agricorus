@@ -1,0 +1,48 @@
+{
+  "name": "agricorus-landowner-selenium-tests",
+  "version": "1.0.0",
+  "description": "Comprehensive Selenium testing suite for AgriCorus landowner CRUD functionality",
+  "scripts": {
+    "setup-browser": "node setup-browser.js",
+    "pretest": "node check-servers.js",
+    "test": "mocha \"*.test.js\" --timeout 180000 --exit",
+    "test:landowner": "mocha landowner-crud.test.js --timeout 180000 --exit",
+    "test:landowner-advanced": "mocha landowner-advanced.test.js --timeout 180000 --exit",
+    "test:landowner-create": "mocha landowner-crud.test.js --grep \"Create Land\" --timeout 180000 --exit",
+    "test:landowner-read": "mocha landowner-crud.test.js --grep \"Read Land\" --timeout 180000 --exit",
+    "test:landowner-update": "mocha landowner-crud.test.js --grep \"Update Land\" --timeout 180000 --exit",
+    "test:landowner-delete": "mocha landowner-crud.test.js --grep \"Delete Land\" --timeout 180000 --exit",
+    "test:farmer": "mocha farmer-crud-comprehensive.test.js --timeout 180000 --exit",
+    "test:farmer-projects": "mocha farmer-crud-comprehensive.test.js --grep \"Project Management\" --timeout 180000 --exit",
+    "test:farmer-lands": "mocha farmer-crud-comprehensive.test.js --grep \"Land Browsing\" --timeout 180000 --exit",
+    "test:farmer-leases": "mocha farmer-crud-comprehensive.test.js --grep \"Lease Management\" --timeout 180000 --exit",
+    "test:farmer-create": "mocha farmer-crud-comprehensive.test.js --grep \"CREATE\" --timeout 180000 --exit",
+    "test:farmer-read": "mocha farmer-crud-comprehensive.test.js --grep \"READ\" --timeout 180000 --exit",
+    "test:farmer-update": "mocha farmer-crud-comprehensive.test.js --grep \"UPDATE\" --timeout 180000 --exit",
+    "test:farmer-delete": "mocha farmer-crud-comprehensive.test.js --grep \"DELETE\" --timeout 180000 --exit",
+    "test:vendor": "mocha vendor-crud-comprehensive.test.js --timeout 180000 --exit",
+    "test:vendor-products": "mocha vendor-crud-comprehensive.test.js --grep \"Product Management\" --timeout 180000 --exit",
+    "test:vendor-orders": "mocha vendor-crud-comprehensive.test.js --grep \"Order Management\" --timeout 180000 --exit",
+    "test:vendor-create": "mocha vendor-crud-comprehensive.test.js --grep \"CREATE\" --timeout 180000 --exit",
+    "test:vendor-read": "mocha vendor-crud-comprehensive.test.js --grep \"READ\" --timeout 180000 --exit",
+    "test:vendor-update": "mocha vendor-crud-comprehensive.test.js --grep \"UPDATE\" --timeout 180000 --exit",
+    "test:vendor-delete": "mocha vendor-crud-comprehensive.test.js --grep \"DELETE\" --timeout 180000 --exit",
+    "test:report": "mochawesome-merge ./reports/*.json > ./reports/combined-report.json && marge ./reports/combined-report.json -f report -o ./reports",
+    "check-servers": "node check-servers.js"
+  },
+  "dependencies": {
+    "selenium-webdriver": "^4.16.0",
+    "chromedriver": "^120.0.0",
+    "mocha": "^10.2.0",
+    "chai": "^4.3.10",
+    "mochawesome": "^7.1.3",
+    "mochawesome-merge": "^4.3.0",
+    "mochawesome-report-generator": "^6.2.0",
+    "dotenv": "^16.3.1",
+    "faker": "^5.5.3"
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.6",
+    "@types/chai": "^4.3.11"
+  }
+}

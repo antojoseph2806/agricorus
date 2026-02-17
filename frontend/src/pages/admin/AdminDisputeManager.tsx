@@ -18,7 +18,7 @@ import {
   Shield,
 } from "lucide-react";
 
-const API_BASE = `${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/disputes/admin`;
+const API_BASE = `${import.meta.env.VITE_BACKEND_URL || "https://agricorus.duckdns.org"}/api/disputes/admin`;
 
 interface UserRef {
   _id: string;

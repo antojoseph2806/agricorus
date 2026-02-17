@@ -31,7 +31,7 @@ const EditProjectadmin: React.FC = () => {
 
   const getAxios = () =>
     axios.create({
-      baseURL: `${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}`,
+      baseURL: `${import.meta.env.VITE_BACKEND_URL || "https://agricorus.duckdns.org"}`,
       headers: { Authorization: `Bearer ${token}` },
     });
 
@@ -88,7 +88,7 @@ const EditProjectadmin: React.FC = () => {
     setSuccess(null);
 
     try {
-      await getAxios().put(`${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/projects/${id}`, formData);
+      await getAxios().put(`${import.meta.env.VITE_BACKEND_URL || "https://agricorus.duckdns.org"}/api/projects/${id}`, formData);
       setSuccess("Project updated successfully!");
       // Optional: navigate back to ManageProjects page after update
       setTimeout(() => navigate("/admin/manage-projects"), 1000);

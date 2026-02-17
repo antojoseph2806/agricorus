@@ -99,7 +99,7 @@ const VendorProfile = () => {
   const fetchProfile = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/vendor/profile`, {
+      const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL || "https://agricorus.duckdns.org"}/api/vendor/profile`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -237,8 +237,8 @@ const VendorProfile = () => {
       });
 
       const url = profile
-        ? `${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/vendor/profile`
-        : `${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/vendor/profile`;
+        ? `${import.meta.env.VITE_BACKEND_URL || "https://agricorus.duckdns.org"}/api/vendor/profile`
+        : `${import.meta.env.VITE_BACKEND_URL || "https://agricorus.duckdns.org"}/api/vendor/profile`;
       const method = profile ? "PUT" : "POST";
 
       const res = await axios[method.toLowerCase() as "post" | "put"](

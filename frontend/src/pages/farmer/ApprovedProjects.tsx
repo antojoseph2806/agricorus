@@ -29,7 +29,7 @@ export default function ApprovedProjects() {
 
   useEffect(() => {
     axios
-      .get(`${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/projects/approved`)
+      .get(`${import.meta.env.VITE_BACKEND_URL || "https://agricorus.duckdns.org"}/api/projects/approved`)
       .then((res) => setProjects(res.data))
       .catch((err) => console.error(err))
       .finally(() => setLoading(false));

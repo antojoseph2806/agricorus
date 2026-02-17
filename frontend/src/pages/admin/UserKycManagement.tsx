@@ -53,7 +53,7 @@ const UserKycManagement: React.FC = () => {
   const getAxios = () => {
     if (!token) throw new Error("No authentication token found");
     return axios.create({
-      baseURL: `${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}`,
+      baseURL: `${import.meta.env.VITE_BACKEND_URL || "https://agricorus.duckdns.org"}`,
       headers: { Authorization: `Bearer ${token}` },
     });
   };

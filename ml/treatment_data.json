@@ -1,0 +1,306 @@
+{
+  "Apple___Apple_scab": {
+    "treatments": [
+      {"active_ingredient": "Captan", "type": "Fungicide", "category": "Chemical", "usage_stage": "Preventive"},
+      {"active_ingredient": "Myclobutanil", "type": "Systemic Fungicide", "category": "Chemical", "usage_stage": "Early infection"},
+      {"active_ingredient": "Sulfur", "type": "Contact Fungicide", "category": "Organic", "usage_stage": "Mild infection"},
+      {"active_ingredient": "Potassium Bicarbonate", "type": "Bio-Fungicide", "category": "Organic", "usage_stage": "Early stage"}
+    ]
+  },
+  "Apple___Black_rot": {
+    "treatments": [
+      {"active_ingredient": "Mancozeb", "type": "Fungicide", "category": "Chemical", "usage_stage": "Preventive"},
+      {"active_ingredient": "Thiophanate-methyl", "type": "Systemic Fungicide", "category": "Chemical", "usage_stage": "Early infection"},
+      {"active_ingredient": "Captan", "type": "Fungicide", "category": "Chemical", "usage_stage": "Moderate infection"},
+      {"active_ingredient": "Copper Oxychloride", "type": "Fungicide", "category": "Chemical", "usage_stage": "Preventive"}
+    ]
+  },
+  "Apple___Cedar_apple_rust": {
+    "treatments": [
+      {"active_ingredient": "Myclobutanil", "type": "Systemic Fungicide", "category": "Chemical", "usage_stage": "Preventive"},
+      {"active_ingredient": "Propiconazole", "type": "Systemic Fungicide", "category": "Chemical", "usage_stage": "Early infection"},
+      {"active_ingredient": "Mancozeb", "type": "Fungicide", "category": "Chemical", "usage_stage": "Moderate infection"},
+      {"active_ingredient": "Sulfur", "type": "Contact Fungicide", "category": "Organic", "usage_stage": "Mild stage"}
+    ]
+  },
+  "Apple___healthy": {
+    "treatments": [
+      {"active_ingredient": "NPK 19:19:19", "type": "Fertilizer", "category": "Nutrition", "usage_stage": "Growth stage"},
+      {"active_ingredient": "Calcium Nitrate", "type": "Fertilizer", "category": "Nutrition", "usage_stage": "Fruit development"},
+      {"active_ingredient": "Micronutrient Mix", "type": "Foliar Spray", "category": "Nutrition", "usage_stage": "Vegetative stage"},
+      {"active_ingredient": "Seaweed Extract", "type": "Bio-stimulant", "category": "Organic", "usage_stage": "All stages"}
+    ]
+  },
+  "Blueberry___healthy": {
+    "treatments": [
+      {"active_ingredient": "Ammonium Sulfate", "type": "Fertilizer", "category": "Nutrition", "usage_stage": "Soil acidification"},
+      {"active_ingredient": "Iron Chelate", "type": "Micronutrient", "category": "Nutrition", "usage_stage": "Chlorosis correction"},
+      {"active_ingredient": "Seaweed Extract", "type": "Bio-stimulant", "category": "Organic", "usage_stage": "Vegetative stage"},
+      {"active_ingredient": "Humic Acid", "type": "Soil Conditioner", "category": "Organic", "usage_stage": "Soil improvement"}
+    ]
+  },
+  "Cherry_(including_sour)___Powdery_mildew": {
+    "treatments": [
+      {"active_ingredient": "Sulfur", "type": "Fungicide", "category": "Organic", "usage_stage": "Early infection"},
+      {"active_ingredient": "Myclobutanil", "type": "Systemic Fungicide", "category": "Chemical", "usage_stage": "Moderate infection"},
+      {"active_ingredient": "Potassium Bicarbonate", "type": "Bio-Fungicide", "category": "Organic", "usage_stage": "Mild stage"},
+      {"active_ingredient": "Neem Oil", "type": "Bio-Fungicide", "category": "Organic", "usage_stage": "Preventive"}
+    ]
+  },
+  "Cherry_(including_sour)___healthy": {
+    "treatments": [
+      {"active_ingredient": "NPK 20:20:20", "type": "Fertilizer", "category": "Nutrition", "usage_stage": "Growth stage"},
+      {"active_ingredient": "Boron", "type": "Micronutrient", "category": "Nutrition", "usage_stage": "Flowering"},
+      {"active_ingredient": "Calcium Spray", "type": "Foliar Nutrient", "category": "Nutrition", "usage_stage": "Fruit set"},
+      {"active_ingredient": "Seaweed Extract", "type": "Bio-stimulant", "category": "Organic", "usage_stage": "All stages"}
+    ]
+  },
+  "Corn_(maize)___Cercospora_leaf_spot_Gray_leaf_spot": {
+    "treatments": [
+      {"active_ingredient": "Azoxystrobin", "type": "Systemic Fungicide", "category": "Chemical", "usage_stage": "Early infection"},
+      {"active_ingredient": "Pyraclostrobin", "type": "Systemic Fungicide", "category": "Chemical", "usage_stage": "Moderate infection"},
+      {"active_ingredient": "Mancozeb", "type": "Contact Fungicide", "category": "Chemical", "usage_stage": "Preventive"},
+      {"active_ingredient": "Propiconazole", "type": "Systemic Fungicide", "category": "Chemical", "usage_stage": "Severe infection"}
+    ]
+  },
+  "Corn_(maize)___Common_rust": {
+    "treatments": [
+      {"active_ingredient": "Propiconazole", "type": "Systemic Fungicide", "category": "Chemical", "usage_stage": "Early infection"},
+      {"active_ingredient": "Tebuconazole", "type": "Systemic Fungicide", "category": "Chemical", "usage_stage": "Moderate infection"},
+      {"active_ingredient": "Azoxystrobin", "type": "Fungicide", "category": "Chemical", "usage_stage": "Preventive"},
+      {"active_ingredient": "Mancozeb", "type": "Contact Fungicide", "category": "Chemical", "usage_stage": "Mild stage"}
+    ]
+  },
+  "Corn_(maize)___Northern_Leaf_Blight": {
+    "treatments": [
+      {"active_ingredient": "Azoxystrobin", "type": "Systemic Fungicide", "category": "Chemical", "usage_stage": "Early stage"},
+      {"active_ingredient": "Mancozeb", "type": "Contact Fungicide", "category": "Chemical", "usage_stage": "Preventive"},
+      {"active_ingredient": "Propiconazole", "type": "Systemic Fungicide", "category": "Chemical", "usage_stage": "Moderate infection"},
+      {"active_ingredient": "Chlorothalonil", "type": "Fungicide", "category": "Chemical", "usage_stage": "Severe infection"}
+    ]
+  },
+  "Corn_(maize)___healthy": {
+    "treatments": [
+      {"active_ingredient": "NPK 20:20:20", "type": "Fertilizer", "category": "Nutrition", "usage_stage": "Vegetative"},
+      {"active_ingredient": "Urea", "type": "Nitrogen Fertilizer", "category": "Nutrition", "usage_stage": "Growth stage"},
+      {"active_ingredient": "Zinc Sulfate", "type": "Micronutrient", "category": "Nutrition", "usage_stage": "Deficiency correction"},
+      {"active_ingredient": "Seaweed Extract", "type": "Bio-stimulant", "category": "Organic", "usage_stage": "All stages"}
+    ]
+  },
+  "Grape___Black_rot": {
+    "treatments": [
+      {"active_ingredient": "Myclobutanil", "type": "Systemic Fungicide", "category": "Chemical", "usage_stage": "Early stage"},
+      {"active_ingredient": "Mancozeb", "type": "Contact Fungicide", "category": "Chemical", "usage_stage": "Preventive"},
+      {"active_ingredient": "Captan", "type": "Fungicide", "category": "Chemical", "usage_stage": "Moderate infection"},
+      {"active_ingredient": "Copper Hydroxide", "type": "Fungicide", "category": "Chemical", "usage_stage": "Preventive"}
+    ]
+  },
+  "Grape___Esca_(Black_Measles)": {
+    "treatments": [
+      {"active_ingredient": "Thiophanate-methyl", "type": "Systemic Fungicide", "category": "Chemical", "usage_stage": "Early detection"},
+      {"active_ingredient": "Copper Oxychloride", "type": "Fungicide", "category": "Chemical", "usage_stage": "Preventive"},
+      {"active_ingredient": "Trichoderma spp.", "type": "Bio-Fungicide", "category": "Organic", "usage_stage": "Soil application"},
+      {"active_ingredient": "Pruning Sealant Fungicide", "type": "Protective Treatment", "category": "Management", "usage_stage": "After pruning"}
+    ]
+  },
+  "Grape___Leaf_blight_(Isariopsis_Leaf_Spot)": {
+    "treatments": [
+      {"active_ingredient": "Mancozeb", "type": "Contact Fungicide", "category": "Chemical", "usage_stage": "Preventive"},
+      {"active_ingredient": "Copper Hydroxide", "type": "Fungicide", "category": "Chemical", "usage_stage": "Early infection"},
+      {"active_ingredient": "Azoxystrobin", "type": "Systemic Fungicide", "category": "Chemical", "usage_stage": "Moderate infection"},
+      {"active_ingredient": "Sulfur", "type": "Contact Fungicide", "category": "Organic", "usage_stage": "Mild stage"}
+    ]
+  },
+  "Grape___healthy": {
+    "treatments": [
+      {"active_ingredient": "NPK 19:19:19", "type": "Fertilizer", "category": "Nutrition", "usage_stage": "Growth stage"},
+      {"active_ingredient": "Magnesium Sulfate", "type": "Micronutrient", "category": "Nutrition", "usage_stage": "Deficiency correction"},
+      {"active_ingredient": "Seaweed Extract", "type": "Bio-stimulant", "category": "Organic", "usage_stage": "All stages"},
+      {"active_ingredient": "Humic Acid", "type": "Soil Conditioner", "category": "Organic", "usage_stage": "Soil health"}
+    ]
+  },
+  "Orange___Haunglongbing_(Citrus_greening)": {
+    "treatments": [
+      {"active_ingredient": "Imidacloprid", "type": "Systemic Insecticide", "category": "Chemical", "usage_stage": "Psyllid control"},
+      {"active_ingredient": "Thiamethoxam", "type": "Insecticide", "category": "Chemical", "usage_stage": "Vector management"},
+      {"active_ingredient": "Neem Oil", "type": "Bio-Insecticide", "category": "Organic", "usage_stage": "Vector suppression"},
+      {"active_ingredient": "Micronutrient Foliar Mix", "type": "Plant Nutrition", "category": "Supportive", "usage_stage": "Stress reduction"}
+    ]
+  },
+  "Peach___Bacterial_spot": {
+    "treatments": [
+      {"active_ingredient": "Copper Oxychloride", "type": "Bactericide", "category": "Chemical", "usage_stage": "Early infection"},
+      {"active_ingredient": "Oxytetracycline", "type": "Antibiotic Spray", "category": "Chemical", "usage_stage": "Severe infection"},
+      {"active_ingredient": "Streptomycin", "type": "Bactericide", "category": "Chemical", "usage_stage": "Early stage"},
+      {"active_ingredient": "Neem Extract", "type": "Bio-Control", "category": "Organic", "usage_stage": "Preventive"}
+    ]
+  },
+  "Peach___healthy": {
+    "treatments": [
+      {"active_ingredient": "NPK 20:20:20", "type": "Fertilizer", "category": "Nutrition", "usage_stage": "Vegetative"},
+      {"active_ingredient": "Calcium Nitrate", "type": "Fertilizer", "category": "Nutrition", "usage_stage": "Fruit development"},
+      {"active_ingredient": "Boron", "type": "Micronutrient", "category": "Nutrition", "usage_stage": "Flowering"},
+      {"active_ingredient": "Seaweed Extract", "type": "Bio-stimulant", "category": "Organic", "usage_stage": "All stages"}
+    ]
+  },
+  "Pepper,_bell___Bacterial_spot": {
+    "treatments": [
+      {"active_ingredient": "Copper Hydroxide", "type": "Bactericide", "category": "Chemical", "usage_stage": "Early stage"},
+      {"active_ingredient": "Streptomycin", "type": "Antibiotic Spray", "category": "Chemical", "usage_stage": "Moderate infection"},
+      {"active_ingredient": "Oxytetracycline", "type": "Antibiotic Spray", "category": "Chemical", "usage_stage": "Severe infection"},
+      {"active_ingredient": "Neem Oil", "type": "Bio-Control", "category": "Organic", "usage_stage": "Preventive"}
+    ]
+  },
+  "Pepper,_bell___healthy": {
+    "treatments": [
+      {"active_ingredient": "NPK 19:19:19", "type": "Fertilizer", "category": "Nutrition", "usage_stage": "Growth"},
+      {"active_ingredient": "Calcium Spray", "type": "Foliar Nutrient", "category": "Nutrition", "usage_stage": "Fruit set"},
+      {"active_ingredient": "Magnesium Sulfate", "type": "Micronutrient", "category": "Nutrition", "usage_stage": "Deficiency correction"},
+      {"active_ingredient": "Seaweed Extract", "type": "Bio-stimulant", "category": "Organic", "usage_stage": "All stages"}
+    ]
+  },
+  "Potato___Early_blight": {
+    "treatments": [
+      {"active_ingredient": "Mancozeb", "type": "Contact Fungicide", "category": "Chemical", "usage_stage": "Preventive"},
+      {"active_ingredient": "Chlorothalonil", "type": "Fungicide", "category": "Chemical", "usage_stage": "Early infection"},
+      {"active_ingredient": "Azoxystrobin", "type": "Systemic Fungicide", "category": "Chemical", "usage_stage": "Moderate infection"},
+      {"active_ingredient": "Copper Hydroxide", "type": "Fungicide", "category": "Chemical", "usage_stage": "Mild stage"}
+    ]
+  },
+  "Potato___Late_blight": {
+    "treatments": [
+      {"active_ingredient": "Metalaxyl", "type": "Systemic Fungicide", "category": "Chemical", "usage_stage": "Early infection"},
+      {"active_ingredient": "Mancozeb", "type": "Contact Fungicide", "category": "Chemical", "usage_stage": "Preventive"},
+      {"active_ingredient": "Cymoxanil + Mancozeb", "type": "Combination Fungicide", "category": "Chemical", "usage_stage": "Moderate infection"},
+      {"active_ingredient": "Chlorothalonil", "type": "Fungicide", "category": "Chemical", "usage_stage": "Severe infection"}
+    ]
+  },
+  "Potato___healthy": {
+    "treatments": [
+      {"active_ingredient": "NPK 12:32:16", "type": "Fertilizer", "category": "Nutrition", "usage_stage": "Basal application"},
+      {"active_ingredient": "Urea", "type": "Nitrogen Fertilizer", "category": "Nutrition", "usage_stage": "Vegetative"},
+      {"active_ingredient": "Potassium Sulfate", "type": "Potash Fertilizer", "category": "Nutrition", "usage_stage": "Tuber development"},
+      {"active_ingredient": "Humic Acid", "type": "Soil Conditioner", "category": "Organic", "usage_stage": "Soil health"}
+    ]
+  },
+  "Raspberry___healthy": {
+    "treatments": [
+      {"active_ingredient": "NPK 20:20:20", "type": "Fertilizer", "category": "Nutrition", "usage_stage": "Growth stage"},
+      {"active_ingredient": "Calcium Nitrate", "type": "Fertilizer", "category": "Nutrition", "usage_stage": "Fruit development"},
+      {"active_ingredient": "Seaweed Extract", "type": "Bio-stimulant", "category": "Organic", "usage_stage": "All stages"},
+      {"active_ingredient": "Iron Chelate", "type": "Micronutrient", "category": "Nutrition", "usage_stage": "Deficiency correction"}
+    ]
+  },
+  "Soybean___healthy": {
+    "treatments": [
+      {"active_ingredient": "Rhizobium Inoculant", "type": "Bio-Fertilizer", "category": "Organic", "usage_stage": "Seed treatment"},
+      {"active_ingredient": "NPK 10:26:26", "type": "Fertilizer", "category": "Nutrition", "usage_stage": "Basal dose"},
+      {"active_ingredient": "Molybdenum", "type": "Micronutrient", "category": "Nutrition", "usage_stage": "Early growth"},
+      {"active_ingredient": "Humic Acid", "type": "Soil Conditioner", "category": "Organic", "usage_stage": "Soil improvement"}
+    ]
+  },
+  "Squash___Powdery_mildew": {
+    "treatments": [
+      {"active_ingredient": "Sulfur", "type": "Contact Fungicide", "category": "Organic", "usage_stage": "Early infection"},
+      {"active_ingredient": "Myclobutanil", "type": "Systemic Fungicide", "category": "Chemical", "usage_stage": "Moderate infection"},
+      {"active_ingredient": "Potassium Bicarbonate", "type": "Bio-Fungicide", "category": "Organic", "usage_stage": "Mild stage"},
+      {"active_ingredient": "Neem Oil", "type": "Bio-Fungicide", "category": "Organic", "usage_stage": "Preventive"}
+    ]
+  },
+  "Strawberry___Leaf_scorch": {
+    "treatments": [
+      {"active_ingredient": "Captan", "type": "Fungicide", "category": "Chemical", "usage_stage": "Preventive"},
+      {"active_ingredient": "Myclobutanil", "type": "Systemic Fungicide", "category": "Chemical", "usage_stage": "Early infection"},
+      {"active_ingredient": "Copper Hydroxide", "type": "Fungicide", "category": "Chemical", "usage_stage": "Moderate infection"},
+      {"active_ingredient": "Azoxystrobin", "type": "Systemic Fungicide", "category": "Chemical", "usage_stage": "Severe infection"}
+    ]
+  },
+  "Strawberry___healthy": {
+    "treatments": [
+      {"active_ingredient": "NPK 19:19:19", "type": "Fertilizer", "category": "Nutrition", "usage_stage": "Vegetative"},
+      {"active_ingredient": "Calcium Nitrate", "type": "Fertilizer", "category": "Nutrition", "usage_stage": "Fruit stage"},
+      {"active_ingredient": "Boron", "type": "Micronutrient", "category": "Nutrition", "usage_stage": "Flowering"},
+      {"active_ingredient": "Seaweed Extract", "type": "Bio-stimulant", "category": "Organic", "usage_stage": "All stages"}
+    ]
+  },
+  "Tomato___Bacterial_spot": {
+    "treatments": [
+      {"active_ingredient": "Copper Hydroxide", "type": "Bactericide", "category": "Chemical", "usage_stage": "Early infection"},
+      {"active_ingredient": "Streptomycin", "type": "Antibiotic Spray", "category": "Chemical", "usage_stage": "Moderate infection"},
+      {"active_ingredient": "Oxytetracycline", "type": "Antibiotic Spray", "category": "Chemical", "usage_stage": "Severe infection"},
+      {"active_ingredient": "Neem Oil", "type": "Bio-Control", "category": "Organic", "usage_stage": "Preventive"}
+    ]
+  },
+  "Tomato___Early_blight": {
+    "treatments": [
+      {"active_ingredient": "Mancozeb", "type": "Fungicide", "category": "Chemical", "usage_stage": "Preventive"},
+      {"active_ingredient": "Chlorothalonil", "type": "Fungicide", "category": "Chemical", "usage_stage": "Early infection"},
+      {"active_ingredient": "Azoxystrobin", "type": "Systemic Fungicide", "category": "Chemical", "usage_stage": "Moderate infection"},
+      {"active_ingredient": "Copper Hydroxide", "type": "Fungicide", "category": "Chemical", "usage_stage": "Mild stage"}
+    ]
+  },
+  "Tomato___Late_blight": {
+    "treatments": [
+      {"active_ingredient": "Metalaxyl", "type": "Systemic Fungicide", "category": "Chemical", "usage_stage": "Early infection"},
+      {"active_ingredient": "Cymoxanil + Mancozeb", "type": "Combination Fungicide", "category": "Chemical", "usage_stage": "Moderate infection"},
+      {"active_ingredient": "Chlorothalonil", "type": "Fungicide", "category": "Chemical", "usage_stage": "Severe infection"},
+      {"active_ingredient": "Copper Hydroxide", "type": "Fungicide", "category": "Chemical", "usage_stage": "Preventive"}
+    ]
+  },
+  "Tomato___Leaf_Mold": {
+    "treatments": [
+      {"active_ingredient": "Chlorothalonil", "type": "Fungicide", "category": "Chemical", "usage_stage": "Early stage"},
+      {"active_ingredient": "Mancozeb", "type": "Fungicide", "category": "Chemical", "usage_stage": "Moderate infection"},
+      {"active_ingredient": "Copper Hydroxide", "type": "Fungicide", "category": "Chemical", "usage_stage": "Preventive"},
+      {"active_ingredient": "Azoxystrobin", "type": "Systemic Fungicide", "category": "Chemical", "usage_stage": "Severe infection"}
+    ]
+  },
+  "Tomato___Septoria_leaf_spot": {
+    "treatments": [
+      {"active_ingredient": "Mancozeb", "type": "Fungicide", "category": "Chemical", "usage_stage": "Preventive"},
+      {"active_ingredient": "Chlorothalonil", "type": "Fungicide", "category": "Chemical", "usage_stage": "Early infection"},
+      {"active_ingredient": "Copper Hydroxide", "type": "Fungicide", "category": "Chemical", "usage_stage": "Moderate infection"},
+      {"active_ingredient": "Azoxystrobin", "type": "Systemic Fungicide", "category": "Chemical", "usage_stage": "Severe infection"}
+    ]
+  },
+  "Tomato___Spider_mites_Two-spotted_spider_mite": {
+    "treatments": [
+      {"active_ingredient": "Abamectin", "type": "Miticide", "category": "Chemical", "usage_stage": "Active infestation"},
+      {"active_ingredient": "Spiromesifen", "type": "Miticide", "category": "Chemical", "usage_stage": "Moderate infestation"},
+      {"active_ingredient": "Neem Oil", "type": "Bio-Insecticide", "category": "Organic", "usage_stage": "Early infestation"},
+      {"active_ingredient": "Insecticidal Soap", "type": "Contact Control", "category": "Organic", "usage_stage": "Mild infestation"}
+    ]
+  },
+  "Tomato___Target_Spot": {
+    "treatments": [
+      {"active_ingredient": "Azoxystrobin", "type": "Systemic Fungicide", "category": "Chemical", "usage_stage": "Early stage"},
+      {"active_ingredient": "Chlorothalonil", "type": "Fungicide", "category": "Chemical", "usage_stage": "Moderate infection"},
+      {"active_ingredient": "Mancozeb", "type": "Fungicide", "category": "Chemical", "usage_stage": "Preventive"},
+      {"active_ingredient": "Copper Hydroxide", "type": "Fungicide", "category": "Chemical", "usage_stage": "Severe infection"}
+    ]
+  },
+  "Tomato___Tomato_mosaic_virus": {
+    "treatments": [
+      {"active_ingredient": "Imidacloprid", "type": "Insecticide", "category": "Chemical", "usage_stage": "Vector control"},
+      {"active_ingredient": "Thiamethoxam", "type": "Insecticide", "category": "Chemical", "usage_stage": "Vector suppression"},
+      {"active_ingredient": "Neem Oil", "type": "Bio-Insecticide", "category": "Organic", "usage_stage": "Preventive"},
+      {"active_ingredient": "Micronutrient Foliar Mix", "type": "Plant Nutrition", "category": "Supportive", "usage_stage": "Stress recovery"}
+    ]
+  },
+  "Tomato___Tomato_Yellow_Leaf_Curl_Virus": {
+    "treatments": [
+      {"active_ingredient": "Imidacloprid", "type": "Systemic Insecticide", "category": "Chemical", "usage_stage": "Whitefly control"},
+      {"active_ingredient": "Thiamethoxam", "type": "Insecticide", "category": "Chemical", "usage_stage": "Vector management"},
+      {"active_ingredient": "Neem Oil", "type": "Bio-Insecticide", "category": "Organic", "usage_stage": "Early infestation"},
+      {"active_ingredient": "Micronutrient Mix", "type": "Plant Nutrition", "category": "Supportive", "usage_stage": "Recovery support"}
+    ]
+  },
+  "Tomato___healthy": {
+    "treatments": [
+      {"active_ingredient": "NPK 19:19:19", "type": "Fertilizer", "category": "Nutrition", "usage_stage": "Vegetative"},
+      {"active_ingredient": "Calcium Nitrate", "type": "Fertilizer", "category": "Nutrition", "usage_stage": "Fruit development"},
+      {"active_ingredient": "Magnesium Sulfate", "type": "Micronutrient", "category": "Nutrition", "usage_stage": "Deficiency correction"},
+      {"active_ingredient": "Seaweed Extract", "type": "Bio-stimulant", "category": "Organic", "usage_stage": "All stages"}
+    ]
+  }
+}

@@ -1,0 +1,45 @@
+===============================================
+  HOW TO START THE SERVER - COPY THIS COMMAND
+===============================================
+
+In PowerShell, run this EXACT command:
+
+$env:PYTHONNOUSERSITE="1"; .\venv\Scripts\python.exe -m uvicorn app:app --reload --host 127.0.0.1 --port 8000
+
+
+OR simply double-click:  start.bat
+
+
+===============================================
+  WHY THIS WORKS
+===============================================
+
+The command does 3 things:
+1. Sets PYTHONNOUSERSITE=1 to disable user site-packages
+2. Uses venv\Scripts\python.exe directly (not the system python)
+3. Runs uvicorn through python -m (ensures correct environment)
+
+
+===============================================
+  EXPECTED OUTPUT
+===============================================
+
+You should see:
+  INFO:     Uvicorn running on http://127.0.0.1:8000
+  Model weights loaded successfully!
+  INFO:     Application startup complete.
+
+
+===============================================
+  IF IT STILL FAILS
+===============================================
+
+The issue is that uvicorn installed in a different venv is being used.
+
+Solution: Install uvicorn in THIS venv:
+  .\venv\Scripts\python.exe -m pip install uvicorn==0.24.0 --force-reinstall
+
+Then run the command above again.
+
+
+===============================================

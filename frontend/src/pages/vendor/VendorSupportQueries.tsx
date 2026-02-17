@@ -37,7 +37,7 @@ export default function VendorSupportQueries() {
     try {
       setLoading(true);
       const token = localStorage.getItem('token');
-      const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
+      const backendUrl = import.meta.env.VITE_BACKEND_URL || "https://agricorus.duckdns.org";
       
       const response = await axios.get(
         `${backendUrl}/api/marketplace/support/vendor/queries?status=${filterStatus}`,
@@ -60,7 +60,7 @@ export default function VendorSupportQueries() {
     try {
       setSending(true);
       const token = localStorage.getItem('token');
-      const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
+      const backendUrl = import.meta.env.VITE_BACKEND_URL || "https://agricorus.duckdns.org";
       
       const response = await axios.post(
         `${backendUrl}/api/marketplace/support/vendor/reply`,
@@ -89,7 +89,7 @@ export default function VendorSupportQueries() {
   const updateStatus = async (queryId: string, status: string) => {
     try {
       const token = localStorage.getItem('token');
-      const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
+      const backendUrl = import.meta.env.VITE_BACKEND_URL || "https://agricorus.duckdns.org";
       
       await axios.patch(
         `${backendUrl}/api/marketplace/support/vendor/status`,

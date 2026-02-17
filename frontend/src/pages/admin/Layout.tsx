@@ -135,7 +135,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, onToggleSidebar, isMob
     const token = localStorage.getItem('token');
     if (token) {
       try {
-        await fetch(`${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/auth/logout`, {
+        await fetch(`${import.meta.env.VITE_BACKEND_URL || "https://agricorus.duckdns.org"}/api/auth/logout`, {
           method: 'POST',
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -314,14 +314,14 @@ const UserProfileDropdown: React.FC = () => {
       if (!token) return;
       
       try {
-        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/profile`, {
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL || "https://agricorus.duckdns.org"}/api/profile`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const data = await response.json();
         if (data.profileImage) {
           const imageUrl = data.profileImage.startsWith('http') 
             ? data.profileImage 
-            : `${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}${data.profileImage}`;
+            : `${import.meta.env.VITE_BACKEND_URL || "https://agricorus.duckdns.org"}${data.profileImage}`;
           setProfileImage(imageUrl);
         }
       } catch (error) {
@@ -336,7 +336,7 @@ const UserProfileDropdown: React.FC = () => {
     const token = localStorage.getItem("token");
     if (token) {
       try {
-        await fetch(`${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/auth/logout`, {
+        await fetch(`${import.meta.env.VITE_BACKEND_URL || "https://agricorus.duckdns.org"}/api/auth/logout`, {
           method: "POST",
           headers: { Authorization: `Bearer ${token}` },
         });

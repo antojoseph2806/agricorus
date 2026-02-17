@@ -33,7 +33,7 @@ const FarmerViewLands: React.FC = () => {
   const navigate = useNavigate();
 
   const backendUrl =
-    import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
+    import.meta.env.VITE_BACKEND_URL || "https://agricorus.duckdns.org";
 
   useEffect(() => {
     const fetchLands = async () => {

@@ -73,7 +73,7 @@ const EditLand: React.FC = () => {
 
       const token = localStorage.getItem('token');
       try {
-        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/landowner/lands/${id}`, {
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL || "https://agricorus.duckdns.org"}/api/landowner/lands/${id}`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
 
@@ -172,7 +172,7 @@ const EditLand: React.FC = () => {
     const token = localStorage.getItem('token');
     
     try {
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/landowner/lands/${id}`, {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL || "https://agricorus.duckdns.org"}/api/landowner/lands/${id}`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,

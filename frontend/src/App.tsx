@@ -120,6 +120,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import ForbiddenPage from "./pages/ForbiddenPage";
 import FarmerKYCStatus from "./pages/farmer/FarmerKYCStatus";
 import FarmerKYCVerify from "./pages/farmer/FarmerKYCVerify";
+import DiseaseIdentification from "./pages/DiseaseIdentification";
 
 function App() {
   return (
@@ -642,6 +643,17 @@ function App() {
               <ProtectedRoute
                 element={<ProfileView />}
                 allowedRoles={["farmer", "landowner", "investor", "admin"]}
+              />
+            }
+          />
+
+          {/* ----------------- Disease Identification Route ----------------- */}
+          <Route
+            path="/disease-identification"
+            element={
+              <ProtectedRoute
+                element={<DiseaseIdentification />}
+                allowedRoles={["farmer", "landowner", "investor"]}
               />
             }
           />

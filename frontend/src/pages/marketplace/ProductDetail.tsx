@@ -49,7 +49,7 @@ const ProductDetail = () => {
     try {
       setLoading(true);
       const res = await axios.get(
-        `${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/marketplace/products/${id}`
+        `${import.meta.env.VITE_BACKEND_URL || "https://agricorus.duckdns.org"}/api/marketplace/products/${id}`
       );
 
       if (res.data.success) {
@@ -80,7 +80,7 @@ const ProductDetail = () => {
     try {
       const token = localStorage.getItem("token");
       const res = await axios.post(
-        `${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/cart/add`,
+        `${import.meta.env.VITE_BACKEND_URL || "https://agricorus.duckdns.org"}/api/cart/add`,
         {
           productId: product._id,
           quantity: quantity,
@@ -116,7 +116,7 @@ const ProductDetail = () => {
     try {
       const token = localStorage.getItem("token");
       const res = await axios.post(
-        `${import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"}/api/cart/add`,
+        `${import.meta.env.VITE_BACKEND_URL || "https://agricorus.duckdns.org"}/api/cart/add`,
         {
           productId: product._id,
           quantity: quantity,
